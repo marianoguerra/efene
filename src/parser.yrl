@@ -3,12 +3,12 @@ Nonterminals
     arguments block fun_expression function_call call_arguments call_argument
     call_params bool_expr comp_expr add_expr mul_expr unary_expr or_expr
     xor_expr and_expr patterns pattern list list_items tuple tuple_items
-    list_comp list_generators list_generator.
+    list_comp list_generators list_generator try_expr recv_expr.
 
 Terminals 
     bool_op comp_op add_op mul_op unary_op match var open close fn sep
     open_list close_list open_block close_block integer float boolean endl atom
-    string and_op xor_op or_op rtl ltr split_op if.
+    string and_op xor_op or_op rtl ltr split_op if try catch finally receive after.
 
 Rootsymbol grammar.
 
@@ -104,6 +104,8 @@ literal -> open bool_expr close : '$2'.
 literal -> function_call        : '$1'.
 literal -> function_def         : '$1'.
 literal -> list_comp            : '$1'.
+literal -> try_expr 		: '$1'.
+literal -> recv_expr 		: '$1'.
 
 list -> open_list close_list            : {nil, line('$1')}.
 list -> open_list list_items close_list : '$2'.
@@ -127,6 +129,13 @@ list_generators -> list_generator                   : '$1'.
 
 list_generator  -> atom bool_expr atom bool_expr  : [{generate, line('$1'), '$2', '$4'}]. 
 list_generator  -> atom bool_expr atom bool_expr if bool_expr : [{generate, line('$1'), '$2', '$4'},'$6']. 
+
+try_expr -> try block 					: {trys, line('$1'), '$2'}.
+try_expr -> try block catch patterns 			: {trys, line('$1'), '$2', '$4'}.
+try_expr -> try block catch patterns finally block	: {trys, line('$1'), '$2', '$4', '$6'}.
+
+recv_expr -> receive patterns 				: {receives, line('$1'), '$2'}.
+recv_expr -> receive patterns after literal block	: {receives, line('$1'), '$2', '$4', '$5'}.
 
 Erlang code.
 

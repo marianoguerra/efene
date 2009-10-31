@@ -72,6 +72,11 @@ atom_or_identifier(String, TokenLine) ->
      end.
 
 is_reserved("if") -> true;
+is_reserved("try") -> true;
+is_reserved("catch") -> true;
+is_reserved("finally") -> true;
+is_reserved("receive") -> true;
+is_reserved("after") -> true;
 is_reserved(_) -> false.
 
 build_string(Type, Chars, Line, Len) ->
