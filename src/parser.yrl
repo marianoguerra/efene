@@ -1,14 +1,14 @@
 Nonterminals 
     expr_list grammar literal expressions expression function_def argument_def
     arguments block fun_expression function_call call_arguments call_argument
-    call_params bool_expr comp_expr add_expr mul_expr unary_expr or_expr
+    call_params send_expr bool_expr comp_expr add_expr mul_expr unary_expr or_expr
     xor_expr and_expr patterns pattern list list_items tuple tuple_items
     list_comp list_generators list_generator try_expr recv_expr.
 
 Terminals 
     bool_op comp_op add_op mul_op unary_op match var open close fn sep
     open_list close_list open_block close_block integer float boolean endl atom
-    string and_op xor_op or_op rtl ltr split_op if try catch finally receive after.
+    string and_op xor_op or_op send_op rtl ltr split_op if try catch finally receive after.
 
 Rootsymbol grammar.
 
@@ -33,7 +33,10 @@ expressions -> expression                       : ['$1'].
 expressions -> expression expressions           : ['$1'|'$2'].
 
 expression -> bool_expr match bool_expr endl    : {unwrap('$2'), line('$2'), '$1', '$3'}.
-expression -> bool_expr endl                    : '$1'.
+expression -> send_expr endl    		: '$1'.
+
+send_expr -> bool_expr send_op send_expr : {unwrap('$2'), line('$2'), '$1', '$3'}.
+send_expr -> bool_expr : '$1'.
 
 bool_expr -> comp_expr bool_op bool_expr        : {unwrap('$2'), line('$2'), '$1', '$3'}.
 bool_expr -> comp_expr                          : '$1'.

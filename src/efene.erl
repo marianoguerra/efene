@@ -22,8 +22,10 @@ forms('-' = Op, Line, Ast1, nil) ->
   {op, Line, Op, Ast1};
 forms('~', Line, Ast1, nil) ->
   {op, Line, 'bnot', Ast1};
-forms('!', Line, Ast1, Ast2) ->
+forms('$|', Line, Ast1, Ast2) ->
   {op, Line, 'bor', Ast1, Ast2};
+forms('!'=Op, Line, Ast1, Ast2) ->
+  {op, Line, Op, Ast1, Ast2};
 forms('&', Line, Ast1, Ast2) ->
   {op, Line, 'band', Ast1, Ast2};
 forms('^', Line, Ast1, Ast2) ->
@@ -161,6 +163,8 @@ matches({'>' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'!=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
 matches({'!' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+
+matches({'$|' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'&' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'^' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 

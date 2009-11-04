@@ -1,5 +1,6 @@
 Definitions.
 
+Or		= $| 
 Identifier	= [A-Z_][a-zA-Z0-9_]*
 Atom		= [a-z][a-zA-Z0-9_@]*
 Uppercase	= [A-Z]
@@ -30,6 +31,7 @@ Split		= :
 
 Rules.
 
+{Or}			: {token, {or_op,	TokenLine, list_to_atom(TokenChars)}}.
 {AddOp}   		: {token, {add_op,	TokenLine, list_to_atom(TokenChars)}}.
 {MulOp}   		: {token, {mul_op,	TokenLine, list_to_atom(TokenChars)}}.
 {UnaryOp}   		: {token, {unary_op,	TokenLine, list_to_atom(TokenChars)}}.
@@ -53,7 +55,7 @@ Rules.
 {Identifier}	   	: {token, {var,		TokenLine, list_to_atom(TokenChars)}}.
 {Atom}		   	: {token, atom_or_identifier(TokenChars, TokenLine)}.
 &			: {token, {and_op,	TokenLine, list_to_atom(TokenChars)}}.
-!			: {token, {or_op,	TokenLine, list_to_atom(TokenChars)}}.
+!			: {token, {send_op,	TokenLine, list_to_atom(TokenChars)}}.
 \^			: {token, {xor_op,	TokenLine, list_to_atom(TokenChars)}}.
 {Split}			: {token, {split_op,	TokenLine, list_to_atom(TokenChars)}}.
 {White}+  		: skip_token.

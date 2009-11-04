@@ -1,0 +1,20 @@
+
+loop = fn () {
+    receive (Stuff) {
+        io->format("~p~n", [Stuff]);
+    };
+    loop();
+};
+
+start = fn () {
+    Pid = spawn(fn () loop());
+    Pid1 = spawn(fn () loop());
+    Pid ! Pid1 ! 1;
+    Pid ! Pid1 ! atom;
+    Pid ! Pid1 ! "string";
+    ok;
+};
+
+testor = fn (A, B) {
+    A $| B;
+};
