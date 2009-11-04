@@ -1,0 +1,4 @@
+*.beam
+lexer.erl
+parser.erl
+src/*.fn
