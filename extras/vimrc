@@ -1,0 +1,8 @@
+au BufRead,BufNewFile *.fn set shiftwidth=4
+au BufRead,BufNewFile *.fn set tabstop=4
+au BufRead,BufNewFile *.fn source ~/.vim/syntax/efene.vim
+au BufRead,BufNewFile *.fn set expandtab
+au BufRead,BufNewFile *.fn match BadWhitespace /^\t\+/
+au BufRead,BufNewFile *.fn match BadWhitespace /\s\+$/
+au BufRead,BufNewFile *.fn set textwidth=79
+au BufNewFile *.fn set fileformat=unix
