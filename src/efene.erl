@@ -72,6 +72,9 @@ get_ast(From, String) ->
     Ast = lists:map(fun(Line) -> matches(Line) end, get_tree(From, String)),
     module(get_module_name(String), Ast).
 
+print_ast(From, String) ->
+    io:format("~p~n", [get_ast(From, String)]).
+
 get_code(Ast) ->
     {ok, _, Code} = compile:forms(Ast),
     Code.
@@ -94,6 +97,9 @@ from_erlang(Name) ->
     {ok,Parsed} = erl_parse:parse_form(Scanned),
     Parsed.
 
+print_from_erlang(Name) ->
+    io:format("~p~n", [from_erlang(Name)]).
+
 build(From, String) ->
     ModuleName = get_module_name(String),
     build_module(ModuleName, get_ast(From, String)).
@@ -108,6 +114,9 @@ get_tree(From, String) ->
     {ok, Tree} = parser:parse(Tokens),
     Tree.
 
+print_tree(From, String) ->
+    io:format("~p~n", [get_tree(From, String)]).
+
 get_lex(string, String) ->
     {ok, Tokens, _Endline} = lexer:string(String),
     Tokens;
@@ -116,6 +125,9 @@ get_lex(file, Name) ->
     Program = binary_to_list(Content),
     {ok, Tokens, _Endline} = lexer:string(Program),
     Tokens.
+
+print_lex(From, String) ->
+    io:format("~p~n", [get_lex(From, String)]).
 
 get_module_name(String) ->
     [ModuleNameStr | _] = string:tokens(String, "."),
@@ -175,6 +187,15 @@ matches({fn, Line, Patterns}) ->
     {'fun', Line, match_fun_body(Patterns)};
 matches({fun_def, Line, Name, {fn, _Line, Patterns}}) ->
     function(Name, Line, get_function_arity(Patterns), match_function_body(Patterns));
+
+matches({receives, Line, Patterns}) -> {'receive', Line, match_function_body(Patterns)};
+matches({receives, Line, Patterns, After, {'{', _, AfterBody}}) -> {'receive', Line, match_function_body(Patterns), matches(After), matches(AfterBody)};
+
+matches({trys, Line, {'{', _, TryBody}, CatchPatterns}) ->
+    {'try', Line, matches(TryBody), [], match_function_body(CatchPatterns), []};
+matches({trys, Line, {'{', _, TryBody}, CatchPatterns, {'{', _, FinallyBody}}) ->
+    {'try', Line, matches(TryBody), [], match_function_body(CatchPatterns), matches(FinallyBody)};
+
 matches(Exp) -> {error, Exp}.
 
 matches_list([]) -> [];
