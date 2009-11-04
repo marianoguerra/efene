@@ -1,0 +1,132 @@
+/* reset stuff */ html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, a, abbr, acronym, address, big,
+cite, code, del, dfn, em, font, img,
+ins, kbd, q, s, samp, small, strike,
+strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+center, u, b, i {
+     margin: 0;
+     padding: 0;
+     border: 0;
+     outline: 0;
+     font-weight: normal;
+     font-style: normal;
+     font-size: 100%;
+     font-family: inherit;
+     vertical-align: baseline
+}
+
+body {
+     line-height: 1
+}
+
+:focus {
+     outline: 0
+}
+
+ol, ul {
+     list-style: none
+}
+
+table {
+     border-collapse: collapse;
+     border-spacing: 0
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+     content: ""
+}
+
+blockquote, q {
+     quotes: "" ""
+}
+
+input, textarea {
+     margin: 0;
+     padding: 0
+}
+
+hr {
+     margin: 0;
+     padding: 0;
+     border: 0;
+     color: #000;
+     background-color: #000;
+     height: 1px
+}
+
+/* actual css */
+body{
+ font-family: arial;
+ font-size: 1.2em;
+ color: #555;
+ background: url('../img/bg.png') repeat-x fixed bottom left;
+}
+
+#header, #body, #footer{
+ width: 80%;
+ margin-left: 10%;
+ display: table;
+}
+
+em{
+ color: #39c;
+ font-style: italic;
+}
+
+strong{
+ color: #FC0082;
+ font-weight: bold;
+}
+
+#nav{
+ float: right;
+ margin-right: 10%;
+}
+
+#nav li{
+ display: inline;
+}
+
+a{
+ text-decoration: none;
+ color: #FC0082;
+}
+
+a:hover{
+ text-decoration: underline;
+ color: #39c;
+}
+
+ul{
+ margin-top: 1.5em;
+ margin-bottom: 1.5em;
+}
+
+li{
+ margin-left: 1.0em;
+ margin-bottom: 1.0em;
+ list-style-type: circle;
+}
+
+p{
+ margin-top: 1em;
+}
+
+#header h1{
+ float: left;
+ font-size: 1.5em;
+ color: #333;
+ margin-top: 2em;
+}
+
+.page{
+}
+
+#logo{
+ float: right;
+}
+
+
