@@ -22,7 +22,7 @@ forms('-' = Op, Line, Ast1, nil) ->
   {op, Line, Op, Ast1};
 forms('~', Line, Ast1, nil) ->
   {op, Line, 'bnot', Ast1};
-forms('$|', Line, Ast1, Ast2) ->
+forms('bor', Line, Ast1, Ast2) ->
   {op, Line, 'bor', Ast1, Ast2};
 forms('!'=Op, Line, Ast1, Ast2) ->
   {op, Line, Op, Ast1, Ast2};
@@ -164,7 +164,7 @@ matches({'!=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
 matches({'!' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
-matches({'$|' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'bor' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'&' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'^' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
@@ -224,4 +224,23 @@ match_pattern({pattern, {'(', Line, Args}, Guards, {'{', _, Body}}) ->
 
 get_function_arity([]) -> 0;
 get_function_arity([{pattern, {'(', _Line, Arguments}, _, _}|_T]) -> length(Arguments).
+
+main([]) -> io:format("All files compiled~n");
+main([Head|Tail]) ->
+    try
+        io:format("compiling ~s~n", [Head]),
+        compile(Head),
+        main(Tail)
+    catch
+        _:Error ->
+            display_error(Error)
+    end.
+
+display_error({badmatch,{error,{Line,lexer,{illegal,Character}},_}}) ->
+    io:format("~B: Illegal character '~s'~n", [Line, Character]);
+display_error({badmatch,{error,{Line,parser,[Message,Item]}}}) ->
+    io:format("~B: ~s~s~n", [Line, Message, Item]);
+display_error(Unknown) ->
+    io:format("Error: ~p~n", [Unknown]).
+
 

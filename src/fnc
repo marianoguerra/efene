@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+erl -run efene main $@ -run init stop -noshell

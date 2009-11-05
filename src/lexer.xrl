@@ -1,6 +1,6 @@
 Definitions.
 
-Or		= $| 
+Or		= bor 
 Identifier	= [A-Z_][a-zA-Z0-9_]*
 Atom		= [a-z][a-zA-Z0-9_@]*
 Uppercase	= [A-Z]
