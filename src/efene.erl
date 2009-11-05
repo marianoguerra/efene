@@ -89,6 +89,9 @@ to_erlang(From, String) ->
     Ast = get_ast(From, String),
     erl_prettypr:format(erl_syntax:form_list(Ast)).
 
+print_erlang([File]) ->
+    print_erlang(file, File).
+
 print_erlang(From, String) ->
     io:format("~s~n", [to_erlang(From, String)]).
 

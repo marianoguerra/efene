@@ -9,7 +9,7 @@ AddOp     	= (\+|-)
 MulOp     	= (\*|/|%)
 CompOp    	= (<|<=|==|===|>=|>|!=|!==)
 BoolOp   	= (and|or)
-White      	= (\s|\n)
+White      	= (\s|\t|\n)
 Comment 	= #.*
 Open    	= \(
 Close   	= \)
