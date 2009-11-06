@@ -1,0 +1,9 @@
+
+calculate = fn () {
+    lists:sum([X for X in lists:seq(0, 1000) if X % 3 == 0 or X % 5 == 0]);
+};
+
+run = fn () {
+    io->format("~w~n", [calculate()]);
+};
+

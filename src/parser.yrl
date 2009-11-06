@@ -75,6 +75,7 @@ call_arguments -> call_argument call_arguments      : ['$1'|'$2'].
 call_argument -> bool_expr          : '$1'.
 
 function_def 	-> fn patterns      : {unwrap('$1'), line('$1'), '$2'}.
+function_def 	-> block      : {'fn', line('$1'), [{pattern,{'(',line('$1'),[]},[],'$1'}]}.
 
 patterns	-> pattern patterns     : ['$1'|'$2'].
 patterns	-> pattern              : ['$1'].
@@ -88,7 +89,6 @@ arguments	-> unary_expr               : ['$1'].
 arguments	-> unary_expr sep arguments : ['$1'|'$3'].
 arguments	-> unary_expr arguments     : ['$1'|'$2'].
 
-block		-> bool_expr                            : {'{',             line('$1'), ['$1']}.
 block		-> open_block expressions close_block   : {unwrap('$1'),    line('$1'), '$2'}.
 
 unary_expr -> unary_op literal  : {unwrap('$1'), line('$1'), '$2'}.
