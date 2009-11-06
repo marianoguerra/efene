@@ -1,0 +1,21 @@
+is_zero = fn (0, FunTrue, _) { FunTrue(); }
+             (_, _, FunFalse) { FunFalse(); };
+
+say = fn (Pid, Str) {
+   io->fwrite("~s~n", [Str]);
+   Pid ! done;
+};
+
+wait = fn (N) {
+    receive (done) {
+        is_zero(N, { 0; }, { wait(N - 1); });
+    };
+};
+
+run = fn () {
+    spawn(concurrent, say, [self(), "Enjoy"]);
+    spawn(concurrent, say, [self(), "Roseta"]);
+    spawn(concurrent, say, [self(), "Code"]);
+    wait(2);
+    ok;
+};
