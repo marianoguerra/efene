@@ -5,6 +5,7 @@ Identifier	= [A-Z_][a-zA-Z0-9_]*
 Atom		= [a-z][a-zA-Z0-9_@]*
 Uppercase	= [A-Z]
 Number       	= [0-9]
+ConcatOp     	= (\+\+|--)
 AddOp     	= (\+|-)
 MulOp     	= (\*|/|%)
 CompOp    	= (<|<=|==|===|>=|>|!=|!==)
@@ -31,6 +32,7 @@ Split		= :
 Rules.
 
 {Or}			: {token, {or_op,	TokenLine, list_to_atom(TokenChars)}}.
+{ConcatOp}   		: {token, {concat_op,	TokenLine, list_to_atom(TokenChars)}}.
 {AddOp}   		: {token, {add_op,	TokenLine, list_to_atom(TokenChars)}}.
 {MulOp}   		: {token, {mul_op,	TokenLine, list_to_atom(TokenChars)}}.
 {UnaryOp}   		: {token, {unary_op,	TokenLine, list_to_atom(TokenChars)}}.

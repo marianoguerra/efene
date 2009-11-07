@@ -30,6 +30,10 @@ forms('&', Line, Ast1, Ast2) ->
   {op, Line, 'band', Ast1, Ast2};
 forms('^', Line, Ast1, Ast2) ->
   {op, Line, 'bxor', Ast1, Ast2};
+forms('++' = Op, Line, Ast1, Ast2) ->
+  {op, Line, Op, Ast1, Ast2};
+forms('--' = Op, Line, Ast1, Ast2) ->
+  {op, Line, Op, Ast1, Ast2};
 % the code below is from reia (I would have written the same :P)
 % changes on == and != and parameter order
 forms('*' = Op, Line, Ast1, Ast2) ->
@@ -157,6 +161,9 @@ matches({'-' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'*' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'/' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'%' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+
+matches({'++' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'--' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
 matches({'<' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({'<=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));

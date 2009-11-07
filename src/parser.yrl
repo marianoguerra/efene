@@ -3,24 +3,25 @@ Nonterminals
     arguments block fun_expression function_call call_arguments call_argument
     call_params send_expr bool_expr comp_expr add_expr mul_expr unary_expr or_expr
     xor_expr and_expr patterns pattern list list_items tuple tuple_items
-    list_comp list_generators list_generator try_expr recv_expr.
+    concat_expr list_comp list_generators list_generator try_expr recv_expr.
 
 Terminals 
     bool_op comp_op add_op mul_op unary_op match var open close fn sep
     open_list close_list open_block close_block integer float boolean endl atom
-    string and_op xor_op or_op send_op rtl split_op if try catch finally receive after.
+    string concat_op and_op xor_op or_op send_op rtl split_op if try catch finally receive after.
 
 Rootsymbol grammar.
 
 Left 100 bool_op.
 Left 200 comp_op.
-Left 300 or_op.
-Left 400 xor_op.
-Left 500 and_op.
-Left 600 add_op.
-Left 700 mul_op.
-Left 800 unary_op.
-Left 900 open.
+Right 300 concat_op.
+Left 400 or_op.
+Left 500 xor_op.
+Left 600 and_op.
+Left 700 add_op.
+Left 800 mul_op.
+Left 900 unary_op.
+Left 1000 open.
 
 grammar -> expr_list                            : '$1'.
 
@@ -41,8 +42,11 @@ send_expr -> bool_expr : '$1'.
 bool_expr -> comp_expr bool_op bool_expr        : {unwrap('$2'), line('$2'), '$1', '$3'}.
 bool_expr -> comp_expr                          : '$1'.
 
-comp_expr -> or_expr comp_op comp_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}.
-comp_expr -> or_expr                    : '$1'.
+comp_expr -> concat_expr comp_op comp_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}.
+comp_expr -> concat_expr                    : '$1'.
+
+concat_expr -> or_expr concat_op concat_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}.
+concat_expr -> or_expr                    : '$1'.
 
 or_expr -> xor_expr or_op or_expr       : {unwrap('$2'), line('$2'), '$1', '$3'}.
 or_expr -> xor_expr                     : '$1'.
