@@ -24,7 +24,7 @@
   <div id="body">
 
    <div class="page" id="home">
-    <p>makes you <em>awesome</em> at coding</p>
+    <p><strong>efene</strong> makes you <em>awesome</em> at coding</p>
 
     <p>have you ever wanted to learn a functional programming language but you were scared by the syntax?</p>
     <p>then <strong>efene</strong> is for you!</p>
@@ -39,22 +39,215 @@
    </div>
 
    <div class="page hide" id="more">
-    <h2>More</h2>
+
+    <p>here are available some examples that you can get with efene</p>
+    <p>to download and run this examples you need to run the following commands</p>
+    <pre>
+# clone the repository with the latest code
+git clone git://github.com/marianoguerra/efene.git
+
+# go to the source directory
+cd efene/src/
+
+# build the binaries
+./build.sh
+
+# go to the examples folder
+cd ../examples/
+
+# build the examples
+./build.sh
+
+# run the examples
+./run.sh
+    </pre>
+
+    <p>or you can compile and run them one by one with the following commands</p>
+
+    <pre>
+cd efene/examples
+
+# fnc is the efene compiler
+# . is where the compiled bytecode will be written
+# numbers.fn the name of the file to compile
+
+../bin/fnc . numbers.fn
+
+# fn is the program that executes efene programs
+# numbers is the module that we want to run
+# run is the method we want to call inside the numbers module
+
+../bin/fn numbers run
+    </pre>
+
+    <p>now some examples</p>
+
+<h2>arraycb.fn</h2>
+<div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/Apply_a_callback_to_an_Array</span>
+
+<span class="nx">square</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span><span class="o">;</span>
+<span class="p">};</span>
+
+<span class="c"># list comprehension</span>
+<span class="nx">squares1</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">[</span><span class="nx">square</span><span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="k">for</span> <span class="nx">N</span> <span class="k">in</span> <span class="nx">Numbers</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="c"># functional form</span>
+<span class="nx">squares2a</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lists</span><span class="o">:</span><span class="nx">map</span><span class="p">(</span><span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">square</span><span class="p">(</span><span class="nx">N</span><span class="p">);</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c"># functional form with lambda</span>
+<span class="nx">squares2b</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lists</span><span class="o">:</span><span class="nx">map</span><span class="p">(</span><span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span><span class="o">;</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c"># no need for a function</span>
+<span class="nx">squares3</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">[</span><span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span> <span class="k">for</span> <span class="nx">N</span> <span class="k">in</span> <span class="nx">Numbers</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">7</span><span class="p">];</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;squares1 : ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">squares1</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)]);</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;squares2a: ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">squares2a</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)]);</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;squares2b: ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">squares2b</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)]);</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;squares3 : ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">squares3</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)]);</span>
+<span class="p">};</span>
+</pre></div>
+<h2>concat.fn</h2>
+<div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/String_concatenation</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">S</span> <span class="o">=</span> <span class="s2">&quot;hello&quot;</span><span class="o">;</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">S</span> <span class="o">++</span> <span class="s2">&quot; lite&quot;</span> <span class="o">++</span> <span class="s2">&quot;ral&quot;</span><span class="p">]);</span>
+    <span class="nx">S1</span> <span class="o">=</span> <span class="nx">S</span> <span class="o">++</span> <span class="s2">&quot; lite&quot;</span> <span class="o">++</span> <span class="s2">&quot;ral&quot;</span><span class="o">;</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">S1</span><span class="p">]);</span>
+    <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">;</span> <span class="c"># just to test that the ++ doesn&#39;t break the +</span>
+<span class="p">};</span>
+</pre></div>
+<h2>concurrent.fn</h2>
+<div class="highlight"><pre><span class="nx">is_zero</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span> <span class="nx">FunTrue</span><span class="o">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span> <span class="nx">FunTrue</span><span class="p">();</span> <span class="p">}</span>
+             <span class="p">(</span><span class="nx">_</span><span class="o">,</span> <span class="nx">_</span><span class="o">,</span> <span class="nx">FunFalse</span><span class="p">)</span> <span class="p">{</span> <span class="nx">FunFalse</span><span class="p">();</span> <span class="p">};</span>
+
+<span class="nx">say</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Pid</span><span class="o">,</span> <span class="nx">Str</span><span class="p">)</span> <span class="p">{</span>
+   <span class="nx">io</span><span class="o">:</span><span class="nx">fwrite</span><span class="p">(</span><span class="s2">&quot;~s~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Str</span><span class="p">]);</span>
+   <span class="nx">Pid</span> <span class="o">!</span> <span class="nx">done</span><span class="o">;</span>
+<span class="p">};</span>
+
+<span class="nx">wait</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">receive</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">is_zero</span><span class="p">(</span><span class="nx">N</span><span class="o">,</span> <span class="p">{</span> <span class="mi">0</span><span class="o">;</span> <span class="p">}</span><span class="o">,</span> <span class="p">{</span> <span class="nx">wait</span><span class="p">(</span><span class="nx">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span> <span class="p">});</span>
+    <span class="p">};</span>
+<span class="p">};</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">spawn</span><span class="p">(</span><span class="nx">concurrent</span><span class="o">,</span> <span class="nx">say</span><span class="o">,</span> <span class="p">[</span><span class="nx">self</span><span class="p">()</span><span class="o">,</span> <span class="s2">&quot;Enjoy&quot;</span><span class="p">]);</span>
+    <span class="nx">spawn</span><span class="p">(</span><span class="nx">concurrent</span><span class="o">,</span> <span class="nx">say</span><span class="o">,</span> <span class="p">[</span><span class="nx">self</span><span class="p">()</span><span class="o">,</span> <span class="s2">&quot;Roseta&quot;</span><span class="p">]);</span>
+    <span class="nx">spawn</span><span class="p">(</span><span class="nx">concurrent</span><span class="o">,</span> <span class="nx">say</span><span class="o">,</span> <span class="p">[</span><span class="nx">self</span><span class="p">()</span><span class="o">,</span> <span class="s2">&quot;Code&quot;</span><span class="p">]);</span>
+    <span class="nx">wait</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="nx">ok</span><span class="o">;</span>
+<span class="p">};</span>
+</pre></div>
+<h2>evennums.fn</h2>
+<div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/Select_from_Array</span>
+
+<span class="nx">even1</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lists</span><span class="o">:</span><span class="nx">filter</span><span class="p">(</span><span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">N</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">even2</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">[</span><span class="nx">Number</span> <span class="k">for</span> <span class="nx">Number</span> <span class="k">in</span> <span class="nx">Numbers</span> <span class="k">if</span> <span class="nx">Number</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Numbers</span> <span class="o">=</span> <span class="nx">lists</span><span class="o">:</span><span class="nx">seq</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">15</span><span class="p">);</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;even1: ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">even1</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)]);</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;even2: ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">even2</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)]);</span>
+<span class="p">};</span>
+</pre></div>
+<h2>numbers.fn</h2>
+<div class="highlight"><pre><span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0xff  : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0xff</span><span class="p">]);</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0xFF  : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0xFF</span><span class="p">]);</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0o777 : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0o777</span><span class="p">]);</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0b1011: ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0b1011</span><span class="p">]);</span>
+<span class="p">};</span>
+</pre></div>
+<h2>pythag.fn</h2>
+<div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/List_Comprehension</span>
+<span class="nx">pythag</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">[(</span><span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="o">,</span> <span class="nx">C</span><span class="p">)</span> <span class="k">for</span> <span class="nx">A</span> <span class="k">in</span> <span class="nx">lists</span><span class="o">:</span><span class="nx">seq</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="nx">N</span><span class="p">)</span>
+         <span class="k">for</span> <span class="nx">B</span> <span class="k">in</span> <span class="nx">lists</span><span class="o">:</span><span class="nx">seq</span><span class="p">(</span><span class="nx">A</span><span class="o">,</span> <span class="nx">N</span><span class="p">)</span>
+         <span class="k">for</span> <span class="nx">C</span> <span class="k">in</span> <span class="nx">lists</span><span class="o">:</span><span class="nx">seq</span><span class="p">(</span><span class="nx">B</span><span class="o">,</span> <span class="nx">N</span><span class="p">)</span>
+         <span class="k">if</span> <span class="nx">A</span> <span class="o">+</span> <span class="nx">B</span> <span class="o">+</span> <span class="nx">C</span> <span class="o">&lt;=</span> <span class="nx">N</span> <span class="nx">and</span> <span class="nx">A</span> <span class="o">*</span> <span class="nx">A</span> <span class="o">+</span> <span class="nx">B</span> <span class="o">*</span> <span class="nx">B</span> <span class="o">==</span> <span class="nx">C</span> <span class="o">*</span> <span class="nx">C</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">pythag</span><span class="p">(</span><span class="mi">20</span><span class="p">)]);</span>
+<span class="p">};</span>
+</pre></div>
+<h2>send.fn</h2>
+<div class="highlight"><pre><span class="nx">loop</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">receive</span> <span class="p">(</span><span class="nx">Stuff</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Stuff</span><span class="p">]);</span>
+    <span class="p">};</span>
+    <span class="nx">loop</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Pid</span> <span class="o">=</span> <span class="nx">spawn</span><span class="p">({</span><span class="nx">loop</span><span class="p">();});</span>
+    <span class="nx">Pid1</span> <span class="o">=</span> <span class="nx">spawn</span><span class="p">({</span><span class="nx">loop</span><span class="p">();});</span>
+    <span class="nx">Pid</span> <span class="o">!</span> <span class="nx">Pid1</span> <span class="o">!</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="nx">Pid</span> <span class="o">!</span> <span class="nx">Pid1</span> <span class="o">!</span> <span class="nx">atom</span><span class="o">;</span>
+    <span class="nx">Pid</span> <span class="o">!</span> <span class="nx">Pid1</span> <span class="o">!</span> <span class="s2">&quot;string&quot;</span><span class="o">;</span>
+    <span class="nx">ok</span><span class="o">;</span>
+<span class="p">};</span>
+</pre></div>
+<h2>sleep.fn</h2>
+<div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/Sleep_the_Main_Thread</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;Sleeping...~n&quot;</span><span class="p">);</span>
+    <span class="nx">timer</span><span class="o">:</span><span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span> <span class="c"># in milliseconds</span>
+    <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;Awake!~n&quot;</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+
    </div>
 
    <div class="page hide" id="download">
     <h2>Download</h2>
+
+    <p>you can download a zip containing the latest version of the master branch <a href="http://github.com/marianoguerra/efene/zipball/master">here</a></p>
+    <p>to see the code, commits and report bugs go to the <a href="http://github.com/marianoguerra/efene/">github</a> page</p>
    </div>
 
    <div class="page hide" id="docs">
     <h2>Documentation</h2>
+
+    <p>no docs by now</p>
    </div>
 
    <div class="page hide" id="participate">
     <h2>Participate</h2>
+
+    <p>send me an email to <em>luismarianoguerra@gmail.com</em> to see what can we do :)</p>
    </div>
 
   </div>
 
+  <script type="text/javascript">
+   var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+   document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+   try {
+    var pageTracker = _gat._getTracker("UA-11479354-1");
+    pageTracker._trackPageview();
+    } catch(err) {}</script>
  </body>
 </html>

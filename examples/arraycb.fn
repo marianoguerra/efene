@@ -1,3 +1,4 @@
+# http://rosettacode.org/wiki/Apply_a_callback_to_an_Array
 
 square = fn (N) {
     N * N;
@@ -31,4 +32,3 @@ run = fn () {
     io:format("squares3 : ~p~n", [squares3(Numbers)]);
 };
 
-# http://rosettacode.org/wiki/Apply_a_callback_to_an_Array
