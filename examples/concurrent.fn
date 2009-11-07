@@ -2,7 +2,7 @@ is_zero = fn (0, FunTrue, _) { FunTrue(); }
              (_, _, FunFalse) { FunFalse(); };
 
 say = fn (Pid, Str) {
-   io->fwrite("~s~n", [Str]);
+   io:fwrite("~s~n", [Str]);
    Pid ! done;
 };
 

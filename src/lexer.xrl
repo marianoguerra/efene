@@ -25,7 +25,6 @@ End		= ;
 UnaryOp		= (not|~)
 % the string stuff taken from Reia
 String	 	= "(\\\^.|\\.|[^\"])*"
-Ltr		= ->
 Rtl		= <-
 Split		= :
 
@@ -51,7 +50,6 @@ Rules.
 {End}   		: {token, {endl,	TokenLine, list_to_atom(TokenChars)}}.
 {Match}			: {token, {match,	TokenLine, list_to_atom(TokenChars)}}.
 {Rtl}			: {token, {rtl,		TokenLine, list_to_atom(TokenChars)}}.
-{Ltr}			: {token, {ltr,		TokenLine, list_to_atom(TokenChars)}}.
 {Identifier}	   	: {token, {var,		TokenLine, list_to_atom(TokenChars)}}.
 {Atom}		   	: {token, atom_or_identifier(TokenChars, TokenLine)}.
 &			: {token, {and_op,	TokenLine, list_to_atom(TokenChars)}}.

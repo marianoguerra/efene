@@ -1,7 +1,7 @@
 
 loop = fn () {
     receive (Stuff) {
-        io->format("~p~n", [Stuff]);
+        io:format("~p~n", [Stuff]);
     };
     loop();
 };
@@ -13,8 +13,4 @@ start = fn () {
     Pid ! Pid1 ! atom;
     Pid ! Pid1 ! "string";
     ok;
-};
-
-testor = fn (A, B) {
-    A $| B;
 };

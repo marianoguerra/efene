@@ -1,75 +1,75 @@
 
 testtry = fn (){
-    try { 
-        io->format("~p~n", [time()]);
-        io->format("asd~n", []);
+    try {
+        io:format("~p~n", [time()]);
+        io:format("asd~n", []);
     }
     catch ((throw, 1, _)) {
-        io->format("1"); }
+        io:format("1"); }
     ((throw, 2, _)) {
-        io->format("2"); }
+        io:format("2"); }
     finally {
-        io->format("finally~n");
+        io:format("finally~n");
     };
 };
 
 trycatch = fn (){
-    try { 
+    try {
         throw(1);
     }
     catch ((throw, 1, _)) {
-        io->format("1"); }
+        io:format("1"); }
     ((throw, 2, _)) {
-        io->format("2"); }
+        io:format("2"); }
     finally {
-        io->format("finally~n");
+        io:format("finally~n");
     };
 };
 
 trycatch1 = fn (){
-    try { 
+    try {
         throw(2);
     }
     catch ((throw, 1, _)) {
-        io->format("1"); }
+        io:format("1"); }
     ((throw, 2, _)) {
-        io->format("2"); }
+        io:format("2"); }
     finally {
-        io->format("finally~n");
+        io:format("finally~n");
     };
 };
 
 recvafter = fn () {
     receive (1) {
-        io->format("match: 1~n");
+        io:format("match: 1~n");
     }
     (2) {
-        io->format("match: 2~n");
+        io:format("match: 2~n");
     }
     (Atom) if is_atom(Atom) {
-        io->format("atom: ~p~n", [Atom]);
+        io:format("atom: ~p~n", [Atom]);
     }
     (Number) {
-        io->format("otro numero: ~p~n", [Number]);
+        io:format("otro numero: ~p~n", [Number]);
     }
     after 1000 {
-        io->format("after~n");
+        io:format("after~n");
     };
     recv();
 };
 
 recv = fn () {
     receive (1) {
-        io->format("match: 1~n");
+        io:format("match: 1~n");
     }
     (2) {
-        io->format("match: 2~n");
+        io:format("match: 2~n");
     }
     (Atom) if is_atom(Atom) {
-        io->format("atom: ~p~n", [Atom]);
+        io:format("atom: ~p~n", [Atom]);
     }
     (Number) {
-        io->format("otro numero: ~p~n", [Number]);
+        io:format("otro numero: ~p~n", [Number]);
     };
     recv();
 };
