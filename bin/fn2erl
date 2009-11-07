@@ -1,2 +1,8 @@
 #!/usr/bin/env sh
-erl -run efene print_erlang $1 -run init stop -noshell
+SCRIPT=$(readlink -f $0)
+# Absolute path this script is in.
+SCRIPTPATH=`dirname $SCRIPT`
+OLD=$(pwd)
+cd $SCRIPTPATH
+erl -run efene print_erlang $OLD/$1 -run init stop -noshell
+cd $OLD

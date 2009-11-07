@@ -3,7 +3,8 @@ Nonterminals
     arguments block fun_expression function_call call_arguments call_argument
     call_params send_expr bool_expr comp_expr add_expr mul_expr unary_expr or_expr
     xor_expr and_expr patterns pattern list list_items tuple tuple_items
-    concat_expr list_comp list_generators list_generator try_expr recv_expr.
+    concat_expr list_comp list_generators list_generator try_expr recv_expr
+    catch_patterns catch_pattern.
 
 Terminals 
     bool_op comp_op add_op mul_op unary_op match var open close fn sep
@@ -122,11 +123,11 @@ list_items -> bool_expr                     : {cons, line('$1'), '$1', {nil, lin
 list_items -> bool_expr split_op bool_expr  : {cons, line('$1'), '$1', '$3'}.
 list_items -> bool_expr sep                 : {cons, line('$1'), '$1', {nil, line('$1')}}.
 
-tuple -> open close             : {tuple, line('$1'), []}.
+tuple -> open sep close             : {tuple, line('$1'), []}.
 tuple -> open tuple_items close : {tuple, line('$1'), '$2'}.
 
 tuple_items -> bool_expr sep tuple_items    : ['$1'|'$3'].
-tuple_items -> bool_expr                    : ['$1'].
+tuple_items -> bool_expr sep bool_expr : ['$1','$3'].
 tuple_items -> bool_expr sep                : ['$1'].
 
 list_comp   -> open_list bool_expr list_generators close_list : {lc, line('$1'), '$2', lists:flatten('$3')}.
@@ -137,9 +138,18 @@ list_generators -> list_generator                   : '$1'.
 list_generator  -> atom bool_expr atom bool_expr  : [{generate, line('$1'), '$2', '$4'}]. 
 list_generator  -> atom bool_expr atom bool_expr if bool_expr : [{generate, line('$1'), '$2', '$4'},'$6']. 
 
-try_expr -> try block 					: {trys, line('$1'), '$2'}.
-try_expr -> try block catch patterns 			: {trys, line('$1'), '$2', '$4'}.
-try_expr -> try block catch patterns finally block	: {trys, line('$1'), '$2', '$4', '$6'}.
+try_expr -> try block 						: {trys, line('$1'), '$2'}.
+try_expr -> try block catch catch_patterns 			: {trys, line('$1'), '$2', '$4'}.
+try_expr -> try block catch catch_patterns finally block	: {trys, line('$1'), '$2', '$4', '$6'}.
+
+catch_patterns	-> catch_pattern catch_patterns     	: ['$1'|'$2'].
+catch_patterns	-> catch_pattern              		: ['$1'].
+%% TODO: restrict atom to throw, error and exit
+catch_pattern	-> open atom literal close block   	: {pattern, {unwrap('$1'), line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'}.
+catch_pattern	-> open literal close block   		: {pattern, {unwrap('$1'), line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
+
+%% {tuple,35,[{atom,35,throw},{integer,35,2},{var,35,'_'}]}
+%% {pattern, {'(',35,[{tuple,35,[{atom,35,throw},{integer,35,2},{var,35,'_'}]}]}
 
 recv_expr -> receive patterns 				: {receives, line('$1'), '$2'}.
 recv_expr -> receive patterns after literal block	: {receives, line('$1'), '$2', '$4', '$5'}.

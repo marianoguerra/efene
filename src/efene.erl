@@ -253,8 +253,8 @@ main([Dir, File]) ->
 display_error({badmatch,{error,{Line,lexer,{illegal,Character}},_}}) ->
     io:format("~B: Illegal character '~s'~n", [Line, Character]);
 display_error({badmatch,{error,{Line,parser,[Message,Item]}}}) ->
-    io:format("~B: ~s~s~n", [Line, Message, Item]).
-%display_error(Unknown) ->
-%    io:format("Error: ~p~n", [Unknown]).
+    io:format("~B: ~s~s~n", [Line, Message, Item]);
+display_error(Unknown) ->
+    io:format("Error: ~p~n", [Unknown]).
 
 
