@@ -114,8 +114,12 @@ build(From, String) ->
     build_module(ModuleName, get_ast(From, String)).
 
 compile(Name) ->
+    compile(Name, ".").
+
+compile(Name, Dir) ->
     Module = get_code(get_ast(file, Name)),
-    {ok, Device} = file:open(get_module_beam_name(Name), [binary, write]),
+    Path = filename:join([Dir, get_module_beam_name(Name)]),
+    {ok, Device} = file:open(Path, [binary, write]),
     file:write(Device, Module).
 
 get_tree(From, String) ->
@@ -139,11 +143,13 @@ print_lex(From, String) ->
     io:format("~p~n", [get_lex(From, String)]).
 
 get_module_name(String) ->
-    [ModuleNameStr | _] = string:tokens(String, "."),
+    File = filename:basename(String),
+    ModuleNameStr  = filename:rootname(File),
     list_to_atom(ModuleNameStr).
 
 get_module_beam_name(String) ->
-    [ModuleNameStr | _] = string:tokens(String, "."),
+    File = filename:basename(String),
+    ModuleNameStr  = filename:rootname(File),
     string:concat(ModuleNameStr, ".beam").
 
 matches([]) -> [];
@@ -235,12 +241,10 @@ match_pattern({pattern, {'(', Line, Args}, Guards, {'{', _, Body}}) ->
 get_function_arity([]) -> 0;
 get_function_arity([{pattern, {'(', _Line, Arguments}, _, _}|_T]) -> length(Arguments).
 
-main([]) -> io:format("All files compiled~n");
-main([Head|Tail]) ->
+main([Dir, File]) ->
     try
-        io:format("compiling ~s~n", [Head]),
-        compile(Head),
-        main(Tail)
+        io:format("compiling ~s~n", [File]),
+        compile(File, Dir)
     catch
         _:Error ->
             display_error(Error)
@@ -249,8 +253,8 @@ main([Head|Tail]) ->
 display_error({badmatch,{error,{Line,lexer,{illegal,Character}},_}}) ->
     io:format("~B: Illegal character '~s'~n", [Line, Character]);
 display_error({badmatch,{error,{Line,parser,[Message,Item]}}}) ->
-    io:format("~B: ~s~s~n", [Line, Message, Item]);
-display_error(Unknown) ->
-    io:format("Error: ~p~n", [Unknown]).
+    io:format("~B: ~s~s~n", [Line, Message, Item]).
+%display_error(Unknown) ->
+%    io:format("Error: ~p~n", [Unknown]).
 
 

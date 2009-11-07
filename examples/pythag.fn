@@ -7,5 +7,5 @@ pythag = fn (N) {
 };
 
 run = fn () {
-    io:format("~p~n", [pythag(100)]);
+    io:format("~p~n", [pythag(20)]);
 };

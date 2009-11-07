@@ -6,9 +6,9 @@ loop = fn () {
     loop();
 };
 
-start = fn () {
-    Pid = spawn(fn () loop());
-    Pid1 = spawn(fn () loop());
+run = fn () {
+    Pid = spawn({loop();});
+    Pid1 = spawn({loop();});
     Pid ! Pid1 ! 1;
     Pid ! Pid1 ! atom;
     Pid ! Pid1 ! "string";

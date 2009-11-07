@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+# Absolute path to this script.
+SCRIPT=$(readlink -f $0)
+# Absolute path this script is in.
+SCRIPTPATH=`dirname $SCRIPT`
+OLD=$(pwd)
+cd $SCRIPTPATH
+erl -run efene main $1 $OLD/$2 -run init stop -noshell
+cd $OLD
