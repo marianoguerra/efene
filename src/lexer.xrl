@@ -5,6 +5,9 @@ Identifier	= [A-Z_][a-zA-Z0-9_]*
 Atom		= [a-z][a-zA-Z0-9_@]*
 Uppercase	= [A-Z]
 Number       	= [0-9]
+BinNumber      	= 0b[01]+
+OctNumber      	= 0o[0-7]+
+HexNumber      	= 0x[0-9a-fA-F]+
 ConcatOp     	= (\+\+|--)
 AddOp     	= (\+|-)
 MulOp     	= (\*|/|%)
@@ -38,6 +41,9 @@ Rules.
 {UnaryOp}   		: {token, {unary_op,	TokenLine, list_to_atom(TokenChars)}}.
 {Number}+   		: {token, {integer,	TokenLine, list_to_integer(TokenChars)}}.
 {Number}+\.{Number}+   	: {token, {float,	TokenLine, list_to_float(TokenChars)}}.
+{BinNumber}   		: {token, {integer,	TokenLine, bin_to_integer(TokenChars)}}.
+{OctNumber}   		: {token, {integer,	TokenLine, oct_to_integer(TokenChars)}}.
+{HexNumber}   		: {token, {integer,	TokenLine, hex_to_integer(TokenChars)}}.
 {Bool}   		: {token, {boolean,	TokenLine, list_to_atom(TokenChars)}}.
 {BoolOp}   		: {token, {bool_op,	TokenLine, list_to_atom(TokenChars)}}.
 {CompOp}   		: {token, {comp_op,	TokenLine, list_to_atom(TokenChars)}}.
@@ -72,6 +78,18 @@ atom_or_identifier(String, TokenLine) ->
 	false ->   
             {atom, TokenLine, list_to_atom(String)}
      end.
+
+bin_to_integer("0b" ++ Number) ->
+	{ok, [Val], _} = io_lib:fread("~2u", Number),	
+	Val.
+
+oct_to_integer("0o" ++ Number) ->
+	{ok, [Val], _} = io_lib:fread("~8u", Number),	
+	Val.
+
+hex_to_integer("0x" ++ Number) ->
+	{ok, [Val], _} = io_lib:fread("~16u", Number),	
+	Val.
 
 is_reserved("if") -> true;
 is_reserved("try") -> true;
