@@ -216,6 +216,41 @@ cd efene/examples
 <span class="p">};</span>
 </pre></div>
 
+<h2>trycatch.fn</h2>
+<div class="highlight"><pre><span class="nx">trycatch</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Arg</span><span class="p">){</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">make_error</span><span class="p">(</span><span class="nx">Arg</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="nx">throw</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;throw 1~n&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="p">(</span><span class="nx">exit</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;exit 2~n&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="p">(</span><span class="nx">error</span> <span class="p">(</span><span class="nx">some</span><span class="o">,</span> <span class="nx">fancy</span><span class="o">,</span> <span class="nx">tuple</span><span class="o">,</span> <span class="mi">3</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;error~n&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">finally</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="o">:</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;finally~n&quot;</span><span class="p">);</span>
+    <span class="p">};</span>
+<span class="p">};</span>
+
+<span class="nx">make_error</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">throw</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">erlang</span><span class="o">:</span><span class="nx">error</span><span class="p">((</span><span class="nx">some</span><span class="o">,</span> <span class="nx">fancy</span><span class="o">,</span> <span class="nx">tuple</span><span class="o">,</span> <span class="mi">3</span><span class="p">));</span>
+<span class="p">};</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">trycatch</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">trycatch</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="nx">trycatch</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
 
    </div>
 
