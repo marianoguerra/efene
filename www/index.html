@@ -16,6 +16,7 @@
   <ul id="nav">
    <li><a href="javascript:ui.showPage('#home')">Home</a></li>
    <li><a href="javascript:ui.showPage('#more')" >More</a></li>
+   <li><a href="javascript:ui.showPage('#examples')" >Examples</a></li>
    <li><a href="javascript:ui.showPage('#download')">Download</a></li>
    <li><a href="javascript:ui.showPage('#docs')">Documentation</a></li>
    <li><a href="javascript:ui.showPage('#participate')">Participate</a></li>
@@ -32,13 +33,54 @@
 
     <ul id="features">
      <li><em>javascript</em> like syntax</li>
-     <li> <em>erlang</em> power
+     <li> <em>erlang</em> power</li>
     </ul>
     
     <a href="javascript:ui.showPage('#more')" >Show me more!</a>
    </div>
 
    <div class="page hide" id="more">
+    <ul id="features">
+     <li>all erlang libraries available</li>
+     <li>bytecode compatible (can use erlang modules from <strong>efene</strong> and vice-versa)</li>
+     <li>translate <strong>efene</strong> sourcecode to erlang</li>
+     <li>braces as delimiters and semi-colons to end expressions like C/C++/C#/Java/Javascript
+      <ul>
+       <li>no multiple delimiters (, . ; and no delimiter) in different situations</li> 
+      </ul>
+     </li>
+     <li>unified syntax to define functions and lambdas</li>
+     <li>arithmetic operators like C/C++/C#/Java/Javascript
+      <ul>
+       <li>+ - * / % | &amp; ^ ~ (instead of + - * / rem bor band bxor bnot)</li> 
+      </ul>
+     </li>
+     <li>comparison operators like C/C++/C#/Java/Javascript
+      <ul>
+       <li>== != === !== &lt; &lt;= &gt; &gt;= (instead of == /= =:= =/= &lt; =&lt; &gt; &gt;=)</li> 
+      </ul>
+     </li>
+     <li>python like boolean operators 
+      <ul>
+       <li>and or not (instead of andalso orelse not)</li> 
+      </ul>
+     </li>
+     <li>python-like lists and tuples
+      <ul>
+       <li>[] and () (instead of [] and {})</li> 
+      </ul>
+     </li>
+     <li>python-like lists comprehensions
+      <ul>
+       <li>[Number for Number in Numbers if Number % 2 == 0] (instead of [Number || Number &lt;- Numbers, Number rem 2 == 0])</li> 
+      </ul>
+     </li>
+     <li>java-like try/catch/finally</li>
+     <li>and more to come..</li>
+    </ul>
+   </div>
+
+   <div class="page hide" id="examples">
 
     <p>here are available some examples that you can get with efene</p>
     <p>to download and run this examples you need to run the following commands</p>
