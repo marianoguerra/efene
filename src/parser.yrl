@@ -3,8 +3,8 @@ Nonterminals
     arguments block fun_expression function_call call_arguments call_argument
     call_params send_expr bool_expr comp_expr add_expr mul_expr unary_expr
     or_expr xor_expr and_expr patterns pattern list list_items tuple
-    tuple_items binary binary_items binary_item binary_types concat_expr list_comp
-    list_generators list_generator try_expr recv_expr catch_patterns
+    tuple_items binary binary_items binary_item binary_types concat_expr list_comp bin_comp
+    list_generators bin_generators list_generator bin_generator try_expr recv_expr catch_patterns
     catch_pattern.
 
 Terminals 
@@ -115,6 +115,7 @@ literal -> open bool_expr close : '$2'.
 literal -> function_call        : '$1'.
 literal -> function_def         : '$1'.
 literal -> list_comp            : '$1'.
+literal -> bin_comp            : '$1'.
 literal -> try_expr 		: '$1'.
 literal -> recv_expr 		: '$1'.
 
@@ -153,6 +154,16 @@ list_generators -> list_generator                   : '$1'.
 
 list_generator  -> atom bool_expr atom bool_expr  : [{generate, line('$1'), '$2', '$4'}]. 
 list_generator  -> atom bool_expr atom bool_expr if bool_expr : [{generate, line('$1'), '$2', '$4'},'$6']. 
+
+%% XXX: I don't know the difference between a list comprehension with binary generator and a binary comprehension
+%% this might change in the future
+bin_comp   -> open_bin bool_expr bin_generators close_bin : {lc, line('$1'), '$2', lists:flatten('$3')}.
+
+bin_generators -> bin_generator bin_generators   : ['$1'|'$2'].
+bin_generators -> bin_generator                   : '$1'.
+
+bin_generator  -> atom bool_expr atom bool_expr  : [{b_generate, line('$1'), '$2', '$4'}]. 
+bin_generator  -> atom bool_expr atom bool_expr if bool_expr : [{b_generate, line('$1'), '$2', '$4'},'$6']. 
 
 try_expr -> try block 						: {trys, line('$1'), '$2'}.
 try_expr -> try block catch catch_patterns 			: {trys, line('$1'), '$2', '$4'}.

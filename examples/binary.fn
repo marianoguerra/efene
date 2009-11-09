@@ -11,10 +11,12 @@ run = fn () {
     C = <[1:8 unsigned little integer, 2:4, 3:2, 4]>;
     D = <[1 unsigned little integer, 2:4, 3:2, 4]>;
     E = <["mariano"]>;
+    F = <[Char - 32 for <[Char:8]> in E]>;
 
     match(A);
     match(B);
     match(C);
     match(D);
     match(E);
+    match(F);
 };

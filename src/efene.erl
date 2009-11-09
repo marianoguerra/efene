@@ -194,9 +194,13 @@ matches({'(', _Line, A}) -> matches(A);
 matches({'bin'=Op, Line, BinElements}) -> {Op, Line, matches_list(BinElements)};
 matches({'bin_element'=Op, Line, Value, Size, Types}) -> {Op, Line, matches(Value), matches(Size), Types};
 
-matches({lc, Line, Exp, Generators}) -> {lc, Line, matches(Exp), matches_list(Generators)};
-matches({generate, Line, For, In}) -> {generate, Line, matches(For), matches(In)};
-matches({generate, Line, For, In, If}) -> {generate, Line, matches(For), matches(In), matches(If)};
+matches({lc=Op, Line, Exp, Generators}) -> {Op, Line, matches(Exp), matches_list(Generators)};
+matches({generate=Op, Line, For, In}) -> {Op, Line, matches(For), matches(In)};
+matches({generate=Op, Line, For, In, If}) -> {Op, Line, matches(For), matches(In), matches(If)};
+
+matches({bc=Op, Line, Exp, Generators}) -> {Op, Line, matches(Exp), matches_list(Generators)};
+matches({b_generate=Op, Line, For, In}) -> {Op, Line, matches(For), matches(In)};
+matches({b_generate=Op, Line, For, In, If}) -> {Op, Line, matches(For), matches(In), matches(If)};
 matches({callatom, Line, [Atom], Args}) ->
     {call, Line, Atom, matches_list(Args)};
 matches({callatom, Line, [Package, Function], Args}) ->
