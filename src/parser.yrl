@@ -1,15 +1,17 @@
 Nonterminals 
     expr_list grammar literal expressions expression function_def argument_def
     arguments block fun_expression function_call call_arguments call_argument
-    call_params send_expr bool_expr comp_expr add_expr mul_expr unary_expr or_expr
-    xor_expr and_expr patterns pattern list list_items tuple tuple_items
-    concat_expr list_comp list_generators list_generator try_expr recv_expr
-    catch_patterns catch_pattern.
+    call_params send_expr bool_expr comp_expr add_expr mul_expr unary_expr
+    or_expr xor_expr and_expr patterns pattern list list_items tuple
+    tuple_items binary binary_items binary_item binary_types concat_expr list_comp
+    list_generators list_generator try_expr recv_expr catch_patterns
+    catch_pattern.
 
 Terminals 
     bool_op comp_op add_op mul_op unary_op match var open close fn sep
-    open_list close_list open_block close_block integer float boolean endl atom
-    string concat_op and_op xor_op or_op send_op rtl split_op if try catch finally receive after.
+    open_list close_list open_block close_block open_bin close_bin integer
+    float boolean endl atom string concat_op and_op xor_op or_op send_op rtl
+    split_op if try catch finally receive after.
 
 Rootsymbol grammar.
 
@@ -106,6 +108,7 @@ literal -> boolean              : {atom,    line('$1'), unwrap('$1')}.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
 literal -> list                 : '$1'.
 literal -> tuple                : '$1'.
+literal -> binary               : '$1'.
 literal -> var                  : {var,     line('$1'), unwrap('$1')}.
 literal -> atom                 : {atom,    line('$1'), unwrap('$1')}.
 literal -> open bool_expr close : '$2'.
@@ -124,11 +127,23 @@ list_items -> bool_expr split_op bool_expr  : {cons, line('$1'), '$1', '$3'}.
 list_items -> bool_expr sep                 : {cons, line('$1'), '$1', {nil, line('$1')}}.
 
 tuple -> open sep close             : {tuple, line('$1'), []}.
-tuple -> open tuple_items close : {tuple, line('$1'), '$2'}.
+tuple -> open tuple_items close     : {tuple, line('$1'), '$2'}.
 
 tuple_items -> bool_expr sep tuple_items    : ['$1'|'$3'].
-tuple_items -> bool_expr sep bool_expr : ['$1','$3'].
+tuple_items -> bool_expr sep bool_expr      : ['$1','$3'].
 tuple_items -> bool_expr sep                : ['$1'].
+
+binary -> open_bin binary_items close_bin   : {bin, line('$1'), lists:flatten('$2')}.
+
+binary_items -> binary_item sep binary_items    : ['$1'|'$3'].
+binary_items -> binary_item                     : ['$1'].
+
+binary_item -> bool_expr                           : {bin_element, line('$1'), '$1', default, default}.
+binary_item -> bool_expr split_op bool_expr        : {bin_element, line('$1'), '$1', '$3', default}.
+binary_item -> bool_expr split_op bool_expr binary_types : {bin_element, line('$1'), '$1', '$3', '$4'}.
+
+binary_types -> atom binary_types : [unwrap('$1')|'$2'].
+binary_types -> atom : [unwrap('$1')].
 
 list_comp   -> open_list bool_expr list_generators close_list : {lc, line('$1'), '$2', lists:flatten('$3')}.
 

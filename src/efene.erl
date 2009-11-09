@@ -2,11 +2,8 @@
 -compile(export_all).
 
 module(Name, Ast) ->
-    module(Name, Ast, 1).
-
-module(Name, Ast, EofLine) ->
     [{attribute,1,module,Name},
-        {attribute,1,compile,export_all}] ++ Ast ++ [{eof, EofLine}].
+        {attribute,1,compile,export_all}] ++ Ast.
 
 function(Name, Line, Arity, Ast) ->
     {function, Line, Name, Arity, Ast}.
@@ -160,6 +157,7 @@ matches({atom, _, _} = Ast) -> Ast;
 matches({string, _, _} = Ast) -> Ast;
 matches({var, _, _} = Ast) -> Ast;
 matches({nil, _} = Ast) -> Ast;
+matches(default) -> default;
 matches({cons, Line, A, B}) -> {cons, Line, matches(A), matches(B)};
 matches({tuple, Line, A}) -> {tuple, Line, matches_list(A)};
 matches({'+' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
@@ -192,6 +190,9 @@ matches({'~' = Op, Line, A}) -> forms(Op, Line, matches(A), nil);
 matches({'+', _Line, A}) -> matches(A);
 matches({'-' = Op, Line, A}) -> forms(Op, Line, matches(A), nil);
 matches({'(', _Line, A}) -> matches(A);
+
+matches({'bin'=Op, Line, BinElements}) -> {Op, Line, matches_list(BinElements)};
+matches({'bin_element'=Op, Line, Value, Size, Types}) -> {Op, Line, matches(Value), matches(Size), Types};
 
 matches({lc, Line, Exp, Generators}) -> {lc, Line, matches(Exp), matches_list(Generators)};
 matches({generate, Line, For, In}) -> {generate, Line, matches(For), matches(In)};
