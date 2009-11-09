@@ -1,3 +1,9 @@
+match = fn (<[A:8 unsigned little integer, B:4, C:2, D]>) {
+    io:format("match: ~p ~p ~p ~p~n", [A, B, C, D]);
+}
+    (Other) {
+    io:format("other: ~p~n", [Other]);
+};
 
 run = fn () {
     A = <[1]>;
@@ -6,9 +12,9 @@ run = fn () {
     D = <[1 unsigned little integer, 2:4, 3:2, 4]>;
     E = <["mariano"]>;
 
-    io:format("~p~n", [A]);
-    io:format("~p~n", [B]);
-    io:format("~p~n", [C]);
-    io:format("~p~n", [D]);
-    io:format("~p~n", [E]);
+    match(A);
+    match(B);
+    match(C);
+    match(D);
+    match(E);
 };
