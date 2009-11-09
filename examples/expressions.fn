@@ -1,0 +1,18 @@
+# some expressions (and a lambda)
+
+run = fn () {
+    Print = fn (Expr) {
+        io:format("~p~n", [Expr]);
+    };
+
+    Print(1 + 2 * 3 + 4);
+    Print((1 + 2) * (3 + 4));
+    Print(1.0 + 2 * 3 + 4);
+    Print(7 % 3 == 0);
+    Print(1.0 + 2 * 3 + 4 > 5);
+    Print(1.0 + 2 * 3 + 4 > 5 or true);
+    Print(false or true);
+    Print(true and false or true);
+    Print(true and not false or true);
+    Print(1 << ~12 | 5 & 127 ^ 1);
+};
