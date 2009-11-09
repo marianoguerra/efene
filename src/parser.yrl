@@ -141,6 +141,7 @@ binary_items -> binary_item                     : ['$1'].
 binary_item -> bool_expr                           : {bin_element, line('$1'), '$1', default, default}.
 binary_item -> bool_expr split_op bool_expr        : {bin_element, line('$1'), '$1', '$3', default}.
 binary_item -> bool_expr split_op bool_expr binary_types : {bin_element, line('$1'), '$1', '$3', '$4'}.
+binary_item -> bool_expr binary_types : {bin_element, line('$1'), '$1', default, '$2'}.
 
 binary_types -> atom binary_types : [unwrap('$1')|'$2'].
 binary_types -> atom : [unwrap('$1')].
