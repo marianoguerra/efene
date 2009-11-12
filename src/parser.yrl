@@ -10,8 +10,8 @@ Nonterminals
 Terminals 
     comp_op add_op mul_op unary_op match var open close fn sep open_list
     close_list open_block close_block open_bin close_bin integer float boolean
-    endl atom string concat_op and_op xor_op or_op shift_op send_op rtl
-    split_op if try catch finally receive after bool_and_op bool_or_op.
+    endl atom string concat_op and_op xor_op or_op shift_op send_op
+    split_op dot if try catch finally receive after bool_and_op bool_or_op.
 
 Rootsymbol grammar.
 
@@ -89,8 +89,7 @@ literal -> recv_expr                 : '$1'.
 
 function_call -> var call_params            : {call,        line('$1'), '$1', '$2'}.
 function_call -> atom call_params           : {callatom,    line('$1'), ['$1'], '$2'}.
-function_call -> atom rtl atom call_params  : {callatom,    line('$2'), ['$3', '$1'], '$4'}.
-function_call -> atom split_op atom call_params  : {callatom,    line('$2'), ['$1', '$3'], '$4'}.
+function_call -> atom dot atom call_params  : {callatom,    line('$2'), ['$1', '$3'], '$4'}.
 function_call -> function_call call_params  : {call,        line('$1'), '$1', '$2'}.
 
 call_params -> open call_arguments close            : lists:flatten('$2').

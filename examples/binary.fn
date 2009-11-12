@@ -1,8 +1,8 @@
 match = fn (<[A:8 unsigned little integer, B:4, C:2, D]>) {
-    io:format("match: ~p ~p ~p ~p~n", [A, B, C, D]);
+    io.format("match: ~p ~p ~p ~p~n", [A, B, C, D]);
 }
     (Other) {
-    io:format("other: ~p~n", [Other]);
+    io.format("other: ~p~n", [Other]);
 };
 
 run = fn () {

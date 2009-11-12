@@ -33,8 +33,8 @@ End           = ;
 UnaryOp       = (not|~)
 % the string stuff taken from Reia
 String        = "(\\\^.|\\.|[^\"])*"
-Rtl           = <-
 Split         = :
+Dot           = \.
 
 Rules.
 
@@ -65,13 +65,13 @@ Rules.
 {Sep}                    : {token, {sep,         TokenLine, list_to_atom(TokenChars)}}.
 {End}                    : {token, {endl,        TokenLine, list_to_atom(TokenChars)}}.
 {Match}                  : {token, {match,       TokenLine, list_to_atom(TokenChars)}}.
-{Rtl}                    : {token, {rtl,         TokenLine, list_to_atom(TokenChars)}}.
 {Identifier}             : {token, {var,         TokenLine, list_to_atom(TokenChars)}}.
 {Atom}                   : {token, atom_or_identifier(TokenChars, TokenLine)}.
 &                        : {token, {and_op,      TokenLine, list_to_atom(TokenChars)}}.
 !                        : {token, {send_op,     TokenLine, list_to_atom(TokenChars)}}.
 \^                       : {token, {xor_op,      TokenLine, list_to_atom(TokenChars)}}.
 {Split}                  : {token, {split_op,    TokenLine, list_to_atom(TokenChars)}}.
+{Dot}                    : {token, {dot,    TokenLine, list_to_atom(TokenChars)}}.
 {White}+                 : skip_token.
 {Comment}                : skip_token.
 {String}                 : build_string(string, TokenChars, TokenLine, TokenLen).
