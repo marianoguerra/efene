@@ -253,6 +253,50 @@ match_pattern({pattern, {'(', Line, Args}, Guards, {'{', _, Body}}) ->
 get_function_arity([]) -> 0;
 get_function_arity([{pattern, {'(', _Line, Arguments}, _, _}|_T]) -> length(Arguments).
 
+build_record_get(RecordName, FieldName, Line) ->
+    {function, Line, FieldName, 1,
+        [{clause, Line, [{var,Line,'Record'}], [],
+            [{record_field, Line, {var, Line, 'Record'}, RecordName, {atom,Line,FieldName}}]}]}.
+
+build_record_set(RecordName, FieldName, Line) ->
+    {function,Line,FieldName,2,
+        [{clause, Line,
+             [{var, Line, 'Record'},{var, Line, 'Value'}], [],
+             [{record, Line, {var, Line, 'Record'}, RecordName,
+                  [{record_field, Line,{atom, Line, FieldName}, {var, Line, 'Value'}}]}]}]}.
+
+build_record_get_and_set(RecordName, FieldName, Line) ->
+    [build_record_get(RecordName, FieldName, Line),
+        build_record_set(RecordName, FieldName, Line + 2)].
+
+
+build_record_new(RecordName, FieldNames, Line) ->
+    NextLine = Line + 1,
+    {function, Line, new, length(FieldNames),
+        [{clause, Line,
+            [{var, Line, first_upper(FieldName)} || FieldName <- FieldNames],
+             [],
+             [{record,NextLine,RecordName,
+                 [{record_field, NextLine, {atom, NextLine, FieldName}, {var, NextLine, first_upper(FieldName)}}
+                    || FieldName <- FieldNames]}]}]}.
+
+build_recorda(RecordName, FieldNames, Line) ->
+    [{attribute, Line, record,{RecordName, [{record_field, Line, {atom, Line, FieldName}} || FieldName <- FieldNames]}}].
+
+build_record(RecordName, FieldNames, Line) ->
+    Code = [{attribute, Line, record,{RecordName, [{record_field, Line, {atom, Line, FieldName}} || FieldName <- FieldNames]}},
+        build_record_new(RecordName, FieldNames, Line + 2)],
+    add_record_get_and_set(RecordName, FieldNames, Line + 4, Code).
+
+add_record_get_and_set(_RecordName, [], _Line, Code) -> lists:flatten(Code);
+add_record_get_and_set(RecordName, [FieldName|FieldNames], Line, Code) ->
+    add_record_get_and_set(RecordName, FieldNames, Line + 4, [Code | build_record_get_and_set(RecordName, FieldName, Line + 2)]).
+
+first_upper(Atom) when is_atom(Atom) -> first_upper(atom_to_list(Atom));
+first_upper([Head|Tail]) -> list_to_atom([string:to_upper(Head)] ++ Tail).
+
+% command line functions
+
 main([Dir, File]) ->
     try
         io:format("compiling ~s~n", [File]),
