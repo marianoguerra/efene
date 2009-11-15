@@ -381,8 +381,97 @@ cd efene/examples
 
    <div class="page hide" id="docs">
     <h2>Documentation</h2>
+    <p> a small module that guides you through some of the main features of efene</p>
+<div class="highlight"><pre><span class="c"># this is a efene file that describes the syntax of efene</span>
 
-    <p>no docs by now</p>
+<span class="c"># this is the declaration of a module level function called run that receives</span>
+<span class="c"># no arguments</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c"># let&#39;s call a function to print a hello world</span>
+    <span class="c"># io is the io module, format is a function inside it</span>
+    <span class="c"># ~n is how you tell the function to print a new line</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;Hello World~n&quot;</span><span class="p">)</span>
+
+    <span class="c"># we can call the same function but with parameters</span>
+    <span class="c"># ~s means &quot;here comes a string&quot;</span>
+    <span class="c"># ~B means &quot;here comes an integer&quot;</span>
+    <span class="c"># see http://erlang.mirror.su.se/doc/man/io.html#format-1</span>
+    <span class="c"># for more information</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s ~s take: ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="s2">&quot;Hello&quot;</span><span class="o">,</span> <span class="s2">&quot;World&quot;</span><span class="o">,</span> <span class="mi">2</span><span class="p">])</span>
+
+    <span class="c"># if we want we can skip the comma</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s ~s take: ~B~n&quot;</span> <span class="p">[</span><span class="s2">&quot;Hello&quot;</span><span class="o">,</span> <span class="s2">&quot;World&quot;</span><span class="o">,</span> <span class="mi">3</span><span class="p">])</span>
+
+    <span class="c"># we can define a function here to print</span>
+    <span class="nx">Print</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">String</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s~n&quot;</span> <span class="p">[</span><span class="nx">String</span><span class="p">])</span>
+    <span class="p">}</span>
+
+    <span class="c"># now we use the function</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;Hello Print function&quot;</span><span class="p">)</span>
+
+    <span class="c"># we can declare variables</span>
+    <span class="nx">String</span> <span class="o">=</span> <span class="s2">&quot;Hello from a variable&quot;</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">String</span><span class="p">)</span>
+
+    <span class="c"># we can build some nice functions like the following</span>
+    <span class="nx">If</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="kc">true</span> <span class="nx">then</span> <span class="nx">OnTrue</span> <span class="nx">else</span> <span class="nx">_OnFalse</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">OnTrue</span><span class="p">()</span>
+    <span class="p">}</span> <span class="p">(</span><span class="nx">_</span> <span class="nx">then</span> <span class="nx">_OnTrue</span> <span class="nx">else</span> <span class="nx">OnFalse</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">OnFalse</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="c"># let&#39;s use it</span>
+    <span class="nx">If</span><span class="p">(</span><span class="mi">5</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="nx">then</span> <span class="p">{</span> <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;5&gt;4&quot;</span><span class="p">)</span> <span class="p">}</span> <span class="nx">else</span> <span class="p">{</span><span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;5&gt;4 isn&#39;t true&quot;</span><span class="p">)})</span>
+
+    <span class="c"># more formated</span>
+    <span class="nx">If</span><span class="p">(</span><span class="mi">5</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="nx">then</span> <span class="p">{</span>
+        <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;5&gt;4 again&quot;</span><span class="p">)</span>
+    <span class="p">}</span> <span class="nx">else</span> <span class="p">{</span>
+        <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;5&gt;4 isn&#39;t true&quot;</span><span class="p">)</span>
+    <span class="p">})</span>
+
+    <span class="c"># above we defined a function that receives no arguments using only { and }</span>
+    <span class="c"># how is that useful? we use variables from the scope where that function</span>
+    <span class="c"># is defined (that is called a closure)</span>
+    <span class="c"># did you just defined the if statement? ;)</span>
+    <span class="c"># you can build it as you like, you can take out the then and else</span>
+    <span class="c"># or do a simple one</span>
+    <span class="nx">If1</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="kc">true</span> <span class="nx">do</span> <span class="nx">OnTrue</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">OnTrue</span><span class="p">()</span>
+    <span class="p">}</span> <span class="p">(</span><span class="nx">_</span> <span class="nx">do</span> <span class="nx">_OnTrue</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">undefined</span>
+    <span class="p">}</span>
+
+    <span class="nx">If1</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">15</span> <span class="nx">do</span> <span class="p">{</span> <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;Yay!&quot;</span><span class="p">)</span> <span class="p">})</span>
+    <span class="c"># this will return undefined</span>
+    <span class="nx">If1</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">16</span> <span class="nx">do</span> <span class="p">{</span> <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;w00t?&quot;</span><span class="p">)</span> <span class="p">})</span>
+
+    <span class="c"># lets create a list with squares of the numbers from 1 to 10 to use it</span>
+    <span class="c"># later (this is called a list comprehension)</span>
+    <span class="nx">Squares</span> <span class="o">=</span> <span class="p">[</span><span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span> <span class="k">for</span> <span class="nx">N</span> <span class="k">in</span> <span class="nx">lists</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">10</span><span class="p">)]</span>
+
+    <span class="c"># print it</span>
+    <span class="nx">lists</span><span class="p">.</span><span class="nx">foreach</span><span class="p">(</span><span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">N</span><span class="p">])</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Squares</span><span class="p">)</span>
+
+    <span class="c"># we could build our own function for that</span>
+    <span class="nx">ForEach</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">item</span> <span class="nx">on</span> <span class="nx">List</span> <span class="nx">do</span> <span class="nx">Function</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">lists</span><span class="p">.</span><span class="nx">foreach</span><span class="p">(</span><span class="nx">Function</span><span class="o">,</span> <span class="nx">List</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c"># let&#39;s define a useful function</span>
+    <span class="nx">PrintNumber</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">N</span><span class="p">])</span> <span class="p">}</span>
+
+    <span class="c"># isn&#39;t it readable?</span>
+    <span class="nx">ForEach</span><span class="p">(</span><span class="nx">item</span> <span class="nx">on</span> <span class="nx">Squares</span> <span class="nx">do</span> <span class="nx">PrintNumber</span><span class="p">)</span>
+
+    <span class="c"># you may have noticed that I use commas to separate arguments on some</span>
+    <span class="c"># functions and on others I don&#39;t, that&#39;s a matter of taste :)</span>
+
+    <span class="c"># well that&#39;s all for now</span>
+<span class="p">}</span>
+</pre></div>
    </div>
 
    <div class="page hide" id="participate">
