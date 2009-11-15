@@ -15,8 +15,8 @@ MulOp         = (\*|/|%)
 CompOp        = (<|<=|==|===|>=|>|!=|!==)
 BoolAndOp     = and
 BoolOrOp      = or
-White         = (\s|\t|\n)
-Comment       = #.*
+White         = (\s|\t|\\\n)
+Comment       = #.*?\n
 Open          = \(
 Close         = \)
 OpenBlock     = {
@@ -29,7 +29,7 @@ Match         = =
 Bool          = (true|false)
 Fn            = fn
 Sep           = ,
-End           = ;
+End           = ((\s|\t)*\n)+
 UnaryOp       = (not|~)
 % the string stuff taken from Reia
 String        = "(\\\^.|\\.|[^\"])*"
@@ -57,7 +57,7 @@ Rules.
 {CompOp}                 : {token, {comp_op,     TokenLine, list_to_atom(TokenChars)}}.
 {Open}                   : {token, {open,        TokenLine, list_to_atom(TokenChars)}}.
 {Close}                  : {token, {close,       TokenLine, list_to_atom(TokenChars)}}.
-{OpenBlock}              : {token, {open_block,  TokenLine, list_to_atom(TokenChars)}}.
+{OpenBlock}{End}?        : {token, {open_block,  TokenLine, '{'}}.
 {CloseBlock}             : {token, {close_block, TokenLine, list_to_atom(TokenChars)}}.
 {OpenList}               : {token, {open_list,   TokenLine, list_to_atom(TokenChars)}}.
 {CloseList}              : {token, {close_list,  TokenLine, list_to_atom(TokenChars)}}.
@@ -105,6 +105,7 @@ is_reserved("catch") -> true;
 is_reserved("finally") -> true;
 is_reserved("receive") -> true;
 is_reserved("after") -> true;
+is_reserved("object") -> true;
 is_reserved(_) -> false.
 
 build_string(Type, Chars, Line, Len) ->

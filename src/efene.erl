@@ -118,10 +118,17 @@ compile(Name) ->
     compile(Name, ".").
 
 compile(Name, Dir) ->
-    Module = get_code(get_ast(file, Name)),
+    Module = get_code(flatten1level(get_ast(file, Name))),
     Path = filename:join([Dir, get_module_beam_name(Name)]),
     {ok, Device} = file:open(Path, [binary, write]),
     file:write(Device, Module).
+
+flatten1level(List) -> flatten1level(List, []).
+
+flatten1level([], Result) -> lists:reverse(Result);
+flatten1level([Head|Tail], Result) when is_list(Head) -> flatten1level(Tail, lists:append(lists:reverse(Head), Result));
+flatten1level([Head|Tail], Result) -> flatten1level(Tail, [Head|Result]).
+
 
 get_tree(From, String) ->
     Tokens = get_lex(From, String),
@@ -219,6 +226,8 @@ matches({fn, Line, Patterns}) ->
     {'fun', Line, match_fun_body(Patterns)};
 matches({fun_def, Line, Name, {fn, _Line, Patterns}}) ->
     function(Name, Line, get_function_arity(Patterns), match_function_body(Patterns));
+matches({obj_def, Line, Name, Fields}) ->
+    build_record(Name, Fields, Line);
 
 matches({receives, Line, Patterns}) -> {'receive', Line, match_function_body(Patterns)};
 matches({receives, Line, Patterns, After, {'{', _, AfterBody}}) -> {'receive', Line, match_function_body(Patterns), matches(After), matches(AfterBody)};
@@ -280,13 +289,17 @@ build_record_new(RecordName, FieldNames, Line) ->
                  [{record_field, NextLine, {atom, NextLine, FieldName}, {var, NextLine, first_upper(FieldName)}}
                     || FieldName <- FieldNames]}]}]}.
 
-build_recorda(RecordName, FieldNames, Line) ->
-    [{attribute, Line, record,{RecordName, [{record_field, Line, {atom, Line, FieldName}} || FieldName <- FieldNames]}}].
+build_record_keys(FieldNames, Line) ->
+    {function,Line,keys,0,
+        [{clause, Line,
+             [], [],
+             [{tuple, Line, [{atom, Line, FieldName} || FieldName <- FieldNames]}]}]}.
 
 build_record(RecordName, FieldNames, Line) ->
     Code = [{attribute, Line, record,{RecordName, [{record_field, Line, {atom, Line, FieldName}} || FieldName <- FieldNames]}},
-        build_record_new(RecordName, FieldNames, Line + 2)],
-    add_record_get_and_set(RecordName, FieldNames, Line + 4, Code).
+        build_record_new(RecordName, FieldNames, Line + 2),
+        build_record_keys(FieldNames, Line + 4)],
+    add_record_get_and_set(RecordName, FieldNames, Line + 6, Code).
 
 add_record_get_and_set(_RecordName, [], _Line, Code) -> lists:flatten(Code);
 add_record_get_and_set(RecordName, [FieldName|FieldNames], Line, Code) ->

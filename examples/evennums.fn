@@ -1,15 +1,15 @@
 # http://rosettacode.org/wiki/Select_from_Array
 
 even1 = fn (Numbers) {
-    lists.filter(fn (N) { N % 2 == 0; }, Numbers);
-};
+    lists.filter(fn (N) { N % 2 == 0 }, Numbers)
+}
 
 even2 = fn (Numbers) {
-    [Number for Number in Numbers if Number % 2 == 0];
-};
+    [Number for Number in Numbers if Number % 2 == 0]
+}
 
 run = fn () {
-    Numbers = lists.seq(1, 15);
-    io.format("even1: ~p~n", [even1(Numbers)]);
-    io.format("even2: ~p~n", [even2(Numbers)]);
-};
+    Numbers = lists.seq(1, 15)
+    io.format("even1: ~p~n", [even1(Numbers)])
+    io.format("even2: ~p~n", [even2(Numbers)])
+}

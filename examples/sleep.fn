@@ -1,7 +1,8 @@
 # http://rosettacode.org/wiki/Sleep_the_Main_Thread
 
 run = fn () {
-    io.format("Sleeping...~n");
-    timer.sleep(1000); # in milliseconds
-    io.format("Awake!~n");
-};
+    io.format("Sleeping...~n")
+    # in millisecons
+    timer.sleep(1000)
+    io.format("Awake!~n")
+}

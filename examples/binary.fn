@@ -1,22 +1,23 @@
+
 match = fn (<[A:8 unsigned little integer, B:4, C:2, D]>) {
-    io.format("match: ~p ~p ~p ~p~n", [A, B, C, D]);
+    io.format("match: ~p ~p ~p ~p~n", [A, B, C, D])
+} (Other) {
+    io.format("other: ~p~n", [Other])
 }
-    (Other) {
-    io.format("other: ~p~n", [Other]);
-};
 
 run = fn () {
-    A = <[1]>;
-    B = <[1, 2, 3, 4]>;
-    C = <[1:8 unsigned little integer, 2:4, 3:2, 4]>;
-    D = <[1 unsigned little integer, 2:4, 3:2, 4]>;
-    E = <["mariano"]>;
-    F = <[Char - 32 for <[Char:8]> in E]>;
+    A = <[1]>
+    B = <[1, 2, 3, 4]>
+    C = <[1:8 unsigned little integer, 2:4, 3:2, 4]>
+    D = <[1 unsigned little integer, 2:4, 3:2, 4]>
+    E = <["mariano"]>
+    F = <[Char - 32 for <[Char:8]> in E]>
 
-    match(A);
-    match(B);
-    match(C);
-    match(D);
-    match(E);
-    match(F);
-};
+    match(A)
+    match(B)
+    match(C)
+    match(D)
+    match(E)
+    match(F)
+}
+

@@ -1,0 +1,32 @@
+# one object perm module recomended, will create a function for each field with
+# the same name and two special functions, new to create the object and keys to
+# get the names of the fields at runtime
+person = object (firstname lastname mail password)
+
+# when accesed from other modules the examples below will be:
+# person.new(...)
+# person.firstname(...)
+# person.lastname(...)
+# person.keys(...)
+# etc.
+
+run = fn () {
+    Mariano = new("Mariano", "Guerra", "luismarianoguerra@gmail", "secret")
+    io.format("~p~n", [Mariano])
+    FirstName = firstname(Mariano)
+    LastName = lastname(Mariano)
+    Mail = mail(Mariano)
+    Password = password(Mariano)
+    io.format("~s ~s ~s ~s~n", [FirstName, LastName, Mail, Password])
+
+    Ignacio = firstname(Mariano, "Ignacio")
+    io.format("~p~n", [Ignacio])
+
+    # some runtime magic
+    [_:Fields] = tuple_to_list(Mariano)
+    Person = lists.zip(tuple_to_list(keys()), Fields)
+
+    io.format("~p~n", [Person])
+
+    ok
+}
