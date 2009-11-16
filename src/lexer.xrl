@@ -16,7 +16,7 @@ CompOp        = (<|<=|==|===|>=|>|!=|!==)
 BoolAndOp     = and
 BoolOrOp      = or
 White         = (\s|\t|\\\n)
-Comment       = #.*?\n
+Comment       = #.*?
 Open          = \(
 Close         = \)
 OpenBlock     = {
@@ -73,7 +73,7 @@ Rules.
 {Split}                  : {token, {split_op,    TokenLine, list_to_atom(TokenChars)}}.
 {Dot}                    : {token, {dot,    TokenLine, list_to_atom(TokenChars)}}.
 {White}+                 : skip_token.
-{Comment}                : skip_token.
+{Comment}{End}           : skip_token.
 {String}                 : build_string(string, TokenChars, TokenLine, TokenLen).
 
 

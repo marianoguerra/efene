@@ -51,6 +51,7 @@ run = fn () {
     # above we defined a function that receives no arguments using only { and }
     # how is that useful? we use variables from the scope where that function
     # is defined (that is called a closure)
+
     # did you just defined the if statement? ;)
     # you can build it as you like, you can take out the then and else
     # or do a simple one
