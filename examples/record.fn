@@ -1,6 +1,6 @@
 person = object(firstname lastname mail)
 
-main = fn () {
+run = fn () {
     P = person("mariano" "guerra" "mail")
     # helper function
     Print = fn (X) { io.format("~p~n", [X]) }
