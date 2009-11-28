@@ -1,0 +1,31 @@
+person = object(firstname lastname mail)
+
+main = fn () {
+    P = person("mariano" "guerra" "mail")
+    # helper function
+    Print = fn (X) { io.format("~p~n", [X]) }
+    # create an "object"
+    P = person("mariano" "guerra" "mail")
+    # get firstname
+    Print(P(getfirstname))
+    # get lastname
+    Print(P(getlastname))
+    # get mail
+    Print(P(getmail))
+    # get the "object" as an erlang record
+    Print(P(record))
+    # get the fields of the "object"
+    Print(P(fields))
+    # get the name of the "object"
+    Print(P(name))
+
+    # check if the "object" has an attr called firstname
+    Print(P((has, firstname)))
+    # check if the "object" has an attr called address
+    Print(P((has, address)))
+
+    # create a new "object" changing the firstname attribute
+    P1 = P((setfirstname, "Mariano"))
+    # print the new "object"
+    Print(P1(record))
+}

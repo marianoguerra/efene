@@ -6,6 +6,7 @@ build() ->
     yecc:file(parser),
     compile:file(lexer),
     compile:file(parser),
+    compile:file(fn_record),
     compile:file(efene),
     ok.
 
