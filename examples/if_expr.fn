@@ -1,0 +1,22 @@
+
+run = fn () {
+    if (1 === 2) {
+        io.format("w00t?~n")
+    } else {
+        io.format("that makes sense~n")
+    }
+
+    if (1 === 2) {
+        io.format("w00t?~n")
+    } (1 === 2 - 1) {
+        io.format("that makes sense~n")
+    }
+
+    if (1 === 2) {
+        io.format("w00t?~n")
+    } (1 === "1") {
+        io.format("w00t?~n")
+    } else {
+        io.format("that makes sense~n")
+    }
+}

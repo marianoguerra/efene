@@ -117,6 +117,11 @@ match({trys, Line, {'{', _, TryBody}, CatchPatterns}) ->
 match({trys, Line, {'{', _, TryBody}, CatchPatterns, {'{', _, FinallyBody}}) ->
     fn_gen:try_expr(Line, match(TryBody), match_function_body(CatchPatterns), match(FinallyBody));
 
+match({ifs, Line, Patterns}) ->
+    fn_gen:if_expr(Line, match_function_body(Patterns));
+match({ifs, Line, Patterns, {'{', ElseLine, ElseBody}}) ->
+    fn_gen:if_expr(Line, match_function_body(Patterns), ElseLine, match(ElseBody));
+
 match(Exp) -> {error, Exp}.
 
 match_list([]) -> [];
@@ -134,10 +139,12 @@ match_function_body([], Clauses) -> lists:reverse(Clauses);
 match_function_body([Pattern | Patterns], Clauses) ->
      match_function_body(Patterns, [match_pattern(Pattern) | Clauses]).
 
+match_pattern({pattern, nil, {'(', Line, Guard}, {'{', _Line, Body}}) ->
+     fn_gen:func_body(Line, [], [match_list(Guard)], match_list(Body));
 match_pattern({pattern, {'(', Line, Args}, [], {'{', _, Body}}) ->
-     fn_gen:func_body([match(Arg) || Arg <- Args], Line, [], match_list(Body));
+     fn_gen:func_body(Line, [match(Arg) || Arg <- Args], [], match_list(Body));
 match_pattern({pattern, {'(', Line, Args}, Guards, {'{', _, Body}}) ->
-     fn_gen:func_body([match(Arg) || Arg <- Args], Line, [match_list(Guards)], match_list(Body)).
+     fn_gen:func_body(Line, [match(Arg) || Arg <- Args], [match_list(Guards)], match_list(Body)).
 
 get_function_arity([]) -> 0;
 get_function_arity([{pattern, {'(', _Line, Arguments}, _, _}|_T]) -> length(Arguments).

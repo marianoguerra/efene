@@ -17,13 +17,19 @@ fun_def(Line, Patterns) ->
     {'fun', Line, Patterns}.
 
 func_body(Line, Pattern, Guard, Body) ->
-    {clause, Pattern, Line, Guard, Body}.
+    {clause, Line, Pattern, Guard, Body}.
 
 try_expr(Line, Body, Patterns) ->
     {'try', Line, Body, [], Patterns, []}.
 
 try_expr(Line, Body, Patterns, Finally) ->
     {'try', Line, Body, [], Patterns, Finally}.
+
+if_expr(Line, Patterns) ->
+    {'if', Line, Patterns}.
+
+if_expr(Line, Patterns, ElseLine, ElseBody) ->
+    {'if', Line, Patterns ++ [func_body(Line, [], [[{atom, ElseLine, true}]], ElseBody)]}.
 
 receive_expr(Line, Patterns) ->
     {'receive', Line, Patterns}.
