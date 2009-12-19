@@ -100,11 +100,14 @@ hex_to_integer("0x" ++ Number) ->
     Val.
 
 is_reserved("if") -> true;
+is_reserved("else") -> true;
 is_reserved("try") -> true;
 is_reserved("catch") -> true;
 is_reserved("finally") -> true;
 is_reserved("receive") -> true;
 is_reserved("after") -> true;
+is_reserved("case") -> true;
+is_reserved("when") -> true;
 is_reserved("object") -> true;
 is_reserved(_) -> false.
 

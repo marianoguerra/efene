@@ -16,9 +16,6 @@ func_def(Line, Name, Arity, Ast) ->
 fun_def(Line, Patterns) ->
     {'fun', Line, Patterns}.
 
-func_body(Line, Pattern, Guard, Body) ->
-    {clause, Line, Pattern, Guard, Body}.
-
 try_expr(Line, Body, Patterns) ->
     {'try', Line, Body, [], Patterns, []}.
 
@@ -29,7 +26,16 @@ if_expr(Line, Patterns) ->
     {'if', Line, Patterns}.
 
 if_expr(Line, Patterns, ElseLine, ElseBody) ->
-    {'if', Line, Patterns ++ [func_body(Line, [], [[{atom, ElseLine, true}]], ElseBody)]}.
+    {'if', Line, Patterns ++ [clause(Line, [], [[{atom, ElseLine, true}]], ElseBody)]}.
+
+case_expr(Line, Condition, Patterns) ->
+    {'case', Line, Condition, Patterns}.
+
+case_expr(Line, Condition, Patterns, ElseLine, ElseBody) ->
+    {'case', Line, Condition, Patterns ++ [clause(Line, [{var, ElseLine, '_'}], [], ElseBody)]}.
+
+clause(Line, Pattern, Guard, Body) ->
+    {clause, Line, Pattern, Guard, Body}.
 
 receive_expr(Line, Patterns) ->
     {'receive', Line, Patterns}.

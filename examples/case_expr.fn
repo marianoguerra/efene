@@ -1,0 +1,16 @@
+run = fn () {
+    case (random.uniform(4)) {
+        1 {
+            # without parens
+            io.format("one!~n")
+        } (2) {
+            # with parens
+            io.format("two!~n")
+        } (3) {
+            io.format("three!~n")
+        }
+    } else {
+        io.format("else~n")
+    }
+
+}

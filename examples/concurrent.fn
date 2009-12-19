@@ -1,6 +1,6 @@
-is_zero = fn (0 FunTrue else _) {
+is_zero = fn (0 FunTrue otherwise _) {
     FunTrue()
-} (_ _ else FunFalse) {
+} (_ _ otherwise FunFalse) {
     FunFalse()
 }
 
@@ -11,7 +11,7 @@ say = fn (Pid, Str) {
 
 wait = fn (N) {
     receive (done) {
-        is_zero(N { 0 } else { wait(N - 1) })
+        is_zero(N { 0 } otherwise{ wait(N - 1) })
     }
 }
 

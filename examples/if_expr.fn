@@ -1,22 +1,25 @@
 
 run = fn () {
-    if (1 === 2) {
-        io.format("w00t?~n")
+    Num = random.uniform(2)
+
+    if Num === 1 {
+        # without parens
+        io.format("is one~n")
     } else {
-        io.format("that makes sense~n")
+        io.format("not one~n")
     }
 
-    if (1 === 2) {
-        io.format("w00t?~n")
-    } (1 === 2 - 1) {
-        io.format("that makes sense~n")
+    if (Num === 1) {
+        # with parens
+        io.format("is one~n")
+    } Num === 2 {
+        io.format("is two~n")
     }
 
-    if (1 === 2) {
-        io.format("w00t?~n")
-    } (1 === "1") {
-        io.format("w00t?~n")
+    if Num === 99 {
+        io.format("is 99~n")
     } else {
-        io.format("that makes sense~n")
+        io.format("not 99~n")
     }
+
 }
