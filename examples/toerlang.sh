@@ -4,5 +4,5 @@ for file in $(ls *.fn)
 do 
 	echo
 	echo "$file in erlang:"; 
-	../bin/fn2erl $file;
+	../bin/fnc -t erl $file;
 done

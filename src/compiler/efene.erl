@@ -3,7 +3,7 @@
 
 get_ast(From, String) ->
     Ast = lists:map(fun(Line) -> fn_match:match(Line) end, get_tree(From, String)),
-    fn_gen:module(get_module_name(String), Ast).
+    fn_gen:module(get_module_name(String), flatten1level(Ast)).
 
 print_ast(From, String) ->
     io:format("~p~n", [get_ast(From, String)]).
@@ -18,6 +18,10 @@ build_module(ModuleName, Ast) ->
 
 to_erlang(From, String) ->
     Ast = get_ast(From, String),
+    %[Last|Head] = lists:reverse(Ast),
+    %io:format("tuple: ~p, list: ~p~n", [is_tuple(Last),
+    %        is_list(Last)]),
+    %erl_prettypr:format(Ast).
     erl_prettypr:format(erl_syntax:form_list(Ast)).
 
 print_erlang([File]) ->
@@ -44,7 +48,7 @@ compile(Name) ->
     compile(Name, ".").
 
 compile(Name, Dir) ->
-    Module = get_code(flatten1level(get_ast(file, Name))),
+    Module = get_code(get_ast(file, Name)),
     Path = filename:join([Dir, get_module_beam_name(Name)]),
     {ok, Device} = file:open(Path, [binary, write]),
     file:write(Device, Module).
@@ -87,14 +91,24 @@ get_module_beam_name(String) ->
 
 % command line functions
 
-main([Dir, File]) ->
+main(["beam", Dir, File]) ->
     try
         io:format("compiling ~s~n", [File]),
         compile(File, Dir)
     catch
         _:Error ->
             display_error(Error)
-    end.
+    end;
+main(["ast", _Dir, File]) ->
+    print_ast(file, File);
+main(["tree", _Dir, File]) ->
+    print_tree(file, File);
+main(["lex", _Dir, File]) ->
+    print_lex(file, File);
+main(["erl", _Dir, File]) ->
+    print_erlang([File]);
+main(["erl2ast", _Dir, File]) ->
+    print_from_erlang(File).
 
 display_error({badmatch,{error,{Line,lexer,{illegal,Character}},_}}) ->
     io:format("~B: Illegal character '~s'~n", [Line, Character]);

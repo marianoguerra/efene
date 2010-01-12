@@ -11,6 +11,7 @@ import "strings"
 var outputDir = flag.String("o", ".", "output directory")
 var showHelp = flag.Bool("h", false, "show this help")
 var verbose = flag.Bool("v", false, "be verbose")
+var outputType = flag.String("t", "beam", "output type (beam, ast, tree, lex, erl)")
 
 const fnSuffix = ".fn"
 
@@ -35,7 +36,12 @@ func checkArgs() {
 	args := flag.Args()
 	for i := 0; i < flag.NArg(); i++ {
 		file := args[i]
-		if !strings.HasSuffix(file, fnSuffix) {
+		if *outputType == "erl2ast" {
+			if !strings.HasSuffix(file, ".erl") {
+				showErrorAndQuit("Invalid input filename. '" + file + "'", -1)
+			}
+
+		} else if !strings.HasSuffix(file, fnSuffix) {
 			showErrorAndQuit("Invalid input filename '" + file + "'", -1)
 		}
 
@@ -119,7 +125,7 @@ func main() {
 	}
 
 
-	head := []string{erlPath, "-run", "efene", "main", output}
+	head := []string{erlPath, "-run", "efene", "main", *outputType, output}
 	tail := []string{"-run", "init", "stop", "-noshell"}
 	start := len(head) + flag.NArg()
 	args := make([]string, len(head) + len(tail) + flag.NArg())
