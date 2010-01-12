@@ -19,7 +19,6 @@
    <li><a href="javascript:ui.showPage('#more')" >More</a></li>
    <li><a href="javascript:ui.showPage('#examples')" >Examples</a></li>
    <li><a href="javascript:ui.showPage('#download')">Download</a></li>
-   <li><a href="javascript:ui.showPage('#docs')">Documentation</a></li>
    <li><a href="javascript:ui.showPage('#participate')">Participate</a></li>
   </ul>
 
@@ -45,7 +44,7 @@
      <li>all erlang libraries available</li>
      <li>bytecode compatible (can use erlang modules from <strong>efene</strong> and vice-versa)</li>
      <li>translate <strong>efene</strong> sourcecode to erlang</li>
-     <li>braces as delimiters and semi-colons to end expressions like C/C++/C#/Java/Javascript
+     <li>braces as delimiters like C/C++/C#/Java/Javascript
       <ul>
        <li>no multiple delimiters (, . ; and no delimiter) in different situations</li> 
       </ul>
@@ -124,35 +123,35 @@ cd efene/examples
     </pre>
 
     <p>now some examples</p>
-
 <h2>arraycb.fn</h2>
+
 <div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/Apply_a_callback_to_an_Array</span>
 
-<span class="nx">square</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">square</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span>
 <span class="p">}</span>
 
 <span class="c"># list comprehension</span>
-<span class="nx">squares1</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">squares1</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">square</span><span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="k">for</span> <span class="nx">N</span> <span class="k">in</span> <span class="nx">Numbers</span><span class="p">]</span>
 <span class="p">}</span>
 
 <span class="c"># functional form</span>
-<span class="nx">squares2a</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">lists</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">square</span><span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">)</span>
+<span class="nx">squares2a</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lists</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">square</span><span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="c"># functional form with lambda</span>
-<span class="nx">squares2b</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">lists</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">)</span>
+<span class="nx">squares2b</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lists</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="c"># no need for a function</span>
-<span class="nx">squares3</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">squares3</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span> <span class="k">for</span> <span class="nx">N</span> <span class="k">in</span> <span class="nx">Numbers</span><span class="p">]</span>
 <span class="p">}</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">Numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">7</span><span class="p">]</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;squares1 : ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">squares1</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)])</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;squares2a: ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">squares2a</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)])</span>
@@ -161,13 +160,14 @@ cd efene/examples
 <span class="p">}</span>
 </pre></div>
 <h2>binary.fn</h2>
-<div class="highlight"><pre><span class="nx">match</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">[</span><span class="nx">A</span><span class="o">:</span><span class="mi">8</span> <span class="nx">unsigned</span> <span class="nx">little</span> <span class="nx">integer</span><span class="o">,</span> <span class="nx">B</span><span class="o">:</span><span class="mi">4</span><span class="o">,</span> <span class="nx">C</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span> <span class="nx">D</span><span class="p">]</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+
+<div class="highlight"><pre><span class="nx">match</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">[</span><span class="nx">A</span><span class="o">:</span><span class="mi">8</span> <span class="nx">unsigned</span> <span class="nx">little</span> <span class="nx">integer</span><span class="o">,</span> <span class="nx">B</span><span class="o">:</span><span class="mi">4</span><span class="o">,</span> <span class="nx">C</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span> <span class="nx">D</span><span class="p">]</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;match: ~p ~p ~p ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="o">,</span> <span class="nx">C</span><span class="o">,</span> <span class="nx">D</span><span class="p">])</span>
 <span class="p">}</span> <span class="p">(</span><span class="nx">Other</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;other: ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Other</span><span class="p">])</span>
 <span class="p">}</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">A</span> <span class="o">=</span> <span class="o">&lt;</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span>
     <span class="nx">B</span> <span class="o">=</span> <span class="o">&lt;</span><span class="p">[</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="p">]</span><span class="o">&gt;</span>
     <span class="nx">C</span> <span class="o">=</span> <span class="o">&lt;</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">8</span> <span class="nx">unsigned</span> <span class="nx">little</span> <span class="nx">integer</span><span class="o">,</span> <span class="mi">2</span><span class="o">:</span><span class="mi">4</span><span class="o">,</span> <span class="mi">3</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">]</span><span class="o">&gt;</span>
@@ -183,10 +183,30 @@ cd efene/examples
     <span class="nx">match</span><span class="p">(</span><span class="nx">F</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
+<h2>case_expr.fn</h2>
+
+<div class="highlight"><pre><span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">case</span> <span class="p">(</span><span class="nx">random</span><span class="p">.</span><span class="nx">uniform</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span> <span class="p">{</span>
+        <span class="mi">1</span> <span class="p">{</span>
+            <span class="c"># without parens</span>
+            <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;one!~n&quot;</span><span class="p">)</span>
+        <span class="p">}</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c"># with parens</span>
+            <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;two!~n&quot;</span><span class="p">)</span>
+        <span class="p">}</span> <span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;three!~n&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="nx">else</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;else~n&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
 <h2>concat.fn</h2>
+
 <div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/String_concatenation</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">S</span> <span class="o">=</span> <span class="s2">&quot;hello&quot;</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">S</span> <span class="o">++</span> <span class="s2">&quot; lite&quot;</span> <span class="o">++</span> <span class="s2">&quot;ral&quot;</span><span class="p">])</span>
     <span class="nx">S1</span> <span class="o">=</span> <span class="nx">S</span> <span class="o">++</span> <span class="s2">&quot; lite&quot;</span> <span class="o">++</span> <span class="s2">&quot;ral&quot;</span>
@@ -196,24 +216,25 @@ cd efene/examples
 <span class="p">}</span>
 </pre></div>
 <h2>concurrent.fn</h2>
-<div class="highlight"><pre><span class="nx">is_zero</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="mi">0</span> <span class="nx">FunTrue</span> <span class="nx">else</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
+
+<div class="highlight"><pre><span class="nx">is_zero</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="mi">0</span> <span class="nx">FunTrue</span> <span class="nx">otherwise</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">FunTrue</span><span class="p">()</span>
-<span class="p">}</span> <span class="p">(</span><span class="nx">_</span> <span class="nx">_</span> <span class="nx">else</span> <span class="nx">FunFalse</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">}</span> <span class="p">(</span><span class="nx">_</span> <span class="nx">_</span> <span class="nx">otherwise</span> <span class="nx">FunFalse</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">FunFalse</span><span class="p">()</span>
 <span class="p">}</span>
 
-<span class="nx">say</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Pid</span><span class="o">,</span> <span class="nx">Str</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">say</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Pid</span><span class="o">,</span> <span class="nx">Str</span><span class="p">)</span> <span class="p">{</span>
    <span class="nx">io</span><span class="p">.</span><span class="nx">fwrite</span><span class="p">(</span><span class="s2">&quot;~s~n&quot;</span> <span class="p">[</span><span class="nx">Str</span><span class="p">])</span>
    <span class="nx">Pid</span> <span class="o">!</span> <span class="nx">done</span>
 <span class="p">}</span>
 
-<span class="nx">wait</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">receive</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">is_zero</span><span class="p">(</span><span class="nx">N</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">}</span> <span class="nx">else</span> <span class="p">{</span> <span class="nx">wait</span><span class="p">(</span><span class="nx">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">})</span>
+<span class="nx">wait</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">receive</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">is_zero</span><span class="p">(</span><span class="nx">N</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">}</span> <span class="nx">otherwise</span><span class="p">{</span> <span class="nx">wait</span><span class="p">(</span><span class="nx">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">})</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">spawn</span><span class="p">(</span><span class="nx">concurrent</span> <span class="nx">say</span> <span class="p">[</span><span class="nx">self</span><span class="p">()</span><span class="o">,</span> <span class="s2">&quot;Enjoy&quot;</span><span class="p">])</span>
     <span class="nx">spawn</span><span class="p">(</span><span class="nx">concurrent</span> <span class="nx">say</span> <span class="p">[</span><span class="nx">self</span><span class="p">()</span><span class="o">,</span> <span class="s2">&quot;Roseta&quot;</span><span class="p">])</span>
     <span class="nx">spawn</span><span class="p">(</span><span class="nx">concurrent</span> <span class="nx">say</span> <span class="p">[</span><span class="nx">self</span><span class="p">()</span><span class="o">,</span> <span class="s2">&quot;Code&quot;</span><span class="p">])</span>
@@ -222,27 +243,29 @@ cd efene/examples
 <span class="p">}</span>
 </pre></div>
 <h2>evennums.fn</h2>
+
 <div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/Select_from_Array</span>
 
-<span class="nx">even1</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">lists</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">N</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">)</span>
+<span class="nx">even1</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lists</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">N</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Numbers</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">even2</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">even2</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Numbers</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">Number</span> <span class="k">for</span> <span class="nx">Number</span> <span class="k">in</span> <span class="nx">Numbers</span> <span class="k">if</span> <span class="nx">Number</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
 <span class="p">}</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">Numbers</span> <span class="o">=</span> <span class="nx">lists</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">15</span><span class="p">)</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;even1: ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">even1</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)])</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;even2: ~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">even2</span><span class="p">(</span><span class="nx">Numbers</span><span class="p">)])</span>
 <span class="p">}</span>
 </pre></div>
 <h2>expressions.fn</h2>
+
 <div class="highlight"><pre><span class="c"># some expressions (and a lambda)</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="nx">Print</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Expr</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Print</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Expr</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Expr</span><span class="p">])</span>
     <span class="p">}</span>
 
@@ -258,70 +281,100 @@ cd efene/examples
     <span class="nx">Print</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="o">~</span><span class="mi">12</span> <span class="o">|</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="mi">127</span> <span class="o">^</span> <span class="mi">1</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
-<h2>numbers.fn</h2>
-<div class="highlight"><pre><span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0xff  : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0xff</span><span class="p">])</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0xFF  : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0xFF</span><span class="p">])</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0o777 : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0o777</span><span class="p">])</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0b1011: ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0b1011</span><span class="p">])</span>
+<h2>if_expr.fn</h2>
+
+<div class="highlight"><pre><span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Num</span> <span class="o">=</span> <span class="nx">random</span><span class="p">.</span><span class="nx">uniform</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nx">Num</span> <span class="o">===</span> <span class="mi">1</span> <span class="p">{</span>
+        <span class="c"># without parens</span>
+        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;is one~n&quot;</span><span class="p">)</span>
+    <span class="p">}</span> <span class="nx">else</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;not one~n&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Num</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c"># with parens</span>
+        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;is one~n&quot;</span><span class="p">)</span>
+    <span class="p">}</span> <span class="nx">Num</span> <span class="o">===</span> <span class="mi">2</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;is two~n&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nx">Num</span> <span class="o">===</span> <span class="mi">99</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;is 99~n&quot;</span><span class="p">)</span>
+    <span class="p">}</span> <span class="nx">else</span> <span class="p">{</span>
+        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;not 99~n&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
 <span class="p">}</span>
 </pre></div>
-<h2>person.fn</h2>
-<div class="highlight"><pre><span class="c"># one object perm module recomended, will create a function for each field with</span>
-<span class="c"># the same name and two special functions, new to create the object and keys to</span>
-<span class="c"># get the names of the fields at runtime</span>
-<span class="nx">person</span> <span class="o">=</span> <span class="nx">object</span> <span class="p">(</span><span class="nx">firstname</span> <span class="nx">lastname</span> <span class="nx">mail</span> <span class="nx">password</span><span class="p">)</span>
+<h2>numbers.fn</h2>
 
-<span class="c"># when accesed from other modules the examples below will be:</span>
-<span class="c"># person.new(...)</span>
-<span class="c"># person.firstname(...)</span>
-<span class="c"># person.lastname(...)</span>
-<span class="c"># person.keys(...)</span>
-<span class="c"># etc.</span>
-
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="nx">Mariano</span> <span class="o">=</span> <span class="nx">new</span><span class="p">(</span><span class="s2">&quot;Mariano&quot;</span><span class="o">,</span> <span class="s2">&quot;Guerra&quot;</span><span class="o">,</span> <span class="s2">&quot;luismarianoguerra@gmail&quot;</span><span class="o">,</span> <span class="s2">&quot;secret&quot;</span><span class="p">)</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Mariano</span><span class="p">])</span>
-    <span class="nx">FirstName</span> <span class="o">=</span> <span class="nx">firstname</span><span class="p">(</span><span class="nx">Mariano</span><span class="p">)</span>
-    <span class="nx">LastName</span> <span class="o">=</span> <span class="nx">lastname</span><span class="p">(</span><span class="nx">Mariano</span><span class="p">)</span>
-    <span class="nx">Mail</span> <span class="o">=</span> <span class="nx">mail</span><span class="p">(</span><span class="nx">Mariano</span><span class="p">)</span>
-    <span class="nx">Password</span> <span class="o">=</span> <span class="nx">password</span><span class="p">(</span><span class="nx">Mariano</span><span class="p">)</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s ~s ~s ~s~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">FirstName</span><span class="o">,</span> <span class="nx">LastName</span><span class="o">,</span> <span class="nx">Mail</span><span class="o">,</span> <span class="nx">Password</span><span class="p">])</span>
-
-    <span class="nx">Ignacio</span> <span class="o">=</span> <span class="nx">firstname</span><span class="p">(</span><span class="nx">Mariano</span><span class="o">,</span> <span class="s2">&quot;Ignacio&quot;</span><span class="p">)</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Ignacio</span><span class="p">])</span>
-
-    <span class="c"># some runtime magic</span>
-    <span class="p">[</span><span class="nx">_</span><span class="o">:</span><span class="nx">Fields</span><span class="p">]</span> <span class="o">=</span> <span class="nx">tuple_to_list</span><span class="p">(</span><span class="nx">Mariano</span><span class="p">)</span>
-    <span class="nx">Person</span> <span class="o">=</span> <span class="nx">lists</span><span class="p">.</span><span class="nx">zip</span><span class="p">(</span><span class="nx">tuple_to_list</span><span class="p">(</span><span class="nx">keys</span><span class="p">())</span><span class="o">,</span> <span class="nx">Fields</span><span class="p">)</span>
-
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Person</span><span class="p">])</span>
-
-    <span class="nx">ok</span>
+<div class="highlight"><pre><span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0xff  : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0</span><span class="nx">xff</span><span class="p">])</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0xFF  : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0</span><span class="nx">xFF</span><span class="p">])</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0o777 : ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0</span><span class="nx">o777</span><span class="p">])</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;0b1011: ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="mi">0</span><span class="nx">b1011</span><span class="p">])</span>
 <span class="p">}</span>
 </pre></div>
 <h2>pythag.fn</h2>
+
 <div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/List_Comprehension</span>
-<span class="nx">pythag</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">pythag</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">[(</span><span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="o">,</span> <span class="nx">C</span><span class="p">)</span> <span class="k">for</span> <span class="nx">A</span> <span class="k">in</span> <span class="nx">lists</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="nx">N</span><span class="p">)</span> <span class="o">\</span>
          <span class="k">for</span> <span class="nx">B</span> <span class="k">in</span> <span class="nx">lists</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="nx">A</span><span class="o">,</span> <span class="nx">N</span><span class="p">)</span> <span class="o">\</span>
          <span class="k">for</span> <span class="nx">C</span> <span class="k">in</span> <span class="nx">lists</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="nx">B</span><span class="o">,</span> <span class="nx">N</span><span class="p">)</span> <span class="o">\</span>
          <span class="k">if</span> <span class="nx">A</span> <span class="o">+</span> <span class="nx">B</span> <span class="o">+</span> <span class="nx">C</span> <span class="o">&lt;=</span> <span class="nx">N</span> <span class="nx">and</span> <span class="nx">A</span> <span class="o">*</span> <span class="nx">A</span> <span class="o">+</span> <span class="nx">B</span> <span class="o">*</span> <span class="nx">B</span> <span class="o">==</span> <span class="nx">C</span> <span class="o">*</span> <span class="nx">C</span><span class="p">]</span>
 <span class="p">}</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">pythag</span><span class="p">(</span><span class="mi">20</span><span class="p">)])</span>
 <span class="p">}</span>
 </pre></div>
+<h2>record.fn</h2>
+
+<div class="highlight"><pre><span class="nx">person</span> <span class="o">=</span> <span class="nx">object</span><span class="p">(</span><span class="nx">firstname</span> <span class="nx">lastname</span> <span class="nx">mail</span><span class="p">)</span>
+
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">P</span> <span class="o">=</span> <span class="nx">person</span><span class="p">(</span><span class="s2">&quot;mariano&quot;</span> <span class="s2">&quot;guerra&quot;</span> <span class="s2">&quot;mail&quot;</span><span class="p">)</span>
+    <span class="c"># helper function</span>
+    <span class="nx">Print</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">X</span><span class="p">)</span> <span class="p">{</span> <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">X</span><span class="p">])</span> <span class="p">}</span>
+    <span class="c"># create an &quot;object&quot;</span>
+    <span class="nx">P</span> <span class="o">=</span> <span class="nx">person</span><span class="p">(</span><span class="s2">&quot;mariano&quot;</span> <span class="s2">&quot;guerra&quot;</span> <span class="s2">&quot;mail&quot;</span><span class="p">)</span>
+    <span class="c"># get firstname</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P</span><span class="p">(</span><span class="nx">getfirstname</span><span class="p">))</span>
+    <span class="c"># get lastname</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P</span><span class="p">(</span><span class="nx">getlastname</span><span class="p">))</span>
+    <span class="c"># get mail</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P</span><span class="p">(</span><span class="nx">getmail</span><span class="p">))</span>
+    <span class="c"># get the &quot;object&quot; as an erlang record</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P</span><span class="p">(</span><span class="nx">record</span><span class="p">))</span>
+    <span class="c"># get the fields of the &quot;object&quot;</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P</span><span class="p">(</span><span class="nx">fields</span><span class="p">))</span>
+    <span class="c"># get the name of the &quot;object&quot;</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span>
+
+    <span class="c"># check if the &quot;object&quot; has an attr called firstname</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P</span><span class="p">((</span><span class="nx">has</span><span class="o">,</span> <span class="nx">firstname</span><span class="p">)))</span>
+    <span class="c"># check if the &quot;object&quot; has an attr called address</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P</span><span class="p">((</span><span class="nx">has</span><span class="o">,</span> <span class="nx">address</span><span class="p">)))</span>
+
+    <span class="c"># create a new &quot;object&quot; changing the firstname attribute</span>
+    <span class="nx">P1</span> <span class="o">=</span> <span class="nx">P</span><span class="p">((</span><span class="nx">setfirstname</span><span class="o">,</span> <span class="s2">&quot;Mariano&quot;</span><span class="p">))</span>
+    <span class="c"># print the new &quot;object&quot;</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">P1</span><span class="p">(</span><span class="nx">record</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
 <h2>send.fn</h2>
-<div class="highlight"><pre><span class="nx">loop</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="k">receive</span> <span class="p">(</span><span class="nx">Stuff</span><span class="p">)</span> <span class="p">{</span>
+
+<div class="highlight"><pre><span class="nx">loop</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">receive</span> <span class="p">(</span><span class="nx">Stuff</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Stuff</span><span class="p">])</span>
     <span class="p">}</span>
     <span class="nx">loop</span><span class="p">()</span>
 <span class="p">}</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">Pid</span> <span class="o">=</span> <span class="nx">spawn</span><span class="p">({</span><span class="nx">loop</span><span class="p">()})</span>
     <span class="nx">Pid1</span> <span class="o">=</span> <span class="nx">spawn</span><span class="p">({</span><span class="nx">loop</span><span class="p">()})</span>
     <span class="nx">Pid</span> <span class="o">!</span> <span class="nx">Pid1</span> <span class="o">!</span> <span class="mi">1</span>
@@ -331,9 +384,10 @@ cd efene/examples
 <span class="p">}</span>
 </pre></div>
 <h2>sleep.fn</h2>
+
 <div class="highlight"><pre><span class="c"># http://rosettacode.org/wiki/Sleep_the_Main_Thread</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;Sleeping...~n&quot;</span><span class="p">)</span>
     <span class="c"># in millisecons</span>
     <span class="nx">timer</span><span class="p">.</span><span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
@@ -341,21 +395,22 @@ cd efene/examples
 <span class="p">}</span>
 </pre></div>
 <h2>trycatch.fn</h2>
-<div class="highlight"><pre><span class="nx">trycatch</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Arg</span><span class="p">){</span>
-    <span class="k">try</span> <span class="p">{</span>
+
+<div class="highlight"><pre><span class="nx">trycatch</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="nx">Arg</span><span class="p">){</span>
+    <span class="nx">try</span> <span class="p">{</span>
         <span class="nx">make_error</span><span class="p">(</span><span class="nx">Arg</span><span class="p">)</span>
-    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">throw</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="nx">catch</span> <span class="p">(</span><span class="nx">throw</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;throw 1~n&quot;</span><span class="p">)</span>
     <span class="p">}</span> <span class="p">(</span><span class="nx">exit</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;exit 2~n&quot;</span><span class="p">)</span>
     <span class="p">}</span> <span class="p">(</span><span class="nx">error</span> <span class="p">(</span><span class="nx">some</span><span class="o">,</span> <span class="nx">fancy</span><span class="o">,</span> <span class="nx">tuple</span><span class="o">,</span> <span class="mi">3</span><span class="p">))</span> <span class="p">{</span>
         <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;error~n&quot;</span><span class="p">)</span>
-    <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="nx">finally</span> <span class="p">{</span>
         <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;finally~n&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="nx">make_error</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">make_error</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">throw</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="p">}</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -363,115 +418,25 @@ cd efene/examples
     <span class="nx">erlang</span><span class="p">.</span><span class="nx">error</span><span class="p">((</span><span class="nx">some</span><span class="o">,</span> <span class="nx">fancy</span><span class="o">,</span> <span class="nx">tuple</span><span class="o">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="p">}</span>
 
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">run</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">trycatch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="nx">trycatch</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="nx">trycatch</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 
+
+
+
+
+
+
    </div>
 
    <div class="page hide" id="download">
     <h2>Download</h2>
 
-    <p>you can download a zip containing the latest version of the master branch <a href="http://github.com/marianoguerra/efene/zipball/master">here</a></p>
-    <p>to see the code, commits and report bugs go to the <a href="http://github.com/marianoguerra/efene/">github</a> page</p>
-   </div>
-
-   <div class="page hide" id="docs">
-    <h2>Documentation</h2>
-    <p> a small module that guides you through some of the main features of efene</p>
-<div class="highlight"><pre><span class="c"># this is a efene file that describes the syntax of efene</span>
-
-<span class="c"># this is the declaration of a module level function called run that receives</span>
-<span class="c"># no arguments</span>
-<span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="c"># let&#39;s call a function to print a hello world</span>
-    <span class="c"># io is the io module, format is a function inside it</span>
-    <span class="c"># ~n is how you tell the function to print a new line</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;Hello World~n&quot;</span><span class="p">)</span>
-
-    <span class="c"># we can call the same function but with parameters</span>
-    <span class="c"># ~s means &quot;here comes a string&quot;</span>
-    <span class="c"># ~B means &quot;here comes an integer&quot;</span>
-    <span class="c"># see http://erlang.mirror.su.se/doc/man/io.html#format-1</span>
-    <span class="c"># for more information</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s ~s take: ~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="s2">&quot;Hello&quot;</span><span class="o">,</span> <span class="s2">&quot;World&quot;</span><span class="o">,</span> <span class="mi">2</span><span class="p">])</span>
-
-    <span class="c"># if we want we can skip the comma</span>
-    <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s ~s take: ~B~n&quot;</span> <span class="p">[</span><span class="s2">&quot;Hello&quot;</span><span class="o">,</span> <span class="s2">&quot;World&quot;</span><span class="o">,</span> <span class="mi">3</span><span class="p">])</span>
-
-    <span class="c"># we can define a function here to print</span>
-    <span class="nx">Print</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">String</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~s~n&quot;</span> <span class="p">[</span><span class="nx">String</span><span class="p">])</span>
-    <span class="p">}</span>
-
-    <span class="c"># now we use the function</span>
-    <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;Hello Print function&quot;</span><span class="p">)</span>
-
-    <span class="c"># we can declare variables</span>
-    <span class="nx">String</span> <span class="o">=</span> <span class="s2">&quot;Hello from a variable&quot;</span>
-
-    <span class="nx">Print</span><span class="p">(</span><span class="nx">String</span><span class="p">)</span>
-
-    <span class="c"># we can build some nice functions like the following</span>
-    <span class="nx">If</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="kc">true</span> <span class="nx">then</span> <span class="nx">OnTrue</span> <span class="nx">else</span> <span class="nx">_OnFalse</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">OnTrue</span><span class="p">()</span>
-    <span class="p">}</span> <span class="p">(</span><span class="nx">_</span> <span class="nx">then</span> <span class="nx">_OnTrue</span> <span class="nx">else</span> <span class="nx">OnFalse</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">OnFalse</span><span class="p">()</span>
-    <span class="p">}</span>
-
-    <span class="c"># let&#39;s use it</span>
-    <span class="nx">If</span><span class="p">(</span><span class="mi">5</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="nx">then</span> <span class="p">{</span> <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;5&gt;4&quot;</span><span class="p">)</span> <span class="p">}</span> <span class="nx">else</span> <span class="p">{</span><span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;5&gt;4 isn&#39;t true&quot;</span><span class="p">)})</span>
-
-    <span class="c"># more formated</span>
-    <span class="nx">If</span><span class="p">(</span><span class="mi">5</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="nx">then</span> <span class="p">{</span>
-        <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;5&gt;4 again&quot;</span><span class="p">)</span>
-    <span class="p">}</span> <span class="nx">else</span> <span class="p">{</span>
-        <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;5&gt;4 isn&#39;t true&quot;</span><span class="p">)</span>
-    <span class="p">})</span>
-
-    <span class="c"># above we defined a function that receives no arguments using only { and }</span>
-    <span class="c"># how is that useful? we use variables from the scope where that function</span>
-    <span class="c"># is defined (that is called a closure)</span>
-    <span class="c"># did you just defined the if statement? ;)</span>
-    <span class="c"># you can build it as you like, you can take out the then and else</span>
-    <span class="c"># or do a simple one</span>
-    <span class="nx">If1</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="kc">true</span> <span class="nx">do</span> <span class="nx">OnTrue</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">OnTrue</span><span class="p">()</span>
-    <span class="p">}</span> <span class="p">(</span><span class="nx">_</span> <span class="nx">do</span> <span class="nx">_OnTrue</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">undefined</span>
-    <span class="p">}</span>
-
-    <span class="nx">If1</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">15</span> <span class="nx">do</span> <span class="p">{</span> <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;Yay!&quot;</span><span class="p">)</span> <span class="p">})</span>
-    <span class="c"># this will return undefined</span>
-    <span class="nx">If1</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">16</span> <span class="nx">do</span> <span class="p">{</span> <span class="nx">Print</span><span class="p">(</span><span class="s2">&quot;w00t?&quot;</span><span class="p">)</span> <span class="p">})</span>
-
-    <span class="c"># lets create a list with squares of the numbers from 1 to 10 to use it</span>
-    <span class="c"># later (this is called a list comprehension)</span>
-    <span class="nx">Squares</span> <span class="o">=</span> <span class="p">[</span><span class="nx">N</span> <span class="o">*</span> <span class="nx">N</span> <span class="k">for</span> <span class="nx">N</span> <span class="k">in</span> <span class="nx">lists</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">10</span><span class="p">)]</span>
-
-    <span class="c"># print it</span>
-    <span class="nx">lists</span><span class="p">.</span><span class="nx">foreach</span><span class="p">(</span><span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">N</span><span class="p">])</span> <span class="p">}</span><span class="o">,</span> <span class="nx">Squares</span><span class="p">)</span>
-
-    <span class="c"># we could build our own function for that</span>
-    <span class="nx">ForEach</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">item</span> <span class="nx">on</span> <span class="nx">List</span> <span class="nx">do</span> <span class="nx">Function</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">lists</span><span class="p">.</span><span class="nx">foreach</span><span class="p">(</span><span class="nx">Function</span><span class="o">,</span> <span class="nx">List</span><span class="p">)</span>
-    <span class="p">}</span>
-
-    <span class="c"># let&#39;s define a useful function</span>
-    <span class="nx">PrintNumber</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~B~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">N</span><span class="p">])</span> <span class="p">}</span>
-
-    <span class="c"># isn&#39;t it readable?</span>
-    <span class="nx">ForEach</span><span class="p">(</span><span class="nx">item</span> <span class="nx">on</span> <span class="nx">Squares</span> <span class="nx">do</span> <span class="nx">PrintNumber</span><span class="p">)</span>
-
-    <span class="c"># you may have noticed that I use commas to separate arguments on some</span>
-    <span class="c"># functions and on others I don&#39;t, that&#39;s a matter of taste :)</span>
-
-    <span class="c"># well that&#39;s all for now</span>
-<span class="p">}</span>
-</pre></div>
+    <p>just go to <a href="http://github.com/marianoguerra/efene">github</a> and clone it or download the latest snapshot</p>
    </div>
 
    <div class="page hide" id="participate">
