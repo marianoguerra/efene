@@ -12,7 +12,7 @@ Terminals
     comp_op add_op mul_op unary_op match var open close fn sep open_list
     close_list open_block close_block open_bin close_bin integer float boolean
     endl atom string concat_op and_op xor_op or_op shift_op send_op split_op
-    dot if when try catch finally receive after case bool_and_op bool_or_op object else.
+    dot if when try catch receive after case bool_and_op bool_or_op object else.
 
 Rootsymbol grammar.
 
@@ -181,7 +181,7 @@ bin_generator -> atom bool_expr atom bool_expr if bool_expr : [{b_generate, line
 
 try_expr -> try block                                           : {'try', line('$1'), '$2'}.
 try_expr -> try block catch catch_patterns                      : {'try', line('$1'), '$2', '$4'}.
-try_expr -> try block catch catch_patterns finally block        : {'try', line('$1'), '$2', '$4', '$6'}.
+try_expr -> try block catch catch_patterns else block           : {'try', line('$1'), '$2', '$4', '$6'}.
 
 if_expr  -> if if_patterns	: {'if', line('$1'), '$2'}.
 if_expr  -> if if_patterns else block : {'if', line('$1'), '$2', '$4'}.

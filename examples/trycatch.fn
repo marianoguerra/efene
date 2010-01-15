@@ -6,10 +6,10 @@ trycatch = fn (Arg){
         io.format("throw 1~n")
     } (exit 2) {
         io.format("exit 2~n")
-    } (error (some, fancy, tuple, 3)) {
+    } (error (some fancy tuple 3)) {
         io.format("error~n")
-    } finally {
-        io.format("finally~n")
+    } else {
+        io.format("else~n")
     }
 }
 
@@ -18,7 +18,7 @@ make_error = fn (1) {
 } (2) {
     exit(2)
 } (3) {
-    erlang.error((some, fancy, tuple, 3))
+    erlang.error((some fancy tuple 3))
 }
 
 run = fn () {
