@@ -1,0 +1,16 @@
+
+draw = fn (dot at X Y) {
+	io.format("paint a dot at ~p, ~p~n", [X, Y])
+}
+
+draw = fn (line from X1 Y1 to X2 Y2) {
+	io.format("paint a line from ~p, ~p to ~p, ~p~n", [X1, Y1, X2, Y2])
+} (square from X1 Y1 to X2 Y2) {
+	io.format("paint a square from ~p, ~p to ~p, ~p~n", [X1, Y1, X2, Y2])
+}
+
+run = fn () {
+	draw(dot at 10 20)
+	draw(line from 10 20 to 20 20)
+	draw(square from 10 20 to 20 20)
+}

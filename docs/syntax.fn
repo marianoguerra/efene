@@ -32,19 +32,19 @@ run = fn () {
     Print(String)
 
     # we can build some nice functions like the following
-    If = fn (true then OnTrue else _OnFalse) {
+    If = fn (true then OnTrue otherwise _OnFalse) {
         OnTrue()
-    } (_ then _OnTrue else OnFalse) {
+    } (_ then _OnTrue otherwise OnFalse) {
         OnFalse()
     }
 
     # let's use it
-    If(5 > 4 then { Print("5>4") } else {Print("5>4 isn't true")})
+    If(5 > 4 then { Print("5>4") } otherwise {Print("5>4 isn't true")})
 
     # more formated
     If(5 > 4 then {
         Print("5>4 again")
-    } else {
+    } otherwise {
         Print("5>4 isn't true")
     })
 
@@ -53,7 +53,7 @@ run = fn () {
     # is defined (that is called a closure)
 
     # did you just defined the if statement? ;)
-    # you can build it as you like, you can take out the then and else
+    # you can build it as you like, you can take out the then and otherwise
     # or do a simple one
     If1 = fn (true do OnTrue) {
         OnTrue()

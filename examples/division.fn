@@ -1,0 +1,16 @@
+
+divide = fn (_A 0) {
+	error	
+} (A B) {
+	A / B
+}
+
+run = fn () {
+	Helper = fn (A, B) {
+		io.format("~p/~p=~p~n" [A B divide(A B)])
+	}
+
+	Helper(10 2)
+	Helper(10 3)
+	Helper(5 0)
+}

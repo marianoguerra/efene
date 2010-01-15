@@ -135,15 +135,17 @@ list -> open_list close_list            : {nil, line('$1')}.
 list -> open_list list_items close_list : '$2'.
 
 list_items -> bool_expr sep list_items      : {cons, line('$1'), '$1', '$3'}.
+list_items -> bool_expr list_items          : {cons, line('$1'), '$1', '$2'}.
 list_items -> bool_expr                     : {cons, line('$1'), '$1', {nil, line('$1')}}.
 list_items -> bool_expr split_op bool_expr  : {cons, line('$1'), '$1', '$3'}.
-list_items -> bool_expr sep                 : {cons, line('$1'), '$1', {nil, line('$1')}}.
 
 tuple -> open sep close             : {tuple, line('$1'), []}.
 tuple -> open tuple_items close     : {tuple, line('$1'), '$2'}.
 
 tuple_items -> bool_expr sep tuple_items    : ['$1'|'$3'].
+tuple_items -> bool_expr tuple_items        : ['$1'|'$2'].
 tuple_items -> bool_expr sep bool_expr      : ['$1','$3'].
+tuple_items -> bool_expr bool_expr          : ['$1','$2'].
 tuple_items -> bool_expr sep                : ['$1'].
 
 binary -> open_bin binary_items close_bin   : {bin, line('$1'), lists:flatten('$2')}.

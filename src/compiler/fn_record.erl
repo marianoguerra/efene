@@ -78,5 +78,5 @@ build(Line, Name, Fields) ->
              [],
              [{'fun',Line,
                {clauses, Methods}}]}]}}},
-        {call,21,{var,21,'Wrapper'},[{var,21,'Wrapper'},{var,21,'Obj'}]}]}]}].
+        {call,Line,{var,Line,'Wrapper'},[{var,Line,'Wrapper'},{var,Line,'Obj'}]}]}]}].
 
