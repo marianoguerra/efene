@@ -11,12 +11,12 @@ squares1 = fn (Numbers) {
 
 # functional form
 squares2a = fn (Numbers) {
-    lists.map(fn (N) { square(N) }, Numbers)
+    lists.map(fn (N) { square(N) } Numbers)
 }
 
 # functional form with lambda
 squares2b = fn (Numbers) {
-    lists.map(fn (N) { N * N }, Numbers)
+    lists.map(fn (N) { N * N } Numbers)
 }
 
 # no need for a function
@@ -25,10 +25,10 @@ squares3 = fn (Numbers) {
 }
 
 run = fn () {
-    Numbers = [1, 3, 5, 7]
-    io.format("squares1 : ~p~n", [squares1(Numbers)])
-    io.format("squares2a: ~p~n", [squares2a(Numbers)])
-    io.format("squares2b: ~p~n", [squares2b(Numbers)])
-    io.format("squares3 : ~p~n", [squares3(Numbers)])
+    Numbers = [1 3 5 7]
+    io.format("squares1 : ~p~n" [squares1(Numbers)])
+    io.format("squares2a: ~p~n" [squares2a(Numbers)])
+    io.format("squares2b: ~p~n" [squares2b(Numbers)])
+    io.format("squares3 : ~p~n" [squares3(Numbers)])
 }
 

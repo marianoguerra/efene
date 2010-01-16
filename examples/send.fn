@@ -1,7 +1,7 @@
 
 loop = fn () {
     receive (Stuff) {
-        io.format("~p~n", [Stuff])
+        io.format("~p~n" [Stuff])
     }
     loop()
 }

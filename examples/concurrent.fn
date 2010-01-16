@@ -4,7 +4,7 @@ is_zero = fn (0 FunTrue otherwise _) {
     FunFalse()
 }
 
-say = fn (Pid, Str) {
+say = fn (Pid Str) {
    io.fwrite("~s~n" [Str])
    Pid ! done
 }
@@ -16,9 +16,9 @@ wait = fn (N) {
 }
 
 run = fn () {
-    spawn(concurrent say [self(), "Enjoy"])
-    spawn(concurrent say [self(), "Roseta"])
-    spawn(concurrent say [self(), "Code"])
+    spawn(concurrent say [self() "Enjoy"])
+    spawn(concurrent say [self() "Roseta"])
+    spawn(concurrent say [self() "Code"])
     wait(2)
     ok
 }

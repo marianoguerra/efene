@@ -2,9 +2,9 @@
 
 run = fn () {
     S = "hello"
-    io.format("~s~n", [S ++ " lite" ++ "ral"])
+    io.format("~s~n" [S ++ " lite" ++ "ral"])
     S1 = S ++ " lite" ++ "ral"
-    io.format("~s~n", [S1])
+    io.format("~s~n" [S1])
     # just to test that the ++ doesn't break the +
     1 + 2
 }

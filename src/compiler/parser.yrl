@@ -6,13 +6,15 @@ Nonterminals
     pattern list list_items tuple tuple_items binary binary_items binary_item
     binary_types concat_expr list_comp bin_comp list_generators bin_generators
     list_generator bin_generator try_expr recv_expr if_expr case_expr case_body
-    case_patterns case_pattern catch_patterns catch_pattern if_patterns if_pattern.
+    case_patterns case_pattern catch_patterns catch_pattern if_patterns
+    if_pattern.
 
 Terminals 
     comp_op add_op mul_op unary_op match var open close fn sep open_list
     close_list open_block close_block open_bin close_bin integer float boolean
     endl atom string concat_op and_op xor_op or_op shift_op send_op split_op
-    dot if when try catch receive after case bool_and_op bool_or_op object else.
+    dot if when try catch receive after case bool_and_op bool_or_op object
+    else.
 
 Rootsymbol grammar.
 
@@ -34,8 +36,8 @@ grammar -> expr_list                            : '$1'.
 expr_list -> endl expr_list                     : ['$2'].
 expr_list -> fun_expression                     : ['$1'].
 expr_list -> obj_expression                     : ['$1'].
-expr_list -> fun_expression expr_list      : ['$1'|'$2'].
-expr_list -> obj_expression expr_list      : ['$1'|'$2'].
+expr_list -> fun_expression expr_list           : ['$1'|'$2'].
+expr_list -> obj_expression expr_list           : ['$1'|'$2'].
 
 fun_expression -> atom match function_def endl  : {fun_def, line('$1'), unwrap('$1'), '$3'}.
 
@@ -54,8 +56,8 @@ expression -> send_expr endl                    : '$1'.
 send_expr -> bool_expr send_op send_expr        : {unwrap('$2'), line('$2'), '$1', '$3'}.
 send_expr -> bool_expr : '$1'.
 
-bool_expr -> bool_and_expr bool_or_op bool_expr      : {unwrap('$2'), line('$2'), '$1', '$3'}.
-bool_expr -> bool_and_expr                           : '$1'.
+bool_expr -> bool_and_expr bool_or_op bool_expr : {unwrap('$2'), line('$2'), '$1', '$3'}.
+bool_expr -> bool_and_expr                      : '$1'.
 
 bool_and_expr -> comp_expr bool_and_op bool_and_expr : {unwrap('$2'), line('$2'), '$1', '$3'}.
 bool_and_expr -> comp_expr                           : '$1'.
@@ -63,8 +65,8 @@ bool_and_expr -> comp_expr                           : '$1'.
 comp_expr -> concat_expr comp_op comp_expr      : {unwrap('$2'), line('$2'), '$1', '$3'}.
 comp_expr -> concat_expr                        : '$1'.
 
-concat_expr -> add_expr concat_op concat_expr    : {unwrap('$2'), line('$2'), '$1', '$3'}.
-concat_expr -> add_expr                          : '$1'.
+concat_expr -> add_expr concat_op concat_expr   : {unwrap('$2'), line('$2'), '$1', '$3'}.
+concat_expr -> add_expr                         : '$1'.
 
 add_expr -> mul_expr add_op add_expr    : {unwrap('$2'), line('$2'), '$1', '$3'}.
 add_expr -> mul_expr shift_op add_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}.
@@ -96,7 +98,7 @@ literal -> list_comp            : '$1'.
 literal -> bin_comp             : '$1'.
 literal -> try_expr             : '$1'.
 literal -> if_expr              : '$1'.
-literal -> case_expr              : '$1'.
+literal -> case_expr            : '$1'.
 literal -> recv_expr            : '$1'.
 
 function_call -> var call_params            : {call,        line('$1'), '$1', '$2'}.
@@ -104,32 +106,32 @@ function_call -> atom call_params           : {callatom,    line('$1'), ['$1'], 
 function_call -> atom dot atom call_params  : {callatom,    line('$2'), ['$1', '$3'], '$4'}.
 function_call -> function_call call_params  : {call,        line('$1'), '$1', '$2'}.
 
-call_params -> open call_arguments close            : lists:flatten('$2').
-call_params -> open close                           : [].
+call_params -> open call_arguments close    : lists:flatten('$2').
+call_params -> open close                   : [].
 
 call_arguments -> call_argument                     : ['$1'].
 call_arguments -> call_argument sep call_arguments  : ['$1'|'$3'].
 call_arguments -> call_argument call_arguments      : ['$1'|'$2'].
 
-call_argument -> bool_expr          : '$1'.
+call_argument -> bool_expr : '$1'.
 
-function_def -> fn patterns     : {unwrap('$1'), line('$1'), '$2'}.
-function_def -> block           : {'fn', line('$1'), [{pattern,{'(',line('$1'),[]},[],'$1'}]}.
+function_def -> fn patterns : {unwrap('$1'), line('$1'), '$2'}.
+function_def -> block       : {'fn', line('$1'), [{pattern,{'(',line('$1'),[]},[],'$1'}]}.
 
-patterns -> pattern patterns     : ['$1'|'$2'].
-patterns -> pattern              : ['$1'].
-pattern  -> argument_def block   : {pattern, '$1', [], '$2'}.
+patterns -> pattern patterns                    : ['$1'|'$2'].
+patterns -> pattern                             : ['$1'].
+pattern  -> argument_def block                  : {pattern, '$1', [], '$2'}.
 pattern  -> argument_def when bool_expr block   : {pattern, '$1', ['$3'], '$4'}.
 
-argument_def -> open arguments close : {unwrap('$1'), line('$1'), lists:flatten('$2')}.
-argument_def -> open close           : {unwrap('$1'), line('$1'), []}.
+argument_def -> open arguments close  : {unwrap('$1'), line('$1'), lists:flatten('$2')}.
+argument_def -> open close            : {unwrap('$1'), line('$1'), []}.
 
 arguments -> unary_expr               : ['$1'].
 arguments -> unary_expr sep arguments : ['$1'|'$3'].
 arguments -> unary_expr arguments     : ['$1'|'$2'].
 
 block -> open_block expressions close_block   : {unwrap('$1'), line('$1'), '$2'}.
-block -> open_block send_expr close_block : {unwrap('$1'), line('$1'), ['$2']}.
+block -> open_block send_expr close_block     : {unwrap('$1'), line('$1'), ['$2']}.
 
 list -> open_list close_list            : {nil, line('$1')}.
 list -> open_list list_items close_list : '$2'.
@@ -166,7 +168,7 @@ list_comp -> open_list bool_expr list_generators close_list : {lc, line('$1'), '
 list_generators -> list_generator list_generators   : ['$1'|'$2'].
 list_generators -> list_generator                   : '$1'.
 
-list_generator -> atom bool_expr atom bool_expr  : [{generate, line('$1'), '$2', '$4'}]. 
+list_generator -> atom bool_expr atom bool_expr              : [{generate, line('$1'), '$2', '$4'}]. 
 list_generator -> atom bool_expr atom bool_expr if bool_expr : [{generate, line('$1'), '$2', '$4'},'$6']. 
 
 %% XXX: I don't know the difference between a list comprehension with binary generator and a binary comprehension
@@ -183,30 +185,30 @@ try_expr -> try block                                           : {'try', line('
 try_expr -> try block catch catch_patterns                      : {'try', line('$1'), '$2', '$4'}.
 try_expr -> try block catch catch_patterns else block           : {'try', line('$1'), '$2', '$4', '$6'}.
 
-if_expr  -> if if_patterns	: {'if', line('$1'), '$2'}.
-if_expr  -> if if_patterns else block : {'if', line('$1'), '$2', '$4'}.
+if_expr  -> if if_patterns	                 : {'if', line('$1'), '$2'}.
+if_expr  -> if if_patterns else block            : {'if', line('$1'), '$2', '$4'}.
 
-case_expr -> case bool_expr case_body : {'case', line('$1'), '$2', '$3'}.
+case_expr -> case bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.
 case_expr -> case bool_expr case_body else block : {'case', line('$1'), '$2', '$3', '$5'}.
 
-case_body -> open_block case_patterns endl close_block  : '$2'.
+case_body -> open_block case_patterns endl close_block : '$2'.
 
-case_patterns -> case_pattern case_patterns             : ['$1'|'$2'].
-case_patterns -> case_pattern                         : ['$1'].
-case_pattern -> bool_expr block          : {'clause', line('$1'), ['$1'], [], '$2'}.
+case_patterns -> case_pattern case_patterns            : ['$1'|'$2'].
+case_patterns -> case_pattern                          : ['$1'].
+case_pattern -> bool_expr block                        : {'clause', line('$1'), ['$1'], [], '$2'}.
 
-if_patterns -> if_pattern if_patterns             : ['$1'|'$2'].
-if_patterns -> if_pattern                         : ['$1'].
-if_pattern -> bool_expr block          	          : {pattern, nil, {'(', line('$1'), ['$1']}, '$2'}.
+if_patterns -> if_pattern if_patterns                  : ['$1'|'$2'].
+if_patterns -> if_pattern                              : ['$1'].
+if_pattern -> bool_expr block          	               : {pattern, nil, {'(', line('$1'), ['$1']}, '$2'}.
 
-catch_patterns -> catch_pattern catch_patterns             : ['$1'|'$2'].
-catch_patterns -> catch_pattern                            : ['$1'].
+catch_patterns -> catch_pattern catch_patterns         : ['$1'|'$2'].
+catch_patterns -> catch_pattern                        : ['$1'].
 %% TODO: restrict atom to throw, error and exit
-catch_pattern -> open atom literal close block             : {pattern, {unwrap('$1'), line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'}.
-catch_pattern -> open literal close block                  : {pattern, {unwrap('$1'), line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
+catch_pattern -> open atom literal close block         : {pattern, {unwrap('$1'), line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'}.
+catch_pattern -> open literal close block              : {pattern, {unwrap('$1'), line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
 
-recv_expr -> receive patterns                            : {'receive', line('$1'), '$2'}.
-recv_expr -> receive patterns after literal block        : {'receive', line('$1'), '$2', '$4', '$5'}.
+recv_expr -> receive patterns                          : {'receive', line('$1'), '$2'}.
+recv_expr -> receive patterns after literal block      : {'receive', line('$1'), '$2', '$4', '$5'}.
 
 Erlang code.
 

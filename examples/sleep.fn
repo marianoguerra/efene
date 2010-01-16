@@ -5,4 +5,14 @@ run = fn () {
     # in millisecons
     timer.sleep(1000)
     io.format("Awake!~n")
+
+    #or
+
+    io.format("Sleeping again...~n")
+    receive (_Something) {
+    	ok
+    } after 1000 {
+	    io.format("Awake again!~n")
+    }
+
 }

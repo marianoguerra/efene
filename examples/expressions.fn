@@ -2,7 +2,7 @@
 
 run = fn () {
     Print = fn (Expr) {
-        io.format("~p~n", [Expr])
+        io.format("~p~n" [Expr])
     }
 
     Print(1 + 2 * 3 + 4)
