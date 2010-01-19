@@ -204,8 +204,10 @@ if_pattern -> bool_expr block          	               : {pattern, nil, {'(', li
 catch_patterns -> catch_pattern catch_patterns         : ['$1'|'$2'].
 catch_patterns -> catch_pattern                        : ['$1'].
 %% TODO: restrict atom to throw, error and exit
-catch_pattern -> open atom literal close block         : {pattern, {unwrap('$1'), line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'}.
-catch_pattern -> open literal close block              : {pattern, {unwrap('$1'), line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
+catch_pattern -> open atom literal close block         : {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'}.
+catch_pattern -> atom literal block         : {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$1', '$2', {var, line('$1'), '_'}]}]}, [], '$3'}.
+catch_pattern -> open literal close block              : {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
+catch_pattern -> literal block              : {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$1', {var, line('$1'), '_'}]}]}, [], '$2'}.
 
 recv_expr -> receive patterns                          : {'receive', line('$1'), '$2'}.
 recv_expr -> receive patterns after literal block      : {'receive', line('$1'), '$2', '$4', '$5'}.

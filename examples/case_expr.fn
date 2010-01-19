@@ -1,5 +1,5 @@
 run = fn () {
-    case (random.uniform(4)) {
+    case random.uniform(4) {
         1 {
             # without parens
             io.format("one!~n")
