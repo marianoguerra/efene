@@ -28,9 +28,8 @@ cd ../examples/
 ### build the examples
 ./build.sh
 
-# run the examples
+### run the examples
 ./run.sh
-
 
 ## Useful links
 
