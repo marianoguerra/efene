@@ -30,7 +30,8 @@ Bool          = (true|false)
 Fn            = fn
 Sep           = ,
 End           = ((\s|\t)*\n)+
-UnaryOp       = (not|~)
+BinNot        = ~
+BoolNot       = not
 % the string stuff taken from Reia
 String        = "(\\\^.|\\.|[^\"])*"
 Split         = :
@@ -45,7 +46,8 @@ Rules.
 {ConcatOp}               : {token, {concat_op,   TokenLine, list_to_atom(TokenChars)}}.
 {AddOp}                  : {token, {add_op,      TokenLine, list_to_atom(TokenChars)}}.
 {MulOp}                  : {token, {mul_op,      TokenLine, list_to_atom(TokenChars)}}.
-{UnaryOp}                : {token, {unary_op,    TokenLine, list_to_atom(TokenChars)}}.
+{BinNot}                 : {token, {bin_not,     TokenLine, list_to_atom(TokenChars)}}.
+{BoolNot}                : {token, {bool_not,    TokenLine, list_to_atom(TokenChars)}}.
 {Number}+                : {token, {integer,     TokenLine, list_to_integer(TokenChars)}}.
 {Number}+\.{Number}+     : {token, {float,       TokenLine, list_to_float(TokenChars)}}.
 {BinNumber}              : {token, {integer,     TokenLine, bin_to_integer(TokenChars)}}.

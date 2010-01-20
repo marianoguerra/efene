@@ -7,10 +7,10 @@ Nonterminals
     binary_types concat_expr list_comp bin_comp list_generators bin_generators
     list_generator bin_generator try_expr recv_expr if_expr case_expr case_body
     case_patterns case_pattern catch_patterns catch_pattern if_patterns
-    if_pattern.
+    if_pattern block_expr bool_lit.
 
 Terminals 
-    comp_op add_op mul_op unary_op match var open close fn sep open_list
+    comp_op add_op mul_op bin_not bool_not match var open close fn sep open_list
     close_list open_block close_block open_bin close_bin integer float boolean
     endl atom string concat_op and_op xor_op or_op shift_op send_op split_op
     dot if when try catch receive after case bool_and_op bool_or_op object
@@ -28,7 +28,8 @@ Left 700 xor_op.
 Left 700 add_op.
 Left 700 shift_op.
 Left 800 mul_op.
-Left 900 unary_op.
+Left 900 bin_not.
+Left 900 bool_not.
 Left 1000 open.
 
 grammar -> expr_list                            : '$1'.
@@ -78,28 +79,44 @@ mul_expr -> unary_expr mul_op mul_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}
 mul_expr -> unary_expr and_op mul_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}.
 mul_expr -> unary_expr                  : '$1'.
 
-unary_expr -> unary_op literal  : {unwrap('$1'), line('$1'), '$2'}.
-unary_expr -> add_op literal    : {unwrap('$1'), line('$1'), '$2'}.
-unary_expr -> literal           : '$1'.
+unary_expr -> bool_not bool_lit			: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> bool_not var 			: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> bool_not function_call 		: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> bool_not open bool_expr close 	: {unwrap('$1'), line('$1'), '$3'}.
+unary_expr -> add_op integer    		: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> add_op float      		: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> add_op var			: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> add_op open bool_expr close 	: {unwrap('$1'), line('$1'), '$3'}.
+unary_expr -> add_op function_call 		: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> bin_not integer   		: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> bin_not var 			: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> bin_not open bool_expr close 	: {unwrap('$1'), line('$1'), '$3'}.
+unary_expr -> bin_not function_call 		: {unwrap('$1'), line('$1'), '$2'}.
+unary_expr -> block_expr			: '$1'.
 
-literal -> integer              : {integer, line('$1'), unwrap('$1')}.
-literal -> float                : {float,   line('$1'), unwrap('$1')}.
-literal -> boolean              : {atom,    line('$1'), unwrap('$1')}.
+block_expr -> try_expr          : '$1'.
+block_expr -> if_expr           : '$1'.
+block_expr -> case_expr         : '$1'.
+block_expr -> recv_expr         : '$1'.
+block_expr -> function_def	: '$1'.
+block_expr -> literal		: '$1'.
+
+literal -> integer              : '$1'.
+literal -> float                : '$1'.
+literal -> bool_lit             : '$1'.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
 literal -> list                 : '$1'.
 literal -> tuple                : '$1'.
 literal -> binary               : '$1'.
-literal -> var                  : {var,     line('$1'), unwrap('$1')}.
-literal -> atom                 : {atom,    line('$1'), unwrap('$1')}.
+literal -> var                  : '$1'.
+literal -> atom                 : '$1'.
 literal -> open bool_expr close : '$2'.
 literal -> function_call        : '$1'.
-literal -> function_def         : '$1'.
 literal -> list_comp            : '$1'.
 literal -> bin_comp             : '$1'.
-literal -> try_expr             : '$1'.
-literal -> if_expr              : '$1'.
-literal -> case_expr            : '$1'.
-literal -> recv_expr            : '$1'.
+
+bool_lit -> boolean		: {atom, line('$1'), unwrap('$1')}.
+
 
 function_call -> var call_params            : {call,        line('$1'), '$1', '$2'}.
 function_call -> atom call_params           : {callatom,    line('$1'), ['$1'], '$2'}.
