@@ -1,6 +1,6 @@
 Definitions.
 
-Or            = | 
+Or            = |
 Identifier    = [A-Z_][a-zA-Z0-9_]*
 Atom          = [a-z][a-zA-Z0-9_@]*
 Uppercase     = [A-Z]
@@ -83,22 +83,22 @@ Erlang code.
 
 atom_or_identifier(String, TokenLine) ->
      case is_reserved(String) of
-         true -> 
+         true ->
             {list_to_atom(String), TokenLine};
-         false ->   
+         false ->
             {atom, TokenLine, list_to_atom(String)}
      end.
 
 bin_to_integer("0b" ++ Number) ->
-    {ok, [Val], _} = io_lib:fread("~2u", Number),    
+    {ok, [Val], _} = io_lib:fread("~2u", Number),
     Val.
 
 oct_to_integer("0o" ++ Number) ->
-    {ok, [Val], _} = io_lib:fread("~8u", Number),    
+    {ok, [Val], _} = io_lib:fread("~8u", Number),
     Val.
 
 hex_to_integer("0x" ++ Number) ->
-    {ok, [Val], _} = io_lib:fread("~16u", Number),    
+    {ok, [Val], _} = io_lib:fread("~16u", Number),
     Val.
 
 is_reserved("if") -> true;
@@ -117,7 +117,7 @@ build_string(Type, Chars, Line, Len) ->
     {token, {Type, Line, String}}.
 
 unescape_string(String) -> unescape_string(String, []).
- 
+
 unescape_string([], Output) ->
   lists:reverse(Output);
 unescape_string([$\\, Escaped | Rest], Output) ->
