@@ -1,0 +1,17 @@
+print_type = fn (Thing) when is_integer(Thing) {
+    io.format("~p is integer~n", [Thing])
+} (Thing) when is_atom(Thing) {
+    io.format("~p is atom~n", [Thing])
+} (Thing) when is_list(Thing) or is_tuple(Thing) {
+    io.format("~p is list or tuple~n", [Thing])
+} (Thing) {
+    io.format("I dont know the type of ~p~n", [Thing])
+}
+
+run = fn () {
+    print_type(4)
+    print_type(true)
+    print_type([1 2 3 4])
+    print_type((1 2 3 4))
+    print_type(1.2)
+}

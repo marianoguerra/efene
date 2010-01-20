@@ -212,6 +212,7 @@ case_body -> open_block case_patterns endl close_block : '$2'.
 case_patterns -> case_pattern case_patterns            : ['$1'|'$2'].
 case_patterns -> case_pattern                          : ['$1'].
 case_pattern -> bool_expr block                        : {'clause', line('$1'), ['$1'], [], '$2'}.
+case_pattern -> bool_expr when bool_expr block         : {'clause', line('$1'), ['$1'], ['$3'], '$4'}.
 
 if_patterns -> if_pattern if_patterns                  : ['$1'|'$2'].
 if_patterns -> if_pattern                              : ['$1'].
@@ -225,8 +226,8 @@ catch_pattern -> atom literal block                    : {pattern, {'(', line('$
 catch_pattern -> open literal close block              : {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
 catch_pattern -> literal block                         : {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$1', {var, line('$1'), '_'}]}]}, [], '$2'}.
 
-recv_expr -> receive patterns                          : {'receive', line('$1'), '$2'}.
-recv_expr -> receive patterns after literal block      : {'receive', line('$1'), '$2', '$4', '$5'}.
+recv_expr -> receive case_patterns                          : {'receive', line('$1'), '$2'}.
+recv_expr -> receive case_patterns after literal block      : {'receive', line('$1'), '$2', '$4', '$5'}.
 
 Erlang code.
 

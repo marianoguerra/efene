@@ -108,9 +108,9 @@ match({obj_def, Line, Name, Fields}) ->
     fn_record:build(Line, Name, Fields);
 
 match({'receive', Line, Patterns}) ->
-    fn_gen:receive_expr(Line, match_function_body(Patterns));
+    fn_gen:receive_expr(Line, match_list(Patterns));
 match({'receive', Line, Patterns, After, {'{', _, AfterBody}}) ->
-    fn_gen:receive_expr(Line, match_function_body(Patterns), match(After), match(AfterBody));
+    fn_gen:receive_expr(Line, match_list(Patterns), match(After), match(AfterBody));
 
 match({'try', Line, {'{', _, TryBody}, CatchPatterns}) ->
     fn_gen:try_expr(Line, match(TryBody), match_function_body(CatchPatterns));
@@ -127,8 +127,10 @@ match({'case', Line, Condition, Patterns}) ->
 match({'case', Line, Condition, Patterns, {'{', ElseLine, ElseBody}}) ->
     fn_gen:case_expr(Line, match(Condition), match_list(Patterns), ElseLine, match(ElseBody));
 
+match({clause, Line, Pattern, [], {'{', _BodyLine, Body}}) ->
+    fn_gen:clause(Line, match_list(Pattern), [], match_list(Body));
 match({clause, Line, Pattern, Guard, {'{', _BodyLine, Body}}) ->
-    fn_gen:clause(Line, match_list(Pattern), match(Guard), match_list(Body));
+    fn_gen:clause(Line, match_list(Pattern), [match(Guard)], match_list(Body));
 
 match(Exp) -> {error, Exp}.
 
