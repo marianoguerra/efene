@@ -6,6 +6,7 @@ match([_|_] = List)             -> match_list(List);
 match({integer, _, _}   = Ast)  -> Ast;
 match({float, _, _}     = Ast)  -> Ast;
 match({atom, _, _}      = Ast)  -> Ast;
+match({char, _, _}      = Ast)  -> Ast;
 match({string, _, _}    = Ast)  -> Ast;
 match({var, _, _}       = Ast)  -> Ast;
 match({nil, _}          = Ast)  -> Ast;

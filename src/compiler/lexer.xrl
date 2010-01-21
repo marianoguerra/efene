@@ -36,6 +36,7 @@ BoolNot       = not
 String        = "(\\\^.|\\.|[^\"])*"
 Split         = :
 Dot           = \.
+Char          = \$.
 
 Rules.
 
@@ -53,6 +54,7 @@ Rules.
 {BinNumber}              : {token, {integer,     TokenLine, bin_to_integer(TokenChars)}}.
 {OctNumber}              : {token, {integer,     TokenLine, oct_to_integer(TokenChars)}}.
 {HexNumber}              : {token, {integer,     TokenLine, hex_to_integer(TokenChars)}}.
+{Char}                   : {token, {char,        TokenLine, list_to_charnum(TokenChars)}}.
 {Bool}                   : {token, {boolean,     TokenLine, list_to_atom(TokenChars)}}.
 {BoolAndOp}              : {token, {bool_and_op, TokenLine, list_to_atom(TokenChars)}}.
 {BoolOrOp}               : {token, {bool_or_op,  TokenLine, list_to_atom(TokenChars)}}.
@@ -140,3 +142,5 @@ unescape_string([$\\, Escaped | Rest], Output) ->
   unescape_string(Rest, [Char|Output]);
 unescape_string([Char|Rest], Output) ->
   unescape_string(Rest, [Char|Output]).
+
+list_to_charnum([_, Char|_]) -> Char.

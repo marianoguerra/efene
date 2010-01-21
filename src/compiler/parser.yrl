@@ -14,7 +14,7 @@ Terminals
     close_list open_block close_block open_bin close_bin integer float boolean
     endl atom string concat_op and_op xor_op or_op shift_op send_op split_op
     dot if when try catch receive after case bool_and_op bool_or_op object
-    else.
+    else char.
 
 Rootsymbol grammar.
 
@@ -114,6 +114,7 @@ literal -> open bool_expr close : '$2'.
 literal -> function_call        : '$1'.
 literal -> list_comp            : '$1'.
 literal -> bin_comp             : '$1'.
+literal -> char                 : '$1'.
 
 bool_lit -> boolean                : {atom, line('$1'), unwrap('$1')}.
 
