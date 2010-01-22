@@ -8,6 +8,7 @@ build() ->
     compile:file(parser),
     compile:file(fn_record),
     compile:file(fn_match),
+    compile:file(fn_prettypr),
     compile:file(fn_gen),
     compile:file(efene),
     ok.

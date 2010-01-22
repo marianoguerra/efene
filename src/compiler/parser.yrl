@@ -10,11 +10,11 @@ Nonterminals
     if_pattern block_expr bool_lit.
 
 Terminals
-    comp_op add_op mul_op bin_not bool_not match var open close fn sep open_list
-    close_list open_block close_block open_bin close_bin integer float boolean
-    endl atom string concat_op and_op xor_op or_op shift_op send_op split_op
-    dot if when try catch receive after case bool_and_op bool_or_op object
-    else char.
+    comp_op add_op mul_op bin_not bool_not match var open close fn sep
+    open_list close_list open_block close_block open_bin close_bin integer
+    float boolean endl atom string concat_op and_op xor_op or_op shift_op
+    send_op split_op dot if when try catch receive after case for in
+    bool_and_op bool_or_op object else char.
 
 Rootsymbol grammar.
 
@@ -185,8 +185,8 @@ list_comp -> open_list bool_expr list_generators close_list : {lc, line('$1'), '
 list_generators -> list_generator list_generators   : ['$1'|'$2'].
 list_generators -> list_generator                   : '$1'.
 
-list_generator -> atom bool_expr atom bool_expr              : [{generate, line('$1'), '$2', '$4'}].
-list_generator -> atom bool_expr atom bool_expr if bool_expr : [{generate, line('$1'), '$2', '$4'},'$6'].
+list_generator -> for bool_expr in bool_expr              : [{generate, line('$1'), '$2', '$4'}].
+list_generator -> for bool_expr in bool_expr if bool_expr : [{generate, line('$1'), '$2', '$4'},'$6'].
 
 %% XXX: I don't know the difference between a list comprehension with binary generator and a binary comprehension
 %% this might change in the future
@@ -195,8 +195,8 @@ bin_comp -> open_bin bool_expr bin_generators close_bin : {lc, line('$1'), '$2',
 bin_generators -> bin_generator bin_generators   : ['$1'|'$2'].
 bin_generators -> bin_generator                  : '$1'.
 
-bin_generator -> atom bool_expr atom bool_expr              : [{b_generate, line('$1'), '$2', '$4'}].
-bin_generator -> atom bool_expr atom bool_expr if bool_expr : [{b_generate, line('$1'), '$2', '$4'},'$6'].
+bin_generator -> for bool_expr in bool_expr              : [{b_generate, line('$1'), '$2', '$4'}].
+bin_generator -> for bool_expr in bool_expr if bool_expr : [{b_generate, line('$1'), '$2', '$4'},'$6'].
 
 try_expr -> try block                                       : {'try', line('$1'), '$2'}.
 try_expr -> try block catch catch_patterns                  : {'try', line('$1'), '$2', '$4'}.

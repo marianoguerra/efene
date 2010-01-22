@@ -11,7 +11,7 @@ import "strings"
 var outputDir = flag.String("o", ".", "output directory")
 var showHelp = flag.Bool("h", false, "show this help")
 var verbose = flag.Bool("v", false, "be verbose")
-var outputType = flag.String("t", "beam", "output type (beam, ast, tree, lex, erl, erl2ast)")
+var outputType = flag.String("t", "beam", "output type (beam, ast, tree, lex, erl, fn, erl2ast)")
 
 const fnSuffix = ".fn"
 

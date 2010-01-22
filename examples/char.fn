@@ -1,0 +1,7 @@
+
+run = fn () {
+    io.format("~p ~p" [$a $(])
+
+    lists.map(fn (Char) { io.format("~p ", [Char]) } [$a $A $$ $% ${])
+    io.format("~n")
+}

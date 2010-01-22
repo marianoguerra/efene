@@ -18,17 +18,23 @@ build_module(ModuleName, Ast) ->
 
 to_erlang(From, String) ->
     Ast = get_ast(From, String),
-    %[Last|Head] = lists:reverse(Ast),
-    %io:format("tuple: ~p, list: ~p~n", [is_tuple(Last),
-    %        is_list(Last)]),
-    %erl_prettypr:format(Ast).
     erl_prettypr:format(erl_syntax:form_list(Ast)).
+
+to_efene(From, String) ->
+    Ast = get_ast(From, String),
+    fn_prettypr:format(erl_syntax:form_list(Ast)).
 
 print_erlang([File]) ->
     print_erlang(file, File).
 
 print_erlang(From, String) ->
     io:format("~s~n", [to_erlang(From, String)]).
+
+print_efene([File]) ->
+    print_efene(file, File).
+
+print_efene(From, String) ->
+    io:format("~s~n", [to_efene(From, String)]).
 
 from_erlang(Name) ->
     {ok, Content} = file:read_file(Name),
@@ -107,6 +113,8 @@ main(["lex", _Dir, File]) ->
     print_lex(file, File);
 main(["erl", _Dir, File]) ->
     print_erlang([File]);
+main(["fn", _Dir, File]) ->
+    print_efene([File]);
 main(["erl2ast", _Dir, File]) ->
     print_from_erlang(File).
 
