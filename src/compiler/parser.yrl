@@ -7,7 +7,7 @@ Nonterminals
     binary_types concat_expr list_comp bin_comp list_generators bin_generators
     list_generator bin_generator try_expr recv_expr if_expr case_expr case_body
     case_patterns case_pattern catch_patterns catch_pattern if_patterns
-    if_pattern block_expr bool_lit argument.
+    if_pattern block_expr bool_lit argument farity.
 
 Terminals
     comp_op add_op mul_op bin_not bool_not match var open close fn sep
@@ -115,6 +115,13 @@ literal -> function_call        : '$1'.
 literal -> list_comp            : '$1'.
 literal -> bin_comp             : '$1'.
 literal -> char                 : '$1'.
+literal -> farity               : '$1'.
+
+farity -> fn atom mul_op integer   :
+    case unwrap('$3') == '/' of
+        true -> {'fun', line('$1'), {function, unwrap('$2'), unwrap('$4')}};
+        false -> throw({error, {unwrap('$3'), yecc, "'/' expected on function artity expression **"}})
+    end.
 
 bool_lit -> boolean                : {atom, line('$1'), unwrap('$1')}.
 

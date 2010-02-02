@@ -1,0 +1,10 @@
+add_one = fn (Number) {
+    Number + 1
+}
+
+run = fn () {
+    # new way to pass a reference to a function withouth
+    # creating a lambda
+    Result = lists.map(fn add_one/1, lists.seq(1 10))
+    io.format("~p~n", [Result])
+}

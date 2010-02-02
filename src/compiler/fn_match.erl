@@ -77,6 +77,7 @@ match({'-' = Op, Line, A}) ->
     fn_gen:expr(Op, Line, match(A));
 match({'(', _Line, A}) ->
     match(A);
+match({'fun', _Line, {function, _Name, _Arity}} = Expr) -> Expr;
 
 match({'bin'=Op, Line, BinElements}) ->
     fn_gen:op(Line, Op, match_list(BinElements));
