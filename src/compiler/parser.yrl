@@ -7,7 +7,7 @@ Nonterminals
     binary_types concat_expr list_comp bin_comp list_generators bin_generators
     list_generator bin_generator try_expr recv_expr if_expr case_expr case_body
     case_patterns case_pattern catch_patterns catch_pattern if_patterns
-    if_pattern block_expr bool_lit.
+    if_pattern block_expr bool_lit argument.
 
 Terminals
     comp_op add_op mul_op bin_not bool_not match var open close fn sep
@@ -143,9 +143,13 @@ pattern  -> argument_def when bool_expr block   : {pattern, '$1', ['$3'], '$4'}.
 argument_def -> open arguments close  : {unwrap('$1'), line('$1'), lists:flatten('$2')}.
 argument_def -> open close            : {unwrap('$1'), line('$1'), []}.
 
-arguments -> unary_expr               : ['$1'].
-arguments -> unary_expr sep arguments : ['$1'|'$3'].
-arguments -> unary_expr arguments     : ['$1'|'$2'].
+% expression -> bool_expr match bool_expr endl    : {unwrap('$2'), line('$2'), '$1', '$3'}.
+arguments -> argument               : ['$1'].
+arguments -> argument sep arguments : ['$1'|'$3'].
+arguments -> argument arguments     : ['$1'|'$2'].
+
+argument -> unary_expr                : '$1'.
+argument -> unary_expr match var      : {unwrap('$2'), line('$2'), '$1', '$3'}.
 
 block -> open_block expressions close_block   : {unwrap('$1'), line('$1'), '$2'}.
 block -> open_block send_expr close_block     : {unwrap('$1'), line('$1'), ['$2']}.

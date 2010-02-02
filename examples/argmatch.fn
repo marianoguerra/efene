@@ -1,0 +1,10 @@
+foo = fn ((a _ _) = T) {
+    io.format("starts with a: ~p~n" [T])
+} ((b _ _) = T) {
+    io.format("starts with b: ~p~n" [T])
+}
+
+run = fn () {
+    foo((a 1 false))
+    foo((b 2 true))
+}
