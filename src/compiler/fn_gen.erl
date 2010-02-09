@@ -68,3 +68,9 @@ op(Line, Op, First, Second) ->
 
 op(Line, Op, First, Second, Third) ->
     {Op, Line, First, Second, Third}.
+
+var(Line, Name) -> {var, Line, Name}.
+
+atom(Line, Name) -> {atom, Line, Name}.
+
+nil(Line) -> {nil, Line}.

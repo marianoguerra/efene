@@ -7,25 +7,28 @@ run = fn () {
     # create an "object"
     P = person("mariano" "guerra" "mail")
     # get firstname
-    Print(P(getfirstname))
+    Print(P(get firstname))
     # get lastname
-    Print(P(getlastname))
+    Print(P(get lastname))
     # get mail
-    Print(P(getmail))
+    Print(P(get mail))
     # get the "object" as an erlang record
-    Print(P(record))
+    Print(P(to record))
     # get the fields of the "object"
-    Print(P(fields))
+    Print(P(to fields))
     # get the name of the "object"
-    Print(P(name))
+    Print(P(to name))
 
     # check if the "object" has an attr called firstname
-    Print(P((has firstname)))
+    Print(P(has firstname))
     # check if the "object" has an attr called address
-    Print(P((has address)))
+    Print(P(has address))
 
     # create a new "object" changing the firstname attribute
-    P1 = P((setfirstname "Mariano"))
+    P1 = P(setfirstname "Mariano")
     # print the new "object"
-    Print(P1(record))
+    Print(P1(to record))
+    # build a new person from the record of another one
+    P2 = person(P1(to record))
+    Print(P2(to record))
 }
