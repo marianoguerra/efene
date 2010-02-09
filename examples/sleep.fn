@@ -4,7 +4,7 @@ run = fn () {
     timer.sleep(1000)
     io.format("Awake!~n")
 
-    #or
+    # or
 
     io.format("Sleeping again...~n")
     receive (_Something) {

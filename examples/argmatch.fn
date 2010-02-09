@@ -1,10 +1,10 @@
-foo = fn ((a _ _) = T) {
-    io.format("starts with a: ~p~n" [T])
-} ((b _ _) = T) {
-    io.format("starts with b: ~p~n" [T])
+foo = fn ((a _ _) = T, stuff = A) {
+    io.format("starts with a: ~p ~p~n" [T A])
+} ((b _ _) = T, hi = A) {
+    io.format("starts with b: ~p ~p~n" [T A])
 }
 
 run = fn () {
-    foo((a 1 false))
-    foo((b 2 true))
+    foo((a 1 false), stuff)
+    foo((b 2 true), hi)
 }

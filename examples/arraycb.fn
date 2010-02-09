@@ -11,7 +11,7 @@ squares1 = fn (Numbers) {
 
 # functional form
 squares2a = fn (Numbers) {
-    lists.map(fn (N) { square(N) } Numbers)
+    lists.map(fn square/1 Numbers)
 }
 
 # functional form with lambda

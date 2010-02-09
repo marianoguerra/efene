@@ -7,8 +7,8 @@ loop = fn () {
 }
 
 run = fn () {
-    Pid = spawn({loop()})
-    Pid1 = spawn({loop()})
+    Pid = spawn(fn loop/0)
+    Pid1 = spawn(fn loop/0)
     Pid ! Pid1 ! 1
     Pid ! Pid1 ! atom
     Pid ! Pid1 ! "string"
