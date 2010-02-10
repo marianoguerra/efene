@@ -11,6 +11,12 @@ adds some syntactic sugar in some places to make some tasks easier.
 
 to see how it looks you can go to the [examples dir](http://github.com/marianoguerra/efene/tree/master/examples/)
 
+## Participate
+
+a mailing list is available at [librelist]("http://librelist.com") just send a mail to efene@librelist.com to subscribe.
+
+as first mail you may send a hello world program in efene and present yourself by saying your name, where you are, how did you heard about efene and anything else you would like to say.
+
 ## Build instructions
 
 ### clone the repository with the latest code
