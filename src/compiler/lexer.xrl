@@ -36,7 +36,7 @@ BoolNot       = not
 String        = "(\\\^.|\\.|[^\"])*"
 Split         = :
 Dot           = \.
-Char          = \$.
+Char          = \$\\?.
 
 Rules.
 
@@ -125,7 +125,13 @@ unescape_string(String) -> unescape_string(String, []).
 unescape_string([], Output) ->
   lists:reverse(Output);
 unescape_string([$\\, Escaped | Rest], Output) ->
-  Char = case Escaped of
+  Char = map_escaped_char(Escaped),
+  unescape_string(Rest, [Char|Output]);
+unescape_string([Char|Rest], Output) ->
+  unescape_string(Rest, [Char|Output]).
+
+map_escaped_char(Escaped) ->
+  case Escaped of
     $\\ -> $\\;
     $/ -> $/;
     $\" -> $\";
@@ -140,12 +146,11 @@ unescape_string([$\\, Escaped | Rest], Output) ->
     $t -> $\t;
     $v -> $\v;
     _ -> throw({error, {"unrecognized escape sequence: ", [$\\, Escaped]}})
-  end,
-  unescape_string(Rest, [Char|Output]);
-unescape_string([Char|Rest], Output) ->
-  unescape_string(Rest, [Char|Output]).
+  end.
 
-list_to_charnum([_, Char|_]) -> Char.
+list_to_charnum([_, $\\, Char]) ->
+  map_escaped_char(Char);
+list_to_charnum([_, Char]) -> Char.
 
 build_atom([$'|_] = Atom) -> list_to_atom(unescape_string(lists:sublist(Atom, 2, length(Atom) - 2)));
 build_atom(Atom) -> list_to_atom(Atom).
