@@ -123,6 +123,12 @@ farity -> fn atom mul_op integer   :
         false -> throw({error, {unwrap('$3'), yecc, "'/' expected on function artity expression **"}})
     end.
 
+farity -> fn atom dot atom mul_op integer   :
+    case unwrap('$5') == '/' of
+        true -> {'fun', line('$1'), {function, unwrap('$2'), unwrap('$4'), unwrap('$6')}};
+        false -> throw({error, {unwrap('$5'), yecc, "'/' expected on function artity expression **"}})
+    end.
+
 bool_lit -> boolean                : {atom, line('$1'), unwrap('$1')}.
 
 function_call -> var call_params            : {call,        line('$1'), '$1', '$2'}.

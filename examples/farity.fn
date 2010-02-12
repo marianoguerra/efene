@@ -7,4 +7,6 @@ run = fn () {
     # creating a lambda
     Result = lists.map(fn add_one/1, lists.seq(1 10))
     io.format("~p~n", [Result])
+    Result1 = lists.map(fn farity.add_one/1, lists.seq(1 10))
+    io.format("~p~n", [Result1])
 }
