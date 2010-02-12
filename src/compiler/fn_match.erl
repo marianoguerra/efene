@@ -71,7 +71,7 @@ match({'and', Line, A, B}) ->
 match({'or', Line, A, B}) ->
     fn_gen:expr('orelse', Line, match(A), match(B));
 match({'xor', Line, A, B}) ->
-    fn_gen:expr('orelse', Line, match(A), match(B));
+    fn_gen:expr('xor', Line, match(A), match(B));
 
 match({'not' = Op, Line, A}) ->
     fn_gen:expr(Op, Line, match(A));
