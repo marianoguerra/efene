@@ -62,9 +62,15 @@ match({'&', Line, A, B}) ->
 match({'^', Line, A, B}) ->
     fn_gen:expr('bxor', Line, match(A), match(B));
 
+match({'andd', Line, A, B}) ->
+    fn_gen:expr('and', Line, match(A), match(B));
+match({'orr', Line, A, B}) ->
+    fn_gen:expr('or', Line, match(A), match(B));
 match({'and', Line, A, B}) ->
     fn_gen:expr('andalso', Line, match(A), match(B));
 match({'or', Line, A, B}) ->
+    fn_gen:expr('orelse', Line, match(A), match(B));
+match({'xor', Line, A, B}) ->
     fn_gen:expr('orelse', Line, match(A), match(B));
 
 match({'not' = Op, Line, A}) ->

@@ -13,8 +13,8 @@ ShiftOp       = (<<|>>)
 AddOp         = (\+|-)
 MulOp         = (\*|/|%)
 CompOp        = (<|<=|==|===|>=|>|!=|!==)
-BoolAndOp     = and
-BoolOrOp      = or
+BoolAndOp     = (and|andd)
+BoolOrOp      = (or|orr|xor)
 White         = (\s|\t|\\\n)
 Comment       = #.*?
 Open          = \(
