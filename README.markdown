@@ -43,3 +43,4 @@ cd ../examples/
 * [Blog](http://efene.tumblr.com)
 * [Central repo](http://github.com/marianoguerra/efene) (fork this one)
 * [Tracker](http://github.com/marianoguerra/efene/issues)
+* [Rosetta code page](http://rosettacode.org/wiki/Efene)
