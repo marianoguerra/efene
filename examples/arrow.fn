@@ -1,4 +1,8 @@
 
 run = fn () {
-    io.format("~p~n", [(5, 6)->erlang.append_element(7)->erlang.append_element(8)->erlang.append_element(9)])
+    M = erlang
+    F = abs
+    F1 = append_element
+    io.format("~p~n", [(5, 6)->erlang.append_element(7)->M.append_element(8)->erlang.F1(9)])
+    io.format("~p~n", [(1 - 2)->abs()->erlang.F()->M.F()->M.abs()])
 }

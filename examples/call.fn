@@ -1,0 +1,8 @@
+
+run = fn () {
+    M = erlang
+    F = abs
+
+    io.format("~p ~p ~p ~p ~p~n",\
+        [erlang.abs(-1), M.abs(-2), M.F(-3), erlang.F(-4), abs(-5)])
+}

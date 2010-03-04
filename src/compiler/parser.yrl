@@ -126,6 +126,9 @@ arrow_chains -> arrow_chain arrow_chains : ['$1'|'$2'].
 arrow_chains -> arrow_chain : ['$1'].
 arrow_chain -> arrow atom call_params: {line('$1'), '$2', '$3'}.
 arrow_chain -> arrow atom dot atom call_params: {line('$1'), '$2', '$4', '$5'}.
+arrow_chain -> arrow var dot var call_params: {line('$1'), '$2', '$4', '$5'}.
+arrow_chain -> arrow var dot atom call_params: {line('$1'), '$2', '$4', '$5'}.
+arrow_chain -> arrow atom dot var call_params: {line('$1'), '$2', '$4', '$5'}.
 
 farity -> fn atom mul_op integer   :
     case unwrap('$3') == '/' of
@@ -142,10 +145,13 @@ farity -> fn atom dot atom mul_op integer   :
 bool_lit -> boolean                : {atom, line('$1'), unwrap('$1')}.
 
 
-function_call -> var call_params            : {call,        line('$1'), ['$1'], '$2'}.
+function_call -> var call_params            : {call,    line('$1'), ['$1'], '$2'}.
 function_call -> atom call_params           : {call,    line('$1'), ['$1'], '$2'}.
 function_call -> atom dot atom call_params  : {call,    line('$2'), ['$1', '$3'], '$4'}.
-function_call -> function_call call_params  : {call,        line('$1'), ['$1'], '$2'}.
+function_call -> var dot atom call_params   : {call,    line('$2'), ['$1', '$3'], '$4'}.
+function_call -> var dot var call_params    : {call,    line('$2'), ['$1', '$3'], '$4'}.
+function_call -> atom dot var call_params   : {call,    line('$2'), ['$1', '$3'], '$4'}.
+function_call -> function_call call_params  : {call,    line('$1'), ['$1'], '$2'}.
 
 call_params -> open call_arguments close    : lists:flatten('$2').
 call_params -> open close                   : [].
