@@ -7,17 +7,19 @@ Nonterminals
     binary_types concat_expr list_comp bin_comp list_generators bin_generators
     list_generator bin_generator try_expr recv_expr if_expr case_expr case_body
     case_patterns case_pattern catch_patterns catch_pattern if_patterns
-    if_pattern block_expr bool_lit argument farity.
+    if_pattern block_expr bool_lit argument farity arrow_expr arrow_chains
+    arrow_chain.
 
 Terminals
     comp_op add_op mul_op bin_not bool_not match var open close fn sep
     open_list close_list open_block close_block open_bin close_bin integer
     float boolean endl atom string concat_op and_op xor_op or_op shift_op
     send_op split_op dot if when try catch receive after case for in
-    bool_and_op bool_or_op object else char.
+    bool_and_op bool_or_op object else char arrow.
 
 Rootsymbol grammar.
 
+Left 50 arrow.
 Left 100 bool_or_op.
 Left 200 bool_and_op.
 Left 300 comp_op.
@@ -99,7 +101,7 @@ block_expr -> if_expr           : '$1'.
 block_expr -> case_expr         : '$1'.
 block_expr -> recv_expr         : '$1'.
 block_expr -> function_def      : '$1'.
-block_expr -> literal           : '$1'.
+block_expr -> arrow_expr        : '$1'.
 
 literal -> integer              : '$1'.
 literal -> float                : '$1'.
@@ -117,6 +119,14 @@ literal -> bin_comp             : '$1'.
 literal -> char                 : '$1'.
 literal -> farity               : '$1'.
 
+arrow_expr  -> literal arrow_chains: {arrow_call, line('$1'), '$1', '$2'}.
+arrow_expr  -> literal : '$1'.
+
+arrow_chains -> arrow_chain arrow_chains : ['$1'|'$2'].
+arrow_chains -> arrow_chain : ['$1'].
+arrow_chain -> arrow atom call_params: {line('$1'), '$2', '$3'}.
+arrow_chain -> arrow atom dot atom call_params: {line('$1'), '$2', '$4', '$5'}.
+
 farity -> fn atom mul_op integer   :
     case unwrap('$3') == '/' of
         true -> {'fun', line('$1'), {function, unwrap('$2'), unwrap('$4')}};
@@ -131,10 +141,11 @@ farity -> fn atom dot atom mul_op integer   :
 
 bool_lit -> boolean                : {atom, line('$1'), unwrap('$1')}.
 
-function_call -> var call_params            : {call,        line('$1'), '$1', '$2'}.
-function_call -> atom call_params           : {callatom,    line('$1'), ['$1'], '$2'}.
-function_call -> atom dot atom call_params  : {callatom,    line('$2'), ['$1', '$3'], '$4'}.
-function_call -> function_call call_params  : {call,        line('$1'), '$1', '$2'}.
+
+function_call -> var call_params            : {call,        line('$1'), ['$1'], '$2'}.
+function_call -> atom call_params           : {call,    line('$1'), ['$1'], '$2'}.
+function_call -> atom dot atom call_params  : {call,    line('$2'), ['$1', '$3'], '$4'}.
+function_call -> function_call call_params  : {call,        line('$1'), ['$1'], '$2'}.
 
 call_params -> open call_arguments close    : lists:flatten('$2').
 call_params -> open close                   : [].

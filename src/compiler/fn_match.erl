@@ -101,12 +101,27 @@ match({generate=Op, Line, For, In, If}) ->
 match({bc=Op, Line, Exp, Generators}) -> {Op, Line, match(Exp), match_list(Generators)};
 match({b_generate=Op, Line, For, In}) -> {Op, Line, match(For), match(In)};
 match({b_generate=Op, Line, For, In, If}) -> {Op, Line, match(For), match(In), match(If)};
-match({callatom, Line, [Atom], Args}) ->
-    fn_gen:call(Line, Atom, match_list(Args));
-match({callatom, Line, [Package, Function], Args}) ->
-    fn_gen:call(Line, Package, Function, match_list(Args));
-match({call, Line, A, Args}) ->
-    fn_gen:call_expr(Line, match(A), match_list(Args));
+
+match({call, Line, [Function], Args}) ->
+    fn_gen:call(Line, match(Function), match_list(Args));
+match({call, Line, [Package, Function], Args}) ->
+    fn_gen:call(Line, match(Package), match(Function), match_list(Args));
+
+match({arrow_call, Line, Expr, [{_, Function, Args}]}) ->
+    fn_gen:call(Line, match(Function),
+        [match(Expr)|match_list(Args)]);
+match({arrow_call, Line, Expr, [{_, Module, Function, Args}]}) ->
+    fn_gen:call(Line, match(Module), match(Function),
+        [match(Expr)|match_list(Args)]);
+match({arrow_call, Line, Expr, [{_, Function, Args}|T]}) ->
+    FirstCall = fn_gen:call(Line, match(Function),
+        [match(Expr)|match_list(Args)]),
+    chain_call(FirstCall, T);
+match({arrow_call, Line, Expr, [{_, Module, Function, Args}|T]}) ->
+    FirstCall = fn_gen:call(Line, match(Module), match(Function),
+        [match(Expr)|match_list(Args)]),
+    chain_call(FirstCall, T);
+
 match({'=', Line, A, B}) ->
     fn_gen:match(Line, match(A), match(B));
 match({fn, Line, Patterns}) ->
@@ -167,3 +182,18 @@ match_pattern({pattern, {'(', Line, Args}, Guards, {'{', _, Body}}) ->
 
 get_function_arity([]) -> 0;
 get_function_arity([{pattern, {'(', _Line, Arguments}, _, _}|_T]) -> length(Arguments).
+
+chain_call(Expr, [{Line, Function, Args}]) ->
+    fn_gen:call(Line, match(Function),
+        [Expr|match_list(Args)]); % dont match Expr, it's already matched
+chain_call(Expr, [{Line, Module, Function, Args}]) ->
+    fn_gen:call(Line, match(Module), match(Function),
+        [Expr|match_list(Args)]); % dont match Expr, it's already matched
+chain_call(Expr, [{Line, Function, Args}|T]) ->
+    Call = fn_gen:call(Line, match(Function),
+        [Expr|match_list(Args)]), % dont match Expr, it's already matched
+    chain_call(Call, T);
+chain_call(Expr, [{Line, Module, Function, Args}|T]) ->
+    Call = fn_gen:call(Line, match(Module), match(Function),
+        [Expr|match_list(Args)]), % dont match Expr, it's already matched
+    chain_call(Call, T).

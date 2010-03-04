@@ -1,0 +1,4 @@
+
+run = fn () {
+    io.format("~p~n", [(5, 6)->erlang.append_element(7)->erlang.append_element(8)->erlang.append_element(9)])
+}

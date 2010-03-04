@@ -7,9 +7,6 @@ call(Line, Function, Args) ->
 call(Line, Package, Function, Args) ->
     {call, Line, {remote, Line, Package, Function}, Args}.
 
-call_expr(Line, Expr, Args) ->
-    {call, Line, Expr, Args}.
-
 func_def(Line, Name, Arity, Ast) ->
     {function, Line, Name, Arity, Ast}.
 

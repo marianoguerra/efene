@@ -32,6 +32,7 @@ Sep           = ,
 End           = ((\s|\t)*\n)+
 BinNot        = ~
 BoolNot       = not
+Arrow         = ->
 % the string stuff taken from Reia
 String        = "(\\\^.|\\.|[^\"])*"
 Split         = :
@@ -75,7 +76,8 @@ Rules.
 !                        : {token, {send_op,     TokenLine, list_to_atom(TokenChars)}}.
 \^                       : {token, {xor_op,      TokenLine, list_to_atom(TokenChars)}}.
 {Split}                  : {token, {split_op,    TokenLine, list_to_atom(TokenChars)}}.
-{Dot}                    : {token, {dot,    TokenLine, list_to_atom(TokenChars)}}.
+{Dot}                    : {token, {dot,         TokenLine, list_to_atom(TokenChars)}}.
+{Arrow}                  : {token, {arrow,       TokenLine, list_to_atom(TokenChars)}}.
 {White}+                 : skip_token.
 {Comment}{End}           : skip_token.
 {String}                 : build_string(string, TokenChars, TokenLine, TokenLen).
