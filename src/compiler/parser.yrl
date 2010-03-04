@@ -249,9 +249,22 @@ if_pattern -> bool_expr block                          : {pattern, nil, {'(', li
 
 catch_patterns -> catch_pattern catch_patterns         : ['$1'|'$2'].
 catch_patterns -> catch_pattern                        : ['$1'].
-%% TODO: restrict atom to throw, error and exit
-catch_pattern -> open atom literal close block         : {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'}.
-catch_pattern -> atom literal block                    : {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$1', '$2', {var, line('$1'), '_'}]}]}, [], '$3'}.
+catch_pattern -> open atom literal close block         :
+    AtomName = unwrap('$2'),
+    case AtomName == 'throw' orelse AtomName == 'error' orelse AtomName == 'exit' of
+        true ->
+            {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'};
+        false ->
+            throw({error, {AtomName, yecc, "'throw', 'error' or 'exit' expected on catch **"}})
+    end.
+catch_pattern -> atom literal block                    :
+    AtomName = unwrap('$1'),
+    case AtomName == 'throw' orelse AtomName == 'error' orelse AtomName == 'exit' of
+        true ->
+            {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$1', '$2', {var, line('$1'), '_'}]}]}, [], '$3'};
+        false ->
+            throw({error, {AtomName, yecc, "'throw', 'error' or 'exit' expected on catch **"}})
+    end.
 catch_pattern -> open literal close block              : {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
 catch_pattern -> literal block                         : {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$1', {var, line('$1'), '_'}]}]}, [], '$2'}.
 
