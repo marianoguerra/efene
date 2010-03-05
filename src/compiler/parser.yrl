@@ -173,7 +173,6 @@ pattern  -> argument_def when bool_expr block   : {pattern, '$1', ['$3'], '$4'}.
 argument_def -> open arguments close  : {unwrap('$1'), line('$1'), lists:flatten('$2')}.
 argument_def -> open close            : {unwrap('$1'), line('$1'), []}.
 
-% expression -> bool_expr match bool_expr endl    : {unwrap('$2'), line('$2'), '$1', '$3'}.
 arguments -> argument               : ['$1'].
 arguments -> argument sep arguments : ['$1'|'$3'].
 arguments -> argument arguments     : ['$1'|'$2'].
@@ -271,8 +270,10 @@ catch_pattern -> atom literal block                    :
         false ->
             throw({error, {AtomName, yecc, "'throw', 'error' or 'exit' expected on catch **"}})
     end.
-catch_pattern -> open literal close block              : {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
-catch_pattern -> literal block                         : {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$1', {var, line('$1'), '_'}]}]}, [], '$2'}.
+catch_pattern -> open literal close block:
+    {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
+catch_pattern -> literal block:
+    {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$1', {var, line('$1'), '_'}]}]}, [], '$2'}.
 
 recv_expr -> receive case_patterns                          : {'receive', line('$1'), '$2'}.
 recv_expr -> receive case_patterns after literal block      : {'receive', line('$1'), '$2', '$4', '$5'}.
