@@ -24,11 +24,11 @@ Left 100 bool_or_op.
 Left 200 bool_and_op.
 Left 300 comp_op.
 Right 400 concat_op.
-Left 600 and_op.
+Left 500 and_op.
 Left 700 or_op.
 Left 700 xor_op.
 Left 700 add_op.
-Left 700 shift_op.
+Left 800 shift_op.
 Left 800 mul_op.
 Left 900 bin_not.
 Left 900 bool_not.
@@ -72,7 +72,6 @@ concat_expr -> add_expr concat_op concat_expr   : {unwrap('$2'), line('$2'), '$1
 concat_expr -> add_expr                         : '$1'.
 
 add_expr -> mul_expr add_op add_expr    : {unwrap('$2'), line('$2'), '$1', '$3'}.
-add_expr -> mul_expr shift_op add_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}.
 add_expr -> mul_expr or_op add_expr     : {unwrap('$2'), line('$2'), '$1', '$3'}.
 add_expr -> mul_expr xor_op add_expr    : {unwrap('$2'), line('$2'), '$1', '$3'}.
 add_expr -> mul_expr                    : '$1'.
@@ -80,6 +79,7 @@ add_expr -> mul_expr                    : '$1'.
 mul_expr -> unary_expr mul_op mul_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}.
 mul_expr -> unary_expr and_op mul_expr  : {unwrap('$2'), line('$2'), '$1', '$3'}.
 mul_expr -> unary_expr                  : '$1'.
+mul_expr -> unary_expr shift_op mul_expr: {unwrap('$2'), line('$2'), '$1', '$3'}.
 
 unary_expr -> bool_not bool_lit                : {unwrap('$1'), line('$1'), '$2'}.
 unary_expr -> bool_not var                     : {unwrap('$1'), line('$1'), '$2'}.
