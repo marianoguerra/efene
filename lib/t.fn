@@ -1,0 +1,17 @@
+
+assert = fn (Item Fun) {
+    Result = Fun(Item)
+    if Result !== true {
+        throw(assert_failed)
+    } else {
+        Item
+    }
+}
+
+equals = fn (A B) {
+    if A != B {
+        throw(assert_failed)
+    } else {
+        A
+    }
+}

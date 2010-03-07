@@ -1,0 +1,151 @@
+
+each = fn (List Fun) {
+    lists.foreach(Fun List)
+    List
+}
+
+map = fn (List Fun) {
+    lists.map(Fun List)
+}
+
+keep = fn (List Fun) {
+    lists.filter(Fun List)
+}
+
+reject = fn (List Fun) {
+    keep(List fn (X) { not Fun(X) })
+}
+
+flatten = fn (List) {
+    lists.flatten(List)
+}
+
+uniq = fn (List) {
+    notimplemented
+}
+
+tap = fn (List Fun) {
+    Fun(List)
+    List
+}
+
+print = fn (List) {
+    io.format("~p~n" [List])
+    List
+}
+
+times = fn (Num _Fun) when Num < 0 {
+    throw(invalid_times_value)
+} (Num Fun) {
+    times_acc(1 Fun Num)
+}
+
+times_acc = fn (Stop Fun Stop) {
+    Fun(Stop)
+    ok
+} (Count Fun Stop) {
+    Fun(Count)
+    times_acc(Count + 1 Fun Stop)
+}
+
+zip = fn (List NewList) {
+    lists.zip(List NewList)
+}
+
+append = fn (List NewList) {
+    lists.append(List NewList)
+}
+
+length = fn (List) {
+    erlang.length(List)
+}
+
+range = fn (Stop) {
+    range(0 Stop 1 [])
+}
+
+range = fn (to Stop) {
+    range(0 Stop 1 [])
+} (Start Stop) {
+    range(Start Stop 1 [])
+}
+
+range = fn  (Start Stop Step) {
+    range(Start Stop Step [])
+}
+
+range = fn (from Start to Stop by Step) {
+    range(Start Stop Step [])
+}
+
+reverse = fn (List) {
+    lists.reverse(List)
+}
+
+range = fn (from Start to Stop) {
+    range(Start Stop 1 [])
+} (_Start _Stop 0 _Accum) {
+    throw(invalid_step)
+} (Start Stop Step []) when Step > 0 and Start > Stop {
+    throw(invalid_start_stop)
+} (Start Stop Step []) when Step < 0 and Start < Stop {
+    throw(invalid_start_stop)
+} (Start Stop Step Accum) when Step > 0 and Start > Stop {
+    lists.reverse(Accum)
+} (Start Stop Step Accum) when Step < 0 and Start < Stop {
+    lists.reverse(Accum)
+} (Start Stop Step Accum) {
+    range(Start + Step, Stop Step [Start:Accum])
+}
+
+all = fn (List) {
+    all(List fn (Item) { to_bool(Item) })
+}
+
+all = fn (List Fun) {
+    lists.all(Fun List)
+}
+
+any = fn (List) {
+    any(List fn (Item) { to_bool(Item) })
+}
+
+any = fn (List Fun) {
+    lists.any(Fun List)
+}
+
+max = fn (List) {
+    lists.max(List)
+}
+
+max = fn (List Fun) {
+    notimplemented
+}
+
+min = fn (List) {
+    lists.min(List)
+}
+
+min = fn (List Fun) {
+    notimplemented
+}
+
+reduce = fn (List Start Fun) {
+    notimplemented
+}
+
+detect = fn (List Fun) {
+    notimplemented
+}
+
+to_bool = fn (0) {
+    false
+} ([]) {
+    false
+} (0.0) {
+    false
+} ((,)) {
+    false
+} (_) {
+    true
+}
