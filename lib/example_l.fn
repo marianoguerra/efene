@@ -19,7 +19,7 @@ run = fn () {
     # do something with each item
         ->l.each(fn (Item) { io.format("double: ~p~n" [Item * 2]) })\
     # remove the values above 20
-        ->l.reject(fn (Item) { Item > 20 })\
+        ->l.remove(fn (Item) { Item > 20 })\
     # print it
         ->l.print()
 

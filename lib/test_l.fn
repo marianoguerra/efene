@@ -7,7 +7,7 @@ run = fn () {
         ->t.equals([11 10 9 8 7 6 5 4 3])\
         ->l.keep(fn (Item) { Item > 5 })\
         ->t.equals([11 10 9 8 7 6])\
-        ->l.reject(fn (Item) { Item > 10})\
+        ->l.remove(fn (Item) { Item > 10})\
         ->t.equals([10 9 8 7 6])\
         ->l.append([5 4])\
         ->t.equals([10 9 8 7 6 5 4])

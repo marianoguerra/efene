@@ -12,7 +12,7 @@ keep = fn (List Fun) {
     lists.filter(Fun List)
 }
 
-reject = fn (List Fun) {
+remove = fn (List Fun) {
     keep(List fn (X) { not Fun(X) })
 }
 
