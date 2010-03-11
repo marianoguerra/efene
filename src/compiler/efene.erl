@@ -95,6 +95,9 @@ get_module_beam_name(String) ->
     ModuleNameStr  = filename:rootname(File),
     string:concat(ModuleNameStr, ".beam").
 
+eval_expression(Expression) ->
+    io:format("eval: ~p~n", [Expression]).
+
 % command line functions
 
 main(["beam", Dir, File]) ->
@@ -116,7 +119,11 @@ main(["erl", _Dir, File]) ->
 main(["fn", _Dir, File]) ->
     print_efene([File]);
 main(["erl2ast", _Dir, File]) ->
-    print_from_erlang(File).
+    print_from_erlang(File);
+main(["eval", Expression]) ->
+    eval_expression(Expression);
+main(Args) ->
+    io:format("Unknown arguments: ~p~n", [Args]).
 
 display_error({badmatch,{error,{Line,lexer,{illegal,Character}},_}}) ->
     io:format("~B: Illegal character '~s'~n", [Line, Character]);

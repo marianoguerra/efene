@@ -1,0 +1,11 @@
+fun = fn ((_ T, (N _))=A) {
+    io.format("~p ~p ~p~n" [T N A])
+}
+
+run = fn () {
+    A = (complex tuple, (1 true))
+    (_ T, (N _)) = A
+
+    io.format("~p ~p~n" [T N])
+    fun(A)
+}

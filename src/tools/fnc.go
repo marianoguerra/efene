@@ -8,10 +8,11 @@ import "path"
 import "syscall"
 import "strings"
 
-var outputDir = flag.String("o", ".", "output directory")
-var showHelp = flag.Bool("h", false, "show this help")
-var verbose = flag.Bool("v", false, "be verbose")
+var outputDir  = flag.String("o", ".", "output directory")
+var showHelp   = flag.Bool("h", false, "show this help")
+var verbose    = flag.Bool("v", false, "be verbose")
 var outputType = flag.String("t", "beam", "output type (beam, ast, tree, lex, erl, fn, erl2ast)")
+var eval       = flag.String("c", "", "eval expression")
 
 const fnSuffix = ".fn"
 
@@ -26,6 +27,10 @@ func checkArgs() {
 	if *showHelp {
 		flag.Usage()
 		os.Exit(0)
+	}
+
+	if *eval != "" {
+		return
 	}
 
 	if flag.NArg() == 0 {
@@ -106,24 +111,55 @@ func abspath(thepath string) (string, os.Error) {
 	return thepath, nil
 }
 
-func main() {
-	checkArgs()
-	output, absError := abspath(*outputDir)
-	if absError != nil {
-		showErrorAndQuit(absError.String(), -1)
+func getPath(name string) string {
+	path, pathError := exec.LookPath(name)
+
+	if pathError != nil {
+		showErrorAndQuit("Can't find " + name + " program", -1)
 	}
 
+	return path
+}
+
+func run(args []string) {
 	programPath, programError := getProgramPath()
 	if programError != nil {
 		showErrorAndQuit(programError.String(), -1)
 	}
 
-	erlPath, pathError := exec.LookPath("erl")
+	erlPath := getPath("erl")
 
-	if pathError != nil {
-		showErrorAndQuit("Can't find erl program", -1)
+	if *verbose {
+		fmt.Println("cd " + programPath)
+		fmt.Print(erlPath+ " ")
+		printArray(args, true)
 	}
 
+	pid, error := os.ForkExec(erlPath, args, os.Environ(), programPath,
+		[]*os.File{os.Stdin, os.Stdout, os.Stderr})
+
+	if error != nil {
+		showErrorAndQuit(error.String(), -1)
+	}
+
+	os.Wait(pid, 0)
+}
+
+func main() {
+	checkArgs()
+	erlPath := getPath("erl")
+
+	if *eval != "" {
+		evalArgs := []string{erlPath, "-run", "efene", "main",
+			"eval", *eval, "-run", "init", "stop", "-noshell"}
+		run(evalArgs)
+		return
+	}
+
+	output, absError := abspath(*outputDir)
+	if absError != nil {
+		showErrorAndQuit(absError.String(), -1)
+	}
 
 	head := []string{erlPath, "-run", "efene", "main", *outputType, output}
 	tail := []string{"-run", "init", "stop", "-noshell"}
@@ -142,18 +178,6 @@ func main() {
 		args[i] = tail[i - start]
 	}
 
-	if *verbose {
-		fmt.Println("cd " + programPath)
-		fmt.Print(erlPath + " ")
-		printArray(args, true)
-	}
-
-	pid, error := os.ForkExec(erlPath, args, os.Environ(), programPath, []*os.File{os.Stdin, os.Stdout, os.Stderr})
-
-	if error != nil {
-		showErrorAndQuit(error.String(), -1)
-	}
-
-	os.Wait(pid, 0)
+	run(args)
 }
 
