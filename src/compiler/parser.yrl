@@ -35,6 +35,8 @@ Left 900 bool_not.
 Left 1000 open.
 
 grammar -> expr_list                            : '$1'.
+% for eval
+grammar -> expressions                          : '$1'.
 
 expr_list -> endl expr_list                     : ['$2'].
 expr_list -> fun_expression                     : ['$1'].

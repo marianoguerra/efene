@@ -29,7 +29,7 @@ Match         = =
 Bool          = (true|false)
 Fn            = fn
 Sep           = ,
-End           = ((\s|\t)*\n)+
+End           = (((\s|\t)*\n)+|;((\s|\t)*\n)*)
 BinNot        = ~
 BoolNot       = not
 Arrow         = ->

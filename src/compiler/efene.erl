@@ -3,7 +3,13 @@
 
 get_ast(From, String) ->
     Ast = lists:map(fun(Line) -> fn_match:match(Line) end, get_tree(From, String)),
-    fn_gen:module(get_module_name(String), flatten1level(Ast)).
+
+    if
+        From == string ->
+            Ast;
+        From == file ->
+            fn_gen:module(get_module_name(String), flatten1level(Ast))
+    end.
 
 print_ast(From, String) ->
     io:format("~p~n", [get_ast(From, String)]).
@@ -96,7 +102,11 @@ get_module_beam_name(String) ->
     string:concat(ModuleNameStr, ".beam").
 
 eval_expression(Expression) ->
-    io:format("eval: ~p~n", [Expression]).
+    Bindings = erl_eval:new_bindings(),
+    Ast = get_ast(string, Expression ++ "\n"),
+    %io:format("eval: ~p~n", [Ast]),
+    Result = erl_eval:exprs(Ast, Bindings),
+    io:format("eval: ~p~n", [Result]).
 
 % command line functions
 
