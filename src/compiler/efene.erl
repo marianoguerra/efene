@@ -103,10 +103,13 @@ get_module_beam_name(String) ->
 
 eval_expression(Expression) ->
     Bindings = erl_eval:new_bindings(),
-    Ast = get_ast(string, Expression ++ "\n"),
-    %io:format("eval: ~p~n", [Ast]),
-    Result = erl_eval:exprs(Ast, Bindings),
-    io:format("eval: ~p~n", [Result]).
+    try
+        Ast = get_ast(string, Expression ++ "\n"),
+        Result = erl_eval:exprs(Ast, Bindings),
+        io:format("eval: ~p~n", [Result])
+    catch _:Error ->
+        io:format("~p~n", [Error])
+    end.
 
 % command line functions
 
