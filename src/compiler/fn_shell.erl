@@ -10,8 +10,8 @@ loop(Bindings) ->
 
     if
         Expression /= eof ->
-            Ast = efene:get_ast(string, Expression),
             try
+                Ast = efene:get_ast(string, Expression),
                 {value, Result, NewBindings} = erl_eval:exprs(Ast, Bindings),
                 io:format("~p~n", [Result]),
                 loop(NewBindings)
