@@ -132,6 +132,8 @@ main(["erl2ast", _Dir, File]) ->
     print_from_erlang(File);
 main(["eval", Expression]) ->
     eval_expression(Expression);
+main(["shell"]) ->
+    fn_shell:start();
 main(Args) ->
     io:format("Unknown arguments: ~p~n", [Args]).
 

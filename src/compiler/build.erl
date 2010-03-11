@@ -10,6 +10,8 @@ build() ->
     compile:file(fn_match),
     compile:file(fn_prettypr),
     compile:file(fn_gen),
+    compile:file(fn_shell),
+    compile:file(fn_info),
     compile:file(efene),
     ok.
 

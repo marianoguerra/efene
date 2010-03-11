@@ -13,6 +13,7 @@ var showHelp   = flag.Bool("h", false, "show this help")
 var verbose    = flag.Bool("v", false, "be verbose")
 var outputType = flag.String("t", "beam", "output type (beam, ast, tree, lex, erl, fn, erl2ast)")
 var eval       = flag.String("c", "", "eval expression")
+var shell      = flag.Bool("s", false, "shell")
 
 const fnSuffix = ".fn"
 
@@ -29,7 +30,7 @@ func checkArgs() {
 		os.Exit(0)
 	}
 
-	if *eval != "" {
+	if *eval != "" || *shell{
 		return
 	}
 
@@ -148,6 +149,13 @@ func run(args []string) {
 func main() {
 	checkArgs()
 	erlPath := getPath("erl")
+
+	if *shell {
+		shellArgs := []string{erlPath, "-run", "efene", "main",
+			"shell", "-run", "init", "stop", "-noshell"}
+		run(shellArgs)
+		return
+	}
 
 	if *eval != "" {
 		evalArgs := []string{erlPath, "-run", "efene", "main",
