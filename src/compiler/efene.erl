@@ -101,12 +101,18 @@ get_module_beam_name(String) ->
     ModuleNameStr  = filename:rootname(File),
     string:concat(ModuleNameStr, ".beam").
 
-eval_expression(Expression) ->
+eval_expression(Expression, Lang) ->
     Bindings = erl_eval:new_bindings(),
     try
         Ast = get_ast(string, Expression ++ "\n"),
-        Result = erl_eval:exprs(Ast, Bindings),
-        io:format("eval: ~p~n", [Result])
+        {_, Result, _} = erl_eval:exprs(Ast, Bindings),
+        if
+            Lang == efene ->
+                io:format(">>> ~s~n~p~n", [Expression, Result]);
+            Lang == erlang ->
+                io:format("1> ~s~n~p~n",
+                    [erl_prettypr:format(erl_syntax:form_list(Ast)), Result])
+        end
     catch _:Error ->
         io:format("~p~n", [Error])
     end.
@@ -134,7 +140,9 @@ main(["fn", _Dir, File]) ->
 main(["erl2ast", _Dir, File]) ->
     print_from_erlang(File);
 main(["eval", Expression]) ->
-    eval_expression(Expression);
+    eval_expression(Expression, efene);
+main(["eeval", Expression]) ->
+    eval_expression(Expression, erlang);
 main(["shell"]) ->
     fn_shell:start();
 main(Args) ->

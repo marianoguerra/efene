@@ -13,6 +13,7 @@ var showHelp   = flag.Bool("h", false, "show this help")
 var verbose    = flag.Bool("v", false, "be verbose")
 var outputType = flag.String("t", "beam", "output type (beam, ast, tree, lex, erl, fn, erl2ast)")
 var eval       = flag.String("c", "", "eval expression")
+var eeval      = flag.String("C", "", "eval expression and print it in efene and erlang")
 var shell      = flag.Bool("s", false, "shell")
 
 const fnSuffix = ".fn"
@@ -30,7 +31,7 @@ func checkArgs() {
 		os.Exit(0)
 	}
 
-	if *eval != "" || *shell{
+	if *eval != "" || *eeval != "" || *shell{
 		return
 	}
 
@@ -157,9 +158,17 @@ func main() {
 		return
 	}
 
-	if *eval != "" {
+	if *eval != "" || *eeval != "" {
+		option := "eval"
+		expr   := *eval
+
+		if *eeval != "" {
+			option = "eeval"
+			expr   = *eeval
+		}
+
 		evalArgs := []string{erlPath, "-run", "efene", "main",
-			"eval", *eval, "-run", "init", "stop", "-noshell"}
+			option, expr, "-run", "init", "stop", "-noshell"}
 		run(evalArgs)
 		return
 	}
