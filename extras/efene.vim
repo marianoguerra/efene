@@ -33,8 +33,11 @@ syn keyword efeneConditional	if else for in receive after case when try catch ob
 syn keyword efeneBoolean		true false
 
 syn keyword	efeneFunction      fn 
-syn match	efeneBraces	   "[{}\[\]]"
+syn match	efeneBraces	   "[{}\[\]\.,]"
 syn match	efeneParens	   "[()]"
+syn match	efeneOperator	   "[\+\-\*/\|\^\&~=]"
+syn keyword     efeneOperator	   and or andd orr xor not
+syn match	efeneBraces	   "->"
 
 syn sync fromstart
 syn sync maxlines=100
@@ -61,6 +64,7 @@ if version >= 508 || !exists("did_efene_syn_inits")
   HiLink efeneNumber			Number	
   HiLink efeneConditional		Conditional
   HiLink efeneOperator			Operator
+  HiLink efeneParens			Function
   HiLink efeneType			Type
   HiLink efeneStatement			Statement
   HiLink efeneFunction			Function
