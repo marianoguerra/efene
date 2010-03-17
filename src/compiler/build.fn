@@ -8,8 +8,8 @@ build = fn () {
     compile.file(fn_match)
     compile.file(fn_prettypr)
     compile.file(fn_gen)
-    compile.file(fn_shell)
-    compile.file(efene)
+    efene.compile("fn_shell.fn")
     efene.compile("fn_info.fn")
+    compile.file(efene)
     ok
 }

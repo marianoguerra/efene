@@ -1,0 +1,24 @@
+
+start = fn () {
+    fn_info.print_banner()
+    loop(erl_eval.new_bindings())
+}
+
+loop = fn (Bindings) {
+    Expression = io.get_line(">>> ")
+
+    if Expression != eof {
+        try {
+            Ast = efene.get_ast(string Expression)
+            (value Result NewBindings) = erl_eval.exprs(Ast Bindings)
+            io.format("~p~n" [Result])
+            loop(NewBindings)
+        } catch _ Error {
+            io.format("~p~n" [Error])
+            loop(Bindings)
+        }
+    } else {
+        io.format("~n")
+        ok
+    }
+}
