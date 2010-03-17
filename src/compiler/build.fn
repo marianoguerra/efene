@@ -6,10 +6,9 @@ build = fn () {
     compile.file(parser)
     compile.file(fn_record)
     compile.file(fn_match)
-    compile.file(fn_prettypr)
     efene.compile("fn_gen.fn")
     efene.compile("fn_shell.fn")
     efene.compile("fn_info.fn")
-    compile.file(efene)
+    efene.compile("efene.fn")
     ok
 }
