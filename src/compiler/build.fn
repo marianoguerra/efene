@@ -5,7 +5,7 @@ build = fn () {
     compile.file(lexer)
     compile.file(parser)
     compile.file(fn_record)
-    compile.file(fn_match)
+    efene.compile("fn_match.fn")
     efene.compile("fn_gen.fn")
     efene.compile("fn_shell.fn")
     efene.compile("fn_info.fn")
