@@ -1,14 +1,14 @@
 Nonterminals
-    expr_list grammar literal expressions expression function_def argument_def
-    arguments block fun_expression obj_expression object_def fields
-    function_call call_arguments call_argument call_params send_expr
-    bool_and_expr bool_expr comp_expr add_expr mul_expr unary_expr patterns
-    pattern list list_items tuple tuple_items binary binary_items binary_item
-    binary_types concat_expr list_comp bin_comp list_generators bin_generators
-    list_generator bin_generator try_expr recv_expr if_expr case_expr case_body
-    case_patterns case_pattern catch_patterns catch_pattern if_patterns
-    if_pattern block_expr bool_lit argument farity arrow_expr arrow_chains
-    arrow_chain.
+    expr_list grammar literal expressions expression match_expr
+    function_def argument_def arguments block fun_expression obj_expression
+    object_def fields function_call call_arguments call_argument call_params
+    send_expr bool_and_expr bool_expr comp_expr add_expr mul_expr unary_expr
+    patterns pattern list list_items tuple tuple_items binary binary_items
+    binary_item binary_types concat_expr list_comp bin_comp list_generators
+    bin_generators list_generator bin_generator try_expr recv_expr if_expr
+    case_expr case_body case_patterns case_pattern catch_patterns catch_pattern
+    if_patterns if_pattern block_expr bool_lit argument farity arrow_expr
+    arrow_chains arrow_chain.
 
 Terminals
     comp_op add_op mul_op bin_not bool_not match var open close fn sep
@@ -55,11 +55,13 @@ fields -> atom                                  : [unwrap('$1')].
 expressions -> expression expressions           : ['$1'|'$2'].
 expressions -> expression                       : ['$1'].
 
-expression -> bool_expr match bool_expr endl    : {unwrap('$2'), line('$2'), '$1', '$3'}.
 expression -> send_expr endl                    : '$1'.
 
 send_expr -> bool_expr send_op send_expr        : {unwrap('$2'), line('$2'), '$1', '$3'}.
-send_expr -> bool_expr : '$1'.
+send_expr -> match_expr                         : '$1'.
+
+match_expr -> bool_expr match bool_expr         : {unwrap('$2'), line('$2'), '$1', '$3'}.
+match_expr -> bool_expr                         : '$1'.
 
 bool_expr -> bool_and_expr bool_or_op bool_expr : {unwrap('$2'), line('$2'), '$1', '$3'}.
 bool_expr -> bool_and_expr                      : '$1'.
@@ -162,7 +164,7 @@ call_arguments -> call_argument                     : ['$1'].
 call_arguments -> call_argument sep call_arguments  : ['$1'|'$3'].
 call_arguments -> call_argument call_arguments      : ['$1'|'$2'].
 
-call_argument -> bool_expr : '$1'.
+call_argument -> match_expr : '$1'.
 
 function_def -> fn patterns : {unwrap('$1'), line('$1'), '$2'}.
 function_def -> block       : {'fn', line('$1'), [{pattern,{'(',line('$1'),[]},[],'$1'}]}.
@@ -188,19 +190,19 @@ block -> open_block send_expr close_block     : {unwrap('$1'), line('$1'), ['$2'
 list -> open_list close_list            : {nil, line('$1')}.
 list -> open_list list_items close_list : '$2'.
 
-list_items -> bool_expr sep list_items      : {cons, line('$1'), '$1', '$3'}.
-list_items -> bool_expr list_items          : {cons, line('$1'), '$1', '$2'}.
-list_items -> bool_expr                     : {cons, line('$1'), '$1', {nil, line('$1')}}.
-list_items -> bool_expr split_op bool_expr  : {cons, line('$1'), '$1', '$3'}.
+list_items -> match_expr sep list_items      : {cons, line('$1'), '$1', '$3'}.
+list_items -> match_expr list_items          : {cons, line('$1'), '$1', '$2'}.
+list_items -> match_expr                     : {cons, line('$1'), '$1', {nil, line('$1')}}.
+list_items -> match_expr split_op match_expr : {cons, line('$1'), '$1', '$3'}.
 
 tuple -> open sep close             : {tuple, line('$1'), []}.
 tuple -> open tuple_items close     : {tuple, line('$1'), '$2'}.
 
-tuple_items -> bool_expr sep tuple_items    : ['$1'|'$3'].
-tuple_items -> bool_expr tuple_items        : ['$1'|'$2'].
-tuple_items -> bool_expr sep bool_expr      : ['$1','$3'].
-tuple_items -> bool_expr bool_expr          : ['$1','$2'].
-tuple_items -> bool_expr sep                : ['$1'].
+tuple_items -> match_expr sep tuple_items    : ['$1'|'$3'].
+tuple_items -> match_expr tuple_items        : ['$1'|'$2'].
+tuple_items -> match_expr sep match_expr     : ['$1','$3'].
+tuple_items -> match_expr bool_expr         : ['$1','$2'].
+tuple_items -> match_expr sep                : ['$1'].
 
 binary -> open_bin binary_items close_bin   : {bin, line('$1'), lists:flatten('$2')}.
 
