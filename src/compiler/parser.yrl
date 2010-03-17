@@ -181,8 +181,7 @@ arguments -> argument               : ['$1'].
 arguments -> argument sep arguments : ['$1'|'$3'].
 arguments -> argument arguments     : ['$1'|'$2'].
 
-argument -> unary_expr                : '$1'.
-argument -> unary_expr match var      : {unwrap('$2'), line('$2'), '$1', '$3'}.
+argument -> match_expr                : '$1'.
 
 block -> open_block expressions close_block   : {unwrap('$1'), line('$1'), '$2'}.
 block -> open_block send_expr close_block     : {unwrap('$1'), line('$1'), ['$2']}.
