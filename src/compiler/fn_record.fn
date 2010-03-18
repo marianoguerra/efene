@@ -10,14 +10,14 @@ first_upper = fn (Atom) when is_atom(Atom) {
 
 # convert a list of atoms representing the fields of a record
 # to a list of arguments for the inner fun
-fields_to_args = fn (Line, Fields) {
-    [fn_gen.var(Line, first_upper(Field)) for Field in Fields]
+fields_to_args = fn (Line Fields) {
+    [fn_gen.var(Line first_upper(Field)) for Field in Fields]
 }
 
 # create the record instantiation
-fields_to_record = fn (Line, Name, Fields) {
-    (record,Line,Name, \
-        [(record_field, Line, fn_gen.atom(Line, Field), fn_gen.var(Line, first_upper(Field))) for Field in Fields])
+fields_to_record = fn (Line Name Fields) {
+    (record Line Name \
+        [(record_field Line fn_gen.atom(Line Field) fn_gen.var(Line first_upper(Field))) for Field in Fields])
 }
 
 make_get_name = fn (Name) {
@@ -27,81 +27,81 @@ make_get_name = fn (Name) {
 make_set_name = fn (Name) {
     list_to_atom("set" ++ atom_to_list(Name))
 }
-build_getters = fn (Line, Name, VarName, Fields) {
-    [(clause,Line, \
-        [fn_gen.atom(Line, get), fn_gen.atom(Line, Field)], [], \
-        [(record_field, Line, fn_gen.var(Line, VarName), Name, fn_gen.atom(Line, Field))]) for Field in Fields]
+build_getters = fn (Line Name VarName Fields) {
+    [(clause Line  \
+        [fn_gen.atom(Line  get)  fn_gen.atom(Line  Field)]  []  \
+        [(record_field  Line  fn_gen.var(Line  VarName)  Name  fn_gen.atom(Line  Field))]) for Field in Fields]
 }
 
-build_setters = fn (Line, Name, VarName, Fields) {
-    [(clause,Line, \
-     [fn_gen.atom(Line, make_set_name(Field)), fn_gen.var(Line, 'Value')], \
-     [], \
-     [(call, Line, fn_gen.var(Line, 'Self'), \
-      [fn_gen.var(Line, 'Self'), \
-       (record,Line, fn_gen.var(Line, VarName), Name, \
-        [(record_field,Line,fn_gen.atom(Line,Field),fn_gen.var(Line, 'Value'))])])]) for Field in Fields]
+build_setters = fn (Line Name VarName Fields) {
+    [(clause Line  \
+     [fn_gen.atom(Line make_set_name(Field)) fn_gen.var(Line 'Value')] \
+     [] \
+     [(call Line fn_gen.var(Line 'Self') \
+      [fn_gen.var(Line 'Self') \
+       (record Line fn_gen.var(Line VarName) Name \
+        [(record_field Line fn_gen.atom(Line Field) fn_gen.var(Line 'Value'))])])]) for Field in Fields]
 }
 
 # build an expressions that means a list of atoms
-build_list_of_atoms = fn ([Last], Line) {
-    fn_gen.cons(Line, fn_gen.atom(Line, Last), fn_gen.nil(Line))
-} ([Head:Tail], Line) {
-    fn_gen.cons(Line, fn_gen.atom(Line, Head), build_list_of_atoms(Tail, Line))
+build_list_of_atoms = fn ([Last] Line) {
+    fn_gen.cons(Line fn_gen.atom(Line Last) fn_gen.nil(Line))
+} ([Head:Tail] Line) {
+    fn_gen.cons(Line fn_gen.atom(Line Head) build_list_of_atoms(Tail Line))
 }
 
-build_common_functions = fn (Line, Name, VarName, Fields) {
-         [(clause,Line, \
-          [(atom,Line,has),(var,Line,'Field')], \
-          [], \
-          [(call,Line, \
-            (remote,Line,(atom,Line,lists),(atom,Line,member)), \
-            [(var,Line,'Field'), build_list_of_atoms(Fields, Line)])]), \
-             (clause,Line,[(atom,Line,to), (atom,Line,record)],[],[(var,Line,VarName)]), \
-         (clause,Line, \
-             [(atom,Line,to), (atom,Line,fields)], \
-          [], \
-          [(tuple,Line, \
-            [(atom, Line, Field) for Field in Fields])]), \
-             (clause,Line,[(atom,Line,to), (atom,Line,name)],[],[(atom,Line,Name)])]
+build_common_functions = fn (Line Name VarName Fields) {
+         [(clause Line \
+          [(atom Line has) (var Line 'Field')] \
+          [] \
+          [(call Line \
+            (remote Line, (atom Line lists) (atom Line member)) \
+            [(var Line 'Field')  build_list_of_atoms(Fields Line)])]) \
+             (clause Line [(atom Line to) (atom Line record)] [] [(var Line VarName)]) \
+         (clause Line \
+             [(atom Line to) (atom Line fields)] \
+          [] \
+          [(tuple Line \
+            [(atom Line Field) for Field in Fields])]) \
+             (clause Line [(atom Line to) (atom Line name)] [] [(atom Line Name)])]
 }
 
-build_constructor_from_record = fn (Line, Name, Fields) {
-(function,Line,Name,1, \
-    [(clause,Line, \
-         [fields_to_record(Line, Name, Fields)], \
-         [], \
-         [fn_gen.call(Line, fn_gen.atom(Line, Name), [fn_gen.var(Line, first_upper(Field)) for Field in Fields])])])
+build_constructor_from_record = fn (Line Name Fields) {
+(function Line Name 1 \
+    [(clause Line \
+         [fields_to_record(Line Name Fields)] \
+         [] \
+         [fn_gen.call(Line fn_gen.atom(Line Name) [fn_gen.var(Line first_upper(Field)) for Field in Fields])])])
 }
 
-build_constructor_from_fields = fn (Line, Name, Fields) {
+build_constructor_from_fields = fn (Line Name Fields) {
     VarName = first_upper(Name)
 
-    Methods = build_getters(Line, Name, VarName, Fields) ++ \
-        build_setters(Line, Name, VarName, Fields) ++ \
-        build_common_functions(Line, Name, VarName, Fields)
+    Methods = build_getters(Line Name VarName Fields) ++ \
+        build_setters(Line Name VarName Fields) ++ \
+        build_common_functions(Line Name VarName Fields)
 
-    (function,Line,Name,length(Fields), \
-     [(clause,Line, \
-        fields_to_args(Line, Fields), \
-       [], \
-       [(match,Line, \
-         (var,Line,'Obj'), \
-        fields_to_record(Line, Name, Fields)), \
-        (match,Line, \
-         (var,Line,'Wrapper'), \
-         ('fun',Line, \
-          (clauses, \
-           [(clause,Line, \
-             [(var,Line,'Self'),(var,Line,VarName)], \
-             [], \
-             [('fun',Line, \
-               (clauses, Methods))])]))), \
-        (call,Line,(var,Line,'Wrapper'),[(var,Line,'Wrapper'),(var,Line,'Obj')])])])
+    (function Line Name length(Fields)  \
+     [(clause Line \
+        fields_to_args(Line Fields) \
+       [] \
+       [(match Line \
+         (var Line 'Obj') \
+        fields_to_record(Line Name Fields)) \
+        (match Line \
+         (var Line 'Wrapper') \
+         ('fun' Line \
+          (clauses \
+           [(clause Line \
+             [(var Line 'Self') (var Line VarName)]  \
+             [] \
+             [('fun' Line \
+               (clauses Methods))])]))) \
+        (call Line, (var Line 'Wrapper') [(var Line 'Wrapper') (var Line 'Obj')])])])
 }
 
-build = fn (Line, Name, Fields) {
-    [(attribute, Line, record,(Name, [(record_field, Line, (atom, Line, Field)) for Field in Fields])), \
-    build_constructor_from_record(Line, Name, Fields), \
-    build_constructor_from_fields(Line, Name, Fields)]
+build = fn (Line Name Fields) {
+    [(attribute Line record, (Name [(record_field Line, (atom Line Field)) for Field in Fields])) \
+    build_constructor_from_record(Line Name Fields) \
+    build_constructor_from_fields(Line Name Fields)]
 }
