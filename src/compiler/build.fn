@@ -4,7 +4,7 @@ build = fn () {
     yecc.file(parser)
     compile.file(lexer)
     compile.file(parser)
-    compile.file(fn_record)
+    efene.compile("fn_record.fn")
     efene.compile("fn_match.fn")
     efene.compile("fn_gen.fn")
     efene.compile("fn_shell.fn")
