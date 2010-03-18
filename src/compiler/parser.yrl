@@ -191,17 +191,22 @@ list -> open_list list_items close_list : '$2'.
 
 list_items -> match_expr sep list_items      : {cons, line('$1'), '$1', '$3'}.
 list_items -> match_expr list_items          : {cons, line('$1'), '$1', '$2'}.
+list_items -> match_expr sep endl list_items : {cons, line('$1'), '$1', '$4'}.
+list_items -> match_expr endl list_items     : {cons, line('$1'), '$1', '$3'}.
 list_items -> match_expr                     : {cons, line('$1'), '$1', {nil, line('$1')}}.
 list_items -> match_expr split_op match_expr : {cons, line('$1'), '$1', '$3'}.
 
 tuple -> open sep close             : {tuple, line('$1'), []}.
 tuple -> open tuple_items close     : {tuple, line('$1'), '$2'}.
 
-tuple_items -> match_expr sep tuple_items    : ['$1'|'$3'].
-tuple_items -> match_expr tuple_items        : ['$1'|'$2'].
-tuple_items -> match_expr sep match_expr     : ['$1','$3'].
-tuple_items -> match_expr bool_expr         : ['$1','$2'].
-tuple_items -> match_expr sep                : ['$1'].
+tuple_items -> match_expr sep tuple_items      : ['$1'|'$3'].
+tuple_items -> match_expr tuple_items          : ['$1'|'$2'].
+tuple_items -> match_expr sep endl tuple_items : ['$1'|'$4'].
+tuple_items -> match_expr endl tuple_items     : ['$1'|'$3'].
+tuple_items -> match_expr sep match_expr       : ['$1','$3'].
+tuple_items -> match_expr match_expr           : ['$1','$2'].
+tuple_items -> match_expr endl match_expr      : ['$1','$3'].
+tuple_items -> match_expr sep                  : ['$1'].
 
 binary -> open_bin binary_items close_bin   : {bin, line('$1'), lists:flatten('$2')}.
 
