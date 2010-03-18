@@ -140,15 +140,26 @@ eval_expression = fn (Expression Lang) {
     }
 }
 
-# command line functions
-
-main = fn (["beam" Dir File]) {
+compile_file = fn (Dir File) {
     try {
         io.format("compiling ~s~n" [File])
         compile(File Dir)
     } catch _ Error {
         display_error(Error)
     }
+}
+
+compile_files = fn (Dir [File]) {
+    compile_file(Dir File)
+} (Dir [File:Files]) {
+    compile_file(Dir File)
+    compile_files(Dir Files)
+}
+
+# command line functions
+
+main = fn (["beam" Dir:Files]) {
+    compile_files(Dir Files)
 } (["ast" _Dir File]) {
     print_ast(file File)
 } (["tree" _Dir File]) {

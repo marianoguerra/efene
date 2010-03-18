@@ -2,11 +2,6 @@
 echo "building efene compiler modules"
 fnc build.fn
 fn build build | grep -v "{yyaction"  | grep -v "{yeccpars" | grep -v "{yy_"
-fnc fn_record.fn
-fnc fn_match.fn
-fnc fn_gen.fn
-fnc fn_shell.fn
-fnc fn_info.fn
-fnc efene.fn
+fnc fn_record.fn fn_match.fn fn_gen.fn fn_shell.fn fn_info.fn efene.fn
 cp *.beam ../../bin
 rm lexer.erl parser.erl
