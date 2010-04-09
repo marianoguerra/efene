@@ -30,4 +30,6 @@ run = fn () {
     # build a new person from the record of another one
     P2 = person(P1(to record))
     Print(P2(to record))
+    R = P2(to record)
+    Print(person.R.firstname)
 }

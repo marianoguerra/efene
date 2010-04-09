@@ -147,6 +147,8 @@ match = fn ([]) {
     fn_gen.clause(Line match_list(Pattern) [] match_list(Body))
 } ( (clause Line Pattern Guard, ('{' _BodyLine Body) ) ) {
     fn_gen.clause(Line match_list(Pattern) [match(Guard)] match_list(Body))
+} ( ('record' Line Name Var Field) ) {
+    fn_gen.rec_field(Line Name match(Var) match(Field))
 } (Exp) {
     (error Exp)
 }

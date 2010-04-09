@@ -102,3 +102,7 @@ atom = fn (Line Name)  {
 nil = fn (Line)  {
     (nil Line)
 }
+
+rec_field = fn (Line Name Var Field) {
+    (record_field Line Var Name Field)
+}
