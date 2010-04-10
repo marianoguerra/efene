@@ -12,8 +12,10 @@ run = fn () {
     if (Num === 1) {
         # with parens
         io.format("is one~n")
-    } Num === 2 {
+    } else if Num === 2 {
         io.format("is two~n")
+    } else {
+        io.format("not one not two~n")
     }
 
     if Num === 99 {

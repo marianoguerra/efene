@@ -260,7 +260,6 @@ try_expr -> try block catch catch_patterns                  : {'try', line('$1')
 try_expr -> try block catch catch_patterns else block       : {'try', line('$1'), '$2', '$4', '$6'}.
 
 if_expr  -> if if_patterns                       : {'if', line('$1'), '$2'}.
-if_expr  -> if if_patterns else block            : {'if', line('$1'), '$2', '$4'}.
 
 case_expr -> case bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.
 case_expr -> case bool_expr case_body else block : {'case', line('$1'), '$2', '$3', '$5'}.
@@ -272,7 +271,9 @@ case_patterns -> case_pattern                          : ['$1'].
 case_pattern -> bool_expr block                        : {'clause', line('$1'), ['$1'], [], '$2'}.
 case_pattern -> bool_expr when bool_expr block         : {'clause', line('$1'), ['$1'], ['$3'], '$4'}.
 
-if_patterns -> if_pattern if_patterns                  : ['$1'|'$2'].
+if_patterns -> if_pattern else block                   :
+    ['$1'|[{pattern, nil, {'(', line('$2'), [{atom, line('$2'), true}]}, '$3'}]].
+if_patterns -> if_pattern else if if_patterns          : ['$1'|'$4'].
 if_patterns -> if_pattern                              : ['$1'].
 if_pattern -> bool_expr block                          : {pattern, nil, {'(', line('$1'), ['$1']}, '$2'}.
 

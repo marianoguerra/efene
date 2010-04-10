@@ -27,10 +27,6 @@ if_expr = fn (Line Patterns)  {
     ('if' Line Patterns)
 }
 
-if_expr = fn (Line Patterns ElseLine ElseBody)  {
-    ('if' Line Patterns ++ [clause(Line [] [[(atom ElseLine true)]] ElseBody)])
-}
-
 case_expr = fn (Line Condition Patterns)  {
     ('case' Line Condition Patterns)
 }

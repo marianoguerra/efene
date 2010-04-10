@@ -4,7 +4,7 @@ get_ast = fn (From String) {
 
     if From == string {
         Ast
-    } From == file {
+    } else if From == file {
         fn_gen.module(get_module_name(String) flatten1level(Ast))
     }
 }
@@ -132,7 +132,7 @@ eval_expression = fn (Expression Lang) {
         (_ Result _) = erl_eval.exprs(Ast Bindings)
         if Lang == efene {
             io.format(">>> ~s~n~p~n" [Expression Result])
-        } Lang == erlang {
+        } else if Lang == erlang {
             io.format("1> ~s~n~p~n" [erl_prettypr.format(erl_syntax.form_list(Ast)) Result])
         }
     } catch _ Error {
@@ -184,7 +184,7 @@ main = fn (["beam" Dir:Files]) {
 
 display_error = fn ( (badmatch, (error, (Line lexer, (illegal Character)) _)) )  {
     io.format("~B. Illegal character '~s'~n" [Line Character])
-} ( (badmatch, (error, (Line parser [Message Item]))) ) {
+} ( (badmatch, (error, (Line parser, [Message Item]))) ) {
     io.format("~B. ~s~s~n" [Line Message Item])
 } (Unknown) {
     io.format("Error. ~p~n" [Unknown])

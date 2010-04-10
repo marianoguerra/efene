@@ -137,8 +137,6 @@ match = fn ([]) {
     fn_gen.try_expr(Line match(TryBody) match_function_body(CatchPatterns) match(FinallyBody))
 } ( ('if' Line Patterns) ) {
     fn_gen.if_expr(Line match_function_body(Patterns))
-} ( ('if' Line Patterns, ('{' ElseLine ElseBody) ) ) {
-    fn_gen.if_expr(Line match_function_body(Patterns) ElseLine match(ElseBody))
 } ( ('case' Line Condition Patterns) ) {
     fn_gen.case_expr(Line match(Condition) match_list(Patterns))
 } ( ('case' Line Condition Patterns, ('{' ElseLine ElseBody) ) ) {
