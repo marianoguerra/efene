@@ -5,10 +5,10 @@ trycatch = fn (Arg){
     } catch (throw 1) {
     	# catch with parenthesis
         io.format("throw 1~n")
-    } exit 2 {
+    } catch exit 2 {
     	# catch without parenthesis
         io.format("exit 2~n")
-    } error (some fancy tuple 3) {
+    } catch error (some fancy tuple 3) {
         io.format("error~n")
     } else {
         io.format("else~n")

@@ -255,9 +255,9 @@ bin_generators -> bin_generator                  : '$1'.
 bin_generator -> for bool_expr in bool_expr              : [{b_generate, line('$1'), '$2', '$4'}].
 bin_generator -> for bool_expr in bool_expr if bool_expr : [{b_generate, line('$1'), '$2', '$4'},'$6'].
 
-try_expr -> try block                                       : {'try', line('$1'), '$2'}.
-try_expr -> try block catch catch_patterns                  : {'try', line('$1'), '$2', '$4'}.
-try_expr -> try block catch catch_patterns else block       : {'try', line('$1'), '$2', '$4', '$6'}.
+try_expr -> try block                                 : {'try', line('$1'), '$2'}.
+try_expr -> try block catch_patterns                  : {'try', line('$1'), '$2', '$3'}.
+try_expr -> try block catch_patterns else block       : {'try', line('$1'), '$2', '$3', '$5'}.
 
 if_expr  -> if if_patterns                       : {'if', line('$1'), '$2'}.
 
@@ -282,30 +282,30 @@ if_pattern -> bool_expr block                          : {pattern, nil, {'(', li
 
 catch_patterns -> catch_pattern catch_patterns         : ['$1'|'$2'].
 catch_patterns -> catch_pattern                        : ['$1'].
-catch_pattern -> open atom literal close block         :
+catch_pattern -> catch open atom literal close block:
+    AtomName = unwrap('$3'),
+    case AtomName == 'throw' orelse AtomName == 'error' orelse AtomName == 'exit' of
+        true ->
+            {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$3', '$4', {var, line('$1'), '_'}]}]}, [], '$6'};
+        false ->
+            throw({error, {AtomName, yecc, "'throw', 'error' or 'exit' expected on catch **"}})
+    end.
+catch_pattern -> catch atom literal block:
     AtomName = unwrap('$2'),
     case AtomName == 'throw' orelse AtomName == 'error' orelse AtomName == 'exit' of
         true ->
-            {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'};
+            {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$4'};
         false ->
             throw({error, {AtomName, yecc, "'throw', 'error' or 'exit' expected on catch **"}})
     end.
-catch_pattern -> atom literal block                    :
-    AtomName = unwrap('$1'),
-    case AtomName == 'throw' orelse AtomName == 'error' orelse AtomName == 'exit' of
-        true ->
-            {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$1', '$2', {var, line('$1'), '_'}]}]}, [], '$3'};
-        false ->
-            throw({error, {AtomName, yecc, "'throw', 'error' or 'exit' expected on catch **"}})
-    end.
-catch_pattern -> var literal block         :
-    {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$1', '$2', {var, line('$1'), '_'}]}]}, [], '$3'}.
-catch_pattern -> open var literal close block         :
-    {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$5'}.
-catch_pattern -> open literal close block:
-    {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$4'}.
-catch_pattern -> literal block:
-    {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$1', {var, line('$1'), '_'}]}]}, [], '$2'}.
+catch_pattern -> catch var literal block:
+    {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}]}, [], '$4'}.
+catch_pattern -> catch open var literal close block:
+    {pattern, {'(', line('$1'), [{tuple, line('$1'), ['$3', '$4', {var, line('$1'), '_'}]}]}, [], '$6'}.
+catch_pattern -> catch open literal close block:
+    {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$3', {var, line('$1'), '_'}]}]}, [], '$5'}.
+catch_pattern -> catch literal block:
+    {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}]}, [], '$3'}.
 
 recv_expr -> receive receive_patterns                          : {'receive', line('$1'), '$2'}.
 recv_expr -> receive receive_patterns after literal block      : {'receive', line('$1'), '$2', '$4', '$5'}.
