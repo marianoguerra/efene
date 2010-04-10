@@ -103,7 +103,10 @@ nil = fn (Line)  {
     (nil Line)
 }
 
-# fn_gen.record(Line Name match(Var) match_list(Fields))
+record = fn (Line Name Fields) {
+    (record Line Name Fields)
+}
+
 record = fn (Line Name Var Fields) {
     (record Line Var Name Fields)
 }

@@ -8,7 +8,7 @@ Nonterminals
     bin_generators list_generator bin_generator try_expr recv_expr if_expr
     case_expr case_body case_patterns case_pattern catch_patterns catch_pattern
     if_patterns if_pattern block_expr bool_lit argument farity arrow_expr
-    arrow_chains arrow_chain rec rec_set attr_sets attr_set.
+    arrow_chains arrow_chain rec rec_set rec_new attr_sets attr_set.
 
 Terminals
     comp_op add_op mul_op bin_not bool_not match var open close fn sep
@@ -118,6 +118,7 @@ literal -> var                  : '$1'.
 literal -> atom                 : '$1'.
 literal -> rec                  : '$1'.
 literal -> rec_set              : '$1'.
+literal -> rec_new              : '$1'.
 literal -> open bool_expr close : '$2'.
 literal -> function_call        : '$1'.
 literal -> list_comp            : '$1'.
@@ -129,6 +130,9 @@ rec -> atom dot var dot atom : {'record', line('$2'), unwrap('$1'), '$3', '$5'}.
 
 rec_set -> atom dot var open_list attr_sets close_list :
     {record_set, line('$2'), unwrap('$1'), '$3', '$5'}.
+
+rec_new -> atom open_list attr_sets close_list :
+    {record_new, line('$2'), unwrap('$1'), '$3'}.
 
 attr_sets -> attr_set attr_sets : ['$1'|'$2'].
 attr_sets -> attr_set           : ['$1'].

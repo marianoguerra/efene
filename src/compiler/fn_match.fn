@@ -151,6 +151,8 @@ match = fn ([]) {
     fn_gen.rec_field(Line Name match(Var) match(Field))
 } ( (record_set Line Name Var Fields) ) {
     fn_gen.record(Line Name match(Var) match_list(Fields))
+} ( (record_new Line Name Fields) ) {
+    fn_gen.record(Line Name match_list(Fields))
 } ( (attr_set Line Name Expr) ) {
     # {record_field,LINE,Rep(Field_k),Rep(E_k)}
     fn_gen.rec_field(Line match(Name) match(Expr))
