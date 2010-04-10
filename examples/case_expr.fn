@@ -1,16 +1,49 @@
 run = fn () {
-    case random.uniform(4) {
-        1 {
+    switch random.uniform(4) {
+        case 1:
             # without parens
             io.format("one!~n")
-        } (2) {
+            break
+        case (2):
             # with parens
             io.format("two!~n")
-        } (3) {
+            break
+        case (3):
             io.format("three!~n")
-        }
-    } else {
-        io.format("else~n")
+            break
     }
 
+    switch random.uniform(4) {
+        case 1:
+            # without parens
+            io.format("one!~n")
+            break
+        case (2):
+            # with parens
+            io.format("two!~n")
+            break
+        case (3):
+            io.format("three!~n")
+            break
+        else:
+            io.format("else~n")
+            break
+    }
+
+    switch random.uniform(4) {
+        case 10:
+            # without parens
+            io.format("one!~n")
+            break
+        case (12):
+            # with parens
+            io.format("two!~n")
+            break
+        case (13):
+            io.format("three!~n")
+            break
+        else:
+            io.format("else~n")
+            break
+    }
 }

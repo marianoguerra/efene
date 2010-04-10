@@ -1,21 +1,21 @@
 Nonterminals
-    expr_list grammar literal expressions expression match_expr
-    function_def argument_def arguments block fun_expression obj_expression
-    object_def fields function_call call_arguments call_argument call_params
-    send_expr bool_and_expr bool_expr comp_expr add_expr mul_expr unary_expr
-    patterns pattern list list_items tuple tuple_items binary binary_items
-    binary_item binary_types concat_expr list_comp bin_comp list_generators
-    bin_generators list_generator bin_generator try_expr recv_expr if_expr
-    case_expr case_body case_patterns case_pattern catch_patterns catch_pattern
-    if_patterns if_pattern block_expr bool_lit argument farity arrow_expr
-    arrow_chains arrow_chain rec rec_set rec_new attr_sets attr_set.
+    expr_list grammar literal expressions expression match_expr function_def
+    argument_def arguments block fun_expression obj_expression object_def
+    fields function_call call_arguments call_argument call_params send_expr
+    bool_and_expr bool_expr comp_expr add_expr mul_expr unary_expr patterns
+    pattern list list_items tuple tuple_items binary binary_items binary_item
+    binary_types concat_expr list_comp bin_comp list_generators bin_generators
+    list_generator bin_generator try_expr recv_expr if_expr case_expr case_body
+    receive_patterns receive_pattern case_patterns case_pattern catch_patterns
+    catch_pattern if_patterns if_pattern block_expr bool_lit argument farity
+    arrow_expr arrow_chains arrow_chain rec rec_set rec_new attr_sets attr_set.
 
 Terminals
     comp_op add_op mul_op bin_not bool_not match var open close fn sep
     open_list close_list open_block close_block open_bin close_bin integer
     float boolean endl atom string concat_op and_op xor_op or_op shift_op
-    send_op split_op dot if when try catch receive after case for in
-    bool_and_op bool_or_op object else char arrow.
+    send_op split_op dot if when try catch receive after switch case break for
+    in bool_and_op bool_or_op object else char arrow.
 
 Rootsymbol grammar.
 
@@ -261,15 +261,18 @@ try_expr -> try block catch catch_patterns else block       : {'try', line('$1')
 
 if_expr  -> if if_patterns                       : {'if', line('$1'), '$2'}.
 
-case_expr -> case bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.
-case_expr -> case bool_expr case_body else block : {'case', line('$1'), '$2', '$3', '$5'}.
+case_expr -> switch bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.
 
-case_body -> open_block case_patterns endl close_block : '$2'.
+case_body -> open_block case_patterns close_block : '$2'.
+case_body -> open_block case_patterns else split_op endl expressions break endl close_block :
+    '$2' ++ [{'clause', line('$4'), [{var, line('$4'), '_'}], [], {'{', line('$4'), '$6'}}].
 
 case_patterns -> case_pattern case_patterns            : ['$1'|'$2'].
 case_patterns -> case_pattern                          : ['$1'].
-case_pattern -> bool_expr block                        : {'clause', line('$1'), ['$1'], [], '$2'}.
-case_pattern -> bool_expr when bool_expr block         : {'clause', line('$1'), ['$1'], ['$3'], '$4'}.
+case_pattern -> case bool_expr split_op endl expressions break endl :
+    {'clause', line('$1'), ['$2'], [], {'{', line('$1'), '$5'}}.
+case_pattern -> case bool_expr when bool_expr split_op endl expressions break endl :
+    {'clause', line('$1'), ['$2'], ['$4'], {'{', line('$1'), '$7'}}.
 
 if_patterns -> if_pattern else block                   :
     ['$1'|[{pattern, nil, {'(', line('$2'), [{atom, line('$2'), true}]}, '$3'}]].
@@ -304,8 +307,14 @@ catch_pattern -> open literal close block:
 catch_pattern -> literal block:
     {pattern, {'(', line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$1', {var, line('$1'), '_'}]}]}, [], '$2'}.
 
-recv_expr -> receive case_patterns                          : {'receive', line('$1'), '$2'}.
-recv_expr -> receive case_patterns after literal block      : {'receive', line('$1'), '$2', '$4', '$5'}.
+recv_expr -> receive receive_patterns                          : {'receive', line('$1'), '$2'}.
+recv_expr -> receive receive_patterns after literal block      : {'receive', line('$1'), '$2', '$4', '$5'}.
+
+receive_patterns -> receive_pattern receive_patterns            : ['$1'|'$2'].
+receive_patterns -> receive_pattern                          : ['$1'].
+receive_pattern -> bool_expr block                        : {'clause', line('$1'), ['$1'], [], '$2'}.
+receive_pattern -> bool_expr when bool_expr block         : {'clause', line('$1'), ['$1'], ['$3'], '$4'}.
+
 
 Erlang code.
 

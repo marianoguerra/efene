@@ -112,6 +112,8 @@ is_reserved("catch") -> true;
 is_reserved("receive") -> true;
 is_reserved("after") -> true;
 is_reserved("case") -> true;
+is_reserved("switch") -> true;
+is_reserved("break") -> true;
 is_reserved("when") -> true;
 is_reserved("object") -> true;
 is_reserved("for") -> true;
