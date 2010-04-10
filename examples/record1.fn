@@ -1,5 +1,11 @@
 person = object(firstname lastname mail)
 
+is_bob = fn (person[firstname="Bob"]) {
+    true
+} (_) {
+    false
+}
+
 run = fn () {
     Print = fn (X) { io.format("~p~n" [X]) }
     P = person("mariano" "guerra" "mail")
@@ -11,4 +17,6 @@ run = fn () {
 
     R2 = person[firstname="Bob" lastname="Esponja" mail="bob@esponja.com"]
     Print(R2)
+    Print(is_bob(R1))
+    Print(is_bob(R2))
 }
