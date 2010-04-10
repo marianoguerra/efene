@@ -103,6 +103,16 @@ nil = fn (Line)  {
     (nil Line)
 }
 
+# fn_gen.record(Line Name match(Var) match_list(Fields))
+record = fn (Line Name Var Fields) {
+    (record Line Var Name Fields)
+}
+
+# to set a field to a value
+rec_field = fn (Line Name Val) {
+    (record_field Line Name Val)
+}
+
 rec_field = fn (Line Name Var Field) {
     (record_field Line Var Name Field)
 }

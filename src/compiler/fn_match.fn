@@ -149,6 +149,11 @@ match = fn ([]) {
     fn_gen.clause(Line match_list(Pattern) [match(Guard)] match_list(Body))
 } ( ('record' Line Name Var Field) ) {
     fn_gen.rec_field(Line Name match(Var) match(Field))
+} ( (record_set Line Name Var Fields) ) {
+    fn_gen.record(Line Name match(Var) match_list(Fields))
+} ( (attr_set Line Name Expr) ) {
+    # {record_field,LINE,Rep(Field_k),Rep(E_k)}
+    fn_gen.rec_field(Line match(Name) match(Expr))
 } (Exp) {
     (error Exp)
 }
