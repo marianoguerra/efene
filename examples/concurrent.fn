@@ -15,7 +15,7 @@ wait = fn (N) {
     }
 }
 
-run = fn () {
+public run = fn () {
     spawn(concurrent say, [self() "Enjoy"])
     spawn(concurrent say, [self() "Roseta"])
     spawn(concurrent say, [self() "Code"])

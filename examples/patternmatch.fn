@@ -6,7 +6,7 @@ test = fn (('+' = Op Num)) {
     io.format("~p ~p~n", [Op Num])
 }
 
-run = fn () {
+public run = fn () {
     A = (complex tuple, (1 true))
     (_ T, (N _)) = A
 

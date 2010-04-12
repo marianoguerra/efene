@@ -4,7 +4,7 @@ foo = fn ((a _ _) = T, stuff = A) {
     io.format("starts with b: ~p ~p~n" [T A])
 }
 
-run = fn () {
+public run = fn () {
     foo((a 1 false), stuff)
     foo((b 2 true), hi)
 }

@@ -24,7 +24,7 @@ squares3 = fn (Numbers) {
     [N * N for N in Numbers]
 }
 
-run = fn () {
+public run = fn () {
     Numbers = [1 3 5 7]
     io.format("squares1 : ~p~n" [squares1(Numbers)])
     io.format("squares2a: ~p~n" [squares2a(Numbers)])

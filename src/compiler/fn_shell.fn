@@ -1,5 +1,5 @@
 
-start = fn () {
+public start = fn () {
     fn_info.print_banner()
     loop(erl_eval.new_bindings())
 }

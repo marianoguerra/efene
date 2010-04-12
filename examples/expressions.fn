@@ -1,6 +1,6 @@
 # some expressions (and a lambda)
 
-run = fn () {
+public run = fn () {
     Print = fn (Expr) {
         io.format("~p~n" [Expr])
     }

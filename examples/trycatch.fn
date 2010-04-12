@@ -23,7 +23,7 @@ make_error = fn (1) {
     erlang.error((some fancy tuple 3))
 }
 
-run = fn () {
+public run = fn () {
     trycatch(1)
     trycatch(2)
     trycatch(3)

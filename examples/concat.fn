@@ -1,6 +1,6 @@
 # http://rosettacode.org/wiki/String_concatenation
 
-run = fn () {
+public run = fn () {
     S = "hello"
     io.format("~s~n" [S ++ " lite" ++ "ral"])
     S1 = S ++ " lite" ++ "ral"

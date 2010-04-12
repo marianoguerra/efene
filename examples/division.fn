@@ -5,7 +5,7 @@ divide = fn (_A 0) {
 	A / B
 }
 
-run = fn () {
+public run = fn () {
 	Helper = fn (A B) {
 		io.format("~p/~p=~p~n" [A B divide(A B)])
 	}

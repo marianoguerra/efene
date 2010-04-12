@@ -1,4 +1,4 @@
-run = fn () {
+public run = fn () {
 	io.format("testing receive: ")
     receive (Something) when is_integer(Something) {
     	Something + 1

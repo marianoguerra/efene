@@ -3,4 +3,4 @@ version = { "0.3" }
 
 banner = { "efene " ++ version() ++ " exit with Ctrl+D" }
 
-print_banner = { io.format("~s~n" [banner()]) }
+public print_banner = { io.format("~s~n" [banner()]) }

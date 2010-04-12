@@ -1,4 +1,4 @@
-run = fn () {
+public run = fn () {
     switch random.uniform(4) {
         case 1:
             # without parens

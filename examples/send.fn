@@ -6,7 +6,7 @@ loop = fn () {
     loop()
 }
 
-run = fn () {
+public run = fn () {
     Pid = spawn(fn loop/0)
     Pid1 = spawn(fn loop/0)
     Pid ! Pid1 ! 1

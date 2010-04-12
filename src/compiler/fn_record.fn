@@ -20,13 +20,10 @@ fields_to_record = fn (Line Name Fields) {
         [(record_field Line fn_gen.atom(Line Field) fn_gen.var(Line first_upper(Field))) for Field in Fields])
 }
 
-make_get_name = fn (Name) {
-    list_to_atom("get" ++ atom_to_list(Name))
-}
-
 make_set_name = fn (Name) {
     list_to_atom("set" ++ atom_to_list(Name))
 }
+
 build_getters = fn (Line Name VarName Fields) {
     [(clause Line
         [fn_gen.atom(Line  get)  fn_gen.atom(Line  Field)]  []
@@ -100,7 +97,7 @@ build_constructor_from_fields = fn (Line Name Fields) {
         (call Line, (var Line 'Wrapper') [(var Line 'Wrapper') (var Line 'Obj')])])])
 }
 
-build = fn (Line Name Fields) {
+public build = fn (Line Name Fields) {
     [(attribute Line record, (Name [(record_field Line, (atom Line Field)) for Field in Fields]))
     build_constructor_from_record(Line Name Fields)
     build_constructor_from_fields(Line Name Fields)]

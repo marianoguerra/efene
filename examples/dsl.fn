@@ -9,7 +9,7 @@ draw = fn (line from X1 Y1 to X2 Y2) {
 	io.format("paint a square from ~p, ~p to ~p, ~p~n" [X1 Y1 X2 Y2])
 }
 
-run = fn () {
+public run = fn () {
 	draw(dot at 10 20)
 	draw(line from 10 20 to 20 20)
 	draw(square from 10 20 to 20 20)

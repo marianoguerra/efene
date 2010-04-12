@@ -1,6 +1,6 @@
 person = object(firstname lastname mail)
 
-run = fn () {
+public run = fn () {
     # helper function
     Print = fn (X) { io.format("~p~n" [X]) }
     # create an "object"

@@ -1,5 +1,5 @@
 
-run = fn () {
+public run = fn () {
     io.format("0xff  : ~B~n" [0xff])
     io.format("0xFF  : ~B~n" [0xFF])
     io.format("0o777 : ~B~n" [0o777])

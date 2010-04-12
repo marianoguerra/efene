@@ -1,5 +1,5 @@
 
-run = fn () {
+public run = fn () {
     Num = random.uniform(2)
 
     if Num === 1 {

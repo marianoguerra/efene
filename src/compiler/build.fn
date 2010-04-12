@@ -1,5 +1,5 @@
 
-build = fn () {
+public build = fn () {
     leex.file(lexer)
     yecc.file(parser)
     compile.file(lexer)

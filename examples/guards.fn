@@ -8,7 +8,7 @@ print_type = fn (Thing) when is_integer(Thing) {
     io.format("I dont know the type of ~p~n", [Thing])
 }
 
-run = fn () {
+public run = fn () {
     print_type(4)
     print_type(true)
     print_type([1 2 3 4])

@@ -1,5 +1,5 @@
 
-match = fn ([]) {
+public match = fn ([]) {
     []
 } ([_:_] = List) {
     match_list(List)
@@ -125,6 +125,9 @@ match = fn ([]) {
     fn_gen.fun_def(Line match_fun_body(Patterns))
 } ( (fun_def Line Name, ('fn' _Line Patterns) ) ) {
     fn_gen.func_def(Line Name get_function_arity(Patterns) match_function_body(Patterns))
+} ( (public_fun_def Line Name Body) ) {
+    # public function is the same as a function, the export is made on efene.fn
+    match( (fun_def Line Name Body) )
 } ( (obj_def Line Name Fields) ) {
     fn_record.build(Line Name Fields)
 } ( ('receive' Line Patterns) ) {
@@ -190,10 +193,20 @@ match_pattern = fn ( (pattern nil, ('(' Line Guard) ('{' _Line Body) ) ) {
      fn_gen.clause(Line [match(Arg) for Arg in Args] [match_list(Guards)] match_list(Body))
 }
 
-get_function_arity = fn ([]) {
+public get_function_arity = fn ([]) {
     0
 } ([(pattern, ('(' _Line Arguments) _ _):_T]) {
     length(Arguments)
+} ( (fun_def _Line _Name, ('fn' _Line Patterns) ) ) {
+    get_function_arity(Patterns)
+} ( (public_fun_def _Line _Name, ('fn' _Line Patterns) ) ) {
+    get_function_arity(Patterns)
+}
+
+public get_function_name = fn ( (fun_def _line Name _Body) ) {
+    Name
+}( (public_fun_def _line Name _Body) ) {
+    Name
 }
 
 chain_call = fn (Expr [(Line Function Args)]) {

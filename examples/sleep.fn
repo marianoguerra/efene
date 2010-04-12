@@ -1,4 +1,4 @@
-run = fn () {
+public run = fn () {
     io.format("Sleeping...~n")
     # in millisecons
     timer.sleep(1000)

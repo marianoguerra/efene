@@ -1,5 +1,5 @@
 
-run = fn () {
+public run = fn () {
     M = erlang
     F = abs
     F1 = append_element

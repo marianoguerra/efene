@@ -1,5 +1,5 @@
 
-run = fn () {
+public run = fn () {
     M = erlang
     F = abs
 

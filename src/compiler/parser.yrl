@@ -45,6 +45,11 @@ expr_list -> fun_expression expr_list           : ['$1'|'$2'].
 expr_list -> obj_expression expr_list           : ['$1'|'$2'].
 
 fun_expression -> atom match function_def endl  : {fun_def, line('$1'), unwrap('$1'), '$3'}.
+fun_expression -> atom atom match function_def endl :
+    case unwrap('$1') == 'public' of
+        true -> {public_fun_def, line('$1'), unwrap('$2'), '$4'};
+        false -> throw({error, {unwrap('$1'), yecc, "'public' expected on function declaration to make it public**"}})
+    end.
 
 obj_expression -> atom match object_def endl    : {obj_def, line('$1'), unwrap('$1'), '$3'}.
 object_def -> object open fields close          : '$3'.

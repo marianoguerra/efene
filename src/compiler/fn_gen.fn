@@ -1,117 +1,117 @@
 
-call = fn (Line Function Args)  {
+public call = fn (Line Function Args)  {
     (call Line Function Args)
 }
 
-call= fn (Line Package Function Args)  {
+public call= fn (Line Package Function Args)  {
     (call Line, (remote Line Package Function) Args)
 }
 
-func_def = fn (Line Name Arity Ast)  {
+public func_def = fn (Line Name Arity Ast)  {
     (function Line Name Arity Ast)
 }
 
-fun_def = fn (Line Patterns)  {
+public fun_def = fn (Line Patterns)  {
     ('fun' Line Patterns)
 }
 
-try_expr = fn (Line Body Patterns)  {
+public try_expr = fn (Line Body Patterns)  {
     ('try' Line Body [] Patterns [])
 }
 
-try_expr = fn (Line Body Patterns Finally)  {
+public try_expr = fn (Line Body Patterns Finally)  {
     ('try' Line Body [] Patterns Finally)
 }
 
-if_expr = fn (Line Patterns)  {
+public if_expr = fn (Line Patterns)  {
     ('if' Line Patterns)
 }
 
-case_expr = fn (Line Condition Patterns)  {
+public case_expr = fn (Line Condition Patterns)  {
     ('case' Line Condition Patterns)
 }
 
-case_expr = fn (Line Condition Patterns ElseLine ElseBody)  {
+public case_expr = fn (Line Condition Patterns ElseLine ElseBody)  {
     ('case' Line Condition Patterns ++ [clause(Line [(var ElseLine '_')] [] ElseBody)])
 }
 
-clause = fn (Line Pattern Guard Body)  {
+public clause = fn (Line Pattern Guard Body)  {
     (clause Line Pattern Guard Body)
 }
 
-receive_expr = fn (Line Patterns)  {
+public receive_expr = fn (Line Patterns)  {
     ('receive' Line Patterns)
 }
 
-receive_expr = fn (Line Patterns After AfterBody)  {
+public receive_expr = fn (Line Patterns After AfterBody)  {
     ('receive' Line Patterns After AfterBody)
 }
 
-module = fn (Name Ast)  {
-    [(attribute 1 module Name) (attribute 1 compile export_all)] ++ Ast
+public module = fn (Name Ast PublicFuns)  {
+    [(attribute 1 module Name) (attribute 1 export PublicFuns)] ++ Ast
 }
 
-match = fn (Line Ast1 Ast2)  {
+public match = fn (Line Ast1 Ast2)  {
     (match Line Ast1 Ast2)
 }
 
-expr = fn (Op Line Ast1)  {
+public expr = fn (Op Line Ast1)  {
     (op Line Op Ast1)
 }
 
-expr = fn (Op Line Ast1 Ast2)  {
+public expr = fn (Op Line Ast1 Ast2)  {
     (op Line Op Ast1 Ast2)
 }
 
-clauses = fn (Patterns)  {
+public clauses = fn (Patterns)  {
     (clauses Patterns)
 }
 
-tuple = fn (Line Items)  {
+public tuple = fn (Line Items)  {
     (tuple Line Items)
 }
 
-cons = fn (Line Head Tail)  {
+public cons = fn (Line Head Tail)  {
     (cons Line Head Tail)
 }
 
-op = fn (Line Op First)  {
+public op = fn (Line Op First)  {
     (Op Line First)
 }
 
-op = fn (Line Op First Second)  {
+public op = fn (Line Op First Second)  {
     (Op Line First Second)
 }
 
-op = fn (Line Op First Second Third)  {
+public op = fn (Line Op First Second Third)  {
     (Op Line First Second Third)
 }
 
-var = fn (Line Name)  {
+public var = fn (Line Name)  {
     (var Line Name)
 }
 
-atom = fn (Line Name)  {
+public atom = fn (Line Name)  {
     (atom Line Name)
 }
 
-nil = fn (Line)  {
+public nil = fn (Line)  {
     (nil Line)
 }
 
-record = fn (Line Name Fields) {
+public record = fn (Line Name Fields) {
     (record Line Name Fields)
 }
 
-record = fn (Line Name Var Fields) {
+public record = fn (Line Name Var Fields) {
     (record Line Var Name Fields)
 }
 
 # to set a field to a value
-rec_field = fn (Line Name Val) {
+public rec_field = fn (Line Name Val) {
     (record_field Line Name Val)
 }
 
-rec_field = fn (Line Name Var Field) {
+public rec_field = fn (Line Name Var Field) {
     (record_field Line Var Name Field)
 }

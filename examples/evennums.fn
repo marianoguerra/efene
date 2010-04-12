@@ -8,7 +8,7 @@ even2 = fn (Numbers) {
     [Number for Number in Numbers if Number % 2 == 0]
 }
 
-run = fn () {
+public run = fn () {
     Numbers = lists.seq(1 15)
     io.format("even1: ~p~n" [even1(Numbers)])
     io.format("even2: ~p~n" [even2(Numbers)])

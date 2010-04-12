@@ -6,6 +6,6 @@ pythag = fn (N) {
          if A + B + C <= N and A * A + B * B == C * C]
 }
 
-run = fn () {
+public run = fn () {
     io.format("~p~n" [pythag(20)])
 }
