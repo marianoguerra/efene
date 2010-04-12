@@ -7,3 +7,4 @@ do
 	echo "running $name"; 
 	../bin/fn $name run;
 done
+

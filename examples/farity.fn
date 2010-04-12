@@ -1,4 +1,4 @@
-add_one = fn (Number) {
+public add_one = fn (Number) {
     Number + 1
 }
 

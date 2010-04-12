@@ -1,0 +1,26 @@
+first = fn (F) { F() }
+ 
+second = fn () { io.format("hello~n") }
+ 
+public run = fn () {
+    # passing the function specifying the name and arity
+    # arity: the number of arguments it accepts
+    first(fn second/0)
+ 
+    # passing an anonymous function (or lambda) that
+    # accepts 0 arguments (no need to write fn ())
+    first({ io.format("hello~n") })
+ 
+    # more verbose version
+    first(fn () { io.format("hello~n") })
+ 
+    # holding a reference to the function in a variable
+    # in 3 different ways
+    F1 = fn second/0
+    F2 = fn () { io.format("hello~n") }
+    F3 = { io.format("hello~n") }
+ 
+    first(F1)
+    first(F2)
+    first(F3)
+}

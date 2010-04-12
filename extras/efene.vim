@@ -32,7 +32,7 @@ syn match   efeneNumber	       "-\=\<\d\+L\=\>\|0[xob][0-9a-fA-F]\+\>"
 syn keyword efeneConditional	if else for in receive after switch case break when try catch object
 syn keyword efeneBoolean		true false
 
-syn keyword	efeneFunction      fn 
+syn keyword	efeneFunction      public fn 
 syn match	efeneBraces	   "[{}\[\]\.,]"
 syn match	efeneParens	   "[()]"
 syn match	efeneOperator	   "[\+\-\*/\|\^\&~=]"
