@@ -1,7 +1,7 @@
 #!/bin/sh
 
-cd compiler
+cd tools
 sh build.sh
-cd ../tools
+cd ../compiler
 sh build.sh
 

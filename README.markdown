@@ -28,6 +28,8 @@ cd efene/src/
 ### build the binaries
 ./build.sh
 
+a binary of fnc is provided for linux (32 bits) if you are on other OS or architecture you will need the go programming language compilers installed and set up.
+
 ### go to the examples folder
 cd ../examples/
 
