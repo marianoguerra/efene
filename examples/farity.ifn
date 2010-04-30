@@ -1,0 +1,13 @@
+
+one = fn (A)
+    (A,)
+
+two = fn (A, B)
+    (B, A)
+
+public run = fn ()
+    One = fn one:1
+    Two = fn two:2
+
+    io.format("One: ~p~nTwo: ~p~n", [One(1), Two(1, 2)])
+

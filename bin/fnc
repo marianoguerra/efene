@@ -1,0 +1,72 @@
+#!/bin/bash
+
+OUTPUTDIR='.'
+TYPE='beam'
+LASTARG=${!#}
+ 
+while getopts ":o:ht:c:C:i:I:se" opt; do
+  case $opt in
+    o)
+        OUTPUTDIR=$OPTARG
+        ;;
+    h)
+	echo "usage: "
+	echo " to compile: fnc [-o PATH] file.EXT"
+	echo "  -o: the path where the compiled file is created"
+	echo "  EXT: can be 'fn' for efene and 'ifn' for ifene"
+	echo "  examples:"
+	echo "   # compile helloworld.fn and put the result in home"
+	echo "   fnc -o ~ helloworld.fn"
+	echo "   # compile helloworld.ifn and put the result in the current directory"
+	echo "   fnc helloworld.ifn"
+	echo "   # compile with all the options"
+	echo "   fnc -t beam -o . helloworld.ifn"
+	echo
+	echo " -t: type to convert, valid types: lex, tree, erl"
+	echo
+	echo " to run a shell: fnc -s"
+	echo
+	echo " to eval code in efene: fnc -c EXPR"
+	echo " to eval code in efene and print the output in erlang: fnc -C EXPR"
+	echo " EXPR is the expression you want to evaluate, for example \"A = 1\""
+        exit 0
+        ;;
+    s)
+        fnc.sh shell
+        exit $?
+        ;;
+    t)
+        TYPE=$OPTARG
+        ;;
+    c)
+        fnc.sh eval "\"$OPTARG\""
+        exit $?
+        ;;
+    C)
+        fnc.sh erleval "\"$OPTARG\""
+        exit $?
+        ;;
+    \?)
+echo "Invalid option: -$OPTARG" >&2
+        exit 1
+        ;;
+    :)
+        echo "Option -$OPTARG requires an argument." >&2
+        exit 1
+        ;;
+  esac
+done
+
+if [ "$TYPE" == "beam" ];
+then
+    if [ "$#" -lt "1" ];
+    then
+        echo "Program name expected" $OPTARG >&2
+        exit 1
+    fi
+
+    fnc.sh $TYPE $LASTARG $OUTPUTDIR
+else
+    fnc.sh $TYPE $LASTARG
+fi
+exit $?

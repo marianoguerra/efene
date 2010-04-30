@@ -1,0 +1,9 @@
+
+person = record(firstname, lastname, mail="none")
+
+public run = fn ()
+    P = person[firstname="mariano", lastname="guerra", mail="no@spam.com"]
+    io.format("firstname: ~s~n", [person.P.firstname])
+    P1 = person.P[firstname="Mariano", lastname="Guerra"]
+    io.format("firstname: ~s~n", [person.P1.firstname])
+

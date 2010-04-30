@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+erl -run $@ -run init stop -noshell
