@@ -66,7 +66,7 @@ Rules.
 % bool operators
 {BoolNot}                : make_token(bool_not,     TokenLine, TokenChars).
 {Bool}                   : make_token(boolean,      TokenLine, TokenChars).
-{BoolAndAlso}            : make_token(bool_and_op,  TokenLine, TokenChars).
+{BoolAndAlso}            : make_token(bool_andalso_op,  TokenLine, TokenChars).
 {BoolAnd}                : make_token(bool_and_op, TokenLine, TokenChars).
 {BoolOrElse}             : make_token(bool_orelse_op,   TokenLine, TokenChars).
 {BoolOr}                 : make_token(bool_or_op,  TokenLine, TokenChars).

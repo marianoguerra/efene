@@ -17,7 +17,8 @@ Nonterminals
     list_comp list_generator list_generators
     bin_comp
     rec rec_def rec_set rec_new attr_sets attr_set
-    binary binary_items binary_item bin_type_def bin_type.
+    binary binary_items binary_item bin_type_def bin_type
+    prefix_op.
 
 Terminals
     fn match open close open_block close_block
@@ -39,25 +40,12 @@ Terminals
 
 Rootsymbol program.
 
-Left 10 arrow.
-Left 50 match send_op.
-Left 100 bool_orelse_op.
-Left 200 bool_andalso_op.
-Left 300 comp_op.
-Right 400 concat_op.
-Left 500 and_op.
-Left 700 or_op.
-Left 700 add_op.
-Left 100 bool_or_op.
-Left 800 shift_op.
-Left 800 mul_op.
-Left 800 bool_and_op.
-Left 900 bin_not.
-Left 900 bool_not.
-Left 1000 open.
+prefix_op -> add_op : '$1'.
+prefix_op -> bin_not : '$1'.
+prefix_op -> bool_not : '$1'.
 
-program -> tl_exprs : '$1'.
 program -> exprs    : '$1'.
+program -> tl_exprs : '$1'.
 
 tl_exprs -> tl_expr : ['$1'].
 tl_exprs -> tl_expr tl_exprs : ['$1'|'$2'].
@@ -101,51 +89,37 @@ exprs -> expr endl exprs: ['$1'|'$3'].
 
 expr -> send_expr: '$1'.
 
-send_expr -> bool_expr send_op send_expr        : {op, line('$2'), unwrap('$2'), '$1', '$3'}.
+send_expr -> match_expr send_op send_expr        : {op, line('$2'), unwrap('$2'), '$1', '$3'}.
 send_expr -> match_expr                         : '$1'.
 
 match_expr -> bool_expr match match_expr         : {match, line('$2'), '$1', '$3'}.
 match_expr -> bool_expr                         : '$1'.
 
-% andalso and orelse seem to be generated the inverse way of the other
-% operators in erlang
 bool_expr -> bool_and_expr bool_orelse_op bool_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-bool_expr -> bool_and_expr                      : '$1'.
+bool_expr -> bool_and_expr                          : '$1'.
 
-bool_and_expr -> bool_and_expr bool_andalso_op comp_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-bool_and_expr -> comp_expr                           : '$1'.
+bool_and_expr -> comp_expr bool_andalso_op bool_and_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+bool_and_expr -> comp_expr                               : '$1'.
 
-comp_expr -> concat_expr comp_op comp_expr      : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+comp_expr -> concat_expr comp_op concat_expr    : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
 comp_expr -> concat_expr                        : '$1'.
 
 concat_expr -> add_expr concat_op concat_expr   : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
 concat_expr -> add_expr                         : '$1'.
 
-add_expr -> add_expr add_op mul_expr    : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-add_expr -> add_expr or_op mul_expr     : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+add_expr -> add_expr add_op mul_expr         : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+add_expr -> add_expr or_op mul_expr          : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
 add_expr -> add_expr bool_or_op mul_expr     : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-add_expr -> mul_expr                    : '$1'.
+add_expr -> add_expr shift_op mul_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+add_expr -> mul_expr                         : '$1'.
 
-mul_expr -> mul_expr mul_op unary_expr   : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> mul_expr and_op unary_expr   : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> mul_expr bool_and_op unary_expr   : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> unary_expr                   : '$1'.
-mul_expr -> mul_expr shift_op unary_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> mul_expr mul_op unary_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> mul_expr and_op unary_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> mul_expr bool_and_op unary_expr  : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> unary_expr                       : '$1'.
 
-unary_expr -> bool_not bool_lit                : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> bool_not fun_call                : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> bool_not var                     : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> bool_not open bool_expr close    : {op, line('$2'), op(unwrap('$1')), '$3'}.
-unary_expr -> add_op fun_call                  : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> add_op integer                   : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> add_op float                     : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> add_op var                       : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> add_op open bool_expr close      : {op, line('$2'), op(unwrap('$1')), '$3'}.
-unary_expr -> bin_not fun_call                 : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> bin_not integer                  : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> bin_not var                      : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> bin_not open bool_expr close     : {op, line('$2'), op(unwrap('$1')), '$3'}.
-unary_expr -> block_expr                       : '$1'.
+unary_expr -> prefix_op literal              : {op, line('$2'), op(unwrap('$1')), '$2'}.
+unary_expr -> block_expr                     : '$1'.
 
 block_expr -> if_expr           : '$1'.
 block_expr -> arrow_expr        : '$1'.
