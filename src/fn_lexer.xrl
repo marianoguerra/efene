@@ -7,8 +7,10 @@ Shift       = (<<|>>)
 BinNot      = ~
 
 % bool operators
-BoolAnd     = (and|andd)
-BoolOr      = (or|orr|xor)
+BoolAndAlso = and
+BoolAnd     = andd
+BoolOr      = (orr|xor)
+BoolOrElse  = or
 BoolNot     = not
 Bool        = (true|false)
 
@@ -62,9 +64,11 @@ Rules.
 {BinOr}                  : make_token(or_op,    TokenLine, TokenChars).
 
 % bool operators
-{BoolNot}                : make_token(bool_not,    TokenLine, TokenChars).
-{Bool}                   : make_token(boolean,     TokenLine, TokenChars).
+{BoolNot}                : make_token(bool_not,     TokenLine, TokenChars).
+{Bool}                   : make_token(boolean,      TokenLine, TokenChars).
+{BoolAndAlso}            : make_token(bool_and_op,  TokenLine, TokenChars).
 {BoolAnd}                : make_token(bool_and_op, TokenLine, TokenChars).
+{BoolOrElse}             : make_token(bool_orelse_op,   TokenLine, TokenChars).
 {BoolOr}                 : make_token(bool_or_op,  TokenLine, TokenChars).
 
 % arithmetic operators
