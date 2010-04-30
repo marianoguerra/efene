@@ -1,6 +1,0 @@
-
-version = { "0.3" }
-
-banner = { "efene " ++ version() ++ " exit with Ctrl+D" }
-
-public print_banner = { io.format("~s~n" [banner()]) }

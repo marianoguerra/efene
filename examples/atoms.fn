@@ -1,5 +1,0 @@
-
-public run = fn () {
-    lists.map(fn (Atom) { io.format("~p ", [Atom]) } [someatom 'Atom' '@asd' '!"%$&%'])
-    io.format("~n")
-}
