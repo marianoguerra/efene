@@ -44,9 +44,13 @@ comp() ->
     tu:test_ast("1 != 1", "1 /= 1"),
     tu:test_ast("1 !== 1", "1 =/= 1"),
     tu:test_ast("1 > 1 and 2 < 2", "1 > 1 andalso 2 < 2"),
+    tu:test_ast("1 > 1 and 2 < 2 or 3 == 3 and 4 != 4",
+        "1 > 1 andalso 2 < 2 orelse 3 == 3 andalso 4 /= 4"),
     tu:test_ast("(1 > 1) andd (2 < 2)", "(1 > 1) and (2 < 2)"),
     tu:test_ast("1 > 1 or 2 < 2", "1 > 1 orelse 2 < 2"),
     tu:test_ast("(1 > 1) orr (2 < 2)", "(1 > 1) or (2 < 2)"),
+    tu:test_ast("(1 > 1) andd (2 < 2) orr (3 == 3) andd (4 != 4)",
+        "(1 > 1) and (2 < 2) or (3 == 3) and (4 /= 4)"),
     ok.
 
 concat() ->

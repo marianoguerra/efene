@@ -6,4 +6,5 @@ all() ->
     tu:test(unary),
     tu:test(exprs),
     tu:test(funs),
+    tu:test(blocks),
     ok.

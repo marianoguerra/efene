@@ -155,7 +155,7 @@ case_pattern -> case bool_expr when bool_expr fn_block :
 % try catch expression
 
 try_expr -> try fn_block catch_patterns            : {'try', line('$1'), '$2', [], '$3', []}.
-try_expr -> try fn_block catch_patterns else fn_block : {'try', line('$1'), '$2', [], '$3', '$5'}.
+try_expr -> try fn_block catch_patterns after fn_block : {'try', line('$1'), '$2', [], '$3', '$5'}.
 
 catch_patterns -> catch_pattern catch_patterns         : ['$1'|'$2'].
 catch_patterns -> catch_pattern                        : ['$1'].
