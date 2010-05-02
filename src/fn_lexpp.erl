@@ -12,6 +12,66 @@ pre_cleanup([], Accum)->
 % remove new lines after a comma so we can have statements in multiple lines
 pre_cleanup([{sep, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
     pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{add_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{add_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{mul_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{mul_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{and_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{and_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{or_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{or_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{shift_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{shift_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{bool_andalso_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{bool_andalso_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{bool_and_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{bool_and_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{bool_orelse_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{bool_orelse_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{bool_or_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{bool_or_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{bool_comp_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{bool_comp_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{bool_concat_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{bool_concat_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{arrow, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{arrow, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
 pre_cleanup([Head|Tokens], Accum) ->
     pre_cleanup(Tokens, [Head|Accum]).
 
@@ -21,9 +81,9 @@ post_cleanup([{endl, _, _}|Tokens]) -> % remove the first newline
     post_cleanup(Tokens, []);
 post_cleanup(Tokens) ->
     post_cleanup(Tokens, []).
-
 post_cleanup([], Accum)->
     lists:reverse(Accum);
+
 post_cleanup([{endl, _, _}, {fn, _}=Token|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|Accum]);
 post_cleanup([{endl, _, _}, {else, _}=Token|Tokens], Accum) ->

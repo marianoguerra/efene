@@ -12,7 +12,10 @@ bar = fn (A, B, C, D)
     (D, B, C, A)
 
 public run = fn ()
-    A = 1->foo(2)->foo(3,4)->bar(5, 6, 7)->foo(8)
+    A = 1->foo(2)->
+        foo(3,4)->
+        bar(5, 6, 7)->
+        foo(8)
     # comment
     B = foo(bar(foo(foo(1, 2), 3, 4), 5, 6, 7), 8)
 
