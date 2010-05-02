@@ -1,106 +1,81 @@
 
-num_if = fn (Num) when Num > 0
-{
-    if Num < 10
-    {
+num_if = fn (Num) when Num > 0 {
+    if Num < 10 {
         one
     }
-    else if Num < 20
-    {
+    else if Num < 20 {
         two
     }
-    else if Num < 30
-    {
+    else if Num < 30 {
         tree
     }
-    else
-    {
+    else {
         'else'
     }
 }
 
-num_case = fn (Num) when Num > 0
-{
-    switch Num
-    {
-        case 1
-        {
+num_case = fn (Num) when Num > 0 {
+    switch Num {
+        case 1 {
             one
         }
-        case 2
-        {
+        case 2 {
             two
         }
-        case T when T < 10
-        {
+        case T when T < 10 {
             ohhi
         }
-        else
-        {
+        else {
             'else'
         }
     }
 }
-fn (0)
-{
+fn (0) {
     zero
 }
-fn (Num)
-{
+fn (Num) {
     Num
 }
 
-fun = fn (Num)
-{
+fun = fn (Num) {
     fn (A) {
         A * Num
     }
 }
 
 
-lst = fn (one, A, (a, B, 1), [H:_])
-{
+lst = fn (one, A, (a, B, 1), [H:_]) {
     [A, B, H]
 }
 
-recv = fn ()
-{
-    receive 1
-    {
+recv = fn () {
+    receive 1 {
         one
     }
-    else receive Stuff
-    {
+    else receive Stuff {
         Stuff
     }
-    after 10
-    {
+    after 10 {
         slap
     }
 }
 
-fail = fn (F)
-{
-    try
-    {
+fail = fn (F) {
+    try {
         F()
     }
-    catch throw Throw
-    {
+    catch throw Throw {
         ("throw", Throw)
     }
-    catch error Error
-    {
+    catch error Error {
         ("error", Error)
     }
-    catch Type Ex
-    {
+    catch Type Ex {
         (atom_to_list(Type), Ex)
     }
 }
 
-public run = fn()
-{
+public run = fn() {
     Msg = "hello world~n"
     A = io
     B = format

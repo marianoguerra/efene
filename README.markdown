@@ -11,6 +11,290 @@ It also adds some syntactic sugar in some places to make some tasks easier.
 
 to see how it looks you can go to the [examples dir](http://github.com/marianoguerra/efene/tree/master/examples/)
 
+## fast! show me an example!
+
+### efene (hello.fn)
+<pre>
+<code>
+# public will allow accessing this function from other modules
+public run() {
+    io.format("hello world!")
+}
+</code>
+</pre>
+
+### compile
+<pre>
+<code>
+fnc hello.fn
+</code>
+</pre>
+
+### run (call the run function from the hello module)
+<pre>
+<code>
+fn hello run
+</code>
+</pre>
+
+### ifene (hello.ifn)
+<pre>
+<code>
+# public will allow accessing this function from other modules
+public run()
+    io.format("hello world!")
+</code>
+</pre>
+
+### compile
+<pre>
+<code>
+fnc hello.ifn
+</code>
+</pre>
+
+### run (call the run function from the hello module)
+<pre>
+<code>
+fn hello run
+</code>
+</pre>
+
+## that was simple, a more complex one!
+
+### efene (demo.fn)
+<pre>
+<code>
+# if statement
+compare = fn (A, B) {
+    if A < B {
+        lt
+    }
+    else if A > B {
+        gt
+    }
+    else {
+        eq
+    }
+}
+
+# switch statement and multiline expressions
+compare_to_string = fn (Result) {
+    switch Result {
+        case lt {
+            "lower than"
+        }
+        case gt {
+            "greater than"
+        }
+        case eq {
+            "equal to"
+        }
+        else {
+            "invalid value '" ++
+                atom_to_list(Result) ++
+                "'"
+        }
+    }
+}
+
+# multiple function definition and guards
+compare_to_string_guards = fn (Result) when Result == lt {
+    "lower than"
+}
+fn (Result) when Result == gt {
+    "greater than"
+}
+fn (Result) when Result == eq {
+    "equal to"
+}
+fn (Result) {
+    "invalid value '" ++
+        atom_to_list(Result) ++
+        "'"
+}
+
+# try/catch expression and tuples
+fail = fn (Fun) {
+    try {
+        Fun()
+    }
+    catch error Error {
+        ("error", Error)
+    }
+    catch throw Throw {
+        ("throw", Throw)
+    }
+    catch Type Desc {
+        (atom_to_list(Type), Desc)
+    }
+}
+
+# pattern match
+do = fn (add, A, B) {
+    A + B
+}
+fn (mul, A, B) {
+    A * B
+}
+fn (div, _A, 0) {
+    invalid_division
+}
+fn (div, A, B) {
+    A / B
+}
+
+# main function, made public to access it outside the module
+public run = fn () {
+    # lambda functions
+    Print = fn (Expr) io.format("~p~n", [Expr])
+
+    Print(compare(1, 2))
+    Print(compare(2, 1))
+    Print(compare(2, 2))
+
+    Print(compare_to_string(lt))
+    Print(compare_to_string(gt))
+    Print(compare_to_string(eq))
+    Print(compare_to_string(this_is_an_invalid_value))
+
+    Print(compare_to_string_guards(lt))
+    Print(compare_to_string_guards(gt))
+    Print(compare_to_string_guards(eq))
+    Print(compare_to_string_guards(this_is_an_invalid_value))
+
+    # call fail with a function that will fail in different ways
+    Print(fail(fn () throw("throw here")))
+    Print(fail(fn () erlang.error("error here")))
+    Print(fail(fn () exit("exit here")))
+
+    Print(do(add, 10, 2))
+    Print(do(mul, 10, 2))
+    Print(do(div, 10, 2))
+    Print(do(div, 1, 0))
+}
+</code>
+</pre>
+
+### compile
+<pre>
+<code>
+fnc demo.fn
+</code>
+</pre>
+
+### run
+<pre>
+<code>
+fn demo run
+</code>
+</pre>
+
+### ifene (demo.ifn)
+<pre>
+<code>
+# if statement
+compare = fn (A, B)
+    if A < B
+        lt
+    else if A > B
+        gt
+    else
+        eq
+
+# switch statement and multiline expressions
+compare_to_string = fn (Result)
+    switch Result
+        case lt
+            "lower than"
+        case gt
+            "greater than"
+        case eq
+            "equal to"
+        else
+            "invalid value '" ++
+                atom_to_list(Result) ++
+                "'"
+
+# multiple function definition and guards
+compare_to_string_guards = fn (Result) when Result == lt
+    "lower than"
+fn (Result) when Result == gt
+    "greater than"
+fn (Result) when Result == eq
+    "equal to"
+fn (Result)
+    "invalid value '" ++
+        atom_to_list(Result) ++
+        "'"
+
+# try/catch expression and tuples
+fail = fn (Fun)
+    try
+        Fun()
+    catch error Error
+        ("error", Error)
+    catch throw Throw
+        ("throw", Throw)
+    catch Type Desc
+        (atom_to_list(Type), Desc)
+
+# pattern match
+do = fn (add, A, B)
+    A + B
+fn (mul, A, B)
+    A * B
+fn (div, _A, 0)
+    invalid_division
+fn (div, A, B)
+    A / B
+
+# main function, made public to access it outside the module
+public run = fn ()
+    # lambda functions
+    Print = fn (Expr) io.format("~p~n", [Expr])
+
+    Print(compare(1, 2))
+    Print(compare(2, 1))
+    Print(compare(2, 2))
+
+    Print(compare_to_string(lt))
+    Print(compare_to_string(gt))
+    Print(compare_to_string(eq))
+    Print(compare_to_string(this_is_an_invalid_value))
+
+    Print(compare_to_string_guards(lt))
+    Print(compare_to_string_guards(gt))
+    Print(compare_to_string_guards(eq))
+    Print(compare_to_string_guards(this_is_an_invalid_value))
+
+    # call fail with a function that will fail in different ways
+    Print(fail(fn () throw("throw here")))
+    Print(fail(fn () erlang.error("error here")))
+    Print(fail(fn () exit("exit here")))
+
+    Print(do(add, 10, 2))
+    Print(do(mul, 10, 2))
+    Print(do(div, 10, 2))
+    Print(do(div, 1, 0))
+
+</code>
+</pre>
+
+### compile
+<pre>
+<code>
+fnc demo.ifn
+</code>
+</pre>
+
+### run
+<pre>
+<code>
+fn demo run
+</code>
+</pre>
+
 ## Participate
 
 a mailing list is available at [librelist](http://librelist.com) just send a mail to efene@librelist.com to subscribe.

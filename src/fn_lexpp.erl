@@ -62,9 +62,9 @@ pre_cleanup([{bool_comp_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Ac
 pre_cleanup([{bool_comp_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
     pre_cleanup(Tokens, [Token|Accum]);
 
-pre_cleanup([{bool_concat_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+pre_cleanup([{concat_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
     pre_cleanup(Tokens, [Token|Accum]);
-pre_cleanup([{bool_concat_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+pre_cleanup([{concat_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
     pre_cleanup(Tokens, [Token|Accum]);
 
 pre_cleanup([{arrow, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
