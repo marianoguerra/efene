@@ -35,6 +35,10 @@ post_cleanup([{endl, _, _}, {'after', _}=Token|Tokens], Accum) ->
 % remove the new lines after a opening block, makes parsing easier
 post_cleanup([{open_block, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|Accum]);
+% remove endlines before opening blocks, reinsert in tokens to process
+% patterns of openblock and endlines after it
+post_cleanup([{endl, _, _}, {open_block, _, _}=Token|Tokens], Accum) ->
+    post_cleanup([Token|Tokens], Accum);
 post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {'case', _}=Fn|Tokens], Accum) ->
     post_cleanup(Tokens, [Fn|[Close|Accum]]);
 post_cleanup([Head|Tokens], Accum) ->

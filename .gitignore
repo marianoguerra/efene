@@ -2,3 +2,5 @@
 lexer.erl
 parser.erl
 src/*.fn
+erl_crash.dump
+.*.swp
