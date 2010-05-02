@@ -29,7 +29,7 @@ syn region  efeneStringD	       start=+"+  skip=+\\\\\|\\"+  end=+"\|$+
 syn match   efeneSpecialCharacter "'\\.'"
 syn match   efeneNumber	       "-\=\<\d\+L\=\>\|0[xob][0-9a-fA-F]\+\>"
 
-syn keyword efeneConditional	if else for in receive after switch case break when try catch object
+syn keyword efeneConditional	if else for in receive after switch case when try catch object record
 syn keyword efeneBoolean		true false
 
 syn keyword	efeneFunction      public fn 

@@ -88,6 +88,13 @@ h2{
  margin-top: 1em;
 }
 
+h3{
+ color: #39c;
+ font-size: 1.2em;
+ margin-bottom: 1em;
+ margin-top: 1em;
+}
+
 #nav{
  float: right;
  margin-right: 10%;

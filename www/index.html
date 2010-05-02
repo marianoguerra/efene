@@ -4,6 +4,7 @@
  
   <title>efene programming language</title>
   <link rel="stylesheet" href="css/master.css" type="text/css" media="screen" charset="utf-8"/>
+  <link rel="stylesheet" href="css/syntax.css" type="text/css" media="screen" charset="utf-8"/>
   <link rel="shortcut icon" href="favicon.ico" />
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/ui.js"></script>
@@ -39,6 +40,309 @@
     </ul>
     
     <a href="javascript:ui.showPage('#more')" >Show me more!</a>
+    <h2>fast! show me an example!</h2>
+
+    <h3>efene (hello.fn)</h3>
+
+    <pre>
+    <code>
+    # public will allow accessing this function from other modules
+    public run() {
+        io.format("hello world!")
+    }
+    </code>
+    </pre>
+
+
+    <h3>compile</h3>
+
+    <pre>
+    <code>
+    fnc hello.fn
+    </code>
+    </pre>
+
+
+    <h3>run (call the run function from the hello module)</h3>
+
+    <pre>
+    <code>
+    fn hello run
+    </code>
+    </pre>
+
+
+    <h3>ifene (hello.ifn)</h3>
+
+    <pre>
+    <code>
+    # public will allow accessing this function from other modules
+    public run()
+        io.format("hello world!")
+    </code>
+    </pre>
+
+
+    <h3>compile</h3>
+
+    <pre>
+    <code>
+    fnc hello.ifn
+    </code>
+
+    </pre>
+
+
+    <h3>run (call the run function from the hello module)</h3>
+
+    <pre>
+    <code>
+    fn hello run
+    </code>
+    </pre>
+
+
+    <h2>that was simple, a more complex one!</h2>
+
+    <h3>efene (demo.fn)</h3>
+
+<div class="highlight"><pre><span class="c"># if statement</span>
+<span class="nx">compare</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">A</span> <span class="o">&lt;</span> <span class="nx">B</span> <span class="p">{</span>
+        <span class="nx">lt</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">A</span> <span class="o">&gt;</span> <span class="nx">B</span> <span class="p">{</span>
+        <span class="nx">gt</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">eq</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c"># switch statement and multiline expressions</span>
+<span class="nx">compare_to_string</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">switch</span> <span class="nx">Result</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nx">lt</span> <span class="p">{</span>
+            <span class="s2">&quot;lower than&quot;</span>
+        <span class="p">}</span>
+        <span class="k">case</span> <span class="nx">gt</span> <span class="p">{</span>
+            <span class="s2">&quot;greater than&quot;</span>
+        <span class="p">}</span>
+        <span class="k">case</span> <span class="nx">eq</span> <span class="p">{</span>
+            <span class="s2">&quot;equal to&quot;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="s2">&quot;invalid value &#39;&quot;</span> <span class="o">++</span>
+                <span class="nx">atom_to_list</span><span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="o">++</span>
+                <span class="s2">&quot;&#39;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c"># multiple function definition and guards</span>
+<span class="nx">compare_to_string_guards</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nx">Result</span> <span class="o">==</span> <span class="nx">lt</span> <span class="p">{</span>
+    <span class="s2">&quot;lower than&quot;</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nx">Result</span> <span class="o">==</span> <span class="nx">gt</span> <span class="p">{</span>
+    <span class="s2">&quot;greater than&quot;</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nx">Result</span> <span class="o">==</span> <span class="nx">eq</span> <span class="p">{</span>
+    <span class="s2">&quot;equal to&quot;</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="s2">&quot;invalid value &#39;&quot;</span> <span class="o">++</span>
+        <span class="nx">atom_to_list</span><span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="o">++</span>
+        <span class="s2">&quot;&#39;&quot;</span>
+<span class="p">}</span>
+
+<span class="c"># try/catch expression and tuples</span>
+<span class="nx">fail</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Fun</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">Fun</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="nx">error</span> <span class="nx">Error</span> <span class="p">{</span>
+        <span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">Error</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="nx">throw</span> <span class="nx">Throw</span> <span class="p">{</span>
+        <span class="p">(</span><span class="s2">&quot;throw&quot;</span><span class="o">,</span> <span class="nx">Throw</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="nx">Type</span> <span class="nx">Desc</span> <span class="p">{</span>
+        <span class="p">(</span><span class="nx">atom_to_list</span><span class="p">(</span><span class="nx">Type</span><span class="p">),</span> <span class="nx">Desc</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c"># pattern match</span>
+<span class="nx">do</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">add</span><span class="o">,</span> <span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">A</span> <span class="o">+</span> <span class="nx">B</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">mul</span><span class="o">,</span> <span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">A</span> <span class="o">*</span> <span class="nx">B</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">div</span><span class="o">,</span> <span class="nx">_A</span><span class="o">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">invalid_division</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">div</span><span class="o">,</span> <span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">A</span> <span class="o">/</span> <span class="nx">B</span>
+<span class="p">}</span>
+
+<span class="c"># main function, made public to access it outside the module</span>
+<span class="k">public</span> <span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c"># lambda functions</span>
+    <span class="nx">Print</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Expr</span><span class="p">)</span> <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Expr</span><span class="p">])</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare</span><span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare</span><span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string</span><span class="p">(</span><span class="nx">lt</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string</span><span class="p">(</span><span class="nx">gt</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string</span><span class="p">(</span><span class="nx">eq</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string</span><span class="p">(</span><span class="nx">this_is_an_invalid_value</span><span class="p">))</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string_guards</span><span class="p">(</span><span class="nx">lt</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string_guards</span><span class="p">(</span><span class="nx">gt</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string_guards</span><span class="p">(</span><span class="nx">eq</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string_guards</span><span class="p">(</span><span class="nx">this_is_an_invalid_value</span><span class="p">))</span>
+
+    <span class="c"># call fail with a function that will fail in different ways</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">fail</span><span class="p">(</span><span class="k">fn</span> <span class="p">()</span> <span class="nx">throw</span><span class="p">(</span><span class="s2">&quot;throw here&quot;</span><span class="p">)))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">fail</span><span class="p">(</span><span class="k">fn</span> <span class="p">()</span> <span class="nx">erlang</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;error here&quot;</span><span class="p">)))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">fail</span><span class="p">(</span><span class="k">fn</span> <span class="p">()</span> <span class="nx">exit</span><span class="p">(</span><span class="s2">&quot;exit here&quot;</span><span class="p">)))</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">do</span><span class="p">(</span><span class="nx">add</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">do</span><span class="p">(</span><span class="nx">mul</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">do</span><span class="p">(</span><span class="nx">div</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">do</span><span class="p">(</span><span class="nx">div</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+
+
+    <h3>compile</h3>
+
+    <pre>
+    <code>
+    fnc demo.fn
+    </code>
+
+    </pre>
+
+
+    <h3>run</h3>
+
+    <pre>
+    <code>
+    fn demo run
+    </code>
+    </pre>
+
+
+    <h3>ifene (demo.ifn)</h3>
+
+<div class="highlight"><pre><span class="c"># if statement</span>
+<span class="nx">compare</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">A</span> <span class="o">&lt;</span> <span class="nx">B</span>
+        <span class="nx">lt</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">A</span> <span class="o">&gt;</span> <span class="nx">B</span>
+        <span class="nx">gt</span>
+    <span class="k">else</span>
+        <span class="nx">eq</span>
+
+<span class="c"># switch statement and multiline expressions</span>
+<span class="nx">compare_to_string</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span>
+    <span class="k">switch</span> <span class="nx">Result</span>
+        <span class="k">case</span> <span class="nx">lt</span>
+            <span class="s2">&quot;lower than&quot;</span>
+        <span class="k">case</span> <span class="nx">gt</span>
+            <span class="s2">&quot;greater than&quot;</span>
+        <span class="k">case</span> <span class="nx">eq</span>
+            <span class="s2">&quot;equal to&quot;</span>
+        <span class="k">else</span>
+            <span class="s2">&quot;invalid value &#39;&quot;</span> <span class="o">++</span>
+                <span class="nx">atom_to_list</span><span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="o">++</span>
+                <span class="s2">&quot;&#39;&quot;</span>
+
+<span class="c"># multiple function definition and guards</span>
+<span class="nx">compare_to_string_guards</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nx">Result</span> <span class="o">==</span> <span class="nx">lt</span>
+    <span class="s2">&quot;lower than&quot;</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nx">Result</span> <span class="o">==</span> <span class="nx">gt</span>
+    <span class="s2">&quot;greater than&quot;</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nx">Result</span> <span class="o">==</span> <span class="nx">eq</span>
+    <span class="s2">&quot;equal to&quot;</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">Result</span><span class="p">)</span>
+    <span class="s2">&quot;invalid value &#39;&quot;</span> <span class="o">++</span>
+        <span class="nx">atom_to_list</span><span class="p">(</span><span class="nx">Result</span><span class="p">)</span> <span class="o">++</span>
+        <span class="s2">&quot;&#39;&quot;</span>
+
+<span class="c"># try/catch expression and tuples</span>
+<span class="nx">fail</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Fun</span><span class="p">)</span>
+    <span class="k">try</span>
+        <span class="nx">Fun</span><span class="p">()</span>
+    <span class="k">catch</span> <span class="nx">error</span> <span class="nx">Error</span>
+        <span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">Error</span><span class="p">)</span>
+    <span class="k">catch</span> <span class="nx">throw</span> <span class="nx">Throw</span>
+        <span class="p">(</span><span class="s2">&quot;throw&quot;</span><span class="o">,</span> <span class="nx">Throw</span><span class="p">)</span>
+    <span class="k">catch</span> <span class="nx">Type</span> <span class="nx">Desc</span>
+        <span class="p">(</span><span class="nx">atom_to_list</span><span class="p">(</span><span class="nx">Type</span><span class="p">),</span> <span class="nx">Desc</span><span class="p">)</span>
+
+<span class="c"># pattern match</span>
+<span class="nx">do</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">add</span><span class="o">,</span> <span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="p">)</span>
+    <span class="nx">A</span> <span class="o">+</span> <span class="nx">B</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">mul</span><span class="o">,</span> <span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="p">)</span>
+    <span class="nx">A</span> <span class="o">*</span> <span class="nx">B</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">div</span><span class="o">,</span> <span class="nx">_A</span><span class="o">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nx">invalid_division</span>
+<span class="k">fn</span> <span class="p">(</span><span class="nx">div</span><span class="o">,</span> <span class="nx">A</span><span class="o">,</span> <span class="nx">B</span><span class="p">)</span>
+    <span class="nx">A</span> <span class="o">/</span> <span class="nx">B</span>
+
+<span class="c"># main function, made public to access it outside the module</span>
+<span class="k">public</span> <span class="nx">run</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">()</span>
+    <span class="c"># lambda functions</span>
+    <span class="nx">Print</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">(</span><span class="nx">Expr</span><span class="p">)</span> <span class="nx">io</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;~p~n&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">Expr</span><span class="p">])</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare</span><span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare</span><span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string</span><span class="p">(</span><span class="nx">lt</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string</span><span class="p">(</span><span class="nx">gt</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string</span><span class="p">(</span><span class="nx">eq</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string</span><span class="p">(</span><span class="nx">this_is_an_invalid_value</span><span class="p">))</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string_guards</span><span class="p">(</span><span class="nx">lt</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string_guards</span><span class="p">(</span><span class="nx">gt</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string_guards</span><span class="p">(</span><span class="nx">eq</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">compare_to_string_guards</span><span class="p">(</span><span class="nx">this_is_an_invalid_value</span><span class="p">))</span>
+
+    <span class="c"># call fail with a function that will fail in different ways</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">fail</span><span class="p">(</span><span class="k">fn</span> <span class="p">()</span> <span class="nx">throw</span><span class="p">(</span><span class="s2">&quot;throw here&quot;</span><span class="p">)))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">fail</span><span class="p">(</span><span class="k">fn</span> <span class="p">()</span> <span class="nx">erlang</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;error here&quot;</span><span class="p">)))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">fail</span><span class="p">(</span><span class="k">fn</span> <span class="p">()</span> <span class="nx">exit</span><span class="p">(</span><span class="s2">&quot;exit here&quot;</span><span class="p">)))</span>
+
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">do</span><span class="p">(</span><span class="nx">add</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">do</span><span class="p">(</span><span class="nx">mul</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">do</span><span class="p">(</span><span class="nx">div</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="nx">Print</span><span class="p">(</span><span class="nx">do</span><span class="p">(</span><span class="nx">div</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+
+
+    <h3>compile</h3>
+
+    <pre>
+    <code>
+    fnc demo.ifn
+    </code>
+    </pre>
+
+    <h3>run</h3>
+
+    <pre>
+    <code>
+    fn demo run
+    </code>
+    </pre>
+
+
+
    </div>
 
    <div class="page hide" id="more">
