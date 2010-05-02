@@ -7,4 +7,5 @@ all() ->
     tu:test(exprs),
     tu:test(funs),
     tu:test(blocks),
+    tu:test(comments),
     ok.
