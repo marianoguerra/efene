@@ -34,7 +34,7 @@
     <p>why?</p>
 
     <ul id="features">
-     <li><em>javascript</em> like syntax</li>
+     <li><em>javascript</em>/<em>python</em> like syntax</li>
      <li> <em>erlang</em> power</li>
     </ul>
     
@@ -47,6 +47,7 @@
      <li>bytecode compatible (can use erlang modules from <strong>efene</strong> and vice-versa)</li>
      <li>translate <strong>efene</strong> sourcecode to erlang</li>
      <li>braces as block delimiters like C/C++/C#/Java/Javascript
+     <li>alternative indent as block delimiter through ifene (idented efene) for python fans</li>
       <ul>
        <li>no multiple delimiters (, . ; and no delimiter) in different situations</li> 
       </ul>
@@ -99,14 +100,16 @@ cd efene/src/
 # go to the examples folder
 cd ../examples/
 
-# build the examples
-./build.sh
+# compile an example 
+../bin/fnc test.fn
+# or
+../bin/fnc test.ifn
 
-# run the examples
-./run.sh
+# run the example
+../bin/fn test run
     </pre>
 
-    <p>or you can compile and run them one by one with the following commands</p>
+    <p>you can compile and run them one by one with the following commands</p>
 
     <pre>
 cd efene/examples
