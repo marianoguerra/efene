@@ -41,7 +41,13 @@ pretty_print([{Atom, _Line}|Tokens], PrintBlocks, Indent) ->
     pretty_print(Tokens, PrintBlocks, Indent);
 
 pretty_print([{endl, _Line, Count}|Tokens], PrintBlocks, Indent) ->
-    io:format(lists:duplicate(Count, $\n)),
+    if
+        PrintBlocks ->
+            io:format(lists:duplicate(Count, $\n));
+        true ->
+            io:format("~n")
+    end,
+
     io:format(lists:duplicate(Indent, $\s)),
     pretty_print(Tokens, PrintBlocks, Indent);
 
