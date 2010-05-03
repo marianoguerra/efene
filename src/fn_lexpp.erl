@@ -92,6 +92,8 @@ post_cleanup([{endl, _, _}, {'catch', _}=Token|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|Accum]);
 post_cleanup([{endl, _, _}, {'after', _}=Token|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|Accum]);
+post_cleanup([{else, _}=Else, {endl, _, _}, {'if', _}=Token|Tokens], Accum) ->
+    post_cleanup(Tokens, [Token|[Else|Accum]]);
 % remove the new lines after a opening block, makes parsing easier
 post_cleanup([{open_block, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|Accum]);
@@ -99,8 +101,8 @@ post_cleanup([{open_block, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
 % patterns of openblock and endlines after it
 post_cleanup([{endl, _, _}, {open_block, _, _}=Token|Tokens], Accum) ->
     post_cleanup([Token|Tokens], Accum);
-post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {'case', _}=Fn|Tokens], Accum) ->
-    post_cleanup(Tokens, [Fn|[Close|Accum]]);
+post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {'case', _}=Token|Tokens], Accum) ->
+    post_cleanup(Tokens, [Token|[Close|Accum]]);
 post_cleanup([Head|Tokens], Accum) ->
     post_cleanup(Tokens, [Head|Accum]).
 
