@@ -18,8 +18,10 @@
 % lexer functions
 
 get_lex(String) ->
-    {ok, Tokens, _Endline} = fn_lexer:string(String),
-    Tokens.
+    case fn_lexer:string(String) of
+        {ok, Tokens, _Endline} -> Tokens;
+        Errors -> throw(Errors)
+    end.
 
 get_lex(string, String) ->
     Lex = get_lex(String),
@@ -49,7 +51,12 @@ print_lex(From, String) ->
 
 get_tree(From, String) ->
     Tokens = get_lex(From, String),
-    fn_parser:parse(Tokens).
+    case fn_parser:parse(Tokens) of
+        {ok, Tree}    -> Tree;
+        {ok, Tree, _} -> Tree;
+        {error, _Warnings, Errors} -> throw(Errors);
+        Error -> throw(Error)
+    end.
 
 print_tree(From, String) ->
     io:format("~p~n", [get_tree(From, String)]).
@@ -69,13 +76,13 @@ get_publics(Tree) ->
     Publics.
 
 get_publics(From, String) ->
-    {ok, Tree} = get_tree(From, String),
+    Tree = get_tree(From, String),
     get_publics(Tree).
 
 % ast functions
 
 get_ast(From, String) ->
-    {ok, Tree} = get_tree(From, String),
+    Tree = get_tree(From, String),
     {_Publics, Ast} = tree_to_ast(Tree),
     Ast.
 
@@ -83,9 +90,16 @@ print_ast(From, String) ->
     io:format("~p~n", [get_ast(From, String)]).
 
 erl_to_ast(String) ->
-    {ok, Scanned, _} = erl_scan:string(String),
-    {ok, Parsed} = erl_parse:parse_exprs(Scanned),
-    Parsed.
+    Scanned = case erl_scan:string(String) of
+        {ok, Return, _} -> Return;
+        Errors -> throw(Errors)
+    end,
+
+    case erl_parse:parse_exprs(Scanned) of
+        {ok, Parsed} -> Parsed;
+        Errors1 -> throw(Errors1)
+    end.
+
 % to erlang functions
 
 get_erlang(From, String) ->
@@ -101,7 +115,7 @@ print_erlang(From, String) ->
 from_erlang(Path) ->
     case epp:parse_file(Path, [], []) of
         {ok, Tree} -> Tree;
-        Error -> exit(Error)
+        Error -> throw(Error)
     end.
 
 print_from_erlang(Path) ->
@@ -113,14 +127,19 @@ get_code(Ast) ->
     case compile:forms(Ast) of
         {ok, _, Code} -> Code;
         {ok, _, Code, _} -> Code;
-        error -> exit("errors compiling code");
-        {error, Errors, Warnings} -> show_errors(Errors, Warnings)
+        {error, Errors, _Warnings} -> throw(Errors);
+        Error -> throw(Error)
     end.
 
 compile(Name, Dir) ->
     Module = get_code(build_module(Name)),
     Path = filename:join([Dir, get_module_beam_name(Name)]),
-    {ok, Device} = file:open(Path, [binary, write]),
+
+    Device = case file:open(Path, [binary, write]) of
+        {ok, Return} -> Return;
+        {error, _Reason} = Error -> throw(Error)
+    end,
+
     file:write(Device, Module).
 
 build_module(Name) ->
@@ -132,12 +151,12 @@ build_module(Name) ->
 remove_quotes(String) ->
     lists:reverse(tl(lists:reverse(tl(String)))).
 
-show_errors(Errors, Warnings) ->
-    io:format("Errors:~n~p~nWarnings:~n~p~n", [Errors, Warnings]),
-    exit("errors compiling code").
-
 file_to_string(Path) ->
-    {ok, Content} = file:read_file(Path),
+    Content = case file:read_file(Path) of
+        {ok, Return} -> Return;
+        {error, _Reason} = Error -> throw(Error)
+    end,
+
     binary_to_list(Content).
 
 get_module_name(String) ->
@@ -181,22 +200,22 @@ run(["eval", Expr]) ->
 run(["erleval", Expr]) ->
     eval(remove_quotes(Expr), erlang);
 run(["lex", File]) ->
-    print_lex(file, File);
+    fn_errors:handle(fun () -> print_lex(file, File) end);
 run(["tree", File]) ->
-    print_tree(file, File);
+    fn_errors:handle(fun () -> print_tree(file, File) end);
 run(["ast", File]) ->
-    print_ast(file, File);
+    fn_errors:handle(fun () -> print_ast(file, File) end);
 run(["erl", File]) ->
-    print_erlang(file, File);
+    fn_errors:handle(fun () -> print_erlang(file, File) end);
 run(["fn", File]) ->
-    fn_pp:pretty_print(get_lex(file, File), true);
+   fn_errors:handle(fun () ->  fn_pp:pretty_print(get_lex(file, File), true) end);
 run(["ifn", File]) ->
-    fn_pp:pretty_print(get_lex(file, File), false);
+    fn_errors:handle(fun () -> fn_pp:pretty_print(get_lex(file, File), false) end);
 run(["erl2ast", File]) ->
-    print_from_erlang(File);
+    fn_errors:handle(fun () -> print_from_erlang(File) end);
 run(["beam", File]) ->
-    compile(File, ".");
+    fn_errors:handle(fun () -> compile(File, ".") end);
 run(["beam", File, Dir]) ->
-    compile(File, Dir);
+    fn_errors:handle(fun () -> compile(File, Dir) end);
 run(Opts) ->
     io:format("Invalid input to fn.erl: \"~p\"~n", [Opts]).

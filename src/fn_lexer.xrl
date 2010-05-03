@@ -99,7 +99,6 @@ Rules.
 {CloseList}              : make_token(close_list,  TokenLine, TokenChars).
 
 {Sep}                    : make_token(sep,      TokenLine, TokenChars).
-{End}                    : make_token(endl,     TokenLine, TokenChars).
 {Send}                   : make_token(send_op,  TokenLine, TokenChars).
 {Split}                  : make_token(split_op, TokenLine, TokenChars).
 {Dot}                    : make_token(dot,      TokenLine, TokenChars).
@@ -114,7 +113,7 @@ Rules.
 {Atom}                   : {token, atom_or_identifier(TokenChars, TokenLine)}.
 
 % spaces, tabs and new lines
-{Endls}                 : make_token(endl,  TokenLine, endls_length(TokenChars)).
+{Endls}                 : make_token(endl,  TokenLine, endls(TokenChars)).
 {Whites}                : make_token(white, TokenLine, length(TokenChars)).
 {Tabs}                  : make_token(tab,   TokenLine, length(TokenChars)).
 
@@ -128,8 +127,8 @@ make_token(Name, Line, Chars) ->
 make_token(Name, Line, Chars, Fun) ->
     {token, {Name, Line, Fun(Chars)}}.
 
-endls_length(Chars) ->
-    length(lists:filter(fun (C) -> C == $\n end, Chars)).
+endls(Chars) ->
+    lists:filter(fun (C) -> C == $\n orelse C == $; end, Chars).
 
 atom_or_identifier(String, TokenLine) ->
      case is_reserved(String) of

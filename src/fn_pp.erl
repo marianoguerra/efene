@@ -40,10 +40,10 @@ pretty_print([{Atom, _Line}|Tokens], PrintBlocks, Indent) ->
     print_token(Atom),
     pretty_print(Tokens, PrintBlocks, Indent);
 
-pretty_print([{endl, _Line, Count}|Tokens], PrintBlocks, Indent) ->
+pretty_print([{endl, _Line, Endls}|Tokens], PrintBlocks, Indent) ->
     if
         PrintBlocks ->
-            io:format(lists:duplicate(Count, $\n));
+            io:format(Endls);
         true ->
             io:format("~n")
     end,

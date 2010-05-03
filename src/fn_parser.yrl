@@ -62,7 +62,7 @@ fn_def -> atom atom match fn_patterns:
     PublicToken = unwrap('$1'),
     if
         PublicToken /= public ->
-            throw({error, {PublicToken, yecc, "'public', expected on function definition"}});
+            fail(line('$1'), "'public', expected on function definition got:", PublicToken);
         true ->
             {public_function, line('$2'), unwrap('$2'), Arity, '$4'}
     end.
@@ -166,7 +166,7 @@ catch_pattern  -> catch open atom literal close fn_block:
         true ->
             {clause, line('$1'), [{tuple, line('$1'), ['$3', '$4', {var, line('$1'), '_'}]}], [], '$6'};
         false ->
-            throw({error, {AtomName, yecc, "'throw', 'error' or 'exit' expected on catch **"}})
+            fail(line('$1'), "'throw', 'error' or 'exit' expected on catch got:", AtomName)
     end.
 catch_pattern -> catch atom literal fn_block:
     AtomName = unwrap('$2'),
@@ -174,7 +174,7 @@ catch_pattern -> catch atom literal fn_block:
         true ->
             {clause, line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}], [], '$4'};
         false ->
-            throw({error, {AtomName, yecc, "'throw', 'error' or 'exit' expected on catch **"}})
+            fail(line('$1'), "'throw', 'error' or 'exit' expected on catch got:", AtomName)
     end.
 catch_pattern -> catch var literal fn_block:
     {clause, line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}], [], '$4'}.
@@ -283,29 +283,31 @@ list_generators -> list_generator                   : '$1'.
 list_generator -> atom bool_expr atom bool_expr :
     In = element(3, '$3'),
     For = element(3, '$1'),
+    Line = line('$1'),
 
     if For /= for ->
-            throw({error, {For, yecc, "'for' expected in list comprehension"}});
+            fail(Line, "'for' expected in list comprehension got:", For);
         In == in ->
-            [{generate, line('$1'), '$2', '$4'}];
+            [{generate, Line, '$2', '$4'}];
         In == bin ->
-            [{b_generate, line('$1'), '$2', '$4'}];
+            [{b_generate, Line, '$2', '$4'}];
        true ->
-            throw({error, {In, yecc, "'in' expected in list comprehension"}})
+            fail(Line, "'in' expected in list comprehension got:", In)
     end.
 
 list_generator -> atom bool_expr atom bool_expr if bool_expr :
     In = element(3, '$3'),
     For = element(3, '$1'),
+    Line = line('$1'),
 
     if For /= for ->
-            throw({error, {For, yecc, "'for' expected in list comprehension"}});
+            fail(Line, "'for' expected in list comprehension got:", For);
         In == in ->
-            [{generate, line('$1'), '$2', '$4'},'$6'];
+            [{generate, Line, '$2', '$4'},'$6'];
         In == bin ->
-            [{b_generate, line('$1'), '$2', '$4'},'$6'];
+            [{b_generate, Line, '$2', '$4'},'$6'];
        true ->
-            throw({error, {In, yecc, "'in' expected in list comprehension"}})
+            fail(Line, "'in' expected in list comprehension got: ", In)
     end.
 
 % records
@@ -390,8 +392,13 @@ add_first_param(Value, Ast) ->
 
 assert_atom(Token, Atom) ->
     Got = unwrap(Token),
+    Line = line(Token),
+
     if
         Got /= Atom ->
-            throw({error, {Got, yecc, "'" ++ atom_to_list(Atom) ++ "' expected, got '" ++ atom_to_list(Got) ++ "'"}});
+            fail(Line, "'" ++ atom_to_list(Atom) ++ "' expected, got: " , Got);
         true -> ok
     end.
+
+fail(Line, Reason, Cause) ->
+    throw({error, {Line, fn_parser, [Reason, Cause]}}).
