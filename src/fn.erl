@@ -188,6 +188,10 @@ run(["ast", File]) ->
     print_ast(file, File);
 run(["erl", File]) ->
     print_erlang(file, File);
+run(["fn", File]) ->
+    fn_pp:pretty_print(get_lex(file, File), true);
+run(["ifn", File]) ->
+    fn_pp:pretty_print(get_lex(file, File), false);
 run(["erl2ast", File]) ->
     print_from_erlang(File);
 run(["beam", File]) ->
