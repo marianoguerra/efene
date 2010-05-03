@@ -22,7 +22,7 @@ while getopts ":o:ht:c:C:i:I:se" opt; do
 	echo "   # compile with all the options"
 	echo "   fnc -t beam -o . helloworld.ifn"
 	echo
-	echo " -t: type to convert, valid types: lex, tree, erl"
+	echo " -t: type to convert, valid types: lex, tree, ast, erl, erl2ast, fn, ifn"
 	echo
 	echo " to run a shell: fnc -s"
 	echo
