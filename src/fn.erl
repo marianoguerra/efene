@@ -8,6 +8,7 @@
         get_publics/1,
         get_publics/2,
         build_module/1,
+        print_module/1,
         compile/2,
         get_erlang/2,
         print_erlang/2,
@@ -143,8 +144,13 @@ compile(Name, Dir) ->
     file:write(Device, Module).
 
 build_module(Name) ->
+    Publics = get_publics(file, Name),
+    Ast = get_ast(file, Name),
     [{attribute, 1, module, get_module_name(Name)},
-        {attribute, 1, export, get_publics(file, Name)}] ++ get_ast(file, Name).
+        {attribute, 1, export, Publics}] ++ Ast.
+
+print_module(Name) ->
+    io:format("~p~n", [build_module(Name)]).
 
 % utils
 
@@ -211,6 +217,8 @@ run(["fn", File]) ->
    fn_errors:handle(fun () ->  fn_pp:pretty_print(get_lex(file, File), true) end);
 run(["ifn", File]) ->
     fn_errors:handle(fun () -> fn_pp:pretty_print(get_lex(file, File), false) end);
+run(["mod", File]) ->
+    fn_errors:handle(fun () -> print_module(File) end);
 run(["erl2ast", File]) ->
     fn_errors:handle(fun () -> print_from_erlang(File) end);
 run(["beam", File]) ->
