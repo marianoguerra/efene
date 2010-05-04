@@ -17,7 +17,7 @@ tries() ->
     tu:test_ast("try { A } catch 1 { 1 } catch 2 { 2 } catch 3 { 3 }",
         "try A catch 1 -> 1; 2 -> 2; 3 -> 3 end"),
     tu:test_ast("try { A } catch error E { E } catch throw T { T }",
-        "try A catch error:E -> E; throw:T -> T end"),
+        "try A catch error : E -> E; throw:T -> T end"),
     tu:test_ast("try { A } catch exit E { E } catch Type T { (Type, T) }",
         "try A catch exit:E -> E; Type:T -> {Type, T} end"),
     tu:test_ast("try { A } catch B { C } after { true }",
