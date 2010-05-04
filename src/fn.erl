@@ -27,9 +27,9 @@ get_lex(string, String) ->
     Lex = get_lex(String),
     fn_lexpp:clean_whites(Lex);
 get_lex(istring, String) ->
-    Lex  = get_lex(String),
-    Lex1 = fn_lexpp:clean_tabs(Lex),
-    fn_lexpp:indent_to_blocks(Lex1);
+    Lex1  = get_lex(String),
+    Lex2 = fn_lexpp:indent_to_blocks(Lex1),
+    fn_errors:fail_on_tab(Lex2);
 get_lex(file, Path) ->
     Program = file_to_string(Path),
 
