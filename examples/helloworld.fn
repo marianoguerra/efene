@@ -1,0 +1,9 @@
+# classic hello world
+
+hello = fn (Who) {
+    io.format("hello ~s!~n", [Who])
+}
+
+public run = fn () {
+    hello("world")
+}

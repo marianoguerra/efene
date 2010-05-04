@@ -1,3 +1,4 @@
+# shows how to declare, create, modify and access fields in records
 
 person = record(firstname, lastname, mail="none")
 

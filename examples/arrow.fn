@@ -1,16 +1,19 @@
 # arrow expressions are useful for cases when multiple transformations are
 # applied to the same variable and temporary variables makes the code ugly
 
-foo = fn (A, B)
+foo = fn (A, B) {
     (A, B)
+}
 
-foo = fn (A, B, C)
+foo = fn (A, B, C) {
     (A, B, C)
+}
 
-bar = fn (A, B, C, D)
+bar = fn (A, B, C, D) {
     (D, B, C, A)
+}
 
-public run = fn ()
+public run = fn () {
     # this expression is the same as the one below
     A = 1->foo(2)->
         foo(3,4)->
@@ -21,4 +24,4 @@ public run = fn ()
     B = foo(bar(foo(foo(1, 2), 3, 4), 5, 6, 7), 8)
 
     io.format("~p~n~p~n", [A, B])
-
+}
