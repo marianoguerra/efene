@@ -133,41 +133,41 @@ indent_to_blocks([]=Tokens, [_Indent|Indents], Accum) ->
 
 % indent, and there is no current indentation
 indent_to_blocks([{endl, Line, _}=Endl, {white, _, NewIndent}|Tokens], []=_Indents, Accum) ->
-    indent_to_blocks(Tokens, [NewIndent], [Endl|[{open_block, Line, '{'}|Accum]]);
+    indent_to_blocks(Tokens, [NewIndent], [endl(Endl)|[{open_block, Line, '{'}|Accum]]);
 
 % indent > than the current one
 indent_to_blocks([{endl, Line, _}=Endl, {white, _, NewIndent}|Tokens], [Indent|_]=Indents, Accum)
         when NewIndent > Indent ->
-    indent_to_blocks(Tokens, [NewIndent|Indents], [Endl|[{open_block, Line, '{'}|Accum]]);
+    indent_to_blocks(Tokens, [NewIndent|Indents], [endl(Endl)|[{open_block, Line, '{'}|Accum]]);
 
 % indent < than the current one
 indent_to_blocks([{endl, Line, _}=Endl, {white, _, NewIndent}|_]=Tokens, [Indent|Indents], Accum)
         when NewIndent < Indent ->
-    indent_to_blocks(Tokens, Indents, [{close_block, Line, '}'}|[Endl|Accum]]);
+    indent_to_blocks(Tokens, Indents, [{close_block, Line, '}'}|[endl(Endl)|Accum]]);
 
 % indent = than the current one
 indent_to_blocks([{endl, _, _}=Endl, {white, _, NewIndent}|Tokens], [Indent|_]=Indents, Accum)
         when NewIndent == Indent ->
-    indent_to_blocks(Tokens, Indents, [Endl|Accum]);
+    indent_to_blocks(Tokens, Indents, [endl(Endl)|Accum]);
 
 % new line without whitespace, indents available and the last token is a new
 % line (avoid adding two newlines while closing blocks
 indent_to_blocks([{endl, Line, _}=Endl|_]=Tokens, [_Indent|Indents], [{endl, _, _}|_]=Accum) ->
-    indent_to_blocks(Tokens, Indents, [Endl|[{close_block, Line, '}'}|Accum]]);
+    indent_to_blocks(Tokens, Indents, [endl(Endl)|[{close_block, Line, '}'}|Accum]]);
 
 % new line without whitespace and indents available
 indent_to_blocks([{endl, Line, _}=Endl|_]=Tokens, [_Indent|Indents], Accum) ->
-    indent_to_blocks(Tokens, Indents, [Endl|[{close_block, Line, '}'}|[Endl|Accum]]]);
+    indent_to_blocks(Tokens, Indents, [endl(Endl)|[{close_block, Line, '}'}|[endl(Endl)|Accum]]]);
 
 % new line without whitespace and no indents available, last is a new line
 % don't insert the new line, avoid duplicated new lines
 indent_to_blocks([{endl, _, _}=Endl|Tokens], []=Indents, [{endl, _, _}|Accum]) ->
-    indent_to_blocks(Tokens, Indents, [Endl|Accum]);
+    indent_to_blocks(Tokens, Indents, [endl(Endl)|Accum]);
 
 % new line without whitespace and no indents available
 % insert the new line, needed for example in record definitions
 indent_to_blocks([{endl, _, _}=Endl|Tokens], []=Indents, Accum) ->
-    indent_to_blocks(Tokens, Indents, [Endl|Accum]);
+    indent_to_blocks(Tokens, Indents, [endl(Endl)|Accum]);
 
 % remove whites that reach this clause
 indent_to_blocks([{white, _, _}|Tokens], Indents, Accum) ->
@@ -175,3 +175,5 @@ indent_to_blocks([{white, _, _}|Tokens], Indents, Accum) ->
 
 indent_to_blocks([Token|Tokens], Indents, Accum) ->
     indent_to_blocks(Tokens, Indents, [Token|Accum]).
+
+endl({endl, Line, _}) ->  {endl, Line, "\n"}.

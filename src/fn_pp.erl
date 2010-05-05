@@ -51,6 +51,12 @@ pretty_print([{endl, _Line, Endls}|Tokens], PrintBlocks, Indent) ->
     io:format(lists:duplicate(Indent, $\s)),
     pretty_print(Tokens, PrintBlocks, Indent);
 
+pretty_print([{attr, _Line, Str}|Tokens], PrintBlocks, Indent) ->
+    io:format("@~s", [atom_to_list(Str)]),
+    pretty_print(Tokens, PrintBlocks, Indent);
+pretty_print([{gattr, _Line, Str}|Tokens], PrintBlocks, Indent) ->
+    io:format("@@~s", [atom_to_list(Str)]),
+    pretty_print(Tokens, PrintBlocks, Indent);
 pretty_print([{_Token, _Line, Str}|Tokens], PrintBlocks, Indent) ->
     print_token(Str),
     pretty_print(Tokens, PrintBlocks, Indent).
