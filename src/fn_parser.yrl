@@ -41,6 +41,22 @@ Terminals
 
 Rootsymbol program.
 
+Left 50 arrow.
+Left 100 bool_or_op.
+Left 200 bool_and_op.
+Left 300 comp_op.
+Right 400 concat_op.
+Left 500 and_op.
+Left 700 or_op.
+Left 700 add_op.
+Left 800 shift_op.
+Left 800 mul_op.
+Left 900 bin_not.
+Left 900 bool_not.
+Left 1000 match send_op.
+Left 1100 open.
+
+
 prefix_op -> add_op : '$1'.
 prefix_op -> bin_not : '$1'.
 prefix_op -> bool_not : '$1'.
