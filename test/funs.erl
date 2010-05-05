@@ -3,8 +3,7 @@
 
 basic() ->
     tu:test_ast("fn () { ok }", "fun () -> ok end"),
-    tu:test_ast("fn () ok", "fun () -> ok end"),
-    tu:test_ast("fn (A) A + 2", "fun (A) -> A + 2 end"),
+    tu:test_ast("fn (A) { A + 2 }", "fun (A) -> A + 2 end"),
     tu:test_ast("fn () { 1 + 2 * 3 - 4 / 5 }", "fun () -> 1 + 2 * 3 - 4 / 5 end"),
     tu:test_ast("fn (A) { A }", "fun (A) -> A end"),
     tu:test_ast("fn (A, B, C) { A + B + C }", "fun (A, B, C) -> A + B + C end"),

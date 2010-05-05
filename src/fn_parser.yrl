@@ -10,9 +10,9 @@ Nonterminals
     case_expr case_body case_patterns case_pattern
     try_expr catch_patterns catch_pattern
     recv_expr receive_patterns receive_pattern
-    list list_items list_item
+    list list_items
     tuple tuple_items
-    fun_call call_params call_parameters call_item farity
+    fun_call call_params call_parameters farity
     arrow_chains arrow_chain
     list_comp list_generator list_generators
     bin_comp
@@ -37,20 +37,21 @@ Terminals
     arrow
     open_bin close_bin
     record
-    attr gattr.
+    attr gattr
+    public for in.
 
 Rootsymbol program.
 
 Left 50 arrow.
-Left 100 bool_or_op.
-Left 200 bool_and_op.
+Left 100 bool_orelse_op.
+Left 200 bool_andalso_op.
 Left 300 comp_op.
 Right 400 concat_op.
 Left 500 and_op.
 Left 700 or_op.
-Left 700 add_op.
+Left 700 add_op bool_or_op.
 Left 800 shift_op.
-Left 800 mul_op.
+Left 800 mul_op bool_and_op.
 Left 900 bin_not.
 Left 900 bool_not.
 Left 1000 match send_op.
@@ -78,15 +79,9 @@ fn_def -> atom match fn_patterns:
     Arity = get_arity('$3'),
     {function, line('$1'), unwrap('$1'), Arity, '$3'}.
 
-fn_def -> atom atom match fn_patterns:
+fn_def -> public atom match fn_patterns:
     Arity = get_arity('$4'),
-    PublicToken = unwrap('$1'),
-    if
-        PublicToken /= public ->
-            fail(line('$1'), "'public', expected on function definition got:", PublicToken);
-        true ->
-            {public_function, line('$2'), unwrap('$2'), Arity, '$4'}
-    end.
+    {public_function, line('$2'), unwrap('$2'), Arity, '$4'}.
 
 fun_def -> fn_patterns : {'fun', element(2, hd('$1')), {clauses, '$1'}}.
 
@@ -94,7 +89,7 @@ fn_patterns -> fn_pattern : ['$1'].
 fn_patterns -> fn_pattern fn_patterns : ['$1'|'$2'].
 
 fn_pattern -> fn fn_parameters fn_block : {clause, line('$1'), '$2', [], '$3'}.
-fn_pattern -> fn fn_parameters expr : {clause, line('$1'), '$2', [], ['$3']}.
+%fn_pattern -> fn fn_parameters expr : {clause, line('$1'), '$2', [], ['$3']}.
 fn_pattern -> fn fn_parameters when bool_expr fn_block : {clause, line('$1'), '$2', [['$4']], '$5'}.
 
 fn_parameters -> open close : [].
@@ -227,7 +222,8 @@ literal -> integer              : '$1'.
 literal -> float                : '$1'.
 literal -> bool_lit             : '$1'.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
-literal -> call_item            : '$1'.
+literal -> atom                 : '$1'.
+literal -> var                  : '$1'.
 literal -> open expr close      : '$2'.
 literal -> char                 : '$1'.
 literal -> list                 : '$1'.
@@ -244,19 +240,14 @@ literal -> binary               : '$1'.
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
 % list type
+list -> open_list match_expr close_list : {cons, line('$1'), '$2', {nil, line('$1')}}.
 list -> open_list close_list : {nil, line('$1')}.
-list -> open_list list_item list_items close_list : {cons, line('$1'), '$2', '$3'}.
+list -> open_list match_expr list_items close_list : {cons, line('$1'), '$2', '$3'}.
 list -> open_list match_expr split_op match_expr close_list : {cons, line('$1'), '$2', '$4'}.
 
-list_items -> list_item : {cons, line('$1'), {nil, line('$1')}}.
-list_items -> list_items sep list_item : {cons, line('$2'), '$1', '$3'}.
-
-list_items -> split_op list_item : '$2'.
-list_items -> sep list_item list_items : {cons, line('$2'), '$2', '$3'}.
-% XXX: the 1 in nil is to make pass the tests, find a way to put the line there
-list_items -> '$empty' : {nil, 1}.
-
-list_item -> match_expr : '$1'.
+list_items -> sep match_expr : {cons, line('$2'), '$2', {nil, line('$2')}}.
+list_items -> sep match_expr split_op match_expr : {cons, line('$2'), '$2', '$4'}.
+list_items -> sep match_expr list_items : {cons, line('$2'), '$2', '$3'}.
 
 % tuple type
 tuple -> open sep close    : {tuple, line('$1'), []}.
@@ -268,16 +259,17 @@ tuple_items -> match_expr sep tuple_items : ['$1'|'$3'].
 
 % function call
 
-fun_call -> call_item call_params            : {call, line('$1'), '$1', '$2'}.
-% duplicated to avoid the rec from matching first for atom dot
-fun_call -> atom dot call_item call_params  :
+fun_call -> atom call_params           : {call, line('$1'), '$1', '$2'}.
+fun_call -> var call_params            : {call, line('$1'), '$1', '$2'}.
+fun_call -> atom dot atom call_params  :
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> var dot call_item call_params  :
+fun_call -> atom dot var call_params  :
+    {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
+fun_call -> var dot atom call_params  :
+    {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
+fun_call -> var dot var call_params  :
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
 fun_call -> fun_call call_params       : {call, line('$1'), '$1', '$2'}.
-
-call_item -> atom : '$1'.
-call_item -> var: '$1'.
 
 call_params -> open close : [].
 call_params -> open call_parameters close : '$2'.
@@ -301,42 +293,20 @@ bin_comp  -> open_bin match_expr list_generators close_bin   : {bc, line('$1'), 
 list_generators -> list_generator list_generators   : ['$1'|'$2'].
 list_generators -> list_generator                   : '$1'.
 
-list_generator -> atom bool_expr atom bool_expr :
-    In = element(3, '$3'),
-    For = element(3, '$1'),
+list_generator -> for bool_expr in bool_expr :
     Line = line('$1'),
+    [{generate, Line, '$2', '$4'}].
 
-    if For /= for ->
-            fail(Line, "'for' expected in list comprehension got:", For);
-        In == in ->
-            [{generate, Line, '$2', '$4'}];
-        In == bin ->
-            [{b_generate, Line, '$2', '$4'}];
-       true ->
-            fail(Line, "'in' expected in list comprehension got:", In)
-    end.
-
-list_generator -> atom bool_expr atom bool_expr if bool_expr :
-    In = element(3, '$3'),
-    For = element(3, '$1'),
+list_generator -> for bool_expr in bool_expr if bool_expr :
     Line = line('$1'),
-
-    if For /= for ->
-            fail(Line, "'for' expected in list comprehension got:", For);
-        In == in ->
-            [{generate, Line, '$2', '$4'},'$6'];
-        In == bin ->
-            [{b_generate, Line, '$2', '$4'},'$6'];
-       true ->
-            fail(Line, "'in' expected in list comprehension got: ", In)
-    end.
+    [{generate, Line, '$2', '$4'},'$6'].
 
 % records
 
 rec -> atom dot var dot atom : {'record_field', line('$2'), '$3', unwrap('$1'), '$5'}.
 
 rec_def -> atom match record open attr_sets close :
-    {attribute, line('$2'), record, {unwrap('$1'), '$5'}}.
+    {global_attribute, line('$2'), record, {unwrap('$1'), '$5'}}.
 
 rec_set -> atom dot var open_list attr_sets close_list :
     {'record', line('$2'), '$3', unwrap('$1'), '$5'}.
