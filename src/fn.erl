@@ -128,13 +128,11 @@ get_attrs(From, String) ->
     Tree = get_tree(From, String),
     get_attrs(Tree).
 
-
-
 % ast functions
 
 get_ast(From, String) ->
     Tree = get_tree(From, String),
-    {_Publics, Ast} = tree_to_ast(Tree),
+    {_Publics, Ast, _Attrs} = tree_to_ast(Tree),
     Ast.
 
 print_ast(From, String) ->
