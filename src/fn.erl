@@ -7,6 +7,8 @@
         print_ast/2,
         get_publics/1,
         get_publics/2,
+        get_attrs/1,
+        get_attrs/2,
         build_module/1,
         print_module/1,
         compile/2,
@@ -63,22 +65,70 @@ print_tree(From, String) ->
     io:format("~p~n", [get_tree(From, String)]).
 
 tree_to_ast(Tree) ->
-    tree_to_ast(Tree, [], []).
+    tree_to_ast(Tree, [], [], [], []).
 
-tree_to_ast([], Publics, Ast) ->
-    {lists:reverse(Publics), lists:reverse(Ast)};
-tree_to_ast([{public_function, Line, Name, Arity, Body}|Tree], Publics, Ast) ->
-    tree_to_ast(Tree, [{Name, Arity}|Publics], [{function, Line, Name, Arity, Body}|Ast]);
-tree_to_ast([H|Tree], Publics, Ast) ->
-    tree_to_ast(Tree, Publics, [H|Ast]).
+tree_to_ast(file, Name) ->
+    Tree = get_tree(file, Name),
+    tree_to_ast(Tree).
+
+% Publics contain the list of functions to export
+% Ast contains the ast it's final form
+% CurrAttrs contains all the attributes found previous to a function
+% Attrs contains the attributes modified to have the function they apply to
+
+% all attributes are gattered until a function is found in CurrAttrs, then all
+% are modified to contain the function/arity the apply to
+tree_to_ast([], Publics, Ast, CurrAttrs, Attrs) ->
+    {lists:reverse(Publics), lists:reverse(Ast),
+        lists:reverse(lists:flatten(Attrs)) ++ lists:reverse(CurrAttrs)};
+
+% global attributes are not tied to one function
+tree_to_ast([{global_attribute, Line, Name, Value}|Tree], Publics, Ast, CurrAttrs, Attrs) ->
+    tree_to_ast(Tree, Publics, Ast, CurrAttrs, [{attribute, Line, Name, Value}|Attrs]);
+
+tree_to_ast([{attribute, _Line, _Name, _Value}=Attr|Tree], Publics, Ast, CurrAttrs, Attrs) ->
+    tree_to_ast(Tree, Publics, Ast, [Attr|CurrAttrs], Attrs);
+
+tree_to_ast([{public_function, Line, Name, Arity, Body}|Tree], Publics, Ast, CurrAttrs, Attrs) ->
+    Fun = {Name, Arity},
+    NewAttrs = modify_attrs(CurrAttrs, Fun),
+    tree_to_ast(Tree, [Fun|Publics],
+        [{function, Line, Name, Arity, Body}|Ast], [], [NewAttrs|Attrs]);
+
+tree_to_ast([{function, _Line, Name, Arity, _Body}=H|Tree], Publics, Ast, CurrAttrs, Attrs) ->
+    Fun = {Name, Arity},
+    NewAttrs = modify_attrs(CurrAttrs, Fun),
+    tree_to_ast(Tree, Publics,
+        [H|Ast], [], [NewAttrs|Attrs]);
+tree_to_ast([H|Tree], Publics, Ast, CurrAttrs, Attrs) ->
+    tree_to_ast(Tree, Publics, [H|Ast], CurrAttrs, Attrs).
+
+modify_attrs(Attrs, Fun) ->
+    modify_attrs(Attrs, Fun, []).
+
+modify_attrs([], _Fun, Accum) ->
+    lists:reverse(Accum);
+modify_attrs([{attribute, Line, Name, Args}|Attrs], Fun, Accum) ->
+        modify_attrs(Attrs, Fun, [{attribute, Line, Name, {Fun, Args}}|Accum]).
+
 
 get_publics(Tree) ->
-    {Publics, _Ast} = tree_to_ast(Tree),
+    {Publics, _Ast, _Attrs} = tree_to_ast(Tree),
     Publics.
 
 get_publics(From, String) ->
     Tree = get_tree(From, String),
     get_publics(Tree).
+
+get_attrs(Tree) ->
+    {_Publics, _Ast, Attrs} = tree_to_ast(Tree),
+    Attrs.
+
+get_attrs(From, String) ->
+    Tree = get_tree(From, String),
+    get_attrs(Tree).
+
+
 
 % ast functions
 
@@ -144,10 +194,10 @@ compile(Name, Dir) ->
     file:write(Device, Module).
 
 build_module(Name) ->
-    Publics = get_publics(file, Name),
-    Ast = get_ast(file, Name),
-    [{attribute, 1, module, get_module_name(Name)},
-        {attribute, 1, export, Publics}] ++ Ast.
+    {Publics, Ast, Attrs} = tree_to_ast(file, Name),
+
+    [{attribute, 1, module, get_module_name(Name)}|
+        [{attribute, 1, export, Publics}|Attrs]] ++ Ast.
 
 print_module(Name) ->
     io:format("~p~n", [build_module(Name)]).

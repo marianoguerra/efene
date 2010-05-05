@@ -18,7 +18,7 @@ Nonterminals
     bin_comp
     rec rec_def rec_set rec_new attr_sets attr_set
     binary binary_items binary_item bin_type_def bin_type
-    prefix_op.
+    prefix_op attribute.
 
 Terminals
     fn match open close open_block close_block
@@ -36,7 +36,8 @@ Terminals
     open_list close_list sep split_op dot
     arrow
     open_bin close_bin
-    record.
+    record
+    attr gattr.
 
 Rootsymbol program.
 
@@ -50,8 +51,12 @@ program -> tl_exprs : '$1'.
 tl_exprs -> tl_expr : ['$1'].
 tl_exprs -> tl_expr tl_exprs : ['$1'|'$2'].
 
-tl_expr -> fn_def endl  : '$1'.
-tl_expr -> rec_def endl : '$1'.
+tl_expr -> fn_def endl    : '$1'.
+tl_expr -> rec_def endl   : '$1'.
+tl_expr -> attribute endl : '$1'.
+
+attribute -> attr open literal close : {attribute, line('$1'), unwrap('$1'), unwrap('$3')}.
+attribute -> gattr open literal close : {global_attribute, line('$1'), unwrap('$1'), unwrap('$3')}.
 
 fn_def -> atom match fn_patterns:
     Arity = get_arity('$3'),
