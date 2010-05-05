@@ -151,6 +151,9 @@ erl_to_ast(String) ->
 
 % to erlang functions
 
+get_erlang(file, String) ->
+    Ast = build_module(String),
+    erl_prettypr:format(erl_syntax:form_list(Ast));
 get_erlang(From, String) ->
     Ast = get_ast(From, String),
     erl_prettypr:format(erl_syntax:form_list(Ast)).
