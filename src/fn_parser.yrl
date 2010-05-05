@@ -55,8 +55,8 @@ tl_expr -> fn_def endl    : '$1'.
 tl_expr -> rec_def endl   : '$1'.
 tl_expr -> attribute endl : '$1'.
 
-attribute -> attr open literal close : {attribute, line('$1'), unwrap('$1'), unwrap('$3')}.
-attribute -> gattr open literal close : {global_attribute, line('$1'), unwrap('$1'), unwrap('$3')}.
+attribute -> attr open literal close : {attribute, line('$1'), unwrap('$1'), erl_parse:normalise('$3')}.
+attribute -> gattr open literal close : {global_attribute, line('$1'), unwrap('$1'), erl_parse:normalise('$3')}.
 
 fn_def -> atom match fn_patterns:
     Arity = get_arity('$3'),

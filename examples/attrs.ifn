@@ -10,7 +10,7 @@ public index = fn (_Req)
     "hello world!"
 
 # another global attribute, you can place attributes anywhere
-@@version("1.0.0")
+@@version((1, 0, 0))
 
 @post("/user/")
 @accepts(json)
