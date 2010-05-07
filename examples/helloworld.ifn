@@ -3,5 +3,6 @@
 hello = fn (Who)
     io.format("hello ~s!~n", [Who])
 
-public run = fn ()
+@public
+run = fn ()
     hello("world")

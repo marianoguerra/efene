@@ -38,9 +38,11 @@ Terminals
     open_bin close_bin
     record
     attr gattr
-    public for in.
+    for in.
 
 Rootsymbol program.
+
+Expect 4.
 
 Left 50 arrow.
 Left 100 bool_orelse_op.
@@ -72,16 +74,13 @@ tl_expr -> fn_def endl    : '$1'.
 tl_expr -> rec_def endl   : '$1'.
 tl_expr -> attribute endl : '$1'.
 
+attribute -> attr : {attribute, line('$1'), unwrap('$1'), nil}.
 attribute -> attr open literal close : {attribute, line('$1'), unwrap('$1'), erl_parse:normalise('$3')}.
 attribute -> gattr open literal close : {global_attribute, line('$1'), unwrap('$1'), erl_parse:normalise('$3')}.
 
 fn_def -> atom match fn_patterns:
     Arity = get_arity('$3'),
     {function, line('$1'), unwrap('$1'), Arity, '$3'}.
-
-fn_def -> public atom match fn_patterns:
-    Arity = get_arity('$4'),
-    {public_function, line('$2'), unwrap('$2'), Arity, '$4'}.
 
 fun_def -> fn_patterns : {'fun', element(2, hd('$1')), {clauses, '$1'}}.
 

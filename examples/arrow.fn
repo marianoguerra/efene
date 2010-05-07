@@ -13,7 +13,8 @@ bar = fn (A, B, C, D) {
     (D, B, C, A)
 }
 
-public run = fn () {
+@public
+run = fn () {
     # this expression is the same as the one below
     A = 1->foo(2)->
         foo(3,4)->

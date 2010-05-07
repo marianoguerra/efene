@@ -78,7 +78,8 @@ fn (div, A, B) {
 }
 
 # main function, made public to access it outside the module
-public run = fn () {
+@public
+run = fn () {
     # lambda functions
     Print = fn (Expr) { io.format("~p~n", [Expr]) }
 

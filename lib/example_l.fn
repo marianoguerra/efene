@@ -1,4 +1,5 @@
-public run = fn () {
+@public
+run = fn () {
     # create a list with the numbers from 1 to 10
     l.range(2, 10)->
     # increment each item by 1

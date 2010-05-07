@@ -6,7 +6,8 @@
 # after it
 @get("/")
 @produces(html)
-public index = fn (_Req)
+@public
+index = fn (_Req)
     "hello world!"
 
 # another global attribute, you can place attributes anywhere
@@ -15,10 +16,12 @@ public index = fn (_Req)
 @post("/user/")
 @accepts(json)
 @produces(txt)
-public create_user = fn (_Req, _Body)
+@public
+create_user = fn (_Req, _Body)
     (200, "ok")
 
-public run = fn ()
+@public
+run = fn ()
     Api = get_rest_api(module_info(attributes))
     pretty_print_api(Api)
 

@@ -4,7 +4,8 @@
 # http://en.wikipedia.org/wiki/List_comprehension
 # http://www.erlang.org/doc/programming_examples/list_comprehensions.html
 
-public run = fn ()
+@public
+run = fn ()
     A = [X for X in lists.seq(1, 10)]
     B = [X for X in lists.seq(1, 10) if X % 2 == 0]
     C = [X for X in lists.seq(1, 10) if X % 2 == 0 and X != 4]

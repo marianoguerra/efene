@@ -89,27 +89,30 @@ tree_to_ast([{global_attribute, Line, Name, Value}|Tree], Publics, Ast, CurrAttr
 tree_to_ast([{attribute, _Line, _Name, _Value}=Attr|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     tree_to_ast(Tree, Publics, Ast, [Attr|CurrAttrs], Attrs);
 
-tree_to_ast([{public_function, Line, Name, Arity, Body}|Tree], Publics, Ast, CurrAttrs, Attrs) ->
-    Fun = {Name, Arity},
-    NewAttrs = modify_attrs(CurrAttrs, Fun),
-    tree_to_ast(Tree, [Fun|Publics],
-        [{function, Line, Name, Arity, Body}|Ast], [], [NewAttrs|Attrs]);
-
 tree_to_ast([{function, _Line, Name, Arity, _Body}=H|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     Fun = {Name, Arity},
-    NewAttrs = modify_attrs(CurrAttrs, Fun),
-    tree_to_ast(Tree, Publics,
+    {IsPublic, NewAttrs} = modify_attrs(CurrAttrs, Fun),
+
+    NewPublics = if
+        IsPublic -> [Fun|Publics];
+        true -> Publics
+    end,
+
+    tree_to_ast(Tree, NewPublics,
         [H|Ast], [], [NewAttrs|Attrs]);
+
 tree_to_ast([H|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     tree_to_ast(Tree, Publics, [H|Ast], CurrAttrs, Attrs).
 
 modify_attrs(Attrs, Fun) ->
-    modify_attrs(Attrs, Fun, []).
+    modify_attrs(Attrs, Fun, [], false).
 
-modify_attrs([], _Fun, Accum) ->
-    lists:reverse(Accum);
-modify_attrs([{attribute, Line, Name, Args}|Attrs], Fun, Accum) ->
-        modify_attrs(Attrs, Fun, [{attribute, Line, Name, {Fun, Args}}|Accum]).
+modify_attrs([], _Fun, Accum, IsPublic) ->
+    {IsPublic, lists:reverse(Accum)};
+modify_attrs([{attribute, _Line, public, nil}|Attrs], Fun, Accum, _IsPublic) ->
+        modify_attrs(Attrs, Fun, Accum, true);
+modify_attrs([{attribute, Line, Name, Args}|Attrs], Fun, Accum, IsPublic) ->
+        modify_attrs(Attrs, Fun, [{attribute, Line, Name, {Fun, Args}}|Accum], IsPublic).
 
 
 get_publics(Tree) ->

@@ -6,7 +6,8 @@ bytwo = fn (A)
 add = fn (A, B)
     A + B
 
-public run = fn ()
+@public
+run = fn ()
     ByTwo = fn bytwo:1
     Add   = fn add:2
 

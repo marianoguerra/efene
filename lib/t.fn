@@ -1,5 +1,6 @@
 
-public assert = fn (Item, Fun) {
+@public
+assert = fn (Item, Fun) {
     Result = Fun(Item)
 
     if Result !== true {
@@ -10,7 +11,8 @@ public assert = fn (Item, Fun) {
     }
 }
 
-public equals = fn (A, B) {
+@public
+equals = fn (A, B) {
     if A != B {
         throw(assert_failed)
     } else {

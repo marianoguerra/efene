@@ -1,40 +1,49 @@
 
-public each = fn (List, Fun) {
+@public
+each = fn (List, Fun) {
     lists.foreach(Fun, List)
     List
 }
 
-public map = fn (List, Fun) {
+@public
+map = fn (List, Fun) {
     lists.map(Fun, List)
 }
 
-public keep = fn (List, Fun) {
+@public
+keep = fn (List, Fun) {
     lists.filter(Fun, List)
 }
 
-public remove = fn (List, Fun) {
+@public
+remove = fn (List, Fun) {
     keep(List, fn (X) { not Fun(X) })
 }
 
-public flatten = fn (List) {
+@public
+flatten = fn (List) {
     lists.flatten(List)
 }
 
-public uniq = fn (_List) {
+@public
+uniq = fn (_List) {
     throw(notimplemented)
 }
 
-public tap = fn (List, Fun) {
+@public
+tap = fn (List, Fun) {
     Fun(List)
     List
 }
 
-public print = fn (List) {
+@public
+print = fn (List) {
     io.format("~p~n", [List])
     List
 }
 
-public times = fn (Num, _Fun) when Num < 0 {
+@public
+times = fn (Num, _Fun) when Num < 0 {
     throw(invalid_times_value)
 } fn (Num, Fun) {
     times_acc(1, Fun, Num)
@@ -48,31 +57,38 @@ times_acc = fn (Stop, Fun, Stop) {
     times_acc(Count + 1, Fun, Stop)
 }
 
-public zip = fn (List, NewList) {
+@public
+zip = fn (List, NewList) {
     lists.zip(List, NewList)
 }
 
-public append = fn (List, NewList) {
+@public
+append = fn (List, NewList) {
     lists.append(List, NewList)
 }
 
-public length = fn (List) {
+@public
+length = fn (List) {
     erlang.length(List)
 }
 
-public range = fn (Stop) {
+@public
+range = fn (Stop) {
     range(0, Stop, 1, [])
 }
 
-public range = fn (Start, Stop) {
+@public
+range = fn (Start, Stop) {
     range(Start, Stop, 1, [])
 }
 
-public range = fn  (Start, Stop, Step) {
+@public
+range = fn  (Start, Stop, Step) {
     range(Start, Stop, Step, [])
 }
 
-public reverse = fn (List) {
+@public
+reverse = fn (List) {
     lists.reverse(List)
 }
 
@@ -90,47 +106,58 @@ range = fn (_Start, _Stop, 0, _Accum) {
     range(Start + Step, Stop, Step, [Start:Accum])
 }
 
-public all = fn (List) {
+@public
+all = fn (List) {
     all(List, fn (Item) { to_bool(Item) })
 }
 
-public all = fn (List, Fun) {
+@public
+all = fn (List, Fun) {
     lists.all(Fun, List)
 }
 
-public any = fn (List) {
+@public
+any = fn (List) {
     any(List, fn (Item) { to_bool(Item) })
 }
 
-public any = fn (List, Fun) {
+@public
+any = fn (List, Fun) {
     lists.any(Fun, List)
 }
 
-public max = fn (List) {
+@public
+max = fn (List) {
     lists.max(List)
 }
 
-public max = fn (_List, _Fun) {
+@public
+max = fn (_List, _Fun) {
     throw(notimplemented)
 }
 
-public min = fn (List) {
+@public
+min = fn (List) {
     lists.min(List)
 }
 
-public min = fn (_List, _Fun) {
+@public
+min = fn (_List, _Fun) {
     throw(notimplemented)
 }
 
-public reduce = fn (_List, _Start, _Fun) {
+@public
+reduce = fn (_List, _Start, _Fun) {
     throw(notimplemented)
 }
 
-public detect = fn (_List, _Fun) {
+@public
+detect = fn (_List, _Fun) {
     throw(notimplemented)
 }
 
-public to_bool = fn (0) {
+@public
+to_bool = fn (0) {
     false
 } fn ([]) {
     false

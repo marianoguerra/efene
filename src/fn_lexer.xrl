@@ -164,7 +164,6 @@ is_reserved("when")    -> true;
 is_reserved("object")  -> true;
 is_reserved("record")  -> true;
 is_reserved("fn")      -> true;
-is_reserved("public")  -> true;
 is_reserved("for")     -> true;
 is_reserved("in")      -> true;
 is_reserved(_)         -> false.
