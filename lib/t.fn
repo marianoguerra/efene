@@ -1,14 +1,16 @@
 
-assert = fn (Item Fun) {
+public assert = fn (Item, Fun) {
     Result = Fun(Item)
+
     if Result !== true {
         throw(assert_failed)
-    } else {
+    }
+    else {
         Item
     }
 }
 
-equals = fn (A B) {
+public equals = fn (A, B) {
     if A != B {
         throw(assert_failed)
     } else {

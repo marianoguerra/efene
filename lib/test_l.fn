@@ -1,14 +1,14 @@
-run = fn () {
-    l.range(from 2 to 10)\
-        ->t.equals([2 3 4 5 6 7 8 9 10])\
-        ->l.reverse()\
-        ->t.equals([10 9 8 7 6 5 4 3 2])\
-        ->l.map(fn (Item) { Item + 1 })\
-        ->t.equals([11 10 9 8 7 6 5 4 3])\
-        ->l.keep(fn (Item) { Item > 5 })\
-        ->t.equals([11 10 9 8 7 6])\
-        ->l.remove(fn (Item) { Item > 10})\
-        ->t.equals([10 9 8 7 6])\
-        ->l.append([5 4])\
-        ->t.equals([10 9 8 7 6 5 4])
+public run = fn () {
+    l.range(2, 10)->
+        t.equals([2, 3, 4, 5, 6, 7, 8, 9, 10])->
+        l.reverse()->
+        t.equals([10, 9, 8, 7, 6, 5, 4, 3, 2])->
+        l.map(fn (Item) { Item + 1 })->
+        t.equals([11, 10, 9, 8, 7, 6, 5, 4, 3])->
+        l.keep(fn (Item) { Item > 5 })->
+        t.equals([11, 10, 9, 8, 7, 6])->
+        l.remove(fn (Item) { Item > 10})->
+        t.equals([10, 9, 8, 7, 6])->
+        l.append([5, 4])->
+        t.equals([10, 9, 8, 7, 6, 5, 4])
 }
