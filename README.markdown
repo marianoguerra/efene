@@ -150,7 +150,7 @@ fn (div, A, B) {
 @public
 run = fn () {
     # lambda functions
-    Print = fn (Expr) io.format("~p~n", [Expr])
+    Print = fn (Expr) { io.format("~p~n", [Expr]) }
 
     Print(compare(1, 2))
     Print(compare(2, 1))
@@ -167,9 +167,9 @@ run = fn () {
     Print(compare_to_string_guards(this_is_an_invalid_value))
 
     # call fail with a function that will fail in different ways
-    Print(fail(fn () throw("throw here")))
-    Print(fail(fn () erlang.error("error here")))
-    Print(fail(fn () exit("exit here")))
+    Print(fail(fn () { throw("throw here") }))
+    Print(fail(fn () { erlang.error("error here") }))
+    Print(fail(fn () { exit("exit here") }))
 
     Print(do(add, 10, 2))
     Print(do(mul, 10, 2))
@@ -256,7 +256,7 @@ fn (div, A, B)
 @public
 run = fn ()
     # lambda functions
-    Print = fn (Expr) io.format("~p~n", [Expr])
+    Print = fn (Expr) { io.format("~p~n", [Expr]) }
 
     Print(compare(1, 2))
     Print(compare(2, 1))
@@ -273,9 +273,9 @@ run = fn ()
     Print(compare_to_string_guards(this_is_an_invalid_value))
 
     # call fail with a function that will fail in different ways
-    Print(fail(fn () throw("throw here")))
-    Print(fail(fn () erlang.error("error here")))
-    Print(fail(fn () exit("exit here")))
+    Print(fail(fn () { throw("throw here") }))
+    Print(fail(fn () { erlang.error("error here") }))
+    Print(fail(fn () { exit("exit here") }))
 
     Print(do(add, 10, 2))
     Print(do(mul, 10, 2))
