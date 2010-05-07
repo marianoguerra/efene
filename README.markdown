@@ -17,7 +17,8 @@ to see how it looks you can go to the [examples dir](http://github.com/marianogu
 <pre>
 <code>
 # public will allow accessing this function from other modules
-public run() {
+@public
+run() {
     io.format("hello world!")
 }
 </code>
@@ -41,7 +42,8 @@ fn hello run
 <pre>
 <code>
 # public will allow accessing this function from other modules
-public run()
+@public
+run()
     io.format("hello world!")
 </code>
 </pre>
@@ -145,7 +147,8 @@ fn (div, A, B) {
 }
 
 # main function, made public to access it outside the module
-public run = fn () {
+@public
+run = fn () {
     # lambda functions
     Print = fn (Expr) io.format("~p~n", [Expr])
 
@@ -250,7 +253,8 @@ fn (div, A, B)
     A / B
 
 # main function, made public to access it outside the module
-public run = fn ()
+@public
+run = fn ()
     # lambda functions
     Print = fn (Expr) io.format("~p~n", [Expr])
 
