@@ -8,4 +8,5 @@ all() ->
     tu:test(funs),
     tu:test(blocks),
     tu:test(comments),
+    tu:test(module),
     ok.
