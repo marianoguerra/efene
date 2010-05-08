@@ -9,4 +9,5 @@ all() ->
     tu:test(blocks),
     tu:test(comments),
     tu:test(module),
+    tu:test(records),
     ok.
