@@ -15,6 +15,8 @@
         get_erlang/2,
         print_erlang/2,
         erl_to_ast/1,
+        erlmod_to_ast/2,
+        mod_to_ast/2,
         run/0,
         run/1]).
 
@@ -36,13 +38,13 @@ get_lex(istring, String) ->
 get_lex(file, Path) ->
     Program = file_to_string(Path),
 
-    IsFn = lists:suffix(".fn", Path),
+    IsFn  = lists:suffix(".fn",  Path),
     IsIfn = lists:suffix(".ifn", Path),
 
     if
         IsFn  -> get_lex(string, Program);
         IsIfn -> get_lex(istring, Program);
-        true  -> exit("Invalid file extension (.fn or .ifn expected)")
+        true  -> exit(io_lib:format("Invalid file extension in '~s' (.fn or .ifn expected)~n", [Path]))
     end.
 
 print_lex(From, String) ->
@@ -152,6 +154,26 @@ erl_to_ast(String) ->
         Errors1 -> throw(Errors1)
     end.
 
+mod_to_ast(String, Path) ->
+    string_to_file(String, Path),
+    Ast = build_module(Path),
+
+    case file:delete(Path) of
+        ok -> Ast;
+        Error -> throw(Error)
+    end.
+
+erlmod_to_ast(String, Path) ->
+    string_to_file(String, Path),
+    [_|T] = from_erlang(Path),
+
+    Ast = lists:reverse(tl(lists:reverse(T))),
+
+    case file:delete(Path) of
+        ok -> Ast;
+        Error -> throw(Error)
+    end.
+
 % to erlang functions
 
 get_erlang(file, String) ->
@@ -189,19 +211,13 @@ get_code(Ast) ->
 compile(Name, Dir) ->
     Module = get_code(build_module(Name)),
     Path = filename:join([Dir, get_module_beam_name(Name)]),
-
-    Device = case file:open(Path, [binary, write]) of
-        {ok, Return} -> Return;
-        {error, _Reason} = Error -> throw(Error)
-    end,
-
-    file:write(Device, Module).
+    bin_to_file(Module, Path).
 
 build_module(Name) ->
     {Publics, Ast, Attrs} = tree_to_ast(file, Name),
 
     [{attribute, 1, module, get_module_name(Name)}|
-        [{attribute, 1, export, Publics}|Attrs]] ++ Ast.
+        [{attribute, 2, export, Publics}|Attrs]] ++ Ast.
 
 print_module(Name) ->
     io:format("~p~n", [build_module(Name)]).
@@ -218,6 +234,20 @@ file_to_string(Path) ->
     end,
 
     binary_to_list(Content).
+
+string_to_file(String, Path) ->
+    to_file(String, Path, [write]).
+
+bin_to_file(Bin, Path) ->
+    to_file(Bin, Path, [binary, write]).
+
+to_file(Data, Path, Mode) ->
+    Device = case file:open(Path, Mode) of
+        {ok, Return} -> Return;
+        {error, _Reason} = Error -> throw(Error)
+    end,
+
+    file:write(Device, Data).
 
 get_module_name(String) ->
     File = filename:basename(String),
