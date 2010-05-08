@@ -10,4 +10,5 @@ all() ->
     tu:test(comments),
     tu:test(module),
     tu:test(records),
+    tu:test(attrs),
     ok.
