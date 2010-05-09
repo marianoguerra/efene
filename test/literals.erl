@@ -107,7 +107,11 @@ list_comp() ->
 
 records() ->
     tu:test_ast("a.B.c", "B#a.c"),
+    tu:test_ast("a[,]", "#a{}"),
+    tu:test_ast("a[b=1]", "#a{b=1}"),
     tu:test_ast("a[b=1, c=2]", "#a{b=1, c=2}"),
+    tu:test_ast("a.B[]", "B#a{}"),
+    tu:test_ast("a.B[b=1]", "B#a{b=1}"),
     tu:test_ast("a.B[b=1, c=2]", "B#a{b=1, c=2}").
 
 binaries() ->

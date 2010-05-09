@@ -14,7 +14,7 @@ class EfeneLexer(RegexLexer):
         'root': [
             (r'\s+', Text),
             (r'#.*?\n', Comment),
-            (r'[~\^\*!%&<>\|+=:;,/?\\-]+', Operator),
+            (r'[~\^\*!%&<>\|+=:;,/?\\-@]+', Operator),
             (r'[{}\[\]();.,]+', Punctuation),
             (r'(for|in|if|else|try|catch|receive|after|fn|when|and|andd|or|orr|xor|not|switch|case|public)\b', Keyword),
             (r'(true|false)\b', Keyword.Constant),

@@ -307,8 +307,14 @@ rec -> atom dot var dot atom : {'record_field', line('$2'), '$3', unwrap('$1'), 
 rec_def -> atom match record open attr_sets close :
     {global_attribute, line('$2'), record, {unwrap('$1'), '$5'}}.
 
+rec_set -> atom dot var open_list close_list :
+    {'record', line('$2'), '$3', unwrap('$1'), []}.
+
 rec_set -> atom dot var open_list attr_sets close_list :
     {'record', line('$2'), '$3', unwrap('$1'), '$5'}.
+
+rec_new -> atom open_list sep close_list :
+    {'record', line('$2'), unwrap('$1'), []}.
 
 rec_new -> atom open_list attr_sets close_list :
     {'record', line('$2'), unwrap('$1'), '$3'}.
