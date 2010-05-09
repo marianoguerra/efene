@@ -1,170 +1,176 @@
 
 @public
-each = fn (List, Fun) {
+each = fn (List, Fun)
     lists.foreach(Fun, List)
     List
-}
+
 
 @public
-map = fn (List, Fun) {
+map = fn (List, Fun)
     lists.map(Fun, List)
-}
+
 
 @public
-keep = fn (List, Fun) {
+keep = fn (List, Fun)
     lists.filter(Fun, List)
-}
+
 
 @public
-remove = fn (List, Fun) {
+remove = fn (List, Fun)
     keep(List, fn (X) { not Fun(X) })
-}
+
 
 @public
-flatten = fn (List) {
+flatten = fn (List)
     lists.flatten(List)
-}
+
 
 @public
-uniq = fn (_List) {
+uniq = fn (_List)
     throw(notimplemented)
-}
+
 
 @public
-tap = fn (List, Fun) {
+tap = fn (List, Fun)
     Fun(List)
     List
-}
+
 
 @public
-print = fn (List) {
+print = fn (List)
     io.format("~p~n", [List])
     List
-}
+
 
 @public
-times = fn (Num, _Fun) when Num < 0 {
+times = fn (Num, _Fun) when Num < 0
     throw(invalid_times_value)
-} fn (Num, Fun) {
+fn (Num, Fun)
     times_acc(1, Fun, Num)
-}
 
-times_acc = fn (Stop, Fun, Stop) {
+
+times_acc = fn (Stop, Fun, Stop)
     Fun(Stop)
     ok
-} fn (Count, Fun, Stop) {
+fn (Count, Fun, Stop)
     Fun(Count)
     times_acc(Count + 1, Fun, Stop)
-}
+
 
 @public
-zip = fn (List, NewList) {
+zip = fn (List, NewList)
     lists.zip(List, NewList)
-}
+
 
 @public
-append = fn (List, NewList) {
+append = fn (List, NewList)
     lists.append(List, NewList)
-}
+
 
 @public
-length = fn (List) {
+length = fn (List)
     erlang.length(List)
-}
+
 
 @public
-range = fn (Stop) {
+range = fn (Stop)
     range(0, Stop, 1, [])
-}
+
 
 @public
-range = fn (Start, Stop) {
+range = fn (Start, Stop)
     range(Start, Stop, 1, [])
-}
+
 
 @public
-range = fn  (Start, Stop, Step) {
+range = fn  (Start, Stop, Step)
     range(Start, Stop, Step, [])
-}
+
 
 @public
-reverse = fn (List) {
+reverse = fn (List)
     lists.reverse(List)
-}
 
-range = fn (_Start, _Stop, 0, _Accum) {
+
+range = fn (_Start, _Stop, 0, _Accum)
     throw(invalid_step)
-} fn (Start, Stop, Step, []) when Step > 0 and Start > Stop {
+fn (Start, Stop, Step, []) when Step > 0 and Start > Stop
     throw(invalid_start_stop)
-} fn (Start, Stop, Step, []) when Step < 0 and Start < Stop {
+fn (Start, Stop, Step, []) when Step < 0 and Start < Stop
     throw(invalid_start_stop)
-} fn (Start, Stop, Step, Accum) when Step > 0 and Start > Stop {
+fn (Start, Stop, Step, Accum) when Step > 0 and Start > Stop
     lists.reverse(Accum)
-} fn (Start, Stop, Step, Accum) when Step < 0 and Start < Stop {
+fn (Start, Stop, Step, Accum) when Step < 0 and Start < Stop
     lists.reverse(Accum)
-} fn (Start, Stop, Step, Accum) {
+fn (Start, Stop, Step, Accum)
     range(Start + Step, Stop, Step, [Start:Accum])
-}
+
 
 @public
-all = fn (List) {
+all = fn (List)
     all(List, fn (Item) { to_bool(Item) })
-}
+
 
 @public
-all = fn (List, Fun) {
+all = fn (List, Fun)
     lists.all(Fun, List)
-}
+
 
 @public
-any = fn (List) {
+any = fn (List)
     any(List, fn (Item) { to_bool(Item) })
-}
+
 
 @public
-any = fn (List, Fun) {
+any = fn (List, Fun)
     lists.any(Fun, List)
-}
+
 
 @public
-max = fn (List) {
+max = fn (List)
     lists.max(List)
-}
+
 
 @public
-max = fn (_List, _Fun) {
+max = fn (_List, _Fun)
     throw(notimplemented)
-}
+
 
 @public
-min = fn (List) {
+min = fn (List)
     lists.min(List)
-}
+
 
 @public
-min = fn (_List, _Fun) {
+min = fn (_List, _Fun)
     throw(notimplemented)
-}
+
 
 @public
-reduce = fn (_List, _Start, _Fun) {
+reduce = fn (_List, _Start, _Fun)
     throw(notimplemented)
-}
+
 
 @public
-detect = fn (_List, _Fun) {
+detect = fn (_List, _Fun)
     throw(notimplemented)
-}
+
 
 @public
-to_bool = fn (0) {
+to_bool = fn (0)
     false
-} fn ([]) {
+fn ([])
     false
-} fn (0.0) {
+fn (0.0)
     false
-} fn ((,)) {
+fn ((,))
     false
-} fn (_) {
+fn (_)
     true
-}
+
+
+@public
+to_dict = fn (List)
+    dict.from_list(List)
+
+

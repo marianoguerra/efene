@@ -1,0 +1,37 @@
+
+@public
+set = fn (Dict, Key, Val)
+    dict.store(Key, Val, Dict)
+
+@public
+get = fn (Dict, Key)
+    dict.fetch(Key, Dict)
+
+@public
+remove = fn (Dict, Key)
+    dict.erase(Key, Dict)
+
+@public
+exists = fn (Dict, Key)
+    dict.is_key(Key, Dict)
+
+@public
+size = fn (Dict)
+    dict.size(Dict)
+
+@public
+keys = fn (Dict)
+    dict.fetch_keys(Dict)
+
+@public
+append = fn (Dict, Key, Val)
+    dict.append(Key, Val, Dict)
+
+@public
+new = fn ()
+    dict.new()
+
+@public
+to_list = fn (Dict)
+    dict.to_list(Dict)
+
