@@ -1,0 +1,201 @@
+
+# TODO: add module to the record
+route = record(method=get, path="/", accepts='*', produces=text, handler=nil)
+
+@public
+start = fn (Module)
+    start("127.0.0.1", 8000, Module)
+
+@public
+start = fn(Ip, Port, Module)
+    Options = [(ip, Ip), (port, Port)]
+    Api = rest_api(Module)
+
+    Loop = fn (Req)
+        loop(Req, Api, Module)
+
+    mochiweb_http.start([(name, mochiweb_example_app), (loop, Loop) : Options])
+
+@public
+loop = fn (Req, Api, Module)
+    Request = request(Req)
+    Handler = find_handler(Api, Request)
+
+    if Handler == notfound
+        not_found(Req)
+    else
+        Function = route.Handler.handler
+        Produces = route.Handler.produces
+
+        try
+            Return = Module.Function(Request)
+            # TODO: auto marshal json
+            response(Req, 200, mime(Produces), Return)
+        catch _ _Error
+            internal_error(Req)
+
+find_handler = fn (Api, Req)
+    Handlers = d.get(Api, Req.request_method())
+    find_handler_aux(Handlers, Req.path())
+
+find_handler_aux = fn ([], _Path)
+    notfound
+
+fn ([(route[path=Path])=Route:_Handlers], Path)
+    Route
+
+fn ([_Handler:Handlers], Path)
+    find_handler_aux(Handlers, Path)
+
+@public
+mime = fn (json)
+    "application/json"
+fn (text)
+     "text/plain"
+fn (html)
+     "text/html"
+fn (xml)
+     "text/xml"
+fn (js)
+     "application/javascript"
+fn (Unk) when is_atom(Unk)
+     atom_to_list(Unk)
+fn (Unk) when is_list(Unk)
+     Unk
+
+@public
+print_api = fn (Module)
+    Print = fn ((Name, Arity), Route)
+        io.format("~p/~p:~n", [Name, Arity])
+        io.format("  method: ~p:~n", [route.Route.method])
+        io.format("  path: ~p:~n", [route.Route.path])
+        io.format("  accepts: ~p:~n", [route.Route.accepts])
+        io.format("  produces: ~p:~n", [route.Route.produces])
+        io.format("~n")
+
+        Route
+
+    dict.map(Print, rest_api(Module))
+
+@public
+rest_api = fn (Module)
+    Dict = dict.new()
+    Api = rest_api(Module.module_info(attributes), Dict)
+
+    Gets = filter_get_methods(Api)
+    Puts = filter_put_methods(Api)
+    Posts = filter_post_methods(Api)
+    Deletes = filter_delete_methods(Api)
+
+    Api->d.set('GET', Gets)->
+        d.set('PUT', Puts)->
+        d.set('POST', Posts)->
+        d.set('DELETE', Deletes)
+
+filter_get_methods = fn (Api)
+    dict.fold(fn filter_get_methods:3, [], Api)
+
+filter_get_methods = fn (_Key, route[method=get]=Route, Acc)
+    [Route:Acc]
+fn (_Key, _Route, Acc)
+    Acc
+
+filter_put_methods = fn (Api)
+    dict.fold(fn filter_put_methods:3, [], Api)
+
+filter_put_methods = fn (_Key, route[method=put]=Route, Acc)
+    [Route:Acc]
+fn (_Key, _Route, Acc)
+    Acc
+
+filter_post_methods = fn (Api)
+    dict.fold(fn filter_post_methods:3, [], Api)
+
+filter_post_methods = fn (_Key, route[method=post]=Route, Acc)
+    [Route:Acc]
+fn (_Key, _Route, Acc)
+    Acc
+
+filter_delete_methods = fn (Api)
+    dict.fold(fn filter_delete_methods:3, [], Api)
+
+filter_delete_methods = fn (_Key, route[method=delete]=Route, Acc)
+    [Route:Acc]
+fn (_Key, _Route, Acc)
+    Acc
+
+root = fn ()
+    "./wwwroot"
+
+response = fn (Req)
+    simple_bridge.make_response(mochiweb_response_bridge, (Req, root()))
+
+response = fn (Req, Status, ContentType, Data)
+    Response = response(Req)
+    Response1 = Response.status_code(Status)
+    Response2 = Response1.header("Content-Type", ContentType)
+    Response3 = Response2.data(Data)
+    Response3.build_response()
+
+request = fn (Req)
+    simple_bridge.make_request(mochiweb_request_bridge, (Req, root()))
+
+not_found = fn (Req)
+    response(Req, 404, mime(html), ["<h1>not found</h1>"])
+
+internal_error= fn (Req)
+    response(Req, 500, mime(html), ["<h1>internal error</h1>"])
+
+get_or_create_route = fn (Dict, Key)
+    IsKey = dict.is_key(Key, Dict)
+
+    if IsKey
+        (Dict, dict.fetch(Key, Dict))
+    else
+        Route = route[handler=element(1, Key)]
+        (dict.store(Key, Route, Dict), Route)
+
+update_route = fn (Dict, Key, Val)
+    dict.store(Key, Val, Dict)
+
+set_method = fn (Method, Path, Api, Fun, Tail)
+    (Api0, Route0) = get_or_create_route(Api, Fun)
+
+    Route1 = route.Route0[method=Method]
+    Route = route.Route1[path=Path]
+
+    NewApi = update_route(Api0, Fun, Route)
+    rest_api(Tail, NewApi)
+
+rest_api = fn ([], Api)
+    Api
+
+fn ([(get=Method, [((_Name, _Arity)=Fun, Path):_]):T], Api)
+    set_method(Method, Path, Api, Fun, T)
+
+fn ([(post=Method, [((_Name, _Arity)=Fun, Path):_]):T], Api)
+    set_method(Method, Path, Api, Fun, T)
+
+fn ([(put=Method, [((_Name, _Arity)=Fun, Path):_]):T], Api)
+    set_method(Method, Path, Api, Fun, T)
+
+fn ([(delete=Method, [((_Name, _Arity)=Fun, Path):_]):T], Api)
+    set_method(Method, Path, Api, Fun, T)
+
+fn ([(accepts, [((_Name, _Arity)=Fun, ContentType):_]):T], Api)
+    (Api0, Route0) = get_or_create_route(Api, Fun)
+    Route = route.Route0[accepts=ContentType]
+
+    NewApi = update_route(Api0, Fun, Route)
+    rest_api(T, NewApi)
+
+fn ([(produces, [((_Name, _Arity)=Fun, ContentType):_]):T], Api)
+    (Api0, Route0) = get_or_create_route(Api, Fun)
+    Route = route.Route0[produces=ContentType]
+
+    NewApi = update_route(Api0, Fun, Route)
+    rest_api(T, NewApi)
+
+fn ([_:T], Api)
+    rest_api(T, Api)
+
