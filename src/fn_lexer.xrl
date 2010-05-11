@@ -106,7 +106,7 @@ Rules.
 
 % string stuff
 {String}                 : build_string(string, TokenChars, TokenLine, TokenLen).
-{Char}                   : make_token(char,     TokenLine, TokenChars, fun list_to_charnum/1).
+{Char}                   : make_token(char,     TokenLine, TokenChars, fun(Char) -> list_to_charnum(Char, TokenLine) end).
 
 % identifiers and atoms
 {Identifier}             : make_token(var, TokenLine, TokenChars).
@@ -137,7 +137,7 @@ atom_or_identifier(String, TokenLine) ->
          true ->
             {list_to_atom(String), TokenLine};
          false ->
-            {atom, TokenLine, build_atom(String)}
+            {atom, TokenLine, build_atom(String, TokenLine)}
      end.
 
 bin_to_integer("0b" ++ Number) ->
@@ -169,20 +169,20 @@ is_reserved("in")      -> true;
 is_reserved(_)         -> false.
 
 build_string(Type, Chars, Line, Len) ->
-  String = unescape_string(lists:sublist(Chars, 2, Len - 2)),
+  String = unescape_string(lists:sublist(Chars, 2, Len - 2), Line),
     {token, {Type, Line, String}}.
 
-unescape_string(String) -> unescape_string(String, []).
+unescape_string(String, Line) -> unescape_string(String, Line, []).
 
-unescape_string([], Output) ->
+unescape_string([], _Line, Output) ->
   lists:reverse(Output);
-unescape_string([$\\, Escaped | Rest], Output) ->
-  Char = map_escaped_char(Escaped),
-  unescape_string(Rest, [Char|Output]);
-unescape_string([Char|Rest], Output) ->
-  unescape_string(Rest, [Char|Output]).
+unescape_string([$\\, Escaped | Rest], Line, Output) ->
+  Char = map_escaped_char(Escaped, Line),
+  unescape_string(Rest, Line, [Char|Output]);
+unescape_string([Char|Rest], Line, Output) ->
+  unescape_string(Rest, Line, [Char|Output]).
 
-map_escaped_char(Escaped) ->
+map_escaped_char(Escaped, Line) ->
   case Escaped of
     $\\ -> $\\;
     $/ -> $/;
@@ -197,12 +197,13 @@ map_escaped_char(Escaped) ->
     $s -> $\s;
     $t -> $\t;
     $v -> $\v;
-    _ -> throw({error, {"unrecognized escape sequence: ", [$\\, Escaped]}})
+    _ -> throw({error, {Line, fn_lexer, ["unrecognized escape sequence: ", [$\\, Escaped]]}})
   end.
 
-list_to_charnum([_, $\\, Char]) ->
-  map_escaped_char(Char);
-list_to_charnum([_, Char]) -> Char.
+list_to_charnum([_, $\\, Char], Line) ->
+  map_escaped_char(Char, Line);
+list_to_charnum([_, Char], _Line) -> Char.
 
-build_atom([$'|_] = Atom) -> list_to_atom(unescape_string(lists:sublist(Atom, 2, length(Atom) - 2)));
-build_atom(Atom) -> list_to_atom(Atom).
+build_atom([$'|_] = Atom, Line) ->
+    list_to_atom(unescape_string(lists:sublist(Atom, 2, length(Atom) - 2), Line));
+build_atom(Atom, _Line) -> list_to_atom(Atom).

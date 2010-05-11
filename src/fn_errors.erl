@@ -1,10 +1,12 @@
 -module(fn_errors).
--export([handle/1, fail_on_tab/1]).
+-export([handle/1, fail_on_tab/1, format_error/1]).
 
 format_error({error, {Line, fn, {illegal, tab}}}) ->
     io:format("line ~p: illegal tab found on ifene source (use spaces for indentation)~n", [Line]);
 format_error({error, {Line, fn_lexer, {illegal, Char}}, _Unk}) ->
     io:format("line ~p: illegal character: \"~s\"~n", [Line, Char]);
+format_error({error, {Line, fn_lexer, [Reason, Cause]}}) ->
+    io:format("line ~p: ~s \"~s\"~n", [Line, Reason, Cause]);
 format_error({error, {Line, fn_parser, [Reason, Cause]}}) ->
     io:format("line ~p: ~s \"~s\"~n", [Line, Reason, Cause]);
 format_error(Error) ->

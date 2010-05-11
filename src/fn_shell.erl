@@ -14,7 +14,7 @@ loop(Bindings) ->
                io:format("~p~n", [Result]),
                loop(NewBindings)
            catch
-             _:Error -> io:format("~p~n", [Error]), loop(Bindings)
+             _:Error -> fn_errors:format_error(Error), loop(Bindings)
            end;
        true -> io:format("~n"), ok
     end.
