@@ -1,0 +1,39 @@
+
+# this is a global attribute, it won't be tied to a function
+@@author("Mariano Guerra")
+
+# this is a function attribute, it will be tied to the function
+# after it
+@get("/")
+@produces(html)
+@public
+index = fn (_Req)
+    ["hello world!"]
+
+@get("/<string>/?")
+@produces(html)
+@public
+salute = fn (_Req, Who)
+    ["hello ", Who, "!"]
+
+@get("/add/<integer>/<integer>/?")
+@produces(html)
+@public
+add_integer = fn (_Req, A, B)
+    C = list_to_integer(A) + list_to_integer(B)
+    ["Result: ", io_lib.format("~B", [C])]
+
+@get("/add/<float>/<float>/?")
+@produces(html)
+@public
+add_float = fn (_Req, A, B)
+    C = list_to_float(A) + list_to_float(B)
+    ["Result: ", io_lib.format("~p", [C])]
+
+# another global attribute, you can place attributes anywhere
+@@version((1, 0, 0))
+
+@public
+run = fn ()
+    rest.start(test_rest)
+

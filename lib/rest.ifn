@@ -1,6 +1,6 @@
 
 # TODO: add module to the record
-route = record(method=get, path="/", accepts='*', produces=text, handler=nil)
+route = record(method=get, path="^/$", accepts='*', produces=text, handler=nil)
 
 @public
 start = fn (Module)
@@ -24,28 +24,56 @@ loop = fn (Req, Api, Module)
     if Handler == notfound
         not_found(Req)
     else
-        Function = route.Handler.handler
-        Produces = route.Handler.produces
+        (Route, Captured) = Handler
+        Function = route.Route.handler
+        Produces = route.Route.produces
+        Args = args_from_request(Request, Captured)
 
         try
-            Return = Module.Function(Request)
+            Return = apply(Module, Function, Args)
             # TODO: auto marshal json
             response(Req, 200, mime(Produces), Return)
         catch _ _Error
             internal_error(Req)
 
+# get the values of the parameters from the regular expression
+# matching in the path
+# return a list with request as first parameter and then all the
+# matched arguments
+@public
+args_from_request = fn (Request, Captured)
+    args_from_request(Request.path(), tl(Captured), [Request])
+
+args_from_request = fn (_Path, [], Args)
+    lists.reverse(Args)
+
+fn (Path, [(Start, Len):Captured], Args)
+    Arg = lists.sublist(Path, Start + 1, Len)
+    args_from_request(Path, Captured, [Arg:Args])
+
+method_handlers = fn ((api, Gets, _, _, _), 'GET')
+    Gets
+fn ((api, _, Puts, _, _), 'PUT')
+    Puts
+fn ((api, _, _, Posts, _), 'POST')
+    Posts
+fn ((api, _, _, _, Deletes), 'DELETE')
+    Deletes
+
+
 find_handler = fn (Api, Req)
-    Handlers = d.get(Api, Req.request_method())
+    Handlers = method_handlers(Api, Req.request_method())
     find_handler_aux(Handlers, Req.path())
 
 find_handler_aux = fn ([], _Path)
     notfound
 
-fn ([(route[path=Path])=Route:_Handlers], Path)
-    Route
-
-fn ([_Handler:Handlers], Path)
-    find_handler_aux(Handlers, Path)
+fn ([(route[path=RoutePath])=Route:Handlers], Path)
+    switch re.run(Path, RoutePath)
+        case nomatch
+            find_handler_aux(Handlers, Path)
+        case (match, Captured)
+            (Route, Captured)
 
 @public
 mime = fn (json)
@@ -87,10 +115,7 @@ rest_api = fn (Module)
     Posts = filter_post_methods(Api)
     Deletes = filter_delete_methods(Api)
 
-    Api->d.set('GET', Gets)->
-        d.set('PUT', Puts)->
-        d.set('POST', Posts)->
-        d.set('DELETE', Deletes)
+    (api, Gets, Puts, Posts, Deletes)
 
 filter_get_methods = fn (Api)
     dict.fold(fn filter_get_methods:3, [], Api)
@@ -162,7 +187,7 @@ set_method = fn (Method, Path, Api, Fun, Tail)
     (Api0, Route0) = get_or_create_route(Api, Fun)
 
     Route1 = route.Route0[method=Method]
-    Route = route.Route1[path=Path]
+    Route = route.Route1[path=transform_url(Path)]
 
     NewApi = update_route(Api0, Fun, Route)
     rest_api(Tail, NewApi)
@@ -198,4 +223,14 @@ fn ([(produces, [((_Name, _Arity)=Fun, ContentType):_]):T], Api)
 
 fn ([_:T], Api)
     rest_api(T, Api)
+
+# transform the url from the user friendly form to the regex form
+# /foo/<string>/<int>/<float>/? -> /foo/(.+)/(\d+)/(\d+\.\d+)/?
+@public
+transform_url = fn (Url)
+    Url1 = Url->re.replace("<string>", "(.[^/]+?)", [(return, list), global])->
+        re.replace("<integer>", "([0-9]+)", [(return, list), global])->
+        re.replace("<float>", "([0-9]+\\\\.[0-9]+)", [(return, list), global])
+
+    "^" ++ Url1 ++ "$"
 
