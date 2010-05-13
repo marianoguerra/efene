@@ -12,12 +12,12 @@ start = fn(Ip, Port, Module)
     Api = rest_api(Module)
 
     Loop = fn (Req)
-        loop(Req, Api, Module)
+        loop(Req, Api)
 
     mochiweb_http.start([(name, mochiweb_example_app), (loop, Loop) : Options])
 
 @public
-loop = fn (Req, Api, Module)
+loop = fn (Req, Api)
     Request = request(Req)
     Handler = find_handler(Api, Request)
 
@@ -25,7 +25,7 @@ loop = fn (Req, Api, Module)
         not_found(Req)
     else
         (Route, Captured) = Handler
-        Function = route.Route.handler
+        (Module, Function) = route.Route.handler
         Produces = route.Route.produces
         Args = args_from_request(Request, Captured)
 
@@ -108,7 +108,7 @@ print_api = fn (Module)
 @public
 rest_api = fn (Module)
     Dict = dict.new()
-    Api = rest_api(Module.module_info(attributes), Dict)
+    Api = rest_api(Module.module_info(attributes), Module, Dict)
 
     Gets = filter_get_methods(Api)
     Puts = filter_put_methods(Api)
@@ -171,58 +171,57 @@ not_found = fn (Req)
 internal_error= fn (Req)
     response(Req, 500, mime(html), ["<h1>internal error</h1>"])
 
-get_or_create_route = fn (Dict, Key)
+get_or_create_route = fn (Dict, Key, Module)
     IsKey = dict.is_key(Key, Dict)
 
     if IsKey
         (Dict, dict.fetch(Key, Dict))
     else
-        Route = route[handler=element(1, Key)]
+        Route = route[handler=(Module, element(1, Key))]
         (dict.store(Key, Route, Dict), Route)
 
 update_route = fn (Dict, Key, Val)
     dict.store(Key, Val, Dict)
 
-set_method = fn (Method, Path, Api, Fun, Tail)
-    (Api0, Route0) = get_or_create_route(Api, Fun)
+set_method = fn (Method, Path, Api, Fun, Module, Tail)
+    (Api0, Route0) = get_or_create_route(Api, Fun, Module)
 
-    Route1 = route.Route0[method=Method]
-    Route = route.Route1[path=transform_url(Path)]
+    Route = route.Route0[method=Method, path=transform_url(Path)]
 
     NewApi = update_route(Api0, Fun, Route)
-    rest_api(Tail, NewApi)
+    rest_api(Tail, Module, NewApi)
 
-rest_api = fn ([], Api)
+rest_api = fn ([], _Module, Api)
     Api
 
-fn ([(get=Method, [((_Name, _Arity)=Fun, Path):_]):T], Api)
-    set_method(Method, Path, Api, Fun, T)
+fn ([(get=Method, [((_Name, _Arity)=Fun, Path):_]):T], Module, Api)
+    set_method(Method, Path, Api, Fun, Module, T)
 
-fn ([(post=Method, [((_Name, _Arity)=Fun, Path):_]):T], Api)
-    set_method(Method, Path, Api, Fun, T)
+fn ([(post=Method, [((_Name, _Arity)=Fun, Path):_]):T], Module, Api)
+    set_method(Method, Path, Api, Fun, Module, T)
 
-fn ([(put=Method, [((_Name, _Arity)=Fun, Path):_]):T], Api)
-    set_method(Method, Path, Api, Fun, T)
+fn ([(put=Method, [((_Name, _Arity)=Fun, Path):_]):T], Module, Api)
+    set_method(Method, Path, Api, Fun, Module, T)
 
-fn ([(delete=Method, [((_Name, _Arity)=Fun, Path):_]):T], Api)
-    set_method(Method, Path, Api, Fun, T)
+fn ([(delete=Method, [((_Name, _Arity)=Fun, Path):_]):T], Module, Api)
+    set_method(Method, Path, Api, Fun, Module, T)
 
-fn ([(accepts, [((_Name, _Arity)=Fun, ContentType):_]):T], Api)
-    (Api0, Route0) = get_or_create_route(Api, Fun)
+fn ([(accepts, [((_Name, _Arity)=Fun, ContentType):_]):T], Module, Api)
+    (Api0, Route0) = get_or_create_route(Api, Fun, Module)
     Route = route.Route0[accepts=ContentType]
 
     NewApi = update_route(Api0, Fun, Route)
-    rest_api(T, NewApi)
+    rest_api(T, Module, NewApi)
 
-fn ([(produces, [((_Name, _Arity)=Fun, ContentType):_]):T], Api)
-    (Api0, Route0) = get_or_create_route(Api, Fun)
+fn ([(produces, [((_Name, _Arity)=Fun, ContentType):_]):T], Module, Api)
+    (Api0, Route0) = get_or_create_route(Api, Fun, Module)
     Route = route.Route0[produces=ContentType]
 
     NewApi = update_route(Api0, Fun, Route)
-    rest_api(T, NewApi)
+    rest_api(T, Module, NewApi)
 
-fn ([_:T], Api)
-    rest_api(T, Api)
+fn ([_:T], Module, Api)
+    rest_api(T, Module, Api)
 
 # transform the url from the user friendly form to the regex form
 # /foo/<string>/<int>/<float>/? -> /foo/(.+)/(\d+)/(\d+\.\d+)/?
