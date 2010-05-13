@@ -1,6 +1,5 @@
 
-# TODO: add module to the record
-route = record(method=get, path="^/$", accepts='*', produces=text, handler=nil)
+route = record(method=get, path="^/$", transforms=nil,accepts='*', produces=text, handler=nil)
 
 @public
 start = fn ([Module:Modules])
@@ -36,8 +35,13 @@ loop = fn (Req, Api)
         Produces = route.Route.produces
         Args = args_from_request(Request, Captured)
 
+        Transforms = lists.zip(route.Route.transforms, Args)
+
+        TArgs = [Transform(Arg) for (Transform, Arg) in Transforms]
+        NewArgs = [Request:TArgs]
+
         try
-            Return = apply(Module, Function, Args)
+            Return = apply(Module, Function, NewArgs)
             # TODO: auto marshal json
             response(Req, 200, mime(Produces), Return)
         catch _ _Error
@@ -49,7 +53,7 @@ loop = fn (Req, Api)
 # matched arguments
 @public
 args_from_request = fn (Request, Captured)
-    args_from_request(Request.path(), tl(Captured), [Request])
+    args_from_request(Request.path(), tl(Captured), [])
 
 args_from_request = fn (_Path, [], Args)
     lists.reverse(Args)
@@ -58,6 +62,7 @@ fn (Path, [(Start, Len):Captured], Args)
     Arg = lists.sublist(Path, Start + 1, Len)
     args_from_request(Path, Captured, [Arg:Args])
 
+# return the method handlers for the given HTTP method
 method_handlers = fn ((api, Gets, _, _, _), 'GET')
     Gets
 fn ((api, _, Puts, _, _), 'PUT')
@@ -68,6 +73,8 @@ fn ((api, _, _, _, Deletes), 'DELETE')
     Deletes
 
 
+# return the handler for a given request, return notfound
+# if not found (doh!)
 find_handler = fn (Api, Req)
     Handlers = method_handlers(Api, Req.request_method())
     find_handler_aux(Handlers, Req.path())
@@ -83,6 +90,7 @@ fn ([(route[path=RoutePath])=Route:Handlers], Path)
             (Route, Captured)
 
 @public
+# transform an atom describing a mime type to its string representation
 mime = fn (json)
     "application/json"
 fn (text)
@@ -113,6 +121,7 @@ print_api = fn (Module)
     dict.map(Print, rest_api(Module))
 
 @public
+# get the rest api of a module, Module is the module name as atom
 rest_api = fn (Module)
     Dict = dict.new()
     Api = rest_api(Module.module_info(attributes), Module, Dict)
@@ -125,6 +134,7 @@ rest_api = fn (Module)
     (api, Gets, Puts, Posts, Deletes)
 
 @public
+# append the api of a module to an API already generated
 rest_api = fn (Module, (api, Gets, Puts, Posts, Deletes))
     (api, NewGets, NewPuts, NewPosts, NewDeletes) = rest_api(Module)
 
@@ -133,6 +143,7 @@ rest_api = fn (Module, (api, Gets, Puts, Posts, Deletes))
     (api, A(Gets, NewGets), A(Puts, NewPuts), A(Posts, NewPosts),
         A(Deletes, NewDeletes))
 
+# return only the get methods from the API dict as a list
 filter_get_methods = fn (Api)
     dict.fold(fn filter_get_methods:3, [], Api)
 
@@ -141,6 +152,7 @@ filter_get_methods = fn (_Key, route[method=get]=Route, Acc)
 fn (_Key, _Route, Acc)
     Acc
 
+# return only the put methods from the API dict as a list
 filter_put_methods = fn (Api)
     dict.fold(fn filter_put_methods:3, [], Api)
 
@@ -149,6 +161,7 @@ filter_put_methods = fn (_Key, route[method=put]=Route, Acc)
 fn (_Key, _Route, Acc)
     Acc
 
+# return only the post methods from the API dict as a list
 filter_post_methods = fn (Api)
     dict.fold(fn filter_post_methods:3, [], Api)
 
@@ -157,6 +170,7 @@ filter_post_methods = fn (_Key, route[method=post]=Route, Acc)
 fn (_Key, _Route, Acc)
     Acc
 
+# return only the delete methods from the API dict as a list
 filter_delete_methods = fn (Api)
     dict.fold(fn filter_delete_methods:3, [], Api)
 
@@ -165,6 +179,7 @@ filter_delete_methods = fn (_Key, route[method=delete]=Route, Acc)
 fn (_Key, _Route, Acc)
     Acc
 
+# return the default wwwroot
 root = fn ()
     "./wwwroot"
 
@@ -202,7 +217,9 @@ update_route = fn (Dict, Key, Val)
 set_method = fn (Method, Path, Api, Fun, Module, Tail)
     (Api0, Route0) = get_or_create_route(Api, Fun, Module)
 
-    Route = route.Route0[method=Method, path=transform_url(Path)]
+    Transforms = token_transformers(Path)
+    Route = route.Route0[method=Method, path=transform_url(Path),
+        transforms=Transforms]
 
     NewApi = update_route(Api0, Fun, Route)
     rest_api(Tail, Module, NewApi)
@@ -240,7 +257,7 @@ fn ([_:T], Module, Api)
     rest_api(T, Module, Api)
 
 # transform the url from the user friendly form to the regex form
-# /foo/<string>/<int>/<float>/? -> /foo/(.+)/(\d+)/(\d+\.\d+)/?
+# /foo/<string>/<integer>/<float>/? -> /foo/(.+)/(\d+)/(\d+\.\d+)/?
 @public
 transform_url = fn (Url)
     Url1 = Url->re.replace("<string>", "(.[^/]+?)", [(return, list), global])->
@@ -249,3 +266,29 @@ transform_url = fn (Url)
 
     "^" ++ Url1 ++ "$"
 
+# return a list of functions to be called to transform the string input into
+# the correct type, no operation for <string>, list_to_integer for <integer>
+# and list_to_float for <float>
+token_transformers = fn (Url)
+    Tokens = switch re.run(Url, "<integer>|<string>|<float>", [global, (capture, all, list)])
+        case nomatch
+            []
+        case (match, Return)
+            Return
+
+    token_to_transformer(Tokens, [])
+
+token_to_transformer = fn ([], Trans)
+    lists.reverse(Trans)
+
+fn ([["<string>"]:Tokens], Trans)
+    token_to_transformer(Tokens, [(fn nop:1):Trans])
+
+fn ([["<float>"]:Tokens], Trans)
+    token_to_transformer(Tokens, [(fn erlang.list_to_float:1):Trans])
+
+fn ([["<integer>"]:Tokens], Trans)
+    token_to_transformer(Tokens, [(fn erlang.list_to_integer:1):Trans])
+
+nop = fn (String) when is_list(String)
+    String
