@@ -47,7 +47,7 @@ while getopts ":o:ht:c:C:i:I:se" opt; do
         exit $?
         ;;
     \?)
-echo "Invalid option: -$OPTARG" >&2
+        echo "Invalid option: -$OPTARG" >&2
         exit 1
         ;;
     :)
@@ -57,6 +57,8 @@ echo "Invalid option: -$OPTARG" >&2
   esac
 done
 
+
+
 if [ "$TYPE" == "beam" ];
 then
     if [ "$#" -lt "1" ];
@@ -65,7 +67,8 @@ then
         exit 1
     fi
 
-    fnc.sh $TYPE $LASTARG $OUTPUTDIR
+    shift $(($OPTIND - 1))
+    fnc.sh $TYPE $OUTPUTDIR $*
 else
     fnc.sh $TYPE $LASTARG
 fi

@@ -213,6 +213,13 @@ compile(Name, Dir) ->
     Path = filename:join([Dir, get_module_beam_name(Name)]),
     bin_to_file(Module, Path).
 
+compile_files([], _Dir) -> ok;
+compile_files([File|Files], Dir) ->
+    io:format("Compiling ~s~n", [File]),
+    compile(File, Dir),
+    compile_files(Files, Dir).
+
+
 build_module(Name) ->
     {Publics, Ast, Attrs} = tree_to_ast(file, Name),
 
@@ -305,9 +312,7 @@ run(["mod", File]) ->
     fn_errors:handle(fun () -> print_module(File) end);
 run(["erl2ast", File]) ->
     fn_errors:handle(fun () -> print_from_erlang(File) end);
-run(["beam", File]) ->
-    fn_errors:handle(fun () -> compile(File, ".") end);
-run(["beam", File, Dir]) ->
-    fn_errors:handle(fun () -> compile(File, Dir) end);
+run(["beam", Dir | Files]) ->
+    fn_errors:handle(fun () -> compile_files(Files, Dir) end);
 run(Opts) ->
     io:format("Invalid input to fn.erl: \"~p\"~n", [Opts]).
