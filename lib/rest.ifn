@@ -3,15 +3,15 @@
 route = record(method=get, path="^/$", accepts='*', produces=text, handler=nil)
 
 @public
-start = fn ((api, _, _, _, _)=Api)
-    start("127.0.0.1", 8000, Api)
+start = fn ([Module:Modules])
+    start("127.0.0.1", 8000, Modules, rest_api(Module))
 
-fn (Module)
-    start("127.0.0.1", 8000, Module)
+fn (Module) when is_atom(Module)
+    start("127.0.0.1", 8000, [], rest_api(Module))
 
 # TODO: allow server selection
 @public
-start = fn (Ip, Port, (api, _, _, _, _)=Api)
+start = fn (Ip, Port, [], Api)
     Options = [(ip, Ip), (port, Port)]
 
     Loop = fn (Req)
@@ -19,9 +19,9 @@ start = fn (Ip, Port, (api, _, _, _, _)=Api)
 
     mochiweb_http.start([(name, mochiweb_example_app), (loop, Loop) : Options])
 
-fn(Ip, Port, Module)
-    Api = rest_api(Module)
-    start(Ip, Port, Api)
+fn (Ip, Port, [Module:Modules], Api)
+    start(Ip, Port, Modules, rest_api(Module, Api))
+
 
 @public
 loop = fn (Req, Api)
