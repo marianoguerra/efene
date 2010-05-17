@@ -302,7 +302,7 @@ list_generator -> for bool_expr in bool_expr if bool_expr :
 
 % records
 
-rec -> atom dot var dot atom : {'record_field', line('$2'), '$3', unwrap('$1'), '$5'}.
+rec -> atom dot var open_list atom close_list : {'record_field', line('$2'), '$3', unwrap('$1'), '$5'}.
 
 rec_def -> atom match record open attr_sets close :
     {global_attribute, line('$2'), record, {unwrap('$1'), '$5'}}.

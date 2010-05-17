@@ -31,11 +31,11 @@ loop = fn (Req, Api)
         not_found(Req)
     else
         (Route, Captured) = Handler
-        (Module, Function) = route.Route.handler
-        Produces = route.Route.produces
+        (Module, Function) = route.Route[handler]
+        Produces = route.Route[produces]
         Args = args_from_request(Request, Captured)
 
-        Transforms = lists.zip(route.Route.transforms, Args)
+        Transforms = lists.zip(route.Route[transforms], Args)
 
         TArgs = [Transform(Arg) for (Transform, Arg) in Transforms]
         NewArgs = [Request:TArgs]
@@ -110,10 +110,10 @@ fn (Unk) when is_list(Unk)
 print_api = fn (Module)
     Print = fn ((Name, Arity), Route)
         io.format("~p/~p:~n", [Name, Arity])
-        io.format("  method: ~p:~n", [route.Route.method])
-        io.format("  path: ~p:~n", [route.Route.path])
-        io.format("  accepts: ~p:~n", [route.Route.accepts])
-        io.format("  produces: ~p:~n", [route.Route.produces])
+        io.format("  method: ~p:~n", [route.Route[method]])
+        io.format("  path: ~p:~n", [route.Route[path]])
+        io.format("  accepts: ~p:~n", [route.Route[accepts]])
+        io.format("  produces: ~p:~n", [route.Route[produces]])
         io.format("~n")
 
         Route
