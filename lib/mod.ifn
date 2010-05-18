@@ -1,0 +1,69 @@
+
+@doc("return the documentation of *Mod* as a string")
+@public
+doc = fn (Mod)
+    Info = Mod.module_info(attributes)
+
+    FilterDoc = fn ((doc, _))
+        true
+    fn (_)
+        false
+
+    Docs = lists.filter(FilterDoc, Info)
+    format_docs(Docs, Mod, [])
+
+@doc("save the documentation of the module to *FilePath*")
+@public
+doc_to_file = fn (Mod, FilePath)
+    Docs = doc(Mod)
+
+    file.write_file(FilePath, Docs)
+
+@doc("return the documentation of the function *Mod*.*Fun*/*Arity*")
+@public
+fundoc = fn (Mod, Fun, Arity)
+    Info = Mod.module_info(attributes)
+
+    FilterDoc = fn ((doc, [((Fun1, Arity1), _)]))
+        if Fun == Fun1 and Arity == Arity1
+            true
+        else
+            false
+    fn (_)
+        false
+
+    switch lists.filter(FilterDoc, Info)
+        case [(doc, [((_, _), Doc)])]
+            Doc
+        case []
+            ""
+
+@doc("iterate over the doc attributes and return the formated docs of all
+of them")
+
+format_docs = fn ([], Mod, Docs)
+    Text = atom_to_list(Mod) ++ " documentation"
+    Title = Text ++ "\n" ++ underline(Text, "=") ++ "\n\n"
+
+    lists.flatten([Title:lists.reverse(Docs)])
+
+fn ([(doc, [Doc]):Attrs], Mod, Accum)
+    format_docs(Attrs, Mod, [format_doc(Doc):Accum])
+
+@doc("return a string that repeats the '-' character for the length of *String*")
+underline = fn (String)
+    underline(String, "-")
+
+@doc("return a string that repeats *Char* for the length of *String*")
+underline = fn (String, Char)
+    lists.flatten(lists.duplicate(length(String), Char))
+
+
+@doc("return a string that represents the documentation of the function
+with the title as the name and arity and the body containing the documentation
+present in the *@doc* attribute")
+
+format_doc = fn (((Name, Arity), Doc))
+    Title = atom_to_list(Name) ++ "/" ++ integer_to_list(Arity)
+
+    lists.flatten([Title, "\n", underline(Title), "\n\n", Doc, "\n\n"])
