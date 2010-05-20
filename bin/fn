@@ -1,2 +1,3 @@
 #!/usr/bin/env sh
-erl -run $@ -run init stop -noshell
+SCRIPTDIR=$(dirname $0)
+erl -run $@ -run init stop -noshell -pa $SCRIPTDIR/../lib/

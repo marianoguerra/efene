@@ -22,9 +22,9 @@ syn case ignore
 
 
 syn keyword efeneCommentTodo      TODO FIXME XXX TBD contained
-syn region efeneLineComment start="#" skip="\\$" end="$" keepend contains=efeneCommentTodo,@Spell
+syn region efeneLineComment start="#" skip="\\$" end="\n" keepend contains=efeneCommentTodo,@Spell
 
-syn region  efeneStringD	       start=+"+  skip=+\\\\\|\\"+  end=+"\|$+ 
+syn region  efeneStringD	       start=+"+  skip=+\n\\\\\|\\"+  end=+"+ 
 
 syn match   efeneSpecialCharacter "'\\.'"
 syn match   efeneNumber	       "-\=\<\d\+L\=\>\|0[xob][0-9a-fA-F]\+\>"
@@ -42,9 +42,9 @@ syn match	efeneBraces	   "->"
 syn sync fromstart
 syn sync maxlines=100
 
-if main_syntax == "efene"
-  syn sync ccomment efeneComment
-endif
+"if main_syntax == "efene"
+"  syn sync ccomment efeneComment
+"endif
 
 " Define the default highlighting.
 " For version 5.7 and earlier: only when not done already
