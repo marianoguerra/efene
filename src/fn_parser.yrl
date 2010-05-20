@@ -18,7 +18,8 @@ Nonterminals
     bin_comp
     rec rec_def rec_set rec_new attr_sets attr_set
     binary binary_items binary_item bin_type_def bin_type
-    prefix_op attribute.
+    prefix_op attribute
+    obj_def obj_attrs obj_attrs_tail.
 
 Terminals
     fn match open close open_block close_block
@@ -38,7 +39,8 @@ Terminals
     open_bin close_bin
     record
     attr gattr
-    for in.
+    for in
+    object.
 
 Rootsymbol program.
 
@@ -72,6 +74,7 @@ tl_exprs -> tl_expr tl_exprs : ['$1'|'$2'].
 
 tl_expr -> fn_def endl    : '$1'.
 tl_expr -> rec_def endl   : '$1'.
+tl_expr -> obj_def endl   : '$1'.
 tl_expr -> attribute endl : '$1'.
 
 attribute -> attr : {attribute, line('$1'), unwrap('$1'), nil}.
@@ -299,6 +302,16 @@ list_generator -> for bool_expr in bool_expr :
 list_generator -> for bool_expr in bool_expr if bool_expr :
     Line = line('$1'),
     [{generate, Line, '$2', '$4'},'$6'].
+
+% object, no, you can't have an object with one attribute, that is a variable
+
+obj_def -> atom match object open obj_attrs close :
+    {object, line('$2'), unwrap('$1'), '$5'}.
+
+obj_attrs -> atom obj_attrs_tail : [unwrap('$1')|'$2'].
+
+obj_attrs_tail -> sep atom : [unwrap('$2')].
+obj_attrs_tail -> sep atom obj_attrs_tail: [unwrap('$2')|'$3'].
 
 % records
 

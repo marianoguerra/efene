@@ -88,6 +88,10 @@ tree_to_ast([], Publics, Ast, CurrAttrs, Attrs) ->
 tree_to_ast([{global_attribute, Line, Name, Value}|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     tree_to_ast(Tree, Publics, Ast, CurrAttrs, [{attribute, Line, Name, Value}|Attrs]);
 
+tree_to_ast([{object, Line, Name, Fields}|Tree], Publics, Ast, CurrAttrs, Attrs) ->
+    ObjAst = fn_object:to_ast(Line, Name, Fields),
+    tree_to_ast(Tree, [{Name, length(Fields)}, {Name, 1}|Publics], ObjAst ++ Ast, CurrAttrs, Attrs);
+
 tree_to_ast([{attribute, _Line, _Name, _Value}=Attr|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     tree_to_ast(Tree, Publics, Ast, [Attr|CurrAttrs], Attrs);
 
