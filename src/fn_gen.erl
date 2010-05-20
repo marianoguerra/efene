@@ -87,6 +87,9 @@ var(Line, Name) ->
 atom(Line, Name) ->
     {atom, Line, Name}.
 
+string(Line, String) ->
+    {string, Line, String}.
+
 true(Line) ->
     {atom, Line, true}.
 

@@ -53,10 +53,32 @@ set_field(Line, RecName, VarName, FieldName) ->
                 'Value')])]).
 
 specials(Line, Name, Fields) ->
-    Has = [fn_gen:clause(Line, [fn_gen:atom(Line, has), fn_gen:atom(Line, Field)], [fn_gen:true(Line)]) || Field <- Fields],
-    HasNotFound = fn_gen:clause(Line, [fn_gen:atom(Line, has), fn_gen:var(Line, '_')], [fn_gen:false(Line)]),
-    ToRecord = fn_gen:clause(Line, [fn_gen:atom(Line, to), fn_gen:atom(Line, rec)], [fn_gen:var(Line, fn_gen:atom_to_upper(Name))]),
-    ToFields = fn_gen:clause(Line, [fn_gen:atom(Line, to), fn_gen:atom(Line, fields)], [fn_gen:tuple(Line, [fn_gen:atom(Line, Field) || Field <- Fields])]),
-    ToName = fn_gen:clause(Line, [fn_gen:atom(Line, to), fn_gen:atom(Line, name)], [fn_gen:atom(Line, Name)]),
+    Has = [fn_gen:clause(Line,
+            [fn_gen:atom(Line, has), fn_gen:atom(Line, Field)],
+            [fn_gen:true(Line)]) || Field <- Fields],
 
-    [ToRecord, ToFields, ToName|Has] ++ [HasNotFound].
+    HasNotFound = fn_gen:clause(Line,
+        [fn_gen:atom(Line, has), fn_gen:var(Line, '_')],
+        [fn_gen:false(Line)]),
+
+    ToRecord = fn_gen:clause(Line,
+        [fn_gen:atom(Line, to), fn_gen:atom(Line, rec)],
+        [fn_gen:var(Line, fn_gen:atom_to_upper(Name))]),
+
+    ToFields = fn_gen:clause(Line,
+        [fn_gen:atom(Line, to), fn_gen:atom(Line, fields)],
+        [fn_gen:tuple(Line, [fn_gen:atom(Line, Field) || Field <- Fields])]),
+
+    ToFieldsList = fn_gen:clause(Line,
+        [fn_gen:atom(Line, to), fn_gen:atom(Line, fieldslist)],
+        [fn_gen:literal_to_ast(Fields, Line)]),
+
+    ToName = fn_gen:clause(Line,
+        [fn_gen:atom(Line, to), fn_gen:atom(Line, name)],
+        [fn_gen:atom(Line, Name)]),
+
+    ToStringName = fn_gen:clause(Line,
+        [fn_gen:atom(Line, to), fn_gen:atom(Line, strname)],
+        [fn_gen:string(Line, atom_to_list(Name))]),
+
+    [ToRecord, ToFields, ToFieldsList, ToName, ToStringName|Has] ++ [HasNotFound].
