@@ -1,16 +1,27 @@
 
 @doc("
 return a list of two item tuples containing as key the name of the attribute as
-atom and as value the value of that attribute")
+string and as value the value of that attribute")
 
 @public
 to_dict = fn (Obj)
-    [(Name, Obj(get, Name)) for Name in tuple_to_list(Obj(to, fields))]
+    to_dict(Obj, strkeys)
+
+@doc("
+return a list of two item tuples containing as key the name of the attribute as
+string or atom depending on the second parameter (atomkeys, strkeys)
+and as value the value of that attribute")
+
+@public
+to_dict = fn (Obj, atomkeys)
+    [(Name, Obj(get, Name)) for Name in Obj(to, fieldslist)]
+fn (Obj, strkeys)
+    [(atom_to_list(Name), Obj(get, Name)) for Name in Obj(to, fieldslist)]
 
 @doc("return a string with the JSON representation of Obj")
 @public
 to_json = fn(Obj)
-    Items = [io_lib.format("~p: ~p, ", [atom_to_list(Name), transform(Value)]) for (Name, Value) in to_dict(Obj)]
+    Items = [io_lib.format("~p: ~p, ", [Name, transform(Value)]) for (Name, Value) in to_dict(Obj)]
     Str = lists.flatten(Items)
     "{" ++ lists.sublist(Str, length(Str) - 2) ++ "}"
 
