@@ -57,6 +57,10 @@ specials(Line, Name, Fields) ->
             [fn_gen:atom(Line, has), fn_gen:atom(Line, Field)],
             [fn_gen:true(Line)]) || Field <- Fields],
 
+    HasStr = [fn_gen:clause(Line,
+            [fn_gen:atom(Line, has), fn_gen:string(Line, atom_to_list(Field))],
+            [fn_gen:true(Line)]) || Field <- Fields],
+
     HasNotFound = fn_gen:clause(Line,
         [fn_gen:atom(Line, has), fn_gen:var(Line, '_')],
         [fn_gen:false(Line)]),
@@ -81,4 +85,4 @@ specials(Line, Name, Fields) ->
         [fn_gen:atom(Line, to), fn_gen:atom(Line, strname)],
         [fn_gen:string(Line, atom_to_list(Name))]),
 
-    [ToRecord, ToFields, ToFieldsList, ToName, ToStringName|Has] ++ [HasNotFound].
+    [ToRecord, ToFields, ToFieldsList, ToName, ToStringName|Has] ++ HasStr ++ [HasNotFound].

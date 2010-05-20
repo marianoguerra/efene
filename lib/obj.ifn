@@ -33,6 +33,8 @@ transform = fn (Value) when is_tuple(Value)
     transform(tuple_to_list(Value))
 fn (Value) when is_boolean(Value)
     Value
+fn (Value) when is_function(Value)
+    to_json(Value)
 fn (Value) when is_atom(Value)
     # TODO: see how to make atoms different from strings
     atom_to_list(Value)
