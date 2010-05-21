@@ -21,7 +21,7 @@ fn (Obj, strkeys)
 @doc("return a string with the JSON representation of Obj")
 @public
 to_json = fn(Obj)
-    Items = [io_lib.format("~p: ~p, ", [Name, transform(Value)]) for (Name, Value) in to_dict(Obj)]
+    Items = [io_lib.format("~p: ~s, ", [Name, transform(Value)]) for (Name, Value) in to_dict(Obj)]
     Str = lists.flatten(Items)
     "{" ++ lists.sublist(Str, length(Str) - 2) ++ "}"
 
@@ -30,20 +30,34 @@ transform values so that they are printed correctly by io_format
 as valid json terms")
 
 transform = fn (Value) when is_tuple(Value)
-    transform(tuple_to_list(Value))
+    io_lib.format("~p", [transform_tuple(Value)])
 fn (Value) when is_boolean(Value)
-    Value
+    io_lib.format("~p", [Value])
 fn (Value) when is_function(Value)
     to_json(Value)
 fn (Value) when is_atom(Value)
     # TODO: see how to make atoms different from strings
-    atom_to_list(Value)
+    io_lib.format("\"~p\"", [Value])
 fn (Value) when is_list(Value)
-    transform(Value, [])
+    io_lib.format("~p", [transform_tuple(Value, [])])
+fn (Value) when is_binary(Value)
+    io_lib.format("\"~s\"", [Value])
 fn (Value)
-    Value
+    io_lib.format("~p", [Value])
 
-transform = fn ([], Accum)
+@doc("transform tuples to lists recursively, also transform atoms to strings")
+transform_tuple = fn (Tuple)
+    transform_tuple(tuple_to_list(Tuple), [])
+
+transform_tuple = fn ([], Accum)
     lists.reverse(Accum)
+fn ([H:T], Accum) when is_tuple(H)
+    transform_tuple(T, [transform_tuple(H):Accum])
+fn ([H:T], Accum) when is_list(H)
+    transform_tuple(T, [transform_tuple(H, []):Accum])
+fn ([H:T], Accum) when is_boolean(H)
+    transform_tuple(T, [H:Accum])
+fn ([H:T], Accum) when is_atom(H)
+    transform_tuple(T, [atom_to_list(H):Accum])
 fn ([H:T], Accum)
-    transform(T, [transform(H):Accum])
+    transform_tuple(T, [H:Accum])
