@@ -36,9 +36,12 @@ wrapper(Line, Name, Fields) ->
 
     Gets = [get_field(Line, Name, VarName, Field) || Field <- Fields],
     Sets = [set_field(Line, Name, VarName, Field) || Field <- Fields],
+    Sett = [set_field_tuple(Line, Name, VarName, Field) || Field <- Fields],
     Specials = specials(Line, Name, Fields),
 
-    fn_gen:fun_(Line, [fn_gen:clause(Line, [fn_gen:var(Line, 'Self'), fn_gen:var(Line, VarName)], [fn_gen:fun_(Line, Gets ++ Sets ++ Specials)])]).
+    fn_gen:fun_(Line,
+        [fn_gen:clause(Line, [fn_gen:var(Line, 'Self'), fn_gen:var(Line, VarName)],
+                [fn_gen:fun_(Line, Gets ++ Sets ++ Sett ++ Specials)])]).
 
 get_field(Line, RecName, VarName, FieldName) ->
     fn_gen:clause(Line, [fn_gen:atom(Line, get), fn_gen:atom(Line, FieldName)],
@@ -48,6 +51,12 @@ set_field(Line, RecName, VarName, FieldName) ->
     Set = list_to_atom("set" ++ atom_to_list(FieldName)),
 
     fn_gen:clause(Line, [fn_gen:atom(Line, Set), fn_gen:var(Line, 'Value')],
+        [fn_gen:call_var(Line, 'Self', [fn_gen:var(Line, 'Self'),
+            fn_gen:record_field_set(Line, RecName, VarName, FieldName,
+                'Value')])]).
+
+set_field_tuple(Line, RecName, VarName, FieldName) ->
+    fn_gen:clause(Line, [fn_gen:tuple(Line, [fn_gen:atom(Line, 'set'), fn_gen:atom(Line, FieldName)]), fn_gen:var(Line, 'Value')],
         [fn_gen:call_var(Line, 'Self', [fn_gen:var(Line, 'Self'),
             fn_gen:record_field_set(Line, RecName, VarName, FieldName,
                 'Value')])]).
