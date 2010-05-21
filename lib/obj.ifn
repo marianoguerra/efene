@@ -7,6 +7,27 @@ string and as value the value of that attribute")
 to_dict = fn (Obj)
     to_dict(Obj, strkeys)
 
+@doc("load info to Obj from a Struct like the one returned by mochijson2.decode
+returns a tuple with the object as first element and a list of the attributes
+(as string) that were found and set in the object as the second element")
+
+@public
+from_json = fn ((struct, Data), Obj)
+    from_json(Data, Obj, [])
+
+from_json = fn ([], Obj, Attrs)
+    (Obj, Attrs)
+
+fn ([(Key, Value):Data], Obj, Attrs)
+    SKey = binary_to_list(Key)
+
+    switch Obj(has, SKey)
+        case true
+            AKey = list_to_atom(SKey)
+            from_json(Data, Obj((set, AKey), Value), [SKey:Attrs])
+        else
+            from_json(Data, Obj, Attrs)
+
 @doc("return a json representation of a list of objects")
 
 @public
