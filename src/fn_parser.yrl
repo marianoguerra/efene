@@ -166,9 +166,9 @@ case_body -> open_block case_patterns endl close_block : '$2'.
 
 case_patterns -> case_pattern case_patterns            : ['$1'|'$2'].
 case_patterns -> case_pattern                          : ['$1'].
-case_pattern -> case bool_expr fn_block :
+case_pattern -> case match_expr fn_block :
     {'clause', line('$1'), ['$2'], [], '$3'}.
-case_pattern -> case bool_expr when bool_expr fn_block :
+case_pattern -> case match_expr when bool_expr fn_block :
     {'clause', line('$1'), ['$2'], [['$4']], '$5'}.
 
 % try catch expression
