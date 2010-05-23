@@ -13,20 +13,36 @@ returns a tuple with the object as first element and a list of the attributes
 
 @public
 from_json = fn ((struct, Data), Obj)
-    from_json(Data, Obj, [])
+    from_json(Data, Obj, [], false)
 
-from_json = fn ([], Obj, Attrs)
+@doc("same as from_json/2 but pass a boolean asking if we want to transform
+binaries to lists")
+
+@public
+from_json = fn ((struct, Data), Obj, BinaryToList)
+    from_json(Data, Obj, [], BinaryToList)
+
+
+from_json = fn ([], Obj, Attrs, _BinaryToList)
     (Obj, Attrs)
 
-fn ([(Key, Value):Data], Obj, Attrs)
+fn ([(Key, Value):Data], Obj, Attrs, BinaryToList)
     SKey = binary_to_list(Key)
+
+    FValue = if BinaryToList
+        if is_binary(Value)
+            binary_to_list(Value)
+        else
+            Value
+    else
+        Value
 
     switch Obj(has, SKey)
         case true
             AKey = list_to_atom(SKey)
-            from_json(Data, Obj((set, AKey), Value), [SKey:Attrs])
+            from_json(Data, Obj((set, AKey), FValue), [SKey:Attrs], BinaryToList)
         else
-            from_json(Data, Obj, Attrs)
+            from_json(Data, Obj, Attrs, BinaryToList)
 
 @doc("return a json representation of a list of objects")
 
@@ -56,6 +72,44 @@ to_json = fn(Obj)
     Items = [io_lib.format("~p: ~s, ", [Name, transform(Value)]) for (Name, Value) in to_dict(Obj)]
     Str = lists.flatten(Items)
     "{" ++ lists.sublist(Str, length(Str) - 2) ++ "}"
+
+@doc("validate an object, receives an object, and a list of tuples containing
+the attribute, and a list of functions that return true when the validation
+passes and false if not, the next is the message to show in case of a
+validation failure, for example:
+
+validate(Obj, [(firstname, [(is_string, \"firstname must be a string\")]])
+
+returns ok when all validators passed (error, Reason) when one failed
+")
+
+@public
+validate = fn (_Obj, [])
+    ok
+
+fn (Obj, [(Attr, Validations):T])
+    switch Obj(has, Attr)
+        case true
+
+            switch validate_attr(Obj(get, Attr), Validations)
+                case ok
+                    validate(Obj, T)
+                case (error, _Reason)=Error
+                    Error
+
+        case false
+            (error, io_lib.format("~s has no attribute ~s",
+                [Obj(to, strname), Attr]))
+
+validate_attr = fn (_Attr, [])
+    ok
+
+fn (Attr, [(Validator, Reason):T])
+    switch Validator(Attr)
+        case true
+            validate_attr(Attr, T)
+        case false
+            (error, Reason)
 
 @doc("
 transform values so that they are printed correctly by io_format

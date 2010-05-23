@@ -1,0 +1,114 @@
+@@doc("module to get useful validation functions to be used with obj.validate")
+
+
+@public
+string = fn ()
+    fn erlang.is_list:1
+
+@public
+string_larger_than = fn (Size)
+    list_larger_than(Size)
+
+@public
+match = fn (Regex)
+    fn (Str)
+        is_list(Str) and re.run(Str, Regex) != nomatch
+
+@public
+mail = fn ()
+    fn (Str)
+        is_list(Str) and re.run(Str,
+        "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum)\\b") != nomatch
+
+@public
+list = fn ()
+    fn erlang.is_list:1
+
+@public
+list_larger_than = fn (Size)
+    fn (L)
+        is_list(L) and length(L) > Size
+
+@public
+tuple = fn ()
+    fn erlang.is_tuple:1
+
+@public
+number = fn ()
+    fn erlang.is_number:1
+
+@public
+integer = fn ()
+    fn erlang.is_integer:1
+
+@public
+positive = fn ()
+    fn (X)
+        X > 0
+
+@public
+negative = fn ()
+    fn (X)
+        X < 0
+
+@public
+zero = fn ()
+    fn (X)
+        X == 0
+
+@public
+binary = fn ()
+    fn erlang.is_binary:1
+
+@public
+float = fn ()
+    fn erlang.is_float:1
+
+@public
+atom = fn ()
+    fn erlang.is_atom:1
+
+@public
+boolean = fn ()
+    fn erlang.is_boolean:1
+
+@public
+empty_list = fn ()
+    fn (X)
+        is_list(X) and length(X) === 0
+
+@public
+non_empty_list = fn ()
+    fn (X)
+        is_list(X) and length(X) > 0
+
+@public
+equals = fn (Val)
+    fn (X)
+        Val == X
+
+@public
+not_equals = fn (Val)
+    fn (X)
+        Val != X
+
+@public
+gt = fn (Val)
+    fn (X)
+        X > Val
+
+@public
+ge = fn (Val)
+    fn (X)
+        X >= Val
+
+@public
+lt = fn (Val)
+    fn (X)
+        X < Val
+
+@public
+le = fn (Val)
+    fn (X)
+        X <= Val
+
