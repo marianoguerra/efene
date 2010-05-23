@@ -1,5 +1,5 @@
 
-route = record(method=get, path="^/$", transforms=nil,accepts='*', produces=text, handler=nil)
+route = record(method=get, path="^/$", transforms=nil, accepts=nil, produces=text, handler=nil)
 
 @public
 start = fn ([Module:Modules])
@@ -33,24 +33,96 @@ loop = fn (Req, Api)
         (Route, Captured) = Handler
         (Module, Function) = route.Route[handler]
         Produces = route.Route[produces]
-        Args = args_from_request(Request, Captured)
+        Accepts  = route.Route[accepts]
+        Args     = args_from_request(Request, Captured)
 
         Transforms = lists.zip(route.Route[transforms], Args)
 
         TArgs = [Transform(Arg) for (Transform, Arg) in Transforms]
-        NewArgs = [Request:TArgs]
 
-        try
-            Return = apply(Module, Function, NewArgs)
-            # TODO: auto marshal json
-            response(Req, 200, mime(Produces), Return)
-        catch _ _Error
-            internal_error(Req)
+        NewArgs = switch route.Route[method]
+            case put
+                build_body_args(Req, Request, Accepts, TArgs)
+            case post
+                build_body_args(Req, Request, Accepts, TArgs)
+            else
+                [Request:TArgs]
 
-# get the values of the parameters from the regular expression
-# matching in the path
-# return a list with request as first parameter and then all the
-# matched arguments
+        (Status, Mime, Return) = switch apply(Module, Function, NewArgs)
+            case (ok, OMsg)
+                (200, Produces, OMsg)
+            case (error, EMsg)
+                (501, Produces, EMsg)
+            case (unauthorized, UMsg)
+                (401, Produces, UMsg)
+            case (redirect, Url)
+                (303, Produces, Url)
+            case (static, Path)
+                serve_static(Path)
+
+        response(Req, Status, mime(Mime), Return)
+
+@doc("return a list with the parameters that are going to be passed
+to a handler that handles a PUT or a POST, the first parameter is
+the Request object, the second is the body parsed according to the
+type the handler accepts and the rest are the args matched from the
+URL")
+
+@todo("this functions uses mochiweb specific code, should use
+simplebridge request when request_body is implemented")
+
+build_body_args = fn (Req, Request, json, Args)
+    Body = Req.recv_body()
+    Json = mochijson2.decode(binary_to_list(Body))
+    [Request, Json:Args]
+
+fn (_Req, Request, _Accepts, Args)
+    [Request, Request.request_body():Args]
+
+serve_static = fn (Path)
+    Mime = mime_from_path(Path)
+
+    switch file.read_file(Path)
+        case (ok, Binary)
+            (200, Mime, Binary)
+        case (error, enoent)
+            (404, Mime, "Not Found")
+        case (error, eacces)
+            (401, Mime, "Unauthorized")
+
+@doc("return an atom representing the mime type of a file depending on
+it's extension")
+
+@public
+mime_from_path = fn (Path)
+    switch lists.reverse(Path)
+        case "lmth." ++ _
+            html
+        case "lmx." ++ _
+            xml
+        case "sj." ++ _
+            js
+        case "ssc." ++ _
+            css
+        case "txt." ++ _
+            text
+        case "oci." ++ _
+            icon
+        case "fdp." ++ _
+            pdf
+        case "gnp." ++ _
+            png
+        case "fig." ++ _
+            gif
+        case "gpj." ++ _
+            jpg
+        else
+            binary
+
+@doc("get the values of the parameters from the regular expression matching in
+the path return a list with request as first parameter and then all the matched
+arguments")
+
 @public
 args_from_request = fn (Request, Captured)
     args_from_request(Request.path(), tl(Captured), [])
@@ -89,8 +161,10 @@ fn ([(route[path=RoutePath])=Route:Handlers], Path)
         case (match, Captured)
             (Route, Captured)
 
+@doc("transform an atom describing a mime type to its string representation")
+
 @public
-# transform an atom describing a mime type to its string representation
+
 mime = fn (json)
     "application/json"
 fn (text)
@@ -101,6 +175,20 @@ fn (xml)
      "text/xml"
 fn (js)
      "application/javascript"
+fn (atom)
+     "application/atom+xml"
+fn (icon)
+     "image/vnd.microsoft.icon"
+fn (bin)
+     "application/octet-stream"
+fn (pdf)
+     "application/pdf"
+fn (png)
+     "image/png"
+fn (gif)
+     "image/gif"
+fn (jpg)
+     "image/jpeg"
 fn (Unk) when is_atom(Unk)
      atom_to_list(Unk)
 fn (Unk) when is_list(Unk)
@@ -186,7 +274,15 @@ root = fn ()
 response = fn (Req)
     simple_bridge.make_response(mochiweb_response_bridge, (Req, root()))
 
-response = fn (Req, Status, ContentType, Data)
+response = fn (Req, 303=Status, ContentType, Data)
+    Response = response(Req)
+    Response1 = Response.status_code(Status)
+    Response2 = Response1.header("Content-Type", ContentType)
+    Response3 = Response2.header("Location", Data)
+    Response4 = Response3.data("")
+    Response4.build_response()
+
+fn (Req, Status, ContentType, Data)
     Response = response(Req)
     Response1 = Response.status_code(Status)
     Response2 = Response1.header("Content-Type", ContentType)
@@ -270,7 +366,7 @@ transform_url = fn (Url)
 # the correct type, no operation for <string>, list_to_integer for <integer>
 # and list_to_float for <float>
 token_transformers = fn (Url)
-    Tokens = switch re.run(Url, "<integer>|<string>|<float>", [global, (capture, all, list)])
+    Tokens = switch re.run(Url, "<integer>|<string>|<float>|\\(.*?\\)", [global, (capture, all, list)])
         case nomatch
             []
         case (match, Return)
@@ -289,6 +385,9 @@ fn ([["<float>"]:Tokens], Trans)
 
 fn ([["<integer>"]:Tokens], Trans)
     token_to_transformer(Tokens, [(fn erlang.list_to_integer:1):Trans])
+
+fn ([_:Tokens], Trans)
+    token_to_transformer(Tokens, [(fn nop:1):Trans])
 
 nop = fn (String) when is_list(String)
     String
