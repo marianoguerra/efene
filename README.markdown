@@ -331,6 +331,7 @@ cd ../examples/
 
 * [Download the latest snapshot](http://github.com/marianoguerra/efene/tarball/master)
 * [Website](http://marianoguerra.com.ar/efene)
+* [Documentation](http://marianoguerra.com.ar/efene/docs)
 * [Tutorial](http://marianoguerra.com.ar/efene/tutorial)
 * [Blog](http://efene.tumblr.com)
 * [Central repo](http://github.com/marianoguerra/efene) (fork this one)
