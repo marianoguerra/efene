@@ -1,25 +1,24 @@
 
 @doc("return the documentation of *Mod* as a string")
+
 @public
 doc = fn (Mod)
-    Info = Mod.module_info(attributes)
+    (moddoc, Preamble) = attribute(Mod, moddoc, (moddoc, "Module documentation"))
 
-    FilterDoc = fn ((doc, _))
-        true
-    fn (_)
-        false
+    format_docs(attributes(Mod, doc), Mod, Preamble, [])
 
-    Docs = lists.filter(FilterDoc, Info)
-    format_docs(Docs, Mod, [])
 
 @doc("save the documentation of the module to *FilePath*")
+
 @public
 doc_to_file = fn (Mod, FilePath)
     Docs = doc(Mod)
 
     file.write_file(FilePath, Docs)
 
+
 @doc("return the documentation of the function *Mod*.*Fun*/*Arity*")
+
 @public
 fundoc = fn (Mod, Fun, Arity)
     Info = Mod.module_info(attributes)
@@ -38,23 +37,26 @@ fundoc = fn (Mod, Fun, Arity)
         case []
             ""
 
+
 @doc("iterate over the doc attributes and return the formated docs of all
 of them")
 
-format_docs = fn ([], Mod, Docs)
-    Text = atom_to_list(Mod) ++ " documentation"
+format_docs = fn ([], Mod, Preamble, Docs)
+    Text = atom_to_list(Mod)
     Title = Text ++ "\n" ++ underline(Text, "=") ++ "\n\n"
 
-    lists.flatten([Title:lists.reverse(Docs)])
+    lists.flatten([Title, Preamble, "\n\n":lists.reverse(Docs)])
 
-fn ([(doc, [Doc]):Attrs], Mod, Accum)
-    format_docs(Attrs, Mod, [format_doc(Doc):Accum])
+fn ([(doc, [Doc]):Attrs], Mod, Preamble, Accum)
+    format_docs(Attrs, Mod, Preamble, [format_doc(Doc):Accum])
 
 @doc("return a string that repeats the '-' character for the length of *String*")
+
 underline = fn (String)
     underline(String, "-")
 
 @doc("return a string that repeats *Char* for the length of *String*")
+
 underline = fn (String, Char)
     lists.flatten(lists.duplicate(length(String), Char))
 
@@ -67,3 +69,28 @@ format_doc = fn (((Name, Arity), Doc))
     Title = atom_to_list(Name) ++ "/" ++ integer_to_list(Arity)
 
     lists.flatten([Title, "\n", underline(Title), "\n\n", Doc, "\n\n"])
+
+@doc("return the first attribute with name *Name*.
+return *Default* if not found")
+
+@public
+attribute = fn (Mod, Name, Default)
+    switch lists.keyfind(Name, 1, Mod.module_info(attributes))
+        case false
+            Default
+        case Attr
+            Attr
+
+@doc("return all the attributes with name *Name* as a List")
+
+@public
+attributes = fn (Mod, Name)
+    Info = Mod.module_info(attributes)
+
+    Filter = fn (Attr) when element(1, Attr) == Name
+        true
+    fn (_)
+        false
+
+    lists.filter(Filter, Info)
+

@@ -4,3 +4,4 @@ parser.erl
 src/*.fn
 erl_crash.dump
 .*.swp
+docs/_build

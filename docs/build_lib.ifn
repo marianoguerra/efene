@@ -1,0 +1,21 @@
+
+modules = fn ()
+    [mod, obj, mongomapper, rest, validate]
+
+build_doc = fn (Mod)
+    Path = "lib/" ++ atom_to_list(Mod) ++ ".rst"
+    Doc = mod.doc(Mod)
+    file.write_file(Path, Doc)
+
+build_index = fn (Mods, Path)
+    Title = "Module Index\n------------\n\n.. toctree::\n   :maxdepth: 1\n\n"
+
+    ModToToc = fn (Mod)
+        "   " ++ atom_to_list(Mod) ++ "\n"
+
+    file.write_file(Path, [Title:lists.map(ModToToc, Mods)])
+
+@public
+run = fn ()
+    lists.foreach(fn build_doc:1, modules())
+    build_index(modules(), "lib/index.rst")
