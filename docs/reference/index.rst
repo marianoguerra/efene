@@ -2,9 +2,9 @@ Language Reference
 ------------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    introduction
-   toplevel/index
    statements/index
    expressions/index
+   toplevel/index
