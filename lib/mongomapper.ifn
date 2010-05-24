@@ -1,3 +1,19 @@
+@moddoc("
+This module provides a mapper between efene objects and mongodb
+through the `emongo`__ library.
+
+__ http://github.com/JacobVorreuter/emongo
+
+The emongo library is not installed by efene, you should install it by
+doing::
+
+    git clone http://github.com/JacobVorreuter/emongo.git
+    cd emongo
+    make
+    cd ..
+
+")
+
 @doc("save *Obj* in *Database*, the name of the collection is the name of
 the object as returned by *Obj(to, strname)*")
 

@@ -1,7 +1,12 @@
+@moddoc("Module to do operation on efene objects.
 
-@doc("
-return a list of two item tuples containing as key the name of the attribute as
-string and as value the value of that attribute")
+This module has some functions that expect the result of mochijson2.decode
+function but mochiweb is not installed by default by efene, you should get
+mochiweb or at least mochijson2 or a compatible json encoder/decoder in order
+to use those functions.")
+
+@doc("return a list of two item tuples containing as key the name of the
+attribute as string and as value the value of that attribute")
 
 @public
 to_dict = fn (Obj)
@@ -53,10 +58,9 @@ objs_to_json = fn (Objs)
     Str = lists.flatten(Items)
     "[" ++ lists.sublist(Str, length(Str) - 2) ++ "]"
 
-@doc("
-return a list of two item tuples containing as key the name of the attribute as
-string or atom depending on the second parameter (atomkeys, strkeys)
-and as value the value of that attribute")
+@doc("return a list of two item tuples containing as key the name of the
+attribute as string or atom depending on the second parameter (atomkeys,
+strkeys) and as value the value of that attribute")
 
 @public
 to_dict = fn (Obj, atomkeys)
@@ -73,15 +77,31 @@ to_json = fn(Obj)
     Str = lists.flatten(Items)
     "{" ++ lists.sublist(Str, length(Str) - 2) ++ "}"
 
-@doc("validate an object, receives an object, and a list of tuples containing
-the attribute, and a list of functions that return true when the validation
-passes and false if not, the next is the message to show in case of a
-validation failure, for example:
+@doc("receives an object as first parameter and a data structure that specified
+the validations to be done on each attribute and the string to return if the
+validation fails.
 
-validate(Obj, [(firstname, [(is_string, \"firstname must be a string\")]])
+The data structure is a list of tuples, each tuple has as first element the
+name of the attribute and as second element a list of two item tuples that
+contain the validation function to use in the attribute and the string to be
+returned if the validation fails.
 
-returns ok when all validators passed (error, Reason) when one failed
-")
+example::
+
+    obj.validate(User,
+        [(username,
+            [(validate.string(), \"username must be a string\"),
+            (validate.string_larger_than(2), \"username size must be at least 3 characters\"),
+            (validate.match(\"^[a-z][a-zA-Z0-9_]+$\"), \"username must be alphanumeric and _ only\")]),
+        (mail,
+            [(validate.mail(), \"invalid mail format\")]),
+        (password,
+            [(validate.string(), \"password must be a string\"),
+            (validate.string_larger_than(2), \"password size must be at least 3 characters\")])])
+
+You can add as many validations for attribute and as many attributes you want.
+
+returns ok when all validators pass (error, Reason) when one failed")
 
 @public
 validate = fn (_Obj, [])
@@ -111,9 +131,8 @@ fn (Attr, [(Validator, Reason):T])
         case false
             (error, Reason)
 
-@doc("
-transform values so that they are printed correctly by io_format
-as valid json terms")
+@doc("transform values so that they are printed correctly by io_format as
+valid json terms")
 
 transform = fn (Value) when is_tuple(Value)
     io_lib.format("~p", [transform_tuple(Value)])
@@ -148,3 +167,4 @@ fn ([H:T], Accum) when is_atom(H)
     transform_tuple(T, [atom_to_list(H):Accum])
 fn ([H:T], Accum)
     transform_tuple(T, [H:Accum])
+

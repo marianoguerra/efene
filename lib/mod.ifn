@@ -1,3 +1,4 @@
+@moddoc("functions to manipulate modules")
 
 @doc("return the documentation of *Mod* as a string")
 
@@ -8,7 +9,7 @@ doc = fn (Mod)
     format_docs(attributes(Mod, doc), Mod, Preamble, [])
 
 
-@doc("save the documentation of the module to *FilePath*")
+@doc("save the documentation of the module *Mod* to *FilePath*")
 
 @public
 doc_to_file = fn (Mod, FilePath)
@@ -38,8 +39,8 @@ fundoc = fn (Mod, Fun, Arity)
             ""
 
 
-@doc("iterate over the doc attributes and return the formated docs of all
-of them")
+@doc("iterate over the doc attributes and return the formated docs of all of
+them")
 
 format_docs = fn ([], Mod, Preamble, Docs)
     Text = atom_to_list(Mod)
@@ -61,8 +62,8 @@ underline = fn (String, Char)
     lists.flatten(lists.duplicate(length(String), Char))
 
 
-@doc("return a string that represents the documentation of the function
-with the title as the name and arity and the body containing the documentation
+@doc("return a string that represents the documentation of the function with
+the title as the name and arity and the body containing the documentation
 present in the *@doc* attribute")
 
 format_doc = fn (((Name, Arity), Doc))
@@ -70,8 +71,8 @@ format_doc = fn (((Name, Arity), Doc))
 
     lists.flatten([Title, "\n", underline(Title), "\n\n", Doc, "\n\n"])
 
-@doc("return the first attribute with name *Name*.
-return *Default* if not found")
+@doc("return the first attribute with name *Name*.  return *Default* if not
+found")
 
 @public
 attribute = fn (Mod, Name, Default)
@@ -81,7 +82,12 @@ attribute = fn (Mod, Name, Default)
         case Attr
             Attr
 
-@doc("return all the attributes with name *Name* as a List")
+@doc("return all the attributes with name *Name* as a List, if no attribute
+with that name is found then it will return an empty list.
+
+This function is useful to get attributes that are specific to a function like
+the @doc attribute, the function matches all the attributes that are tuples
+with the name of the attribute as the first element")
 
 @public
 attributes = fn (Mod, Name)
