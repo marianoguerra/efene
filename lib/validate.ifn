@@ -1,4 +1,4 @@
-@@doc("module to get useful validation functions to be used with obj.validate")
+@@moddoc("module to get useful validation functions to be used with obj.validate")
 
 
 @public

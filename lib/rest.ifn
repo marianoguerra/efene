@@ -28,7 +28,7 @@ loop = fn (Req, Api)
     Handler = find_handler(Api, Request)
 
     if Handler == notfound
-        not_found(Req)
+        response(Req, 404, mime(text), "not found")
     else
         (Route, Captured) = Handler
         (Module, Function) = route.Route[handler]
@@ -295,12 +295,6 @@ fn (Req, Status, ContentType, Data)
 
 request = fn (Req)
     simple_bridge.make_request(mochiweb_request_bridge, (Req, root()))
-
-not_found = fn (Req)
-    response(Req, 404, mime(html), ["<h1>not found</h1>"])
-
-internal_error= fn (Req)
-    response(Req, 500, mime(html), ["<h1>internal error</h1>"])
 
 get_or_create_route = fn (Dict, Key, Module)
     IsKey = dict.is_key(Key, Dict)
