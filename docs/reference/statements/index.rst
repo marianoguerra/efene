@@ -14,4 +14,5 @@ Statements
    unary
    arrow
    literals
+   object
 
