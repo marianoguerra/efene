@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+fnc build_lib.ifn
+fn build_lib run
+
+make html
+cd _build
+tar -cf docs.tar.gz html
+scp docs.tar.gz marianoguerra@marianoguerra.com.ar:~/marianoguerra.com.ar/efene
+ssh marianoguerra@marianoguerra.com.ar "cd ~/marianoguerra.com.ar/efene; rm -rf docs; tar -xf docs.tar.gz; mv html docs; rm docs.tar.gz"
+cd ..
+
