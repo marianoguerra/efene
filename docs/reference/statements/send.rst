@@ -1,7 +1,9 @@
 Send Expression
 ---------------
 
-Expr1 ! Expr2
+::
+
+        Expr1 ! Expr2
 
 Sends the value of Expr2 as a message to the process specified by Expr1. The
 value of Expr2 is also the return value of the expression.

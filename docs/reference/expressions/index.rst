@@ -8,4 +8,4 @@ Expressions
    switch
    try
    receive
-   fn
+   function
