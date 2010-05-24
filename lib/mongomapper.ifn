@@ -1,4 +1,4 @@
-@moddoc("
+@@moddoc("
 This module provides a mapper between efene objects and mongodb
 through the `emongo`__ library.
 

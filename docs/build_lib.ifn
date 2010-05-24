@@ -4,8 +4,7 @@ modules = fn ()
 
 build_doc = fn (Mod)
     Path = "lib/" ++ atom_to_list(Mod) ++ ".rst"
-    Doc = mod.doc(Mod)
-    file.write_file(Path, Doc)
+    mod.doc_to_file(Mod, Path)
 
 build_index = fn (Mods, Path)
     Title = "Module Index\n------------\n\n.. toctree::\n   :maxdepth: 1\n\n"

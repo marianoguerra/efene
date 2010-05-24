@@ -1,4 +1,4 @@
-@moddoc("Module to make REST APIs by using function attributes")
+@@moddoc("Module to make REST APIs by using function attributes")
 
 route = record(method=get, path="^/$", transforms=nil, accepts=nil, produces=text, handler=nil)
 

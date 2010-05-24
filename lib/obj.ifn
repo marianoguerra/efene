@@ -1,4 +1,4 @@
-@moddoc("Module to do operation on efene objects.
+@@moddoc("Module to do operation on efene objects.
 
 This module has some functions that expect the result of mochijson2.decode
 function but mochiweb is not installed by default by efene, you should get

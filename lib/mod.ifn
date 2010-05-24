@@ -1,12 +1,19 @@
-@moddoc("functions to manipulate modules")
+@@moddoc("functions to manipulate modules")
 
 @doc("return the documentation of *Mod* as a string")
 
 @public
 doc = fn (Mod)
     (moddoc, Preamble) = attribute(Mod, moddoc, (moddoc, "Module documentation"))
+    Docs = attributes(Mod, doc)
+    Exports = Mod.module_info(exports)
 
-    format_docs(attributes(Mod, doc), Mod, Preamble, [])
+    PublicFilter = fn ((doc, [(FunDef, _)]))
+        lists.member(FunDef, Exports)
+
+    PublicDocs = lists.filter(PublicFilter, Docs)
+
+    format_docs(PublicDocs, Mod, Preamble, [])
 
 
 @doc("save the documentation of the module *Mod* to *FilePath*")
@@ -14,11 +21,10 @@ doc = fn (Mod)
 @public
 doc_to_file = fn (Mod, FilePath)
     Docs = doc(Mod)
-
     file.write_file(FilePath, Docs)
 
 
-@doc("return the documentation of the function *Mod*.*Fun*/*Arity*")
+@doc("return the documentation of the function *Mod.Fun/Arity*")
 
 @public
 fundoc = fn (Mod, Fun, Arity)

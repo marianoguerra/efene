@@ -11,5 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   releases/index
+   reference/index
    lib/index
 
