@@ -106,7 +106,7 @@ list_comp() ->
         "[{A, C} || A <- B, A > 0, C <- D, C > A]").
 
 records() ->
-    tu:test_ast("a.B.c", "B#a.c"),
+    tu:test_ast("a.B[c]", "B#a.c"),
     tu:test_ast("a[,]", "#a{}"),
     tu:test_ast("a[b=1]", "#a{b=1}"),
     tu:test_ast("a[b=1, c=2]", "#a{b=1, c=2}"),

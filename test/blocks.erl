@@ -2,11 +2,11 @@
 -compile(export_all).
 
 ifs() ->
-    tu:test_ast("if A { B }", "if A -> B end"),
-    tu:test_ast("if 1 { 1 } else if 2 { 2 }", "if 1 -> 1; 2 -> 2 end"),
-    tu:test_ast("if 1 { 1 } else if 2 { 2 } else if 3 { 3 }",
+    tu:test_ast("when A { B }", "if A -> B end"),
+    tu:test_ast("when 1 { 1 } else when 2 { 2 }", "if 1 -> 1; 2 -> 2 end"),
+    tu:test_ast("when 1 { 1 } else when 2 { 2 } else when 3 { 3 }",
         "if 1 -> 1; 2 -> 2; 3 -> 3 end"),
-    tu:test_ast("if 1 { 1 } else if 2 { 2 } else if 3 { 3 } else { 4 }",
+    tu:test_ast("when 1 { 1 } else when 2 { 2 } else when 3 { 3 } else { 4 }",
         "if 1 -> 1; 2 -> 2; 3 -> 3; true -> 4 end"),
     ok.
 
