@@ -1,7 +1,7 @@
 -module(blocks).
 -compile(export_all).
 
-ifs() ->
+whens() ->
     tu:test_ast("when A { B }", "if A -> B end"),
     tu:test_ast("when 1 { 1 } else when 2 { 2 }", "if 1 -> 1; 2 -> 2 end"),
     tu:test_ast("when 1 { 1 } else when 2 { 2 } else when 3 { 3 }",
@@ -40,7 +40,7 @@ receives() ->
     ok.
 
 all() ->
-    tu:test(?MODULE, ifs),
+    tu:test(?MODULE, whens),
     tu:test(?MODULE, tries),
     tu:test(?MODULE, cases),
     tu:test(?MODULE, receives),

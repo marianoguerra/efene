@@ -7,6 +7,7 @@ Nonterminals
     add_expr mul_expr unary_expr
     block_expr arrow_expr
     when_expr when_patterns when_pattern
+    if_expr
     case_expr case_body case_patterns case_pattern
     try_expr catch_patterns catch_pattern
     recv_expr receive_patterns receive_pattern
@@ -140,7 +141,8 @@ mul_expr -> unary_expr                       : '$1'.
 unary_expr -> prefix_op literal              : {op, line('$2'), op(unwrap('$1')), '$2'}.
 unary_expr -> block_expr                     : '$1'.
 
-block_expr -> when_expr           : '$1'.
+block_expr -> if_expr           : '$1'.
+block_expr -> when_expr         : '$1'.
 block_expr -> arrow_expr        : '$1'.
 block_expr -> case_expr         : '$1'.
 block_expr -> try_expr          : '$1'.
@@ -156,6 +158,21 @@ when_patterns -> when_pattern else fn_block :
 when_patterns -> when_pattern else when when_patterns          : ['$1'|'$4'].
 when_patterns -> when_pattern                              : ['$1'].
 when_pattern  -> bool_expr fn_block                      : {clause, line('$1'), [], [['$1']], '$2'}.
+
+% if expression
+
+if_expr     -> if bool_expr fn_block :
+     {'case', line('$1'), '$2', [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'}]}.
+
+if_expr     -> if bool_expr fn_block else if_expr :
+     {'case', line('$1'), '$2',
+         [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'},
+          {clause, line('$3'), [{atom, line('$3'), false}], [], ['$5']}]}.
+
+if_expr     -> if bool_expr fn_block else fn_block:
+     {'case', line('$1'), '$2',
+         [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'},
+          {clause, line('$3'), [{atom, line('$3'), false}], [], '$5'}]}.
 
 % case expression
 case_expr -> switch bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.
@@ -371,7 +388,8 @@ Erlang code.
 unwrap({_,V})   -> V;
 unwrap({_,_,V}) -> V.
 
-line(T) when is_tuple(T) -> element(2, T).
+line(T) when is_tuple(T) -> element(2, T);
+line([H|_T]) -> element(2, H).
 
 get_arity([{clause, _, Params, _, _}|_T]) -> length(Params).
 
