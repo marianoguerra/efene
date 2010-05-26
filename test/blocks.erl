@@ -10,6 +10,20 @@ whens() ->
         "if 1 -> 1; 2 -> 2; 3 -> 3; true -> 4 end"),
     ok.
 
+ifs() ->
+    tu:test_ast("if foo(X) { A }", "case foo(X) of true -> A end"),
+    tu:test_ast("if foo(X) { A } else { B }",
+        "case foo(X) of true -> A; false -> B end"),
+    tu:test_ast("if foo(X) { A } else if bar(Y) { B }",
+        "case foo(X) of true -> A; false -> case bar(Y) of true -> B end end"),
+    tu:test_ast("if foo(X) { A } else if bar(Y) { B } else { C }",
+        "case foo(X) of true -> A; false -> case bar(Y) of true -> B; false -> C end end"),
+    tu:test_ast("if foo(X) { A } else if bar(Y) { B } else if baz(Z) { C }",
+        "case foo(X) of true -> A; false -> case bar(Y) of true -> B; false -> case baz(Z) of true -> C end end end"),
+    tu:test_ast("if foo(X) { A } else if bar(Y) { B } else if baz(Z) { C } else { D }",
+        "case foo(X) of true -> A; false -> case bar(Y) of true -> B; false -> case baz(Z) of true -> C; false -> D end end end"),
+    ok.
+
 tries() ->
     tu:test_ast("try { A } catch B { C }", "try A catch B -> C end"),
     tu:test_ast("try { A } catch 1 { 1 } catch 2 { 2 }",
@@ -41,6 +55,7 @@ receives() ->
 
 all() ->
     tu:test(?MODULE, whens),
+    tu:test(?MODULE, ifs),
     tu:test(?MODULE, tries),
     tu:test(?MODULE, cases),
     tu:test(?MODULE, receives),
