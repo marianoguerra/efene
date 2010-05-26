@@ -34,8 +34,8 @@ from_json = fn ([], Obj, Attrs, _BinaryToList)
 fn ([(Key, Value):Data], Obj, Attrs, BinaryToList)
     SKey = binary_to_list(Key)
 
-    FValue = if BinaryToList
-        if is_binary(Value)
+    FValue = when BinaryToList
+        when is_binary(Value)
             binary_to_list(Value)
         else
             Value

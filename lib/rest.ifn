@@ -40,7 +40,7 @@ loop = fn (Req, Api)
     Request = request(Req)
     Handler = find_handler(Api, Request)
 
-    if Handler == notfound
+    when Handler == notfound
         response(Req, 404, mime(text), "not found")
     else
         (Route, Captured) = Handler
@@ -309,7 +309,7 @@ request = fn (Req)
 get_or_create_route = fn (Dict, Key, Module)
     IsKey = dict.is_key(Key, Dict)
 
-    if IsKey
+    when IsKey
         (Dict, dict.fetch(Key, Dict))
     else
         Route = route[handler=(Module, element(1, Key))]

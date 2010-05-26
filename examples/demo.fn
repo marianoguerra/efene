@@ -1,9 +1,9 @@
-# if statement
+# when statement
 compare = fn (A, B) {
-    if A < B {
+    when A < B {
         lt
     }
-    else if A > B {
+    else when A > B {
         gt
     }
     else {

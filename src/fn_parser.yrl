@@ -6,7 +6,7 @@ Nonterminals
     bool_expr bool_and_expr comp_expr concat_expr
     add_expr mul_expr unary_expr
     block_expr arrow_expr
-    if_expr if_patterns if_pattern
+    when_expr when_patterns when_pattern
     case_expr case_body case_patterns case_pattern
     try_expr catch_patterns catch_pattern
     recv_expr receive_patterns receive_pattern
@@ -140,22 +140,22 @@ mul_expr -> unary_expr                       : '$1'.
 unary_expr -> prefix_op literal              : {op, line('$2'), op(unwrap('$1')), '$2'}.
 unary_expr -> block_expr                     : '$1'.
 
-block_expr -> if_expr           : '$1'.
+block_expr -> when_expr           : '$1'.
 block_expr -> arrow_expr        : '$1'.
 block_expr -> case_expr         : '$1'.
 block_expr -> try_expr          : '$1'.
 block_expr -> recv_expr         : '$1'.
 block_expr -> fun_def           : '$1'.
 
-% if expression
-if_expr  -> if if_patterns      : {'if', line('$1'), '$2'}.
+% when expression
+when_expr  -> when when_patterns      : {'if', line('$1'), '$2'}.
 
-if_patterns -> if_pattern else fn_block :
+when_patterns -> when_pattern else fn_block :
     ['$1'|[{clause, line('$2'), [], [[{atom, line('$2'), true}]], '$3'}]].
 
-if_patterns -> if_pattern else if if_patterns          : ['$1'|'$4'].
-if_patterns -> if_pattern                              : ['$1'].
-if_pattern  -> bool_expr fn_block                      : {clause, line('$1'), [], [['$1']], '$2'}.
+when_patterns -> when_pattern else when when_patterns          : ['$1'|'$4'].
+when_patterns -> when_pattern                              : ['$1'].
+when_pattern  -> bool_expr fn_block                      : {clause, line('$1'), [], [['$1']], '$2'}.
 
 % case expression
 case_expr -> switch bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.

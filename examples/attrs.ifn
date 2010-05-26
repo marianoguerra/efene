@@ -30,7 +30,7 @@ run = fn ()
 create_or_update = fn (Dict, Key, Value)
     IsKey = dict.is_key(Key, Dict)
 
-    if IsKey
+    when IsKey
         dict.append(Key, [Value], Dict)
     else
         dict.store(Key, [Value], Dict)

@@ -31,7 +31,7 @@ fundoc = fn (Mod, Fun, Arity)
     Info = Mod.module_info(attributes)
 
     FilterDoc = fn ((doc, [((Fun1, Arity1), _)]))
-        if Fun == Fun1 and Arity == Arity1
+        when Fun == Fun1 and Arity == Arity1
             true
         else
             false
