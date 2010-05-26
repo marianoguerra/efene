@@ -1,5 +1,5 @@
-when Expression
--------------
+When Expression
+---------------
 
 .. code-block:: efene
 
@@ -11,7 +11,7 @@ when Expression
 
 .. code-block:: efene
 
-        # multiple ifs
+        # multiple whens
         when GuardSeq1 {
             Body1
         }
@@ -27,7 +27,7 @@ when Expression
 
 .. code-block:: efene
 
-        # if/else
+        # when/else
         when GuardSeq1 {
             Body1
         }
@@ -39,7 +39,7 @@ when Expression
 
 .. code-block:: efene
 
-        # if/else if/else
+        # when/else when/else
         when GuardSeq1 {
             Body1
         }
@@ -52,7 +52,7 @@ when Expression
             ElseBody
         }
 
-The branches of an if-expression are scanned sequentially until a guard
+The branches of an when-expression are scanned sequentially until a guard
 sequence GuardSeq which evaluates to true is found. Then the corresponding Body
 (sequence of expressions) is evaluated.
 
@@ -76,3 +76,8 @@ Example:
                 false
             }
         }
+
+Difference Between *if* and *when*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See the if expression reference for details.
