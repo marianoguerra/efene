@@ -1,10 +1,10 @@
-If Expression
+when Expression
 -------------
 
 .. code-block:: efene
 
         # simple form
-        if GuardSeq1 {
+        when GuardSeq1 {
             Body1
         }
 
@@ -12,15 +12,15 @@ If Expression
 .. code-block:: efene
 
         # multiple ifs
-        if GuardSeq1 {
+        when GuardSeq1 {
             Body1
         }
 
-        else if GuardSeq2 {
+        else when GuardSeq2 {
             Body2
         }
 
-        else if GuardSeqN {
+        else when GuardSeqN {
             BodyN
         }
 
@@ -28,7 +28,7 @@ If Expression
 .. code-block:: efene
 
         # if/else
-        if GuardSeq1 {
+        when GuardSeq1 {
             Body1
         }
 
@@ -40,11 +40,11 @@ If Expression
 .. code-block:: efene
 
         # if/else if/else
-        if GuardSeq1 {
+        when GuardSeq1 {
             Body1
         }
 
-        else if GuardSeqN {
+        else when GuardSeqN {
             BodyN
         }
 
@@ -56,7 +56,7 @@ The branches of an if-expression are scanned sequentially until a guard
 sequence GuardSeq which evaluates to true is found. Then the corresponding Body
 (sequence of expressions) is evaluated.
 
-The return value of Body is the return value of the if expression.
+The return value of Body is the return value of the when expression.
 
 If no guard sequence is true, an if_clause run-time error will occur.
 
@@ -68,7 +68,7 @@ Example:
 .. code-block:: efene
 
         is_greater_than = fn (X, Y) {
-            if X > Y {
+            when X > Y {
                 true
             }
 
