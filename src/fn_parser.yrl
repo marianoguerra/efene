@@ -20,7 +20,8 @@ Nonterminals
     rec rec_def rec_set rec_new attr_sets attr_set
     binary binary_items binary_item bin_type_def bin_type
     prefix_op attribute
-    obj_def obj_attrs obj_attrs_tail.
+    obj_def obj_attrs obj_attrs_tail
+    for_expr.
 
 Terminals
     fn match open close open_block close_block
@@ -142,6 +143,7 @@ unary_expr -> prefix_op literal              : {op, line('$2'), op(unwrap('$1'))
 unary_expr -> block_expr                     : '$1'.
 
 block_expr -> if_expr           : '$1'.
+block_expr -> for_expr          : '$1'.
 block_expr -> when_expr         : '$1'.
 block_expr -> arrow_expr        : '$1'.
 block_expr -> case_expr         : '$1'.
@@ -173,6 +175,14 @@ if_expr     -> if bool_expr fn_block else fn_block:
      {'case', line('$1'), '$2',
          [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'},
           {clause, line('$3'), [{atom, line('$3'), false}], [], '$5'}]}.
+
+% for expression
+
+for_expr -> for match_expr in bool_expr fn_block :
+    {lc, line('$1'), {block, line('$1'), '$5'}, [{generate, line('$3'), '$2', '$4'}]}.
+
+for_expr -> for match_expr in bool_expr if bool_expr fn_block :
+    {lc, line('$1'), {block, line('$1'), '$7'}, [{generate, line('$3'), '$2', '$4'}, '$6']}.
 
 % case expression
 case_expr -> switch bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.
