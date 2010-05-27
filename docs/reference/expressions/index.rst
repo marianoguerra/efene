@@ -7,6 +7,7 @@ Expressions
    if
    when
    switch
+   for
    try
    receive
    function
