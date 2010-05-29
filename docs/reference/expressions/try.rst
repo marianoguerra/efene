@@ -7,11 +7,11 @@ Try Expression
                 Expres
         }
 
-        catch [Class1] ExceptionPattern1 [when ExceptionGuardSeq1] {
+        catch ([Class1] ExceptionPattern1) [when (ExceptionGuardSeq1)] {
                 ExceptionBody1
         }
 
-        catch [ClassN] ExceptionPatternN [when ExceptionGuardSeqN] {
+        catch ([ClassN] ExceptionPatternN) [when (ExceptionGuardSeqN)] {
                 ExceptionBodyN
         }
 
@@ -29,6 +29,10 @@ is passed on as if Exprs had not been enclosed in a try expression.
 
 If an exception occurs during evaluation of ExceptionBody it is not caught.
 
+.. note::
+
+        Parenthesis around conditions are optional
+
 The try expression can also be augmented with an after section, intended to be
 used for cleanup with side effects:
 
@@ -38,11 +42,11 @@ used for cleanup with side effects:
                 Expres
         }
 
-        catch [Class1] ExceptionPattern1 [when ExceptionGuardSeq1] {
+        catch ([Class1] ExceptionPattern1) [when (ExceptionGuardSeq1)] {
                 ExceptionBody1
         }
 
-        catch [ClassN] ExceptionPatternN [when ExceptionGuardSeqN] {
+        jatch ([ClassN] ExceptionPatternN) [when (ExceptionGuardSeqN)] {
                 ExceptionBodyN
         }
 

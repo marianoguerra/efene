@@ -4,48 +4,48 @@ Receive Expression
 .. code-block:: efene
 
         # receive
-        receive Pattern1 [when GuardSeq1] {
+        receive (Pattern1) [when (GuardSeq1)] {
                 Body1
         }
 
 .. code-block:: efene
 
         # multiple receives
-        receive Pattern1 [when GuardSeq1] {
+        receive (Pattern1) [when (GuardSeq1)] {
                 Body1
         }
 
         ...
 
-        else receive PatternN [when GuardSeqN] {
+        else receive (PatternN) [when (GuardSeqN)] {
                 BodyN
         }
 
 .. code-block:: efene
 
         # receive after
-        receive Pattern1 [when GuardSeq1] {
+        receive (Pattern1) [when (GuardSeq1)] {
                 Body1
         }
 
-        after ExprT {
+        after (ExprT) {
                 BodyT
         }
 
 .. code-block:: efene
 
         # receive/else receive/after
-        receive Pattern1 [when GuardSeq1] {
+        receive (Pattern1) [when (GuardSeq1)] {
                 Body1
         }
 
         ...
 
-        else receive PatternN [when GuardSeqN] {
+        else receive (PatternN) [when (GuardSeqN)] {
                 BodyN
         }
 
-        after ExprT {
+        after (ExprT) {
                 BodyT
         }
 
@@ -61,6 +61,10 @@ The return value of Body is the return value of the receive expression.
 receive never fails. Execution is suspended, possibly indefinitely, until a
 message arrives that does match one of the patterns and with a true guard
 sequence.
+
+.. note::
+
+        Parenthesis around conditions are optional
 
 Example:
 
@@ -82,17 +86,17 @@ It is possible to augment the receive expression with a timeout:
 .. code-block:: efene
 
         # receive/else receive/after
-        receive Pattern1 [when GuardSeq1] {
+        receive (Pattern1) [when (GuardSeq1)] {
                 Body1
         }
 
         ...
 
-        else receive PatternN [when GuardSeqN] {
+        else receive (PatternN) [when (GuardSeqN)] {
                 BodyN
         }
 
-        after ExprT {
+        after (ExprT) {
                 BodyT
         }
 

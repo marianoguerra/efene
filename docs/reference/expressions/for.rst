@@ -14,9 +14,9 @@ For Expression
                 ForBody
 
 The for expression allows to write loops in a way that is familiar to people
-comming from mainstream languages.
+coming from mainstream languages.
 
-The expression is another way of writting a list comprehension but allowing
+The expression is another way of writing a list comprehension but allowing
 a sequence of expressions in the body and not only one expression.
 
 The expression collects the values of the ForBody and returns them as a list.
@@ -48,6 +48,12 @@ Result::
     R2 = for X in lists.seq(1, 5)
         for Y in lists.seq(6, 10)
             (X, Y)
+
+.. warning::
+
+   The expression *lists.seq(6, 10)* in the inner for will be evaluated 5 times
+   if it's a costly expression you should assign it to a variable outside the
+   for and use it.
 
 Result::
 

@@ -4,7 +4,7 @@ When Expression
 .. code-block:: efene
 
         # simple form
-        when GuardSeq1 {
+        when (GuardSeq1) {
             Body1
         }
 
@@ -12,15 +12,15 @@ When Expression
 .. code-block:: efene
 
         # multiple whens
-        when GuardSeq1 {
+        when (GuardSeq1) {
             Body1
         }
 
-        else when GuardSeq2 {
+        else when (GuardSeq2) {
             Body2
         }
 
-        else when GuardSeqN {
+        else when (GuardSeqN) {
             BodyN
         }
 
@@ -28,7 +28,7 @@ When Expression
 .. code-block:: efene
 
         # when/else
-        when GuardSeq1 {
+        when (GuardSeq1) {
             Body1
         }
 
@@ -40,11 +40,11 @@ When Expression
 .. code-block:: efene
 
         # when/else when/else
-        when GuardSeq1 {
+        when (GuardSeq1) {
             Body1
         }
 
-        else when GuardSeqN {
+        else when (GuardSeqN) {
             BodyN
         }
 
@@ -62,6 +62,11 @@ If no guard sequence is true, an if_clause run-time error will occur.
 
 If necessary, the else branch can be used in the last branch, as that guard
 sequence is always true.
+
+.. note::
+
+        Parenthesis around conditions are optional
+
 
 Example:
 

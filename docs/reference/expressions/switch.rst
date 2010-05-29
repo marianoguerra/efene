@@ -4,13 +4,13 @@ Switch Expression
 .. code-block:: efene
 
         switch Expr {
-            case Pattern1 [when GuardSeq1] {
+            case (Pattern1) [when (GuardSeq1)] {
                 Body1
             }
 
             ...
 
-            case PatternN [when GuardSeqN] {
+            case (PatternN) [when (GuardSeqN)] {
                 BodyN
             }
         }
@@ -18,13 +18,13 @@ Switch Expression
 .. code-block:: efene
 
         switch Expr {
-            case Pattern1 [when GuardSeq1] {
+            case (Pattern1) [when (GuardSeq1)] {
                 Body1
             }
 
             ...
 
-            case PatternN [when GuardSeqN] {
+            case (PatternN) [when (GuardSeqN)] {
                 BodyN
             }
             
@@ -45,6 +45,11 @@ run-time error will occur.
 
 If necessary, the else branch can be used in the last branch, as that guard
 sequence is always true.
+
+.. note::
+
+        Parenthesis around conditions are optional
+
 
 Example:
 

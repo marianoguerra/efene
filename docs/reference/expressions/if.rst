@@ -4,7 +4,7 @@ If Expression
 .. code-block:: efene
 
         # simple form
-        if GuardSeq1 {
+        if (GuardSeq1) {
             Body1
         }
 
@@ -12,15 +12,15 @@ If Expression
 .. code-block:: efene
 
         # multiple ifs
-        if GuardSeq1 {
+        if (GuardSeq1) {
             Body1
         }
 
-        else if GuardSeq2 {
+        else if (GuardSeq2) {
             Body2
         }
 
-        else if GuardSeqN {
+        else if (GuardSeqN) {
             BodyN
         }
 
@@ -28,7 +28,7 @@ If Expression
 .. code-block:: efene
 
         # if/else
-        if GuardSeq1 {
+        if (GuardSeq1) {
             Body1
         }
 
@@ -40,11 +40,11 @@ If Expression
 .. code-block:: efene
 
         # if/else if/else
-        if GuardSeq1 {
+        if (GuardSeq1) {
             Body1
         }
 
-        else if GuardSeqN {
+        else if (GuardSeqN) {
             BodyN
         }
 
@@ -62,6 +62,11 @@ If no guard sequence is true, an run-time error will occur.
 
 If necessary, the else branch can be used in the last branch, as that
 expression is always true.
+
+
+.. note::
+
+        Parenthesis around conditions are optional
 
 Example:
 
