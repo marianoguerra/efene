@@ -1,7 +1,7 @@
 Nonterminals
     program tl_exprs tl_expr
     fn_def fun_def fn_patterns fn_pattern fn_parameters parameters fn_block
-    exprs expr literal bool_lit
+    exprs literal bool_lit
     send_expr match_expr
     bool_expr bool_and_expr comp_expr concat_expr
     add_expr mul_expr unary_expr
@@ -13,7 +13,7 @@ Nonterminals
     recv_expr receive_patterns receive_pattern
     list list_items
     tuple tuple_items
-    fun_call call_params call_parameters farity
+    fun_call farity
     arrow_chains arrow_chain
     list_comp list_generator list_generators
     bin_comp
@@ -93,22 +93,19 @@ fn_patterns -> fn_pattern : ['$1'].
 fn_patterns -> fn_pattern fn_patterns : ['$1'|'$2'].
 
 fn_pattern -> fn fn_parameters fn_block : {clause, line('$1'), '$2', [], '$3'}.
-%fn_pattern -> fn fn_parameters expr : {clause, line('$1'), '$2', [], ['$3']}.
 fn_pattern -> fn fn_parameters when bool_expr fn_block : {clause, line('$1'), '$2', [['$4']], '$5'}.
 
 fn_parameters -> open close : [].
 fn_parameters -> open parameters close : '$2'.
 
-parameters -> match_expr sep parameters: ['$1'|'$3'].
-parameters -> match_expr : ['$1'].
+parameters -> send_expr sep parameters: ['$1'|'$3'].
+parameters -> send_expr : ['$1'].
 
-fn_block -> open_block expr close_block : ['$2'].
+fn_block -> open_block send_expr close_block : ['$2'].
 fn_block -> open_block exprs close_block : '$2'.
 
-exprs -> expr endl : ['$1'].
-exprs -> expr endl exprs: ['$1'|'$3'].
-
-expr -> send_expr: '$1'.
+exprs -> send_expr endl : ['$1'].
+exprs -> send_expr endl exprs: ['$1'|'$3'].
 
 send_expr -> match_expr send_op send_expr        : {op, line('$2'), unwrap('$2'), '$1', '$3'}.
 send_expr -> match_expr                         : '$1'.
@@ -253,7 +250,7 @@ literal -> bool_lit             : '$1'.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
 literal -> atom                 : '$1'.
 literal -> var                  : '$1'.
-literal -> open expr close      : '$2'.
+literal -> open send_expr close : '$2'.
 literal -> char                 : '$1'.
 literal -> list                 : '$1'.
 literal -> tuple                : '$1'.
@@ -288,23 +285,17 @@ tuple_items -> match_expr sep tuple_items : ['$1'|'$3'].
 
 % function call
 
-fun_call -> atom call_params           : {call, line('$1'), '$1', '$2'}.
-fun_call -> var call_params            : {call, line('$1'), '$1', '$2'}.
-fun_call -> atom dot atom call_params  :
+fun_call -> atom fn_parameters           : {call, line('$1'), '$1', '$2'}.
+fun_call -> var fn_parameters            : {call, line('$1'), '$1', '$2'}.
+fun_call -> atom dot atom fn_parameters  :
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> atom dot var call_params  :
+fun_call -> atom dot var fn_parameters  :
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> var dot atom call_params  :
+fun_call -> var dot atom fn_parameters  :
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> var dot var call_params  :
+fun_call -> var dot var fn_parameters  :
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> fun_call call_params       : {call, line('$1'), '$1', '$2'}.
-
-call_params -> open close : [].
-call_params -> open call_parameters close : '$2'.
-
-call_parameters -> expr : ['$1'].
-call_parameters -> expr sep call_parameters: ['$1'|'$3'].
+fun_call -> fun_call fn_parameters       : {call, line('$1'), '$1', '$2'}.
 
 % function arity
 

@@ -4,6 +4,6 @@
 build() ->
     leex:file(fn_lexer),
     compile:file(fn_lexer),
-    yecc:file(fn_parser),
+    yecc:file(fn_parser, {verbose, true}),
     compile:file(fn_parser),
     ok.
