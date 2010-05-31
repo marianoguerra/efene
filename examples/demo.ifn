@@ -1,11 +1,24 @@
 # a demo that shows different expressions
 
+# if statement
+compare_if = fn (A, B)
+    if A < B
+        lt
+
+    else if A > B
+        gt
+
+    else
+        eq
+
 # when statement
-compare = fn (A, B)
+compare_when = fn (A, B)
     when A < B
         lt
+
     else when A > B
         gt
+
     else
         eq
 
@@ -62,9 +75,13 @@ run = fn ()
     # lambda functions
     Print = fn (Expr) { io.format("~p~n", [Expr]) }
 
-    Print(compare(1, 2))
-    Print(compare(2, 1))
-    Print(compare(2, 2))
+    Print(compare_when(1, 2))
+    Print(compare_when(2, 1))
+    Print(compare_when(2, 2))
+
+    Print(compare_if(1, 2))
+    Print(compare_if(2, 1))
+    Print(compare_if(2, 2))
 
     Print(compare_to_string(lt))
     Print(compare_to_string(gt))
