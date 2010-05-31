@@ -74,6 +74,10 @@ specials(Line, Name, Fields) ->
         [fn_gen:atom(Line, has), fn_gen:var(Line, '_')],
         [fn_gen:false(Line)]),
 
+    NotFound = fn_gen:clause(Line,
+        [fn_gen:var(Line, '_'), fn_gen:var(Line, '_')],
+        [fn_gen:call(Line, throw, [fn_gen:atom(Line, method_not_found)])]),
+
     ToRecord = fn_gen:clause(Line,
         [fn_gen:atom(Line, to), fn_gen:atom(Line, rec)],
         [fn_gen:var(Line, fn_gen:atom_to_upper(Name))]),
@@ -94,4 +98,5 @@ specials(Line, Name, Fields) ->
         [fn_gen:atom(Line, to), fn_gen:atom(Line, strname)],
         [fn_gen:string(Line, atom_to_list(Name))]),
 
-    [ToRecord, ToFields, ToFieldsList, ToName, ToStringName|Has] ++ HasStr ++ [HasNotFound].
+    [ToRecord, ToFields, ToFieldsList, ToName, ToStringName|Has] ++
+        HasStr ++ [HasNotFound, NotFound].
