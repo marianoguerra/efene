@@ -1,0 +1,21 @@
+# example on how to pass information from one object to another one
+obj1 = object(attr1, attr2, attr3)
+
+obj2 = object(attr1, attr2, attr3, attr4, attr5)
+
+@public
+run = fn ()
+    O1 = obj1(1, 2, 3)
+    O2 = obj2(nil, nil, nil, nil, nil)
+
+    # should copy attr 1, 2, 3 and leave 4 and 5 as nil
+    O3 = obj.copy(O1, O2)
+
+    io.format("~p~n", [O3(to, rec)])
+
+    O4 = O3(setattr4, true)(setattr5, atom)
+
+    # should copy attr 1, 2 and 3
+    O5 = obj.copy(O4, obj1(nil, nil, nil))
+
+    io.format("~p~n", [O5(to, rec)])
