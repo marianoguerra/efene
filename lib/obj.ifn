@@ -168,3 +168,19 @@ fn ([H:T], Accum) when is_atom(H)
 fn ([H:T], Accum)
     transform_tuple(T, [H:Accum])
 
+@doc("copy the attributes from one object to a new one if the attributes are
+pressent")
+
+@public
+copy = fn (Old, New)
+    Attrs = [Attr for Attr in Old(to, fieldslist) if New(has, Attr)]
+    set_attrs(Attrs, Old, New)
+
+@doc("set the attributes from old to new")
+
+set_attrs = fn ([], _Old, New)
+    New
+
+fn ([Attr:Attrs], Old, New)
+    set_attrs(Attrs, Old, New((set, Attr), Old(get, Attr)))
+
