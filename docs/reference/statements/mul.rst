@@ -15,6 +15,7 @@ op       Description
 ====     =======================
 `*`      multiplication
 `/`      division
+`//`     integer division
 `%`      integer reminder of X/Y
 &        binary and
 andd     boolean and
@@ -28,6 +29,8 @@ Examples::
         20
         >>> 10 / 2
         5.0
+        >>> 10 // 2
+        5
         >>> 13 % 2
         1
         >>> 32 & 2
