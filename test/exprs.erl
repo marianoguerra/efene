@@ -88,13 +88,15 @@ mul() ->
     tu:test_ast("1 * 2 * 3", "1 * 2 * 3"),
     tu:test_ast("1 / 2", "1 / 2"),
     tu:test_ast("1 / 2 / 3", "1 / 2 / 3"),
+    tu:test_ast("1 // 2", "1 div 2"),
+    tu:test_ast("1 // 2 // 3", "1 div 2 div 3"),
     tu:test_ast("1 % 2", "1 rem 2"),
     tu:test_ast("1 % 2 % 3", "1 rem 2 rem 3"),
     tu:test_ast("1 & 2", "1 band 2"),
     tu:test_ast("1 & 2 & 3", "1 band 2 band 3"),
 
-    tu:test_ast("1 * 2 / 3 % 4 & 5 % 4 / 3 * 2",
-        "1 * 2 / 3 rem 4 band 5 rem 4 / 3 * 2"),
+    tu:test_ast("1 * 2 / 3 % 4 // 5 & 5 % 4 / 3 * 2",
+        "1 * 2 / 3 rem 4 div 5 band 5 rem 4 / 3 * 2"),
     ok.
 
 random() ->
