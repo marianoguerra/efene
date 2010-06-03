@@ -165,3 +165,11 @@ le = fn (Val)
     fn (X)
         X <= Val
 
+@doc("returns a validator that checks if the parameter validates one of the
+functions")
+@public
+
+or_ = fn (Val1, Val2)
+    fn (X)
+        Val1(X) or Val2(X)
+
