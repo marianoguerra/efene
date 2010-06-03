@@ -107,7 +107,7 @@ rawall = fn (Database, Type)
 
 @public
 all = fn (Database, Obj)
-    from_results(rawall(Database, Obj(get, strname)), Obj)
+    from_results(rawall(Database, Obj(to, strname)), Obj)
 
 
 @doc("find all elements that have the same value in *Key* as *Obj*,
@@ -118,7 +118,7 @@ find = fn (Database, Obj, Key) when is_atom(Key)
     find(Database, Obj, atom_to_list(Key))
 
 fn (Database, Obj, Key) when is_list(Key)
-    query(Database, Obj(get, strname), Obj, [(Key, Obj(get, Key))])
+    query(Database, Obj(to, strname), Obj, [(Key, Obj(get, Key))])
 
 
 @doc("find one element that has the same value in *Key* as *Obj*,
@@ -151,7 +151,7 @@ for *Obj*")
 
 @public
 query = fn (Database, Obj, Selector)
-    Results = emongo.find(Database, Obj(get, strname), Selector)
+    Results = emongo.find(Database, Obj(to, strname), Selector)
     from_results(Results, Obj)
 
 @doc("do a query writing the *Selector* by hand on the collection
