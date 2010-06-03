@@ -76,6 +76,8 @@ loop = fn (Req, Api)
                 (303, Produces, Url)
             case (static, Path)
                 serve_static(Path)
+            case Msg
+                (200, Produces, Msg)
 
         response(Req, Status, mime(Mime), Return)
 
