@@ -395,6 +395,7 @@ line([H|_T]) -> element(2, H).
 get_arity([{clause, _, Params, _, _}|_T]) -> length(Params).
 
 op('%') -> 'rem';
+op('//') -> 'div';
 op('<<') -> 'bsl';
 op('>>') -> 'bsr';
 op('<=') -> '=<';

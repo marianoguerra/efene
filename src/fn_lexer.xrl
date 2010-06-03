@@ -16,7 +16,7 @@ Bool        = (true|false)
 
 % arithmetic operators
 Add         = (\+|-)
-Mul         = (\*|/|%)
+Mul         = (\*|//|/|%)
 Comp        = (<|<=|==|===|>=|>|!=|!==)
 Match       = =
 
