@@ -1,0 +1,17 @@
+# switch statement and multiline expressions
+compare_to_string = fn (Result)
+    switch Result
+        case lt
+            "lower than"
+
+        case gt
+            "greater than"
+
+        case eq
+            "equal to"
+
+        else
+            "invalid value '" ++
+                atom_to_list(Result) ++
+                "'"
+

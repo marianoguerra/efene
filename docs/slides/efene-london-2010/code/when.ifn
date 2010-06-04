@@ -1,0 +1,11 @@
+# when statement
+compare_when = fn (A, B)
+    when A < B
+        lt
+
+    else when A > B
+        gt
+
+    else
+        eq
+

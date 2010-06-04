@@ -1,0 +1,14 @@
+<div class="highlight"><pre><span class="c">% if statement</span>
+<span class="nf">compare_if</span><span class="p">(</span><span class="nv">A</span><span class="p">,</span> <span class="nv">B</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="k">case</span> <span class="nv">A</span> <span class="o">&lt;</span> <span class="nv">B</span> <span class="k">of</span>
+        <span class="n">true</span> <span class="o">-&gt;</span>
+            <span class="n">lt</span><span class="p">;</span>
+        <span class="n">false</span> <span class="o">-&gt;</span>
+            <span class="k">case</span> <span class="nv">A</span> <span class="o">&gt;</span> <span class="nv">B</span> <span class="k">of</span>
+                <span class="n">true</span> <span class="o">-&gt;</span>
+                    <span class="n">gt</span><span class="p">;</span>
+                <span class="n">false</span> <span class="o">-&gt;</span>
+                    <span class="n">eq</span>
+            <span class="k">end</span>
+    <span class="k">end</span><span class="p">.</span>
+</pre></div>

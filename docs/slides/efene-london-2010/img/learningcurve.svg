@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="learningcurve.svg">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective3606"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3640"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3666"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3688"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3713"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3742"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3742-6"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3742-2"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3742-63"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="372.04724"
+     inkscape:cy="664.43017"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1280"
+     inkscape:window-height="723"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 444.38218,386.21518 -144.13103,0"
+       id="path3630-9"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#4c4c4c;stroke-opacity:1;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect2816"
+       width="611.42859"
+       height="337.14285"
+       x="65.714287"
+       y="229.50504"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#4c4c4c;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 64.056415,398.76437 613.557775,1.00091"
+       id="path3590"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#4c4c4c;stroke-width:3.9709084;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 257.23385,230.58797 0,336.36371"
+       id="path3596"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#4c4c4c;stroke-width:3.9709084;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 479.43585,230.08933 0,336.36371"
+       id="path3596-2"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="92.085533"
+       y="283.6488"
+       id="text3620"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3622"
+         x="92.085533"
+         y="283.6488">Learning curve</tspan><tspan
+         sodipodi:role="line"
+         x="92.085533"
+         y="306.1488"
+         id="tspan3624">for some</tspan><tspan
+         sodipodi:role="line"
+         x="92.085533"
+         y="328.6488"
+         id="tspan3626">programming </tspan><tspan
+         sodipodi:role="line"
+         x="92.085533"
+         y="351.1488"
+         id="tspan3628">languages</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 300.25114,242.62606 0,144.13103"
+       id="path3630"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 300.34948,242.95231 -2.63934,3.63387"
+       id="path3656"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 300.1391,242.93231 2.63934,3.63387"
+       id="path3656-9"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 444.00787,386.20564 440.374,383.5663"
+       id="path3656-0"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 444.13387,385.99523 440.5,388.63457"
+       id="path3656-9-9"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="327"
+       y="248.36218"
+       id="text3730"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3732"
+         x="327"
+         y="248.36218">Visual Basic</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 642.31861,386.39002 -144.13103,0"
+       id="path3630-9-7"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 498.18757,242.8009 0,144.13103"
+       id="path3630-7"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 498.28591,243.12715 -2.63934,3.63387"
+       id="path3656-1"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 498.07553,243.10715 2.63934,3.63387"
+       id="path3656-9-1"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 641.9443,386.38048 -3.63387,-2.63934"
+       id="path3656-0-5"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 642.0703,386.17007 -3.63387,2.63934"
+       id="path3656-9-9-9"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="556.9364"
+       y="248.53702"
+       id="text3730-7"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3732-7"
+         x="556.9364"
+         y="248.53702">Java</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 230.31861,554.39002 -144.131028,0"
+       id="path3630-9-73"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 86.187572,410.8009 0,144.13103"
+       id="path3630-6"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 86.285912,411.12715 -2.63934,3.63387"
+       id="path3656-5"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 86.075532,411.10715 2.63934,3.63387"
+       id="path3656-9-6"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 229.9443,554.38048 -3.63387,-2.63934"
+       id="path3656-0-3"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 230.0703,554.17007 -3.63387,2.63934"
+       id="path3656-9-9-94"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="130.93643"
+       y="416.53702"
+       id="text3730-8"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3732-1"
+         x="130.93643"
+         y="416.53702">Ruby</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 445.31861,555.39002 -144.13103,0"
+       id="path3630-9-9"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 301.18757,411.8009 0,144.13103"
+       id="path3630-3"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 301.28591,412.12715 -2.63934,3.63387"
+       id="path3656-90"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 301.07553,412.10715 2.63934,3.63387"
+       id="path3656-9-8"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 444.9443,555.38048 -3.63387,-2.63934"
+       id="path3656-0-8"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 445.0703,555.17007 -3.63387,2.63934"
+       id="path3656-9-9-5"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="345.93643"
+       y="417.53702"
+       id="text3730-0"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3732-9"
+         x="345.93643"
+         y="417.53702">Erlang</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 644.31861,555.39002 -144.13103,0"
+       id="path3630-9-8"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 500.18757,411.8009 0,144.13103"
+       id="path3630-5"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 500.28591,412.12715 -2.63934,3.63387"
+       id="path3656-6"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 500.07553,412.10715 2.63934,3.63387"
+       id="path3656-9-11"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 643.9443,555.38048 -3.63387,-2.63934"
+       id="path3656-0-59"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 644.0703,555.17007 -3.63387,2.63934"
+       id="path3656-9-9-8"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="556.93646"
+       y="417.53702"
+       id="text3730-4"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3732-8"
+         x="556.93646"
+         y="417.53702">Lisp</tspan></text>
+    <path
+       style="fill:none;stroke:#0009ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 302,381.36218 c 26.12172,-14.07495 110.20863,-12.49015 142,-15"
+       id="path3852"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#00ff0d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 502,383.36218 c 24.40677,-14.3535 101.88862,-28.08083 138,-36"
+       id="path3854"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#ff8c00;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 90,554.36218 c 62.14272,-107.67804 69.62704,-86.90809 138,1"
+       id="path3856"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="spiral"
+       style="fill:none;stroke:#ff000b;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="path3862"
+       sodipodi:cx="576"
+       sodipodi:cy="471.36218"
+       sodipodi:expansion="1"
+       sodipodi:revolution="3"
+       sodipodi:radius="49.76947"
+       sodipodi:argument="-17.67046"
+       sodipodi:t0="0"
+       d="m 576,471.36218 c 0.95263,2.30637 -2.63894,2.42201 -3.83333,1.58334 -3.23673,-2.27275 -1.91283,-7.0779 0.66666,-9.25 4.61412,-3.88539 11.49929,-1.7051 14.66667,2.91666 4.64825,6.78261 1.51686,15.98994 -5.16666,20.08334 -8.90809,5.45585 -20.50639,1.33848 -25.50001,-7.41667 -6.28395,-11.01746 -1.16552,-25.03542 9.66666,-30.91667 13.11923,-7.12297 29.57163,-0.99574 36.33334,11.91666 7.96845,15.21683 0.82798,34.11229 -14.16666,41.75001 -17.3119,8.81805 -38.65592,0.66156 -47.16667,-16.41666 -9.67045,-19.40535 -0.49607,-43.20166 18.66666,-52.58334 21.49768,-10.52482 47.74892,-0.33126 58,20.91666 11.38065,23.58921 0.16697,52.29733 -23.16665,63.41667"
+       transform="translate(-2,1.4000025)"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#ff000b;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 502,554.36218 c 30.88282,-16.43636 70.36643,-27.53469 92,-36"
+       id="path3864"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#b600ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       d="m 306,554.36218 0,-111"
+       id="path3866"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#b600ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       d="m 447,443.36218 -142,-1"
+       id="path3868"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/mariano/Descargas/efene/learningcurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>

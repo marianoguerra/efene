@@ -1,0 +1,15 @@
+<div class="highlight"><pre><span class="c">% multiple function definition and guards</span>
+<span class="nf">compare_to_string_guards</span><span class="p">(</span><span class="nv">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nv">Result</span> <span class="o">==</span> <span class="n">lt</span> <span class="o">-&gt;</span>
+    <span class="s">&quot;lower than&quot;</span><span class="p">;</span>
+
+<span class="nf">compare_to_string_guards</span><span class="p">(</span><span class="nv">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nv">Result</span> <span class="o">==</span> <span class="n">gt</span> <span class="o">-&gt;</span>
+    <span class="s">&quot;greater than&quot;</span><span class="p">;</span>
+
+<span class="nf">compare_to_string_guards</span> <span class="p">(</span><span class="nv">Result</span><span class="p">)</span> <span class="k">when</span> <span class="nv">Result</span> <span class="o">==</span> <span class="n">eq</span> <span class="o">-&gt;</span>
+    <span class="s">&quot;equal to&quot;</span><span class="p">;</span>
+
+<span class="nf">compare_to_string_guards</span><span class="p">(</span><span class="nv">Result</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="s">&quot;invalid value &#39;&quot;</span> <span class="o">++</span>
+        <span class="nb">atom_to_list</span><span class="p">(</span><span class="nv">Result</span><span class="p">)</span> <span class="o">++</span>
+        <span class="s">&quot;&#39;&quot;</span><span class="p">.</span>
+</pre></div>

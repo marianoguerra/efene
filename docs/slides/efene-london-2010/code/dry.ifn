@@ -1,0 +1,8 @@
+@public
+foo = fn (<pattern1>)
+    <body1>
+fn (<pattern2>)
+    <body2>
+fn (<pattern3>)
+    <body3>
+
