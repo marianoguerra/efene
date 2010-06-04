@@ -1,9 +1,9 @@
 slidesLoaded({
+    "base": "http://github.com/marianoguerra/efene/raw/master/docs/slides/efene-london-2010/",
+
     "css": {
         "src": ["css/ppt.css", "css/code.css"]
     },
-
-    "base": "http://github.com/marianoguerra/efene/raw/master/docs/slides/efene-london-2010/",
 
     "templates": {
         "xx-bigtext": {
