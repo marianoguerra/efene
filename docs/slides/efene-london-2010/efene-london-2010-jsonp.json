@@ -1,0 +1,801 @@
+slidesLoaded({
+    "css": {
+        "src": ["css/ppt.css", "css/code.css"]
+    },
+
+    "templates": {
+        "xx-bigtext": {
+            "margin-left": "auto",
+            "margin-right": "auto",
+            "margin-top": "20%",
+            "font-size": "96pt",
+            "text-align": "center"
+        },
+
+        "x-bigtext": {
+            "margin-left": "auto",
+            "margin-right": "auto",
+            "margin-top": "22%",
+            "font-size": "80pt",
+            "text-align": "center"
+        },
+
+        "bigtext": {
+            "margin-left": "auto",
+            "margin-right": "auto",
+            "margin-top": "24%",
+            "font-size": "64pt",
+            "text-align": "center"
+        },
+
+        "biglist": {
+            "margin-left": "10%",
+            "margin-top": "8%",
+            "font-size": "42pt",
+            "list-style-type": "none"
+        },
+
+        "smalllist": {
+            "margin-left": "12%",
+            "margin-top": "8%",
+            "font-size": "18pt",
+            "list-style-type": "none"
+        },
+
+        "bigimage": {
+            "margin-top": "8%"
+        },
+
+        "footer": {
+            "position": "fixed",
+            "bottom": "2em",
+            "right": "2em",
+            "font-size": "normal"
+        },
+
+        "quote": {
+            "margin-left": "10%",
+            "width": "80%",
+            "margin-top": "10%",
+            "font-size": "48pt",
+            "text-align": "justify",
+            "font-style": "italic"
+        },
+
+        "code": {
+            "margin-left": "20%",
+            "margin-top": "10%",
+            "font-size": "2em"
+        },
+
+        "lotofcode": {
+            "margin-left": "20%",
+            "margin-top": "2%",
+            "font-size": "1.5em"
+        }
+    },
+
+    "slides": {
+        "first": {
+            "text": [
+                {
+                    "data": "Efene Programming Language",
+                    "template": "bigtext"
+                },
+
+                {
+                    "data": "Mariano Guerra - Erlang Factory - London 2010",
+                    "template": "footer"
+                }
+            ]
+        },
+
+        "me": {
+            "text": {
+                "data": "Me",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "from": {
+            "image": {
+                "src": "img/argentina.png",
+                "template": "bigimage"
+            }
+        },
+
+        "spanish": {
+            "image": {
+                "src": "img/spain.jpg",
+                "template": "bigimage"
+            }
+        },
+
+        "languages1": {
+            "text": {
+                "data": "C, ASM, C++",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "languages2": {
+            "text": {
+                "data": "Java, Python",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "languages3": {
+            "text": {
+                "data": "PHP, JS, C#",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "languages4": {
+            "text": {
+                "data": "Erlang",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "I <3": {
+            "text": {
+                "data": "I **&#x2665;** Python & JS",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "f(x)?": {
+            "text": {
+                "data": "f(x)?",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "why?": {
+            "text": {
+                "data": "Why?",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "disclaimer": {
+            "text": {
+                "data": "Disclaimer",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "disagree": {
+            "image": {
+                "src": "img/disagree.jpg",
+                "template": "bigimage"
+            }
+        },
+
+        "erlang rules": {
+            "text": {
+                "data": "Erlang **rules**",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "quote": {
+            "text": [
+                {
+                    "data": "New technologies aren't adopted because they are great, new, and disruptive; they are adopted only if the user's crisis solved by the technology is greater than the perceived pain of adoption",
+                    "template": "quote"
+                },
+
+                {
+                    "data": "http://www.arcfn.com/2008/07/why-your-favorite-language-is-unpopular.html",
+                    "template": "footer"
+                }
+            ]
+        },
+
+        "crisis": {
+            "text": {
+                "data": "Crisis",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "manycore": {
+            "text": {
+                "data": "Manycore",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "poa": {
+            "text": {
+                "data": "Pain of adoption",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "quote poa": {
+            "text": [
+                {
+                    "data": "A lot of people complain about the Erlang's syntax when they first start using it -- **deal with it**.  It is complicated and seemingly convoluted, but the more you write it the more natural it becomes.  It **will take a while** for any of it **to make sense**",
+                    "template": "quote"
+                },
+
+                {
+                    "data": "Chris Williams",
+                    "template": "footer"
+                }
+            ]
+        },
+
+        "curve languages": {
+            "image": {
+                "src": "img/learningcurve.png",
+                "template": "bigimage"
+            }
+        },
+
+        "curve editors": {
+            "image": {
+                "src": "img/curves.jpg",
+                "template": "bigimage"
+            },
+            "text": {
+                "data": "http://unix.rulez.org/~calver/pictures/curves.jpg",
+                "template": "footer"
+            }
+        },
+
+        "dark side": {
+            "image": {
+                "src": "img/darkside.png",
+                "template": "bigimage"
+            }
+        },
+
+        "cookies": {
+            "image": {
+                "src": "img/cookieMonster.jpg",
+                "template": "bigimage"
+            }
+        },
+
+        "langpop": {
+            "image": {
+                "src": "img/langpop.png",
+                "template": "bigimage"
+            },
+            "text": {
+                "data": "http://langpop.com",
+                "template": "footer"
+            }
+        },
+
+        "tiobe": {
+            "image": {
+                "src": "img/tiobe.png",
+                "template": "bigimage"
+            },
+            "text": {
+                "data": "http://www.tiobe.com/index.php/content/paperinfo/tpci/index.htmlk",
+                "template": "footer"
+            }
+        },
+
+        "pop langs": {
+            "text": {
+                "data": "**C**, **C**++, **C**#, *Java*, *Java*Script",
+                "template": "bigtext"
+            }
+        },
+
+        "js quote1": {
+            "text": {
+                "data": "JavaScript was designed with Java's syntax and standard library in mind",
+                "template": "quote"
+            }
+        },
+
+        "js quote2": {
+            "text": {
+                "data": "All Java keywords are reserved in JavaScript",
+                "template": "quote"
+            }
+        },
+
+        "js quote3": {
+            "text": {
+                "data": "JavaScript's standard library follows Java's naming conventions",
+                "template": "quote"
+            }
+        },
+
+        "js quote4": {
+            "text": {
+                "data": "JavaScript's Math and Date objects are based on classes from Java 1.0",
+                "template": "quote"
+            }
+        },
+
+        "c langs": {
+            "text": {
+                "data": "C &#x2192; C++ &#x2192; C#",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "basic langs": {
+            "text": {
+                "data": "Basic &#x2192; Visual Basic &#x2192; Visual Basic.NET",
+                "template": "x-bigtext"
+            }
+        },
+
+        "point?": {
+            "text": {
+                "data": ".?",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "the point": {
+            "text": {
+                "data": "A language with friendly syntax for people coming from mainstream languages",
+                "template": "quote"
+            }
+        },
+
+        "snippets": {
+            "text": {
+                "data": "Code!",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "efene when": {
+            "external": {
+                "src": "code/when.fn.html",
+                "template": "code"
+            }
+        },
+
+        "erlang when": {
+            "external": {
+                "src": "code/when.erl.html",
+                "template": "code"
+            }
+        },
+
+        "ifene when": {
+            "external": {
+                "src": "code/when.ifn.html",
+                "template": "code"
+            }
+        },
+
+        "ifene?": {
+            "text": {
+                "data": "ifene?",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "efene if": {
+            "external": {
+                "src": "code/if.fn.html",
+                "template": "code"
+            }
+        },
+
+        "erlang if": {
+            "external": {
+                "src": "code/if.erl.html",
+                "template": "code"
+            }
+        },
+
+        "ifene if": {
+            "external": {
+                "src": "code/if.ifn.html",
+                "template": "code"
+            }
+        },
+
+        "efene switch": {
+            "external": {
+                "src": "code/switch.fn.html",
+                "template": "code"
+            }
+        },
+
+        "erlang switch": {
+            "external": {
+                "src": "code/switch.erl.html",
+                "template": "code"
+            }
+        },
+
+        "ifene switch": {
+            "external": {
+                "src": "code/switch.ifn.html",
+                "template": "code"
+            }
+        },
+
+        "efene try": {
+            "external": {
+                "src": "code/try.fn.html",
+                "template": "code"
+            }
+        },
+
+        "erlang try": {
+            "external": {
+                "src": "code/try.erl.html",
+                "template": "code"
+            }
+        },
+
+        "ifene try": {
+            "external": {
+                "src": "code/try.ifn.html",
+                "template": "code"
+            }
+        },
+
+        "efene fn": {
+            "external": {
+                "src": "code/fn.fn.html",
+                "template": "code"
+            }
+        },
+
+        "erlang fn": {
+            "external": {
+                "src": "code/fn.erl.html",
+                "template": "code"
+            }
+        },
+
+        "ifene fn": {
+            "external": {
+                "src": "code/fn.ifn.html",
+                "template": "code"
+            }
+        },
+
+        "extra": {
+            "text": {
+                "data": "Extra",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "ifene for": {
+            "external": {
+                "src": "code/for.ifn.html",
+                "template": "code"
+            }
+        },
+
+        "ifene object": {
+            "external": {
+                "src": "code/object.ifn.html",
+                "template": "lotofcode"
+            }
+        },
+
+        "ideas behind": {
+            "text": {
+                "data": "Ideas behind efene",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "zen": {
+            "list": {
+                "data": [
+                    ">>> import this",
+                    "The Zen of Python, by Tim Peters",
+                    "&nbsp;",
+                    "**Beautiful is better than ugly.**",
+                    "Explicit is better than implicit.",
+                    "**Simple is better than complex.**",
+                    "Complex is better than complicated.",
+                    "**Flat is better than nested.**",
+                    "**Sparse is better than dense.**",
+                    "**Readability counts.**",
+                    "**Special cases aren't special enough to break the rules.**",
+                    "**Although practicality beats purity.**",
+                    "Errors should never pass silently.",
+                    "Unless explicitly silenced.",
+                    "In the face of ambiguity, refuse the temptation to guess.",
+                    "**There should be one-- and preferably only one --obvious way to do it.**",
+                    "Although that way may not be obvious at first unless you're Dutch.",
+                    "Now is better than never.",
+                    "Although never is often better than *right* now.",
+                    "**If the implementation is hard to explain, it's a bad idea.**",
+                    "**If the implementation is easy to explain, it may be a good idea.**",
+                    "Namespaces are one honking great idea -- let's do more of those!"],
+
+                "template": "smalllist"
+            }
+        },
+
+        "DRY": {
+            "text": {
+                "data": "DRY",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "DRY erlang": {
+            "external": {
+                "src": "code/dry.erl.html",
+                "template": "code"
+            }
+        },
+
+        "DRY efene": {
+            "external": {
+                "src": "code/dry.ifn.html",
+                "template": "code"
+            }
+        },
+
+        "damien link": {
+            "text": [
+                {
+                    "data": "What sucks about Erlang",
+                    "template": "x-bigtext"
+                },
+
+                {
+                    "data": "Damien Katz - http://damienkatz.net/2008/03/what_sucks_abou.html",
+                    "template": "footer"
+                }
+            ]
+        },
+
+        "damien quote 1": {
+            "text": [
+                {
+                    "data": "Erlang is based originally on Prolog, a logic programming language that was briefly hot in the 80's.  Surely you've seen other languages based on Prolog, right? No? Why not?  Because Prolog sucks ass for building entire applications.  But that hasn't deterred Erlang from stealing it's dynamite syntax.",
+                    "template": "quote",
+                    "style": {
+                        "font-size": "36pt"
+                    }
+                },
+
+                {
+                    "data": "Damien Katz",
+                    "template": "footer"
+                }
+            ]
+        },
+
+        "damien quote 2": {
+            "text": [
+                {
+                    "data": "Erlang is *amazing* in ways it would take a whole book to describe properly.  It's not a toy built to satisfy the urges of academics, it's used in successful, real world products.",
+                    "template": "quote"
+                },
+
+                {
+                    "data": "Damien Katz",
+                    "template": "footer"
+                }
+            ]
+        },
+
+        "DRY erlang 1": {
+            "external": {
+                "src": "code/dry1.erl.html",
+                "template": "code",
+                "style": {
+                    "margin-left": "30%",
+                    "margin-top": "20%",
+                    "font-size": "3em"
+                }
+            }
+        },
+
+        "DRY efene 1": {
+            "external": {
+                "src": "code/dry1.ifn.html",
+                "template": "code",
+                "style": {
+                    "margin-left": "20%",
+                    "margin-top": "20%",
+                    "font-size": "3em"
+                }
+            }
+        },
+
+        "compile": {
+            "list": {
+                "data": [
+                    "fnc program.fn",
+                    "fn program function"],
+
+                "template": "biglist"
+            }
+        },
+
+        "technical stuff": {
+            "text": {
+                "data": "Technical Stuff",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "tools": {
+            "text": {
+                "data": "leex, yecc",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "steps": {
+            "text": {
+                "data": "lexer &#x2192; post lexer &#x2192; parser &#x2192; post parser &#x2192; compiler",
+                "template": "bigtext"
+            }
+        },
+
+        "steps commands": {
+            "list": {
+                "data": [
+                    "lexer",
+                    " &#x2192; leex",
+                    "post lexer",
+                    " &#x2192; normalize tokens",
+                    "parser",
+                    " &#x2192; yecc",
+                    "post parser",
+                    " &#x2192; attributes, @public, -module, -export",
+                    "compiler",
+                    " &#x2192; compile:forms"],
+
+                "template": "biglist"
+            }
+        },
+
+        "more commands": {
+            "list": {
+                "data": [
+                    "post lexer",
+                    " &#x2192; fnc -t lex file.fn",
+                    "parser",
+                    " &#x2192; fnc -t tree file.fn",
+                    "post parser",
+                    " &#x2192; fnc -t ast file.fn",
+                    " &#x2192; fnc -t mod file.fn",
+                    "compiler",
+                    " &#x2192; fnc -t beam file.fn",
+                    " &#x2192; fnc file.fn"],
+
+                "template": "biglist"
+            }
+        },
+
+        "some more commands": {
+            "list": {
+                "data": [
+                    "fnc -t erl file.fn",
+                    "fnc -t fn file.fn",
+                    "fnc -t ifn file.fn",
+                    "fnc -c 'expression'",
+                    "fnc -C 'expression'",
+                    "fnc -s"],
+
+                "template": "biglist"
+            }
+        },
+
+        "tests": {
+            "text": {
+                "data": "Tests",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "stability": {
+            "text": {
+                "data": "Stability",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "documentation": {
+            "text": {
+                "data": "Documentation",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "future": {
+            "text": {
+                "data": "Future",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "spec": {
+            "text": {
+                "data": "Spec",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "help!": {
+            "text": {
+                "data": "Help!",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "how to help": {
+            "list": {
+                "data": [
+                    "&#x2192; Download it",
+                    "&#x2192; Test it",
+                    "&#x2192; Report bugs",
+                    "&#x2192; Spread the word"],
+                "template": "biglist"
+            }
+        },
+
+        "resources": {
+            "list": {
+                "data": [
+                    "Github Projects",
+                    "&#x2192; http://github.com/marianoguerra",
+                    "Efene Repository",
+                    "&#x2192; http://github.com/marianoguerra/efene",
+                    "Efene Blog",
+                    "&#x2192; http://efene.tumblr.com",
+                    "Efene Website",
+                    "&#x2192; http://marianoguerra.com.ar/efene"],
+                "template": "biglist"
+            }
+        },
+
+        "thanks": {
+            "text": {
+                "data": "Thanks",
+                "template": "xx-bigtext"
+            }
+        },
+
+        "questions": {
+            "text": {
+                "data": "Questions?",
+                "template": "xx-bigtext"
+            }
+        }
+    },
+
+ "order": ["first", "me", "from", "spanish", "languages1", "languages2",
+    "languages3", "languages4", "I <3", "f(x)?", "why?", "disclaimer",
+    "disagree", "erlang rules", "quote", "crisis", "manycore",
+    "poa", "quote poa", "curve languages", "curve editors", "dark side",
+    "cookies", "langpop", "tiobe", "pop langs", "js quote1", "js quote2",
+    "js quote3", "js quote4", "c langs", "basic langs", "point?", "the point",
+    "snippets",
+    "efene when", "erlang when", "ifene when",
+    "ifene?", "I <3",
+    "efene if", "ifene if", "erlang if",
+    "efene switch", "ifene switch", "erlang switch",
+    "efene try", "ifene try", "erlang try",
+    "efene fn", "ifene fn", "erlang fn",
+    "extra", "ifene for", "ifene object",
+    "ideas behind", "zen", "DRY", "DRY erlang", "DRY efene",
+    "tests", "stability", "documentation",
+    "damien link", "damien quote 1", "damien quote 2", "erlang rules",
+    "DRY erlang 1", "DRY efene 1", "compile", "technical stuff", "tools", "steps",
+    "steps commands", "more commands", "some more commands",
+    "future", "spec", "help!", "how to help", "resources", "thanks", "questions"]
+});
