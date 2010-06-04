@@ -565,7 +565,7 @@
                     "data": "Erlang is based originally on Prolog, a logic programming language that was briefly hot in the 80's.  Surely you've seen other languages based on Prolog, right? No? Why not?  Because Prolog sucks ass for building entire applications.  But that hasn't deterred Erlang from stealing it's dynamite syntax.",
                     "template": "quote",
                     "style": {
-                        "font-size": "36pt",
+                        "font-size": "36pt"
                     }
                 },
 
