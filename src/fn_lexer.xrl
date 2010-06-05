@@ -25,6 +25,7 @@ Concat      = (\+\+|--)
 
 % numbers
 Number      = [0-9]
+Float       = [0-9]+\.[0-9]+([eE][-+]?[0-9]+)?
 BinNumber   = 0b[01]+
 OctNumber   = 0o[0-7]+
 HexNumber   = 0x[0-9a-fA-F]+
@@ -83,8 +84,8 @@ Rules.
 {Concat}                 : make_token(concat_op, TokenLine, TokenChars).
 
 % numbers
+{Float}                  : make_token(float,   TokenLine, TokenChars, fun erlang:list_to_float/1).
 {Number}+                : make_token(integer, TokenLine, TokenChars, fun erlang:list_to_integer/1).
-{Number}+\.{Number}+     : make_token(float,   TokenLine, TokenChars, fun erlang:list_to_float/1).
 {BinNumber}              : make_token(integer, TokenLine, TokenChars, fun bin_to_integer/1).
 {OctNumber}              : make_token(integer, TokenLine, TokenChars, fun oct_to_integer/1).
 {HexNumber}              : make_token(integer, TokenLine, TokenChars, fun hex_to_integer/1).
