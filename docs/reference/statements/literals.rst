@@ -336,3 +336,21 @@ Examples::
         >>> <[1:1,0:1]>
         <<2:2>>
 
+Macro Variables
+~~~~~~~~~~~~~~~
+
+A set of variables that are replaced at compile time, all the Macro Variables start
+with the *$* sign and have more than one character in their name (to differentiate them
+from the char operator).
+
+The defined variables are:
+
+$module
+        the module name as atom
+$module_string
+        the module name as string
+$line
+        the current line as an integer
+$file
+        the file name as string
+
