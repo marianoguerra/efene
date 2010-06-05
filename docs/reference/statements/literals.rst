@@ -32,6 +32,16 @@ A literal that represents a decimal value::
         >>> 32.43
         32.43
 
+Scientific notation can be also used::
+
+        >>> 12.32e-2
+        0.1232
+        >>> 12.32E2
+        1232.0
+        >>> 12.43E+2
+        1243.0
+        >>> 12.43e-2
+        0.1243
 
 Boolean
 ~~~~~~~
