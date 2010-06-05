@@ -22,7 +22,13 @@ integers() ->
 floats() ->
     tu:test_ast("1.0", "1.0"),
     tu:test_ast("1.10", "1.10"),
-    tu:test_ast("123.10", "123.10").
+    tu:test_ast("123.10", "123.10"),
+    tu:test_ast("123.10e2", "123.10e2"),
+    tu:test_ast("123.10e-2", "123.10e-2"),
+    tu:test_ast("123.10e+2", "123.10e+2"),
+    tu:test_ast("123.10E2", "123.10E2"),
+    tu:test_ast("123.10E-2", "123.10E-2"),
+    tu:test_ast("123.10E+2", "123.10E+2").
 
 bools() ->
     tu:test_ast("true", "true"),
