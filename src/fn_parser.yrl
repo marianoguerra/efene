@@ -42,7 +42,8 @@ Terminals
     record
     attr gattr
     for in
-    object.
+    object
+    macrovar.
 
 Rootsymbol program.
 
@@ -262,6 +263,28 @@ literal -> rec_set              : '$1'.
 literal -> rec_new              : '$1'.
 literal -> fun_call             : '$1'.
 literal -> binary               : '$1'.
+literal -> macrovar             :
+    case unwrap('$1') of
+        line ->
+            {integer, line('$1'), line('$1')};
+        module ->
+            case fn_server:get(module) of
+                {ok, Value} ->
+                    {atom, line('$1'), Value}
+            end;
+        module_string ->
+            case fn_server:get(module_string) of
+                {ok, Value} ->
+                    {string, line('$1'), Value}
+            end;
+        file ->
+            case fn_server:get(module) of
+                {ok, Value} ->
+                    {string, line('$1'), Value}
+            end;
+        _ ->
+            '$1'
+    end.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 

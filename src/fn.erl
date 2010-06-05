@@ -56,6 +56,14 @@ print_lex(From, String) ->
 
 get_tree(From, String) ->
     Tokens = get_lex(From, String),
+
+    FileName = if
+        From == file -> String;
+        true -> "interactive"
+    end,
+
+    start_server(FileName),
+
     case fn_parser:parse(Tokens) of
         {ok, Tree}    -> Tree;
         {ok, Tree, _} -> Tree;
@@ -269,6 +277,16 @@ get_module_beam_name(String) ->
     File = filename:basename(String),
     ModuleNameStr = filename:rootname(File),
     string:concat(ModuleNameStr, ".beam").
+
+start_server(FileName) ->
+    Module = get_module_name(FileName),
+    ModuleString = atom_to_list(Module),
+
+    fn_server:start(),
+    fn_server:set(module, Module),
+    fn_server:set(module_string, ModuleString),
+    fn_server:set(file, FileName),
+    ok.
 
 % eval functions
 

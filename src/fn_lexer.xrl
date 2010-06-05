@@ -50,10 +50,11 @@ Send        = !
 % string stuff
 String      = "(\\\^.|\\.|[^\"])*"
 Char        = \$\\?.
+MacroVar    = \$[a-z][a-zA-Z0-9\_]+
 
 % identifiers and atoms
 Identifier  = [A-Z\_][a-zA-Z0-9\_]*
-Atom        = ([a-z][a-zA-Z0-9_@]*)|('(\\\^.|\\.|[^\'])*')
+Atom        = ([a-z][a-zA-Z0-9\_@]*)|('(\\\^.|\\.|[^\'])*')
 
 Rules.
 
@@ -106,6 +107,7 @@ Rules.
 
 % string stuff
 {String}                 : build_string(string, TokenChars, TokenLine, TokenLen).
+{MacroVar}               : make_token(macrovar, TokenLine, tl(TokenChars)).
 {Char}                   : make_token(char,     TokenLine, TokenChars, fun(Char) -> list_to_charnum(Char, TokenLine) end).
 
 % identifiers and atoms
