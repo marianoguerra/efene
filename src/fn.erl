@@ -12,6 +12,7 @@
         build_module/1,
         print_module/1,
         compile/2,
+        compile_files/2,
         get_erlang/2,
         print_erlang/2,
         erl_to_ast/1,

@@ -19,7 +19,10 @@ set(Key, Value) ->
 
 get(Key) ->
     fn_server ! {get, self(), Key},
-    receive Response -> Response end.
+    receive
+        {ok, _Val} = Response -> Response;
+        error -> error
+    end.
 
 server(Data) ->
     receive
