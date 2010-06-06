@@ -1,3 +1,5 @@
+.. _whenexpression:
+
 When Expression
 ---------------
 

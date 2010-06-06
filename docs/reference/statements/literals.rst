@@ -32,6 +32,8 @@ A literal that represents a decimal value::
         >>> 32.43
         32.43
 
+.. _scientificnotationfloat:
+
 Scientific notation can be also used::
 
         >>> 12.32e-2
@@ -345,6 +347,8 @@ Examples::
         <<"ABC">>
         >>> <[1:1,0:1]>
         <<2:2>>
+
+.. _macrovariables:
 
 Macro Variables
 ~~~~~~~~~~~~~~~

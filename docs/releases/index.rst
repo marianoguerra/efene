@@ -5,3 +5,4 @@ Releases
    :maxdepth: 1
 
    osix
+   oseven
