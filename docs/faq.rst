@@ -59,12 +59,19 @@ Was it pleasant to develop it in Erlang? Have you considered the JVM or the CLR?
 
 Does beam offer interesting features for dynamic languages?
 
-        you can build dynamic features in the erlang VM, reia is much more
+        You can build dynamic features in the erlang VM, reia is much more
         dynamic than efene and it's done in the erlang VM so yes, you can do
         it.
         
         Some tricks must be done but it's like dynamic languages in the JVM
         before invokedynamic.
+
+Is concurrency and hot code swapping supported? How about performance?
+
+        Those features are implemented by the erlang VM at a lower level
+        so efene supports them by using the same things as in erlang.
+
+        No special code required, the same performance.
 
 Tools
 ~~~~~
