@@ -14,4 +14,5 @@ Contents:
    releases/index
    reference/index
    lib/index
+   faq
 
