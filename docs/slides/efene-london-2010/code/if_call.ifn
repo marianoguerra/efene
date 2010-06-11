@@ -1,0 +1,10 @@
+call_in_if = fn (A, B)
+    if some_function(A)
+        something
+
+    else if some_function(B)
+        something_else
+
+    else
+        another_thing
+

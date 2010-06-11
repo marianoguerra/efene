@@ -614,6 +614,18 @@
             }
         },
 
+        "if efene": {
+            "external": {
+                "src": "code/if_call.ifn.html",
+                "template": "code",
+                "style": {
+                    "margin-left": "20%",
+                    "margin-top": "20%",
+                    "font-size": "3em"
+                }
+            }
+        },
+
         "compile": {
             "list": {
                 "data": [
@@ -793,9 +805,9 @@
     "efene fn", "ifene fn", "erlang fn",
     "extra", "ifene for", "ifene object",
     "ideas behind", "zen", "DRY", "DRY erlang", "DRY efene",
-    "tests", "stability", "documentation",
     "damien link", "damien quote 1", "damien quote 2", "erlang rules",
-    "DRY erlang 1", "DRY efene 1", "compile", "technical stuff", "tools", "steps",
-    "steps commands", "more commands", "some more commands",
+    "DRY erlang 1", "DRY efene 1", "if efene", "technical stuff", "tools", "steps",
+    "steps commands", "more commands", "some more commands", "compile",
+    "tests", "stability", "documentation",
     "future", "spec", "help!", "how to help", "resources", "thanks", "questions"]
 }

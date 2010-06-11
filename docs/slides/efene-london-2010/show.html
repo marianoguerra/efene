@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>pepete</title>
+</head>
+
+<body>
+  <script type="text/javascript" src="jquery.js" charset="utf-8"></script>
+  <script type="text/javascript" src="jquery.hotkeys.js" charset="utf-8"></script>
+  <script type="text/javascript" src="ppt.js" charset="utf-8"></script>
+
+  <script type="text/javascript" charset="utf-8">
+   $(document).ready(function () {
+     var hash = document.location.hash.substring(1);
+     ppt.load(hash || "pepete.json");
+   });
+
+   function slidesLoaded(data) {
+    ppt.init(data);
+   }
+  </script>
+</body>
+</html>
