@@ -23,30 +23,39 @@
 
 % lexer functions
 
-get_lex(String) ->
+get_lex_from_str(String, FileName) ->
     case fn_lexer:string(String) of
-        {ok, Tokens, _Endline} -> Tokens;
+        {ok, Tokens, _Endline} ->
+            replace_macros(Tokens, FileName);
         Errors -> throw(Errors)
     end.
 
 get_lex(string, String) ->
-    Lex = get_lex(String),
-    fn_lexpp:clean_whites(Lex);
+    get_lex(string, String, "interactive.fn");
 get_lex(istring, String) ->
-    Lex1  = get_lex(String),
-    Lex2 = fn_lexpp:indent_to_blocks(Lex1),
-    fn_errors:fail_on_tab(Lex2);
+    get_lex(istring, String, "interactive.ifn");
 get_lex(file, Path) ->
     Program = file_to_string(Path),
 
     IsFn  = lists:suffix(".fn",  Path),
     IsIfn = lists:suffix(".ifn", Path),
 
+    FilePath = filename:basename(Path),
+
     if
-        IsFn  -> get_lex(string, Program);
-        IsIfn -> get_lex(istring, Program);
+        IsFn  -> get_lex(string, Program, FilePath);
+        IsIfn -> get_lex(istring, Program, FilePath);
         true  -> exit(io_lib:format("Invalid file extension in '~s' (.fn or .ifn expected)~n", [Path]))
     end.
+
+get_lex(string, String, FileName) ->
+    Lex = get_lex_from_str(String, FileName),
+    fn_lexpp:clean_whites(Lex);
+get_lex(istring, String, FileName) ->
+    Lex1  = get_lex_from_str(String, FileName),
+    Lex2 = fn_lexpp:indent_to_blocks(Lex1),
+    fn_errors:fail_on_tab(Lex2).
+
 
 print_lex(From, String) ->
     io:format("~p~n", [get_lex(From, String)]).
@@ -57,13 +66,6 @@ print_lex(From, String) ->
 
 get_tree(From, String) ->
     Tokens = get_lex(From, String),
-
-    FileName = if
-        From == file -> String;
-        true -> "interactive"
-    end,
-
-    start_server(FileName),
 
     case fn_parser:parse(Tokens) of
         {ok, Tree}    -> Tree;
@@ -279,15 +281,30 @@ get_module_beam_name(String) ->
     ModuleNameStr = filename:rootname(File),
     string:concat(ModuleNameStr, ".beam").
 
-start_server(FileName) ->
+replace_macros(Tokens, FileName) ->
     Module = get_module_name(FileName),
-    ModuleString = atom_to_list(Module),
+    replace_macros(Tokens, Module, FileName, []).
 
-    fn_server:start(),
-    fn_server:set(module, Module),
-    fn_server:set(module_string, ModuleString),
-    fn_server:set(file, FileName),
-    ok.
+replace_macros([], _Module, _FileName, Accum) ->
+    lists:reverse(Accum);
+
+replace_macros([{macrovar, Line, line}|T], Module, FileName, Accum) ->
+    replace_macros(T, Module, FileName, [{integer, Line, Line}|Accum]);
+
+replace_macros([{macrovar, Line, module}|T], Module, FileName, Accum) ->
+    replace_macros(T, Module, FileName, [{atom, Line, Module}|Accum]);
+
+replace_macros([{macrovar, Line, module_string}|T], Module, FileName, Accum) ->
+    replace_macros(T, Module, FileName, [{string, Line, atom_to_list(Module)}|Accum]);
+
+replace_macros([{macrovar, Line, file}|T], Module, FileName, Accum) ->
+    replace_macros(T, Module, FileName, [{string, Line, FileName}|Accum]);
+
+replace_macros([{macrovar, Line, MacroName}|_T], _Module, _FileName, _Accum) ->
+    throw({error, {Line, fn_parser, ["invalid macro name", MacroName]}});
+
+replace_macros([H|T], Module, FileName, Accum) ->
+    replace_macros(T, Module, FileName, [H|Accum]).
 
 % eval functions
 
