@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
-fnc *.ifn
+../bin/fnc *.ifn
 mv *.beam ../ebin

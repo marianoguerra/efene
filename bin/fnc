@@ -3,6 +3,9 @@
 OUTPUTDIR='.'
 TYPE='beam'
 LASTARG=${!#}
+
+SCRIPTDIR=$(dirname $0)
+FNCSH=$SCRIPTDIR/fnc.sh
  
 while getopts ":o:ht:c:C:i:I:se" opt; do
   case $opt in
@@ -32,18 +35,18 @@ while getopts ":o:ht:c:C:i:I:se" opt; do
         exit 0
         ;;
     s)
-        fnc.sh shell
+        $FNCSH shell
         exit $?
         ;;
     t)
         TYPE=$OPTARG
         ;;
     c)
-        fnc.sh eval "\"$OPTARG\""
+        $FNCSH eval "\"$OPTARG\""
         exit $?
         ;;
     C)
-        fnc.sh erleval "\"$OPTARG\""
+        $FNCSH erleval "\"$OPTARG\""
         exit $?
         ;;
     \?)
@@ -68,8 +71,8 @@ then
     fi
 
     shift $(($OPTIND - 1))
-    fnc.sh $TYPE $OUTPUTDIR $*
+    $FNCSH $TYPE $OUTPUTDIR $*
 else
-    fnc.sh $TYPE $LASTARG
+    $FNCSH $TYPE $LASTARG
 fi
 exit $?
