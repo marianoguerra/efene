@@ -80,7 +80,27 @@ tl_expr -> obj_def endl   : '$1'.
 tl_expr -> attribute endl : '$1'.
 
 attribute -> attr : {attribute, line('$1'), unwrap('$1'), nil}.
-attribute -> attr open literal close : {attribute, line('$1'), unwrap('$1'), erl_parse:normalise('$3')}.
+attribute -> attr open parameters close :
+    case unwrap('$1') of
+        spec ->
+            {attribute, line('$1'), unwrap('$1'), '$3'};
+        _ ->
+            case length('$3') of
+                1 ->
+                    {attribute, line('$1'), unwrap('$1'), erl_parse:normalise(hd('$3'))};
+                _ ->
+                    fail(line('$1'), "one argument expected in attribute ", unwrap('$1'))
+            end
+    end.
+
+attribute -> attr open parameters close arrow send_expr :
+    case unwrap('$1') of
+        spec ->
+            % TODO: see if the return type goes like this
+            {attribute, line('$1'), unwrap('$1'), fn_spec:convert('$3'), fn_spec:convert('$6')};
+        _ ->
+            fail(line('$1'), "'spec' expected on attribute got:", unwrap('$1'))
+    end.
 attribute -> gattr open literal close : {global_attribute, line('$1'), unwrap('$1'), erl_parse:normalise('$3')}.
 
 fn_def -> atom match fn_patterns:
