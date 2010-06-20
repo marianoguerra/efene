@@ -1,0 +1,6 @@
+
+@public
+run = fn () {
+    io.format("I'm in file ~s, module ~p, module as string ~p, line ~p~n",
+        [$file, $module, $module_string, $line])
+}
