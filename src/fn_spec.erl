@@ -16,8 +16,14 @@ convert_one({call, Line, {atom, _, tuple}, []}) ->
     {type, Line, tuple, any};
 convert_one({call, Line, {atom, _, Name}, Args}) ->
     {type, Line, Name, Args};
-convert_one({atom, _Line, _Name}=Atom) ->
-    Atom;
+convert_one({atom, _Line, _Val}=Ast) ->
+    Ast;
+convert_one({integer, _Line, _Val}=Ast) ->
+    Ast;
+convert_one({var, _Line, _Val}=Ast) ->
+    Ast;
+convert_one({'bin', _Line, _Val}=Ast) ->
+    Ast;
 convert_one({_, Line, _}=Node) ->
     throw({error, {Line, fn_parser, ["Invalid syntax in spec: ", Node]}}).
 
