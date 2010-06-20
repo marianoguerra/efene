@@ -19,3 +19,8 @@ one_type_3 = fn (4)
 @spec(<[]>) -> <[]>
 one_type_4 = fn (<[]>)
     <[]>
+
+@public
+@spec([]) -> []
+one_type_5 = fn ([])
+    []
