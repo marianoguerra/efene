@@ -382,6 +382,7 @@ attr_set  -> atom match bool_expr : {record_field, line('$2'), '$1', '$3'}.
 % binary
 
 binary -> open_bin binary_items close_bin : {'bin', line('$1'), '$2'}.
+binary -> open_bin close_bin : {'bin', line('$1'), []}.
 
 binary_items -> binary_item sep binary_items : ['$1'|'$3'].
 binary_items -> binary_item : ['$1'].
