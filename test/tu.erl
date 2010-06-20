@@ -33,6 +33,19 @@ same_ast_no_endl(FnExpr, ErlExpr) ->
         error:_Error -> {error, FnAst, ErlAst}
     end.
 
+same_file_ast(FnPath, ErlPath) ->
+    [_|T] = fn:from_erlang(ErlPath),
+    ErlAst = lists:reverse(tl(lists:reverse(T))),
+
+    FnAst = fn:build_module(FnPath),
+
+    try
+        FnAst = ErlAst,
+        ok
+    catch
+        error:_Error -> {error, FnAst, ErlAst}
+    end.
+
 test_ast(FnExpr, ErlExpr) ->
     test_ast(FnExpr, ErlExpr, same_ast).
 
@@ -49,6 +62,14 @@ test_ast(FnExpr, ErlExpr, Fun) ->
         {error, FnAst, ErlAst} -> io:format("error: ~p = ~p~n~p~n~p~n",
                 [FnExpr, ErlExpr, FnAst, ErlAst])
    end.
+
+test_file(FnPath, ErlPath) ->
+    case same_file_ast(FnPath, ErlPath) of
+        ok ->
+            io:format("ok: ~p = ~p~n", [FnPath, ErlPath]);
+        {error, FnAst, ErlAst} ->
+            io:format("error: ~p = ~p~n~p~n~p~n", [FnPath, ErlPath, FnAst, ErlAst])
+    end.
 
 test_mod_ast(FnMod, ErlMod, ModName) ->
     Result = try

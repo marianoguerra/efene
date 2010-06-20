@@ -11,4 +11,5 @@ all() ->
     tu:test(module),
     tu:test(records),
     tu:test(attrs),
+    tu:test(specc),
     ok.

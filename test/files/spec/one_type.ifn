@@ -1,0 +1,11 @@
+
+
+@public
+@spec(integer()) -> integer()
+one_type_1 = fn (Int)
+    Int
+
+@public
+@spec(tuple()) -> tuple()
+one_type_2 = fn (Tuple)
+    Tuple
