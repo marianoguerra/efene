@@ -97,7 +97,10 @@ attribute -> attr open parameters close arrow send_expr :
     case unwrap('$1') of
         spec ->
             % TODO: see if the return type goes like this
-            {attribute, line('$1'), unwrap('$1'), fn_spec:convert('$3'), fn_spec:convert('$6')};
+            {attribute, line('$1'), unwrap('$1'),
+                [{type, line('$1'), 'fun',
+                    [{type, line('$1'), product, fn_spec:convert('$3')},
+                      hd(fn_spec:convert(['$6']))]}]};
         _ ->
             fail(line('$1'), "'spec' expected on attribute got:", unwrap('$1'))
     end.
