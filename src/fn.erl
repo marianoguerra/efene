@@ -14,6 +14,7 @@
         compile/2,
         compile_files/2,
         get_erlang/2,
+        from_erlang/1,
         print_erlang/2,
         erl_to_ast/1,
         erlmod_to_ast/2,
@@ -108,28 +109,36 @@ tree_to_ast([{attribute, _Line, _Name, _Value}=Attr|Tree], Publics, Ast, CurrAtt
 
 tree_to_ast([{function, _Line, Name, Arity, _Body}=H|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     Fun = {Name, Arity},
-    {IsPublic, NewAttrs} = modify_attrs(CurrAttrs, Fun),
+    {IsPublic, Spec, NewAttrs} = modify_attrs(CurrAttrs, Fun),
 
     NewPublics = if
         IsPublic -> [Fun|Publics];
         true -> Publics
     end,
 
-    tree_to_ast(Tree, NewPublics,
-        [H|Ast], [], [NewAttrs|Attrs]);
+    NewAst = if
+        Spec == nil -> [H|Ast];
+        true -> [H, Spec|Ast]
+    end,
+
+    tree_to_ast(Tree, NewPublics, NewAst, [], [NewAttrs|Attrs]);
 
 tree_to_ast([H|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     tree_to_ast(Tree, Publics, [H|Ast], CurrAttrs, Attrs).
 
 modify_attrs(Attrs, Fun) ->
-    modify_attrs(Attrs, Fun, [], false).
+    modify_attrs(Attrs, Fun, [], nil, false).
 
-modify_attrs([], _Fun, Accum, IsPublic) ->
-    {IsPublic, lists:reverse(Accum)};
-modify_attrs([{attribute, _Line, public, nil}|Attrs], Fun, Accum, _IsPublic) ->
-        modify_attrs(Attrs, Fun, Accum, true);
-modify_attrs([{attribute, Line, Name, Args}|Attrs], Fun, Accum, IsPublic) ->
-        modify_attrs(Attrs, Fun, [{attribute, Line, Name, {Fun, Args}}|Accum], IsPublic).
+modify_attrs([], _Fun, Accum, Spec, IsPublic) ->
+    {IsPublic, Spec, lists:reverse(Accum)};
+modify_attrs([{attribute, _Line, public, nil}|Attrs], Fun, Accum, Spec, _IsPublic) ->
+        modify_attrs(Attrs, Fun, Accum, Spec, true);
+% XXX: if two specs are defined for the same function the last one will be the
+% one remaining
+modify_attrs([{attribute, Line, spec, Args}|Attrs], Fun, Accum, _Spec, IsPublic) ->
+        modify_attrs(Attrs, Fun, Accum, {attribute, Line, spec, {Fun, Args}}, IsPublic);
+modify_attrs([{attribute, Line, Name, Args}|Attrs], Fun, Accum, Spec, IsPublic) ->
+        modify_attrs(Attrs, Fun, [{attribute, Line, Name, {Fun, Args}}|Accum], Spec, IsPublic).
 
 
 get_publics(Tree) ->
