@@ -22,6 +22,8 @@ convert_one({integer, _Line, _Val}=Ast) ->
     Ast;
 convert_one({var, _Line, _Val}=Ast) ->
     Ast;
+convert_one({'bin', Line, []}) ->
+    {type, Line, binary, [{integer, Line, 0}, {integer, Line, 0}]};
 convert_one({'bin', _Line, _Val}=Ast) ->
     Ast;
 convert_one({_, Line, _}=Node) ->

@@ -1,4 +1,4 @@
-
+# see the erlang file with the same name for description on what are we testing
 
 @public
 @spec(integer()) -> integer()
@@ -9,3 +9,13 @@ one_type_1 = fn (Int)
 @spec(tuple()) -> tuple()
 one_type_2 = fn (Tuple)
     Tuple
+
+@public
+@spec(4) -> 5
+one_type_3 = fn (4)
+    5
+
+@public
+@spec(<[]>) -> <[]>
+one_type_4 = fn (<[]>)
+    <[]>
