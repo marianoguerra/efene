@@ -2,25 +2,40 @@
 
 @public
 @spec(integer()) -> integer()
-one_type_1 = fn (Int)
+f_1 = fn (Int)
     Int
 
 @public
 @spec(tuple()) -> tuple()
-one_type_2 = fn (Tuple)
+f_2 = fn (Tuple)
     Tuple
 
 @public
 @spec(4) -> 5
-one_type_3 = fn (4)
+f_3 = fn (4)
     5
 
 @public
 @spec(<[]>) -> <[]>
-one_type_4 = fn (<[]>)
+f_4 = fn (<[]>)
     <[]>
 
 @public
 @spec([]) -> []
-one_type_5 = fn ([])
+f_5 = fn ([])
     []
+
+@public
+@spec((,)) -> (,)
+f_6 = fn ((,))
+    (,)
+
+@public
+@spec(list()) -> list()
+f_7 = fn (List)
+    List
+
+@public
+@spec(some_atom) -> 'if'
+f_8 = fn (some_atom)
+    'if'

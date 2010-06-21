@@ -22,6 +22,8 @@ convert_one({integer, _Line, _Val}=Ast) ->
     Ast;
 convert_one({var, _Line, _Val}=Ast) ->
     Ast;
+convert_one({tuple=Type, Line, Val}) ->
+    {type, Line, Type, Val};
 convert_one({nil, Line}) ->
     {type, Line, nil, []};
 convert_one({'bin', Line, []}) ->
