@@ -1,0 +1,12 @@
+
+
+@public
+@spec(integer() | float()) -> integer() | float()
+f_1 = fn (Val)
+    Val
+
+@public
+@spec(any() | none() | pid() | port() | ref() | float() | integer() | atom() | list () | binary() | fun() | tuple()) ->
+    any() | none() | pid() | port() | ref() | float() | integer() | atom() | list () | binary() | fun() | tuple()
+f_2 = fn (Val)
+    Val
