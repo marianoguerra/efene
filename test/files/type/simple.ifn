@@ -1,0 +1,12 @@
+
+
+
+@type(type1()) -> integer()
+
+@type(type2()) -> integer() | list()
+
+@type(type3()) -> integer() | list() | type1()
+
+@type(one()) -> 1
+
+@type(fals()) -> 0 | false | [] | <[]> | (,)

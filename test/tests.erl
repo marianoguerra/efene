@@ -12,4 +12,5 @@ all() ->
     tu:test(records),
     tu:test(attrs),
     tu:test(specc),
+    tu:test(typee),
     ok.
