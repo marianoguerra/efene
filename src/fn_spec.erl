@@ -1,5 +1,5 @@
 -module(fn_spec).
--export([convert/1]).
+-export([convert/1, convert_type/1]).
 
 
 % convert ast to spec ast
@@ -41,3 +41,5 @@ convert_union_left({op, _Line, 'bor', Ast1, Ast2}) ->
 convert_union_left(Ast) ->
     convert_one(Ast).
 
+convert_type({call, _Line, {atom, _Line, Name}, Args}) ->
+    {Name, convert(Args)}.

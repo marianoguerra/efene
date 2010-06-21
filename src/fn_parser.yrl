@@ -83,7 +83,9 @@ attribute -> attr : {attribute, line('$1'), unwrap('$1'), nil}.
 attribute -> attr open parameters close :
     case unwrap('$1') of
         spec ->
-            {attribute, line('$1'), unwrap('$1'), '$3'};
+            fail(line('$1'), "return type expected in ", unwrap('$1'));
+        type ->
+            fail(line('$1'), "type definition expected in ", unwrap('$1'));
         _ ->
             case length('$3') of
                 1 ->
@@ -94,16 +96,26 @@ attribute -> attr open parameters close :
     end.
 
 attribute -> attr open parameters close arrow send_expr :
+    Return = hd(fn_spec:convert(['$6'])),
+
     case unwrap('$1') of
         spec ->
-            % TODO: see if the return type goes like this
             {attribute, line('$1'), unwrap('$1'),
                 [{type, line('$1'), 'fun',
-                    [{type, line('$1'), product, fn_spec:convert('$3')},
-                      hd(fn_spec:convert(['$6']))]}]};
+                    [{type, line('$1'), product, fn_spec:convert('$3')}, Return]}]};
+        type ->
+            case length('$3') of
+                1 ->
+                    {Name, Args} = fn_spec:convert_type(hd('$3')),
+
+                    {global_attribute, line('$1'), unwrap('$1'), {Name, Return, Args}};
+                _ ->
+                    fail(line('$1'), "one argument expected in ", unwrap('$1'))
+            end;
         _ ->
-            fail(line('$1'), "'spec' expected on attribute got:", unwrap('$1'))
+            fail(line('$1'), "'spec' or 'type' expected got ", unwrap('$1'))
     end.
+
 attribute -> gattr open literal close : {global_attribute, line('$1'), unwrap('$1'), erl_parse:normalise('$3')}.
 
 fn_def -> atom match fn_patterns:
