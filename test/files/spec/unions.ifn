@@ -10,3 +10,13 @@ f_1 = fn (Val)
     any() | none() | pid() | port() | ref() | float() | integer() | atom() | list () | binary() | fun() | tuple()
 f_2 = fn (Val)
     Val
+
+@public
+@spec(foo() | bar()) -> foo() | bar()
+f_3 = fn (Val)
+    Val
+
+@public
+@spec(0 | false | [] | (,) | <[]>) -> 0 | false | [] | (,) | <[]>
+f_4 = fn (Val)
+    Val
