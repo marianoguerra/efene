@@ -1,0 +1,32 @@
+
+
+@public
+@spec(maybe_improper_list(any(),  any())) -> maybe_improper_list(any(), any())
+f_1 = fn (List)
+    List
+
+@public
+@spec(list(integer())) -> list(integer())
+f_2 = fn (List)
+    List
+
+@public
+@spec(list(integer() | float())) -> list(integer() | float())
+f_3 = fn (List)
+    List
+
+@public
+@spec([char()]) -> list(char())
+f_4 = fn (List)
+    List
+
+@public
+@spec([[char()]]) -> list(list(char()))
+f_5 = fn (List)
+    List
+
+@public
+@spec((atom(),atom(),byte())) -> (atom(),atom(),byte())
+f_6 = fn (Tuple)
+    Tuple
+

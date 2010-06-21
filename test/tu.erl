@@ -67,8 +67,8 @@ test_file(FnPath, ErlPath) ->
     case same_file_ast(FnPath, ErlPath) of
         ok ->
             io:format("ok: ~p = ~p~n", [FnPath, ErlPath]);
-        {error, FnAst, ErlAst} ->
-            io:format("error: ~p = ~p~n~p~n~p~n", [FnPath, ErlPath, FnAst, ErlAst])
+        {error, _FnAst, _ErlAst} ->
+            io:format("error: ~p = ~p~n", [FnPath, ErlPath])
     end.
 
 test_mod_ast(FnMod, ErlMod, ModName) ->
