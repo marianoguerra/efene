@@ -2,7 +2,7 @@ Nonterminals
     program tl_exprs tl_expr
     fn_def fun_def fn_patterns fn_pattern fn_parameters parameters fn_block
     exprs literal bool_lit
-    send_expr match_expr
+    send_expr match_expr def_expr
     bool_expr bool_and_expr comp_expr concat_expr
     add_expr mul_expr unary_expr
     block_expr arrow_expr
@@ -36,7 +36,7 @@ Terminals
     switch case
     try catch
     receive after
-    open_list close_list sep split_op dot
+    open_list close_list sep split_op split_def_op dot
     arrow
     open_bin close_bin
     record
@@ -145,8 +145,12 @@ exprs -> send_expr endl exprs: ['$1'|'$3'].
 send_expr -> match_expr send_op send_expr        : {op, line('$2'), unwrap('$2'), '$1', '$3'}.
 send_expr -> match_expr                         : '$1'.
 
-match_expr -> bool_expr match match_expr         : {match, line('$2'), '$1', '$3'}.
-match_expr -> bool_expr                         : '$1'.
+match_expr -> def_expr match match_expr         : {match, line('$2'), '$1', '$3'}.
+match_expr -> def_expr                         : '$1'.
+
+def_expr -> literal split_def_op bool_expr : {def, line('$2'), '$1', '$3'}.
+def_expr -> bool_expr : '$1'.
+
 
 bool_expr -> bool_and_expr bool_orelse_op bool_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
 bool_expr -> bool_and_expr                          : '$1'.

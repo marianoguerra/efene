@@ -1,0 +1,11 @@
+
+
+@public
+@spec(ArgName :: maybe_improper_list(any(),  any())) -> maybe_improper_list(any(), any())
+f_1 = fn (List)
+    List
+
+@public
+@spec(VarName :: foo() | bar()) -> foo() | bar()
+f_2 = fn (Val)
+    Val

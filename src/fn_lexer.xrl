@@ -43,6 +43,7 @@ Sep         = ,
 Endls       = (\s|\t|#(.*))*(\n|;)((\s|\t|#(.*))*(\n|;))*
 Whites      = \s+
 Tabs        = \t+
+SplitDef    = ::
 Split       = :
 Dot         = \.
 Arrow       = ->
@@ -102,6 +103,7 @@ Rules.
 
 {Sep}                    : make_token(sep,      TokenLine, TokenChars).
 {Send}                   : make_token(send_op,  TokenLine, TokenChars).
+{SplitDef}               : make_token(split_def_op, TokenLine, TokenChars).
 {Split}                  : make_token(split_op, TokenLine, TokenChars).
 {Dot}                    : make_token(dot,      TokenLine, TokenChars).
 {Arrow}                  : make_token(arrow,    TokenLine, TokenChars).

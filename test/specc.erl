@@ -13,8 +13,13 @@ params() ->
     tu:test_file("files/spec/params.ifn", "files/spec/params.erl"),
     ok.
 
+annotation() ->
+    tu:test_file("files/spec/coloncolon.ifn", "files/spec/coloncolon.erl"),
+    ok.
+
 all() ->
     tu:test(?MODULE, simple),
     tu:test(?MODULE, unions),
     tu:test(?MODULE, params),
+    tu:test(?MODULE, annotation),
     ok.

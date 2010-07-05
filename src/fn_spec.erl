@@ -14,8 +14,13 @@ convert([H|T], Accum) ->
 
 convert_one({call, Line, {atom, _, tuple}, []}) ->
     {type, Line, tuple, any};
+convert_one({call, Line, {atom, _, 'fun'}, [{def, DefLine, Args, Spec}]}) ->
+    {type, Line, 'fun',
+        [{type, DefLine, product, [convert_one(Args)]}, convert_one(Spec)]};
 convert_one({call, Line, {atom, _, Name}, Args}) ->
     {type, Line, Name, convert(Args)};
+convert_one({def, Line, VarAst, Spec}) ->
+    {ann_type, Line, [VarAst, convert_one(Spec)]};
 convert_one({atom, _Line, _Val}=Ast) ->
     Ast;
 convert_one({integer, _Line, _Val}=Ast) ->
@@ -34,8 +39,9 @@ convert_one({cons, Line, _Head, _Tail}=Ast) ->
     {type, Line, list, convert_list(Ast)};
 convert_one({op, _Line, 'bor', _Ast1, _Ast2}=Ast) ->
     convert_union(Ast);
-convert_one({_, Line, _}=Node) ->
-    throw({error, {Line, fn_parser, ["Invalid syntax in spec: ", Node]}}).
+convert_one(Node) ->
+    throw({error, {element(2, Node), fn_parser, ["Invalid syntax in spec in element: ",
+                    element(1, Node)]}}).
 
 convert_union({op, Line, 'bor', Ast1, Ast2}) ->
     {type, Line, union, lists:flatten([convert_union_left(Ast1), [convert_one(Ast2)]])}.

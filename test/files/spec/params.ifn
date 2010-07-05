@@ -16,7 +16,7 @@ f_3 = fn (List)
     List
 
 @public
-@spec([char()]) -> list(char())
+@spec(Foo :: [char()]) -> list(char())
 f_4 = fn (List)
     List
 

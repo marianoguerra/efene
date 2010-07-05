@@ -16,7 +16,7 @@ f_3(List) ->
     List.
 
 
--spec f_4([char()]) -> list(char()).
+-spec f_4(Foo :: [char()]) -> list(char()).
 f_4(List) ->
     List.
 
