@@ -45,6 +45,7 @@ Whites      = \s+
 Tabs        = \t+
 SplitDef    = ::
 Split       = :
+DotDot      = \.\.
 Dot         = \.
 Arrow       = ->
 Send        = !
@@ -105,6 +106,7 @@ Rules.
 {Send}                   : make_token(send_op,  TokenLine, TokenChars).
 {SplitDef}               : make_token(split_def_op, TokenLine, TokenChars).
 {Split}                  : make_token(split_op, TokenLine, TokenChars).
+{Dot}{Dot}               : make_token(dotdot,   TokenLine, TokenChars).
 {Dot}                    : make_token(dot,      TokenLine, TokenChars).
 {Arrow}                  : make_token(arrow,    TokenLine, TokenChars).
 
