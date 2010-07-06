@@ -17,9 +17,14 @@ annotation() ->
     tu:test_file("files/spec/coloncolon.ifn", "files/spec/coloncolon.erl"),
     ok.
 
+range() ->
+    tu:test_file("files/spec/range.ifn", "files/spec/range.erl"),
+    ok.
+
 all() ->
     tu:test(?MODULE, simple),
     tu:test(?MODULE, unions),
     tu:test(?MODULE, params),
     tu:test(?MODULE, annotation),
+    tu:test(?MODULE, range),
     ok.

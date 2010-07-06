@@ -12,6 +12,11 @@ convert([{op, _Line, 'bor', _Ast1, _Ast2}=Bor|T], Accum) ->
 convert([H|T], Accum) ->
     convert(T, [convert_one(H)|Accum]).
 
+convert_one({call, Line, {remote, _, {atom, _, lists}, {atom, _, seq}},
+        [{integer, _, _}=Start, {integer, _, _}=Stop]}) ->
+
+    {type, Line, range, [Start, Stop]};
+
 convert_one({call, Line, {atom, _, tuple}, []}) ->
     {type, Line, tuple, any};
 convert_one({call, Line, {atom, _, 'fun'}, [{def, DefLine, Args, Spec}]}) ->
@@ -41,7 +46,7 @@ convert_one({op, _Line, 'bor', _Ast1, _Ast2}=Ast) ->
     convert_union(Ast);
 convert_one(Node) ->
     throw({error, {element(2, Node), fn_parser, ["Invalid syntax in spec in element: ",
-                    element(1, Node)]}}).
+                    Node]}}).
 
 convert_union({op, Line, 'bor', Ast1, Ast2}) ->
     {type, Line, union, lists:flatten([convert_union_left(Ast1), [convert_one(Ast2)]])}.
