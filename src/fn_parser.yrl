@@ -217,8 +217,14 @@ if_expr     -> if bool_expr fn_block else fn_block:
 for_expr -> for match_expr in bool_expr fn_block :
     {lc, line('$1'), {block, line('$1'), '$5'}, [{generate, line('$3'), '$2', '$4'}]}.
 
+for_expr -> for open match_expr in bool_expr close fn_block :
+    {lc, line('$1'), {block, line('$1'), '$7'}, [{generate, line('$4'), '$3', '$5'}]}.
+
 for_expr -> for match_expr in bool_expr if bool_expr fn_block :
     {lc, line('$1'), {block, line('$1'), '$7'}, [{generate, line('$3'), '$2', '$4'}, '$6']}.
+
+for_expr -> for open match_expr in bool_expr if bool_expr close fn_block :
+    {lc, line('$1'), {block, line('$1'), '$9'}, [{generate, line('$4'), '$3', '$5'}, '$7']}.
 
 % case expression
 case_expr -> switch bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.
