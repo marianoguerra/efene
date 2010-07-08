@@ -53,10 +53,26 @@ receives() ->
         "receive 1 -> 1; 2 -> 2 end"),
     ok.
 
+fors() ->
+    tu:test_ast("for A in B { A }", "[begin A end || A <- B]"),
+    tu:test_ast("for A in B if A > 0 { A }", "[begin A end || A <- B, A > 0]"),
+    tu:test_ast("for (A in B) { A }", "[begin A end || A <- B]"),
+    tu:test_ast("for (A in B if A > 0) { A }", "[begin A end || A <- B, A > 0]"),
+
+    tu:test_ast("for A in B { C = A + 1; C * 2; }", "[begin C = A + 1, C * 2 end || A <- B]"),
+    tu:test_ast("for A in B if A > 0 and A != 7 { C = A + 1; C * 2; }",
+        "[begin C = A + 1, C * 2 end || A <- B, A > 0 andalso A /= 7]"),
+    tu:test_ast("for A in B if A > 0 { A }", "[begin A end || A <- B, A > 0]"),
+    tu:test_ast("for (A in B) { C = A + 1; C * 2; }", "[begin C = A + 1, C * 2 end || A <- B]"),
+    tu:test_ast("for (A in B if A > 0 and A != 7) { C = A + 1; C * 2; }",
+        "[begin C = A + 1, C * 2 end || A <- B, A > 0 andalso A /= 7]"),
+    ok.
+
 all() ->
     tu:test(?MODULE, whens),
     tu:test(?MODULE, ifs),
     tu:test(?MODULE, tries),
     tu:test(?MODULE, cases),
     tu:test(?MODULE, receives),
+    tu:test(?MODULE, fors),
     ok.
