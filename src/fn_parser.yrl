@@ -21,7 +21,7 @@ Nonterminals
     binary binary_items binary_item bin_type_def bin_type
     prefix_op attribute
     obj_def obj_attrs obj_attrs_tail
-    for_expr range signed_integer.
+    for_expr range.
 
 Terminals
     fn match open close open_block close_block
@@ -178,18 +178,6 @@ mul_expr -> unary_expr                       : '$1'.
 unary_expr -> prefix_op literal              : {op, line('$2'), op(unwrap('$1')), '$2'}.
 unary_expr -> block_expr                     : '$1'.
 
-signed_integer -> add_op integer :
-    Sign = unwrap('$1'),
-    Line = line('$2'),
-
-    if
-        Sign == '-' ->
-            {op, Line, '-', '$2'};
-        true ->
-            '$2'
-   end.
-signed_integer -> integer : '$1'.
-
 block_expr -> if_expr           : '$1'.
 block_expr -> for_expr          : '$1'.
 block_expr -> when_expr         : '$1'.
@@ -295,6 +283,7 @@ arrow_chains -> arrow_chain arrow_chains : add_first_param('$1', '$2').
 arrow_chains -> arrow_chain    : '$1'.
 arrow_chain  -> arrow fun_call : '$2'.
 
+literal -> integer              : '$1'.
 literal -> float                : '$1'.
 literal -> bool_lit             : '$1'.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
@@ -316,10 +305,10 @@ literal -> range                : '$1'.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
-range -> signed_integer dotdot signed_integer :
+range -> integer dotdot integer :
     Line = line('$2'),
-    Start = unwrap_signed_integer('$1'),
-    Stop = unwrap_signed_integer('$3'),
+    Start = unwrap('$1'),
+    Stop = unwrap('$3'),
     Args0 = ['$1', '$3'],
 
     Args = if
@@ -330,8 +319,6 @@ range -> signed_integer dotdot signed_integer :
     end,
 
     {call, Line, {remote, Line, {atom, Line, lists}, {atom, Line, seq}}, Args}.
-
-range -> signed_integer : '$1'.
 
 % list type
 list -> open_list match_expr close_list : {cons, line('$1'), '$2', {nil, line('$1')}}.
@@ -457,13 +444,6 @@ Erlang code.
 
 unwrap({_,V})   -> V;
 unwrap({_,_,V}) -> V.
-
-unwrap_signed_integer({op, _Line, '-', {integer, _Line, Value}}) ->
-    -Value;
-unwrap_signed_integer({op, _Line, '+', {integer, _Line, Value}}) ->
-    Value;
-unwrap_signed_integer({integer, _Line, Value}) ->
-    Value.
 
 line(T) when is_tuple(T) -> element(2, T);
 line([H|_T]) -> element(2, H).
