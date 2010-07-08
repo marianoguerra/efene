@@ -19,6 +19,9 @@ convert_one({call, Line, {remote, _, {atom, _, lists}, {atom, _, seq}},
 
 convert_one({call, Line, {atom, _, tuple}, []}) ->
     {type, Line, tuple, any};
+convert_one({call, Line, {atom, _, 'fun'}, [{def, DefLine, {dotdotdot, _}, Spec}]}) ->
+    {type, Line, 'fun',
+        [{type, DefLine, any}, convert_one(Spec)]};
 convert_one({call, Line, {atom, _, 'fun'}, [{def, DefLine, Args, Spec}]}) ->
     {type, Line, 'fun',
         [{type, DefLine, product, [convert_one(Args)]}, convert_one(Spec)]};
@@ -32,6 +35,8 @@ convert_one({integer, _Line, _Val}=Ast) ->
     Ast;
 convert_one({var, _Line, _Val}=Ast) ->
     Ast;
+convert_one({dotdotdot, Line}) ->
+    {type, Line, any};
 convert_one({tuple=Type, Line, Val}) ->
     {type, Line, Type, convert(Val)};
 convert_one({nil, Line}) ->
@@ -40,6 +45,8 @@ convert_one({'bin', Line, []}) ->
     {type, Line, binary, [{integer, Line, 0}, {integer, Line, 0}]};
 convert_one({'bin', Line, _Val}=Ast) ->
     {type, Line, binary, convert(Ast)};
+convert_one({cons, Line, Type, {cons, _, {dotdotdot, _}, {nil, _}}}) ->
+    {type, Line, nonempty_list, [convert_one(Type)]};
 convert_one({cons, Line, _Head, _Tail}=Ast) ->
     {type, Line, list, convert_list(Ast)};
 convert_one({op, _Line, 'bor', _Ast1, _Ast2}=Ast) ->

@@ -36,7 +36,7 @@ Terminals
     switch case
     try catch
     receive after
-    open_list close_list sep split_op split_def_op dot dotdot
+    open_list close_list sep split_op split_def_op dot dotdot dotdotdot
     arrow
     open_bin close_bin
     record
@@ -302,6 +302,7 @@ literal -> rec_new              : '$1'.
 literal -> fun_call             : '$1'.
 literal -> binary               : '$1'.
 literal -> range                : '$1'.
+literal -> dotdotdot            : {dotdotdot, line('$1')}.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
