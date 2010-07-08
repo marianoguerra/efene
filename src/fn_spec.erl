@@ -12,6 +12,9 @@ convert([{op, _Line, 'bor', _Ast1, _Ast2}=Bor|T], Accum) ->
 convert([H|T], Accum) ->
     convert(T, [convert_one(H)|Accum]).
 
+convert_one({call, Line, {remote, _, Mod, Fun}, []}) ->
+    {remote_type, Line, [Mod, Fun, []]};
+
 convert_one({call, Line, {remote, _, {atom, _, lists}, {atom, _, seq}},
         [{integer, _, _}=Start, {integer, _, _}=Stop]}) ->
 
@@ -30,6 +33,8 @@ convert_one({call, Line, {atom, _, Name}, Args}) ->
 convert_one({def, Line, VarAst, Spec}) ->
     {ann_type, Line, [VarAst, convert_one(Spec)]};
 convert_one({atom, _Line, _Val}=Ast) ->
+    Ast;
+convert_one({op, _Line, _Op, _Val}=Ast) ->
     Ast;
 convert_one({integer, _Line, _Val}=Ast) ->
     Ast;
