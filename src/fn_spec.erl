@@ -20,11 +20,18 @@ convert_one({call, Line, {remote, _, {atom, _, lists}, {atom, _, seq}},
 
     {type, Line, range, [Start, Stop]};
 
+% the tuple type is translated into a different type than the other types
 convert_one({call, Line, {atom, _, tuple}, []}) ->
     {type, Line, tuple, any};
+% when the fun definition has ... as arguments
 convert_one({call, Line, {atom, _, 'fun'}, [{def, DefLine, {dotdotdot, _}, Spec}]}) ->
     {type, Line, 'fun',
         [{type, DefLine, any}, convert_one(Spec)]};
+% the case when the fun definition has more than one argument
+convert_one({call, Line, {atom, _, 'fun'}, [{def, DefLine, {tuple, _, TupleItems}, Spec}]}) ->
+    {type, Line, 'fun',
+        [{type, DefLine, product, convert(TupleItems)}, convert_one(Spec)]};
+% when the fun definition has only one argument (an expression in parenthesis)
 convert_one({call, Line, {atom, _, 'fun'}, [{def, DefLine, Args, Spec}]}) ->
     {type, Line, 'fun',
         [{type, DefLine, product, [convert_one(Args)]}, convert_one(Spec)]};
