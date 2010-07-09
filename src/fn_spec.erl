@@ -41,7 +41,7 @@ convert_one({integer, _Line, _Val}=Ast) ->
 convert_one({var, _Line, _Val}=Ast) ->
     Ast;
 convert_one({record, Line, Name, []}) ->
-    {type, Line, record, {atom, Line, Name}};
+    {type, Line, record, [{atom, Line, Name}]};
 convert_one({dotdotdot, Line}) ->
     {type, Line, any};
 convert_one({tuple=Type, Line, Val}) ->
