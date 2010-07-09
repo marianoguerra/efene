@@ -7,7 +7,7 @@
 @type(bt_unit()) -> 1..256
 @type(internal_status()) -> 'starting' | 'started' | 'stopping'
 @type(zstream()) -> port()
-@type(zlevel()) -> 'none' | 'default' | 'best_compression' | 'best_speed' 
+@type(zlevel()) -> 'none' | 'default' | 'best_compression' | 'best_speed'
 @type(zmethod()) -> 'deflated'
 #@type(zwindowbits()) -> -15..-9 | 9..47
 @type(zmemlevel()) -> 1..9
@@ -55,7 +55,7 @@
 @type(inf_integer()) -> 'neg_inf' | 'pos_inf' | integer()
 @type(range_anno()) -> (range_anno, ann[,], fun((ann[,]) :: string()))
 @type(args_fun()) -> fun((mfa(),cfg()) :: [range[,]])
-@type(call_fun()) -> fun((mfa(),[range[,]]) :: range[,])       
+@type(call_fun()) -> fun((mfa(),[range[,]]) :: range[,])
 @type(final_fun()) -> fun((mfa(),[range[,]]) :: ok)
 @type(data()) -> (mfa(), args_fun(), call_fun(), final_fun())
 @type(label()) -> non_neg_integer()
@@ -108,7 +108,7 @@
 @type(debug_info()) -> keep | strip
 @type(app_file()) -> keep | strip | all
 @type(re_regexp()) -> string()
-@type(regexps()) -> [re_regexp()] | (add, [re_regexp()]) | (del, [re_regexp()]) 
+@type(regexps()) -> [re_regexp()] | (add, [re_regexp()]) | (del, [re_regexp()])
 @type(incl_sys_filters()) -> regexps()
 @type(excl_sys_filters()) -> regexps()
 @type(incl_app_filters()) -> regexps()
@@ -133,7 +133,7 @@
 @type(mod()) -> (incl_cond, incl_cond())
 @type(app()) -> (vsn, app_vsn())
 @type(escript()) -> (incl_cond, incl_cond())
-@type(sys()) -> (mod_cond, mod_cond()) 
+@type(sys()) -> (mod_cond, mod_cond())
 @type(config()) -> (sys, [sys()])
 @type(option()) -> (wx_debug, term()) | (trap_exit, boolean()) | config() | (config, config() | file())
 @type(options()) -> [option()]
@@ -415,57 +415,57 @@
 @type(color()) -> (float(), float(), float(), float())
 @type(percept_option()) -> 'procs' | 'ports' | 'exclusive' | 'scheduler'
 @type(yecc_ret()) -> ('error', _) | ('ok', _)
-@type(ann()) -> Var :: integer() 
-@type(t1()) -> atom() 
-@type(t2()) -> [t1()] 
-@type(t3(Atom)) -> integer(Atom) 
-@type(t4()) -> t3(foobar) 
-@type(t5()) -> (t1(), t3(foo)) 
+@type(ann()) -> Var :: integer()
+@type(t1()) -> atom()
+@type(t2()) -> [t1()]
+@type(t3(Atom)) -> integer(Atom)
+@type(t4()) -> t3(foobar)
+@type(t5()) -> (t1(), t3(foo))
 @type(t6()) -> 1 | 2 | 3
-@type(t7()) -> [] 
-@type(t71()) -> [_] 
-@type(t8()) -> (any(),none(),pid(),port())
-@type(t9()) -> [1|2|3|foo|bar]
-@type(t10()) -> (1|2|3|foo|t9(),) | (,) 
-@type(t11()) -> 1..2 
-@type(t13()) -> maybe_improper_list(integer(), t11()) 
-@type(t14()) -> [erl_scan.foo()]
-#@type(t15()) -> (binary(),<[]>,<[_:34]>,<[_:_*42]>,
-@type(t16()) -> fun() 
-@type(t17()) -> fun((...) :: paren()) 
-@type(t18()) -> fun((,) :: t17() | t16()) 
-@type(t19()) -> fun((t18()) :: t16())
-@type(t20()) -> [t19(), ...] 
-@type(t21()) -> tuple() 
-@type(t21(A)) -> A 
-@type(t22()) -> t21(integer()) 
-@type(t23()) -> rec1[,] 
-#@type(t24()) -> rec2(a :: t23(), b :: [atom()]) 
-@type(ann()) -> Var :: integer() 
-@type(t1()) -> atom() 
-@type(t2()) -> [t1()] 
-@type(t3(Atom)) -> integer(Atom) 
-@type(t4()) -> t3(foobar) 
-@type(t5()) -> (t1(), t3(foo)) 
-@type(t6()) -> 1 | 2 | 3
-@type(t7()) -> [] 
-@type(t71()) -> [_] 
+@type(t7()) -> []
+@type(t71()) -> [_]
 @type(t8()) -> (any(),none(),pid(),port())
 @type(t9()) -> [1|2|3|foo|bar]
 @type(t10()) -> (1|2|3|foo|t9(),) | (,)
 @type(t11()) -> 1..2
-@type(t13()) -> maybe_improper_list(integer(), t11()) 
+@type(t13()) -> maybe_improper_list(integer(), t11())
+@type(t14()) -> [erl_scan.foo()]
 #@type(t15()) -> (binary(),<[]>,<[_:34]>,<[_:_*42]>,
-@type(t16()) -> fun() 
-@type(t17()) -> fun((...) :: paren()) 
-@type(t18()) -> fun((,) :: t17() | t16()) 
+@type(t16()) -> fun()
+@type(t17()) -> fun((...) :: paren())
+@type(t18()) -> fun((,) :: t17() | t16())
 @type(t19()) -> fun((t18()) :: t16())
-@type(t20()) -> [t19(), ...] 
-@type(t21()) -> tuple() 
-@type(t21(A)) -> A 
-@type(t22()) -> t21(integer()) 
-@type(t23()) -> rec1[,] 
-#@type(t24()) -> rec2(a :: t23(), b :: [atom()]) 
+@type(t20()) -> [t19(), ...]
+@type(t21()) -> tuple()
+@type(t21(A)) -> A
+@type(t22()) -> t21(integer())
+@type(t23()) -> rec1[,]
+@type(t24()) -> rec2[a :: t23(), b :: [atom()]]
+@type(ann()) -> Var :: integer()
+@type(t1()) -> atom()
+@type(t2()) -> [t1()]
+@type(t3(Atom)) -> integer(Atom)
+@type(t4()) -> t3(foobar)
+@type(t5()) -> (t1(), t3(foo))
+@type(t6()) -> 1 | 2 | 3
+@type(t7()) -> []
+@type(t71()) -> [_]
+@type(t8()) -> (any(),none(),pid(),port())
+@type(t9()) -> [1|2|3|foo|bar]
+@type(t10()) -> (1|2|3|foo|t9(),) | (,)
+@type(t11()) -> 1..2
+@type(t13()) -> maybe_improper_list(integer(), t11())
+#@type(t15()) -> (binary(),<[]>,<[_:34]>,<[_:_*42]>,
+@type(t16()) -> fun()
+@type(t17()) -> fun((...) :: paren())
+@type(t18()) -> fun((,) :: t17() | t16())
+@type(t19()) -> fun((t18()) :: t16())
+@type(t20()) -> [t19(), ...]
+@type(t21()) -> tuple()
+@type(t21(A)) -> A
+@type(t22()) -> t21(integer())
+@type(t23()) -> rec1[,]
+#@type(t24()) -> rec2(a :: t23(), b :: [atom()])
 @type(direction()) -> 'left' | 'right' | 'both'
 @type(beam()) -> module() | file.filename() | binary()
 @type(forms()) -> term()
@@ -528,16 +528,16 @@
 @type(tokens()) -> [token()]
 @type(error_description()) -> term()
 @type(error_info()) -> (location(), module(), error_description())
-@type(string_return()) -> ('ok', tokens(), location()) 
+@type(string_return()) -> ('ok', tokens(), location())
 @type(char_spec()) -> string() | 'eof'
 @type(cont()) -> return_cont() | []
 @type(tokens_result()) -> ('ok', tokens(), location())
 @type(tokens_return()) -> ('done', tokens_result(), char_spec())
-@type(attribute_item()) -> 'column' | 'length' | 'line' 
+@type(attribute_item()) -> 'column' | 'length' | 'line'
 @type(info_location()) -> location() | term()
-@type(attribute_info()) -> ('column', column())| ('length', pos_integer()) 
+@type(attribute_info()) -> ('column', column())| ('length', pos_integer())
 @type(token_item()) -> 'category' | 'symbol' | attribute_item()
-@type(token_info()) -> ('category', category()) | ('symbol', symbol()) 
+@type(token_info()) -> ('category', category()) | ('symbol', symbol())
 @type(setlineattr_fun()) -> fun((info_line()) :: info_line())
 @type(tab()) -> atom() | tid()
 @type(ext_info()) -> 'md5sum' | 'object_count'

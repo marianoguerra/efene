@@ -47,24 +47,43 @@ convert_one({integer, _Line, _Val}=Ast) ->
     Ast;
 convert_one({var, _Line, _Val}=Ast) ->
     Ast;
-convert_one({record, Line, Name, []}) ->
-    {type, Line, record, [{atom, Line, Name}]};
+convert_one({record, Line, Name, Attrs}) ->
+    {type, Line, record, [{atom, Line, Name}|convert(Attrs)]};
+
+% convert typed record fields to a type
+convert_one({typed_record_field, {record_field, Line, Name}, Type}) ->
+    {type, Line, field_type,[convert_one(Name), convert_one(Type)]};
+% convert ... to the any type
 convert_one({dotdotdot, Line}) ->
     {type, Line, any};
-convert_one({tuple=Type, Line, Val}) ->
-    {type, Line, Type, convert(Val)};
+% convert tuples to tuple type
+convert_one({tuple, Line, Val}) ->
+    {type, Line, tuple, convert(Val)};
+% convert emtpy list
 convert_one({nil, Line}) ->
     {type, Line, nil, []};
+% convert emtpy binary types
 convert_one({'bin', Line, []}) ->
     {type, Line, binary, [{integer, Line, 0}, {integer, Line, 0}]};
+% convert binary types
 convert_one({'bin', Line, _Val}=Ast) ->
     {type, Line, binary, convert(Ast)};
+% convert cons to list types that have ,... (non empty lists)
 convert_one({cons, Line, Type, {cons, _, {dotdotdot, _}, {nil, _}}}) ->
     {type, Line, nonempty_list, [convert_one(Type)]};
+% convert cons to list types
 convert_one({cons, Line, _Head, _Tail}=Ast) ->
     {type, Line, list, convert_list(Ast)};
+% convert the binary or operator to unions
 convert_one({op, _Line, 'bor', _Ast1, _Ast2}=Ast) ->
     convert_union(Ast);
+% the types inside a record with type declaration for a filed that has type and
+% not default value
+convert_one({type, _, union, [{atom, _, undefined}, Type]}) ->
+    Type;
+% the types inside a record with type declaration
+convert_one({type, _Line, union, _Types}=Ast) ->
+    Ast;
 convert_one(Node) ->
     throw({error, {element(2, Node), fn_parser, ["Invalid syntax in spec in element: ",
                     Node]}}).

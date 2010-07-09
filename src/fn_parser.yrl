@@ -418,7 +418,7 @@ attr_sets -> attr_set               : ['$1'].
 
 attr_set -> atom split_def_op add_expr:
     {typed_record_field,
-          {record_field, line('$2'), '$1', '$3'},
+          {record_field, line('$2'), '$1'},
           {type, line('$2'), union, [{atom, line('$2'), undefined}, fn_spec:convert_one('$3')]}}.
 
 attr_set -> atom match bool_expr split_def_op add_expr:
