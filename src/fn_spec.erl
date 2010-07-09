@@ -41,8 +41,8 @@ convert_one({def, Line, VarAst, Spec}) ->
     {ann_type, Line, [VarAst, convert_one(Spec)]};
 convert_one({atom, _Line, _Val}=Ast) ->
     Ast;
-convert_one({op, _Line, _Op, _Val}=Ast) ->
-    Ast;
+convert_one({op, _Line, '-', {Type, Line, Val}}) ->
+    {Type, Line, -Val};
 convert_one({integer, _Line, _Val}=Ast) ->
     Ast;
 convert_one({var, _Line, _Val}=Ast) ->

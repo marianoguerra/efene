@@ -440,7 +440,7 @@
 -type t21(A) :: A. 
 -type t22() :: t21(integer()). 
 -type t23() :: #rec1{}. 
--type t24() :: #rec2{a :: t23(), b :: [atom()]}. 
+%-type t24() :: #rec2{a :: t23(), b :: [atom()]}. 
 -type ann() :: Var :: integer(). 
 -type t1() :: atom(). 
 -type t2() :: [t1()]. 
@@ -465,7 +465,7 @@
 -type t21(A) :: A. 
 -type t22() :: t21(integer()). 
 -type t23() :: #rec1{}. 
--type t24() :: #rec2{a :: t23(), b :: [atom()]}. 
+%-type t24() :: #rec2{a :: t23(), b :: [atom()]}. 
 -type direction() :: 'left' | 'right' | 'both'.
 -type beam() :: module() | file:filename() | binary().
 -type forms()     :: term().

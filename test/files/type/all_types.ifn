@@ -317,7 +317,7 @@
 @type(callgraph_edge()) -> (mfa_or_funlbl(),mfa_or_funlbl())
 @type(gs_object()) -> any()  ## XXX: should be imported from gs
 @type(mfa_or_funlbl()) -> label() | mfa()
-@type(label_type()) -> label() | [label()] | (label())
+@type(label_type()) -> label() | [label()] | (label(),)
 @type(args()) -> [label_type() | [string()]]
 @type(var_to_map1()) -> core_vars() | [cerl.cerl()]
 @type(var_to_map2()) -> cerl.cerl() | [cerl.cerl()]
@@ -426,7 +426,7 @@
 @type(t71()) -> [_] 
 @type(t8()) -> (any(),none(),pid(),port())
 @type(t9()) -> [1|2|3|foo|bar]
-@type(t10()) -> (1|2|3|foo|t9()) | (,) 
+@type(t10()) -> (1|2|3|foo|t9(),) | (,) 
 @type(t11()) -> 1..2 
 @type(t13()) -> maybe_improper_list(integer(), t11()) 
 @type(t14()) -> [erl_scan.foo()]
@@ -452,7 +452,7 @@
 @type(t71()) -> [_] 
 @type(t8()) -> (any(),none(),pid(),port())
 @type(t9()) -> [1|2|3|foo|bar]
-@type(t10()) -> (1|2|3|foo|t9()) | (,)
+@type(t10()) -> (1|2|3|foo|t9(),) | (,)
 @type(t11()) -> 1..2
 @type(t13()) -> maybe_improper_list(integer(), t11()) 
 #@type(t15()) -> (binary(),<[]>,<[_:34]>,<[_:_*42]>,
@@ -465,7 +465,7 @@
 @type(t21(A)) -> A 
 @type(t22()) -> t21(integer()) 
 @type(t23()) -> rec1[,] 
-@type(t24()) -> rec2(a :: t23(), b :: [atom()]) 
+#@type(t24()) -> rec2(a :: t23(), b :: [atom()]) 
 @type(direction()) -> 'left' | 'right' | 'both'
 @type(beam()) -> module() | file.filename() | binary()
 @type(forms()) -> term()
