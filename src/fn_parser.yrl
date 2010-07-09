@@ -46,7 +46,7 @@ Terminals
 
 Rootsymbol program.
 
-Expect 4.
+Expect 5.
 
 Left 50 arrow.
 Left 100 bool_orelse_op.
@@ -415,6 +415,16 @@ rec_new -> atom open_list attr_sets close_list :
 attr_sets -> attr_set sep attr_sets : ['$1'|'$3'].
 attr_sets -> atom sep attr_sets     : [{record_field, line('$1'), '$1'}|'$3'].
 attr_sets -> attr_set               : ['$1'].
+
+attr_set -> atom split_def_op add_expr:
+    {typed_record_field,
+          {record_field, line('$2'), '$1', '$3'},
+          {type, line('$2'), union, [{atom, line('$2'), undefined}, fn_spec:convert_one('$3')]}}.
+
+attr_set -> atom match bool_expr split_def_op add_expr:
+    {typed_record_field,
+          {record_field, line('$2'), '$1', '$3'},
+          fn_spec:convert_one('$5')}.
 
 attr_set  -> atom match bool_expr : {record_field, line('$2'), '$1', '$3'}.
 

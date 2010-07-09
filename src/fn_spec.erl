@@ -1,5 +1,5 @@
 -module(fn_spec).
--export([convert/1, convert_type/1]).
+-export([convert/1, convert_one/1, convert_type/1]).
 
 
 % convert ast to spec ast
