@@ -15,6 +15,20 @@ For Expression
         for Var in Seq if Cond
                 ForBody
 
+Parenthesis can be used
+
+.. code-block:: efene
+
+        # simple for
+        for (Var in Seq)
+                ForBody
+
+.. code-block:: efene
+
+        # for with filter
+        for (Var in Seq if Cond)
+                ForBody
+
 The for expression allows to write loops in a way that is familiar to people
 coming from mainstream languages.
 

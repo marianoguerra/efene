@@ -24,6 +24,13 @@ An example of a record containing the information of an user:
 
 Default values for the fields can be specified after an equal sign.
 
+.. _typedrecords:
+The type of the attribute can be defined:
+
+.. code-block:: efene
+        
+        person = record(username="" :: string(), age :: integer())
+
 For more information about how to instantiate and manipulate records see
 the section about record expressions.
 

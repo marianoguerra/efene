@@ -4,5 +4,6 @@ Releases
 .. toctree::
    :maxdepth: 1
 
-   osix
+   oeight
    oseven
+   osix

@@ -1,3 +1,4 @@
+.. _specexpression:
 Spec Definition
 ---------------
 

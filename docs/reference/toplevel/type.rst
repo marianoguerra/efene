@@ -1,3 +1,4 @@
+.. _typeexpression:
 Type Definition
 ---------------
 
