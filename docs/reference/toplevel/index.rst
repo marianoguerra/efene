@@ -9,3 +9,5 @@ Top Level expressions
    object
    globalattrs
    localattrs
+   type
+   spec
