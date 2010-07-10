@@ -4,7 +4,7 @@ Nonterminals
     exprs literal bool_lit
     send_expr match_expr def_expr
     bool_expr bool_and_expr comp_expr concat_expr
-    add_expr mul_expr unary_expr
+    add_expr mul_expr
     block_expr arrow_expr
     when_expr when_patterns when_pattern
     if_expr
@@ -170,25 +170,13 @@ add_expr -> add_expr bool_or_op mul_expr     : {op, line('$2'), op(unwrap('$2'))
 add_expr -> add_expr shift_op mul_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
 add_expr -> mul_expr                         : '$1'.
 
-mul_expr -> mul_expr mul_op unary_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> mul_expr and_op unary_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> mul_expr bool_and_op unary_expr  : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> unary_expr                       : '$1'.
+mul_expr -> mul_expr mul_op block_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> mul_expr and_op block_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> mul_expr bool_and_op block_expr  : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> block_expr                       : '$1'.
 
-unary_expr -> prefix_op literal              : {op, line('$2'), op(unwrap('$1')), '$2'}.
-unary_expr -> block_expr                     : '$1'.
-unary_expr -> range                          : '$1'.
+signed_integer -> add_op integer : {op, line('$2'), unwrap('$1'), '$2'}.
 
-signed_integer -> add_op integer :
-    Sign = unwrap('$1'),
-    Line = line('$2'),
-
-    if
-        Sign == '-' ->
-            {op, Line, '-', '$2'};
-        true ->
-            '$2'
-   end.
 signed_integer -> integer : '$1'.
 
 block_expr -> if_expr           : '$1'.
@@ -302,6 +290,7 @@ arrow_chains -> arrow_chain arrow_chains : add_first_param('$1', '$2').
 arrow_chains -> arrow_chain    : '$1'.
 arrow_chain  -> arrow fun_call : '$2'.
 
+literal -> range                : '$1'.
 literal -> float                : '$1'.
 literal -> bool_lit             : '$1'.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
@@ -339,6 +328,15 @@ range -> signed_integer dotdot signed_integer :
     {call, Line, {remote, Line, {atom, Line, lists}, {atom, Line, seq}}, Args}.
 
 range -> signed_integer : '$1'.
+range -> bin_not integer: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> prefix_op float: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> add_op char: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> bin_not char: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> bool_not bool_lit: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> prefix_op var: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> prefix_op rec: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> prefix_op fun_call: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> prefix_op open send_expr close : {op, line('$2'), op(unwrap('$1')), '$3'}.
 
 % list type
 list -> open_list match_expr close_list : {cons, line('$1'), '$2', {nil, line('$1')}}.

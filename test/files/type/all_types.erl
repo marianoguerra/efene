@@ -9,7 +9,7 @@
 -type zstream()     :: port().
 -type zlevel()      :: 'none' | 'default' | 'best_compression' | 'best_speed'.
 -type zmethod()     :: 'deflated'.
-%-type zwindowbits() :: -15..-9 | 9..47.
+-type zwindowbits() :: -15..-9 | 9..47.
 -type zmemlevel()   :: 1..9.
 -type zstrategy()   :: 'default' | 'filtered' | 'huffman_only'.
 -type zflush()      :: 'none' | 'sync' | 'full' | 'finish'.
@@ -465,7 +465,7 @@
 -type t21(A) :: A. 
 -type t22() :: t21(integer()). 
 -type t23() :: #rec1{}. 
-%-type t24() :: #rec2{a :: t23(), b :: [atom()]}. 
+-type t24() :: #rec2{a :: t23(), b :: [atom()]}. 
 -type direction() :: 'left' | 'right' | 'both'.
 -type beam() :: module() | file:filename() | binary().
 -type forms()     :: term().

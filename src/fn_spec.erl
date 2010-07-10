@@ -16,9 +16,9 @@ convert_one({call, Line, {remote, _, Mod, Fun}, []}) ->
     {remote_type, Line, [Mod, Fun, []]};
 
 convert_one({call, Line, {remote, _, {atom, _, lists}, {atom, _, seq}},
-        [{integer, _, _}=Start, {integer, _, _}=Stop]}) ->
+        [Start, Stop]}) ->
 
-    {type, Line, range, [Start, Stop]};
+    {type, Line, range, [convert_one(Start), convert_one(Stop)]};
 
 % the tuple type is translated into a different type than the other types
 convert_one({call, Line, {atom, _, tuple}, []}) ->
