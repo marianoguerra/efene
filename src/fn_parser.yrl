@@ -21,7 +21,7 @@ Nonterminals
     binary binary_items binary_item bin_type_def bin_type
     prefix_op attribute
     obj_def obj_attrs obj_attrs_tail
-    for_expr range.
+    for_expr range signed_integer.
 
 Terminals
     fn match open close open_block close_block
@@ -177,6 +177,19 @@ mul_expr -> unary_expr                       : '$1'.
 
 unary_expr -> prefix_op literal              : {op, line('$2'), op(unwrap('$1')), '$2'}.
 unary_expr -> block_expr                     : '$1'.
+unary_expr -> range                          : '$1'.
+
+signed_integer -> add_op integer :
+    Sign = unwrap('$1'),
+    Line = line('$2'),
+
+    if
+        Sign == '-' ->
+            {op, Line, '-', '$2'};
+        true ->
+            '$2'
+   end.
+signed_integer -> integer : '$1'.
 
 block_expr -> if_expr           : '$1'.
 block_expr -> for_expr          : '$1'.
@@ -289,7 +302,6 @@ arrow_chains -> arrow_chain arrow_chains : add_first_param('$1', '$2').
 arrow_chains -> arrow_chain    : '$1'.
 arrow_chain  -> arrow fun_call : '$2'.
 
-literal -> integer              : '$1'.
 literal -> float                : '$1'.
 literal -> bool_lit             : '$1'.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
@@ -307,15 +319,14 @@ literal -> rec_set              : '$1'.
 literal -> rec_new              : '$1'.
 literal -> fun_call             : '$1'.
 literal -> binary               : '$1'.
-literal -> range                : '$1'.
 literal -> dotdotdot            : {dotdotdot, line('$1')}.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
-range -> integer dotdot integer :
+range -> signed_integer dotdot signed_integer :
     Line = line('$2'),
-    Start = unwrap('$1'),
-    Stop = unwrap('$3'),
+    Start = unwrap_signed_integer('$1'),
+    Stop = unwrap_signed_integer('$3'),
     Args0 = ['$1', '$3'],
 
     Args = if
@@ -326,6 +337,8 @@ range -> integer dotdot integer :
     end,
 
     {call, Line, {remote, Line, {atom, Line, lists}, {atom, Line, seq}}, Args}.
+
+range -> signed_integer : '$1'.
 
 % list type
 list -> open_list match_expr close_list : {cons, line('$1'), '$2', {nil, line('$1')}}.
@@ -504,3 +517,10 @@ assert_atom(Token, Atom) ->
 
 fail(Line, Reason, Cause) ->
     throw({error, {Line, fn_parser, [Reason, Cause]}}).
+
+unwrap_signed_integer({op, _Line, '-', {integer, _Line, Value}}) ->
+    -Value;
+unwrap_signed_integer({op, _Line, '+', {integer, _Line, Value}}) ->
+    Value;
+unwrap_signed_integer({integer, _Line, Value}) ->
+    Value.
