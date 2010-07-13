@@ -22,7 +22,7 @@ Nonterminals
     prefix_op attribute
     obj_def obj_attrs obj_attrs_tail
     for_expr range signed_integer
-    meta_block astify.
+    meta_block astify meta_astify.
 
 Terminals
     fn match open close open_block close_block
@@ -44,7 +44,7 @@ Terminals
     attr gattr
     for in
     object
-    open_meta_block open_oxford close_oxford.
+    open_meta_block open_oxford close_oxford open_meta_oxford.
 
 Rootsymbol program.
 
@@ -141,8 +141,9 @@ parameters -> send_expr : ['$1'].
 fn_block -> open_block send_expr close_block : ['$2'].
 fn_block -> open_block exprs close_block : '$2'.
 
-meta_block -> open_meta_block bool_expr close_block : fn_meta:eval('$2').
-astify -> open_oxford bool_expr close_oxford : fn_meta:astify(line('$1'), '$2').
+meta_block  -> open_meta_block  bool_expr close_block   : fn_meta:eval('$2').
+astify      -> open_oxford      bool_expr close_oxford  : fn_meta:astify(line('$1'), '$2').
+meta_astify -> open_meta_oxford bool_expr close_list    : fn_meta:astify(line('$1'), fn_meta:eval('$2')).
 
 exprs -> send_expr endl : ['$1'].
 exprs -> send_expr endl exprs: ['$1'|'$3'].
@@ -316,6 +317,7 @@ literal -> binary               : '$1'.
 literal -> dotdotdot            : {dotdotdot, line('$1')}.
 literal -> meta_block           : '$1'.
 literal -> astify               : '$1'.
+literal -> meta_astify          : '$1'.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 

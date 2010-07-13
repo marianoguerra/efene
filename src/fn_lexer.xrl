@@ -31,7 +31,8 @@ OctNumber   = 0o[0-7]+
 HexNumber   = 0x[0-9a-fA-F]+
 
 % delimiters and operators
-OpenMetaBlock   = \${
+OpenMetaBlock    = \${
+OpenMetaOxford   = \$\[
 Open        = \(
 Close       = \)
 OpenBlock   = {
@@ -96,6 +97,7 @@ Rules.
 
 % delimiters and operators
 {OpenMetaBlock}          : make_token(open_meta_block,  TokenLine, TokenChars).
+{OpenMetaOxford}         : make_token(open_meta_oxford, TokenLine, TokenChars).
 {OpenBin}                : make_token(open_bin,    TokenLine, TokenChars).
 {CloseBin}               : make_token(close_bin,   TokenLine, TokenChars).
 {Open}                   : make_token(open,        TokenLine, TokenChars).
