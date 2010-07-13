@@ -430,7 +430,7 @@
 @type(t11()) -> 1..2
 @type(t13()) -> maybe_improper_list(integer(), t11())
 @type(t14()) -> [erl_scan.foo()]
-#@type(t15()) -> (binary(),<[]>,<[_:34]>,<[_:_*42]>,
+@type(t15()) -> (binary(),<[]>,<[_:34]>,<[_:_*42]>)
 @type(t16()) -> fun()
 @type(t17()) -> fun((...) :: paren())
 @type(t18()) -> fun((,) :: t17() | t16())
@@ -455,7 +455,7 @@
 @type(t10()) -> (1|2|3|foo|t9(),) | (,)
 @type(t11()) -> 1..2
 @type(t13()) -> maybe_improper_list(integer(), t11())
-#@type(t15()) -> (binary(),<[]>,<[_:34]>,<[_:_*42]>,
+@type(t15()) -> (binary(),<[]>,<[_:34]>,<[_:_*42]>)
 @type(t16()) -> fun()
 @type(t17()) -> fun((...) :: paren())
 @type(t18()) -> fun((,) :: t17() | t16())
@@ -465,7 +465,7 @@
 @type(t21(A)) -> A
 @type(t22()) -> t21(integer())
 @type(t23()) -> rec1[,]
-@type(t24()) -> rec2(a :: t23(), b :: [atom()])
+@type(t24()) -> rec2[a :: t23(), b :: [atom()]]
 @type(direction()) -> 'left' | 'right' | 'both'
 @type(beam()) -> module() | file.filename() | binary()
 @type(forms()) -> term()

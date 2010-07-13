@@ -31,12 +31,15 @@ OctNumber   = 0o[0-7]+
 HexNumber   = 0x[0-9a-fA-F]+
 
 % delimiters and operators
+OpenMetaBlock   = \${
 Open        = \(
 Close       = \)
 OpenBlock   = {
 CloseBlock  = }
 OpenList    = \[
 CloseList   = \]
+OpenOxford  = \[\|
+CloseOxford = \|\]
 OpenBin     = <\[
 CloseBin    = \]>
 Sep         = ,
@@ -92,6 +95,7 @@ Rules.
 {HexNumber}              : make_token(integer, TokenLine, TokenChars, fun hex_to_integer/1).
 
 % delimiters and operators
+{OpenMetaBlock}          : make_token(open_meta_block,  TokenLine, TokenChars).
 {OpenBin}                : make_token(open_bin,    TokenLine, TokenChars).
 {CloseBin}               : make_token(close_bin,   TokenLine, TokenChars).
 {Open}                   : make_token(open,        TokenLine, TokenChars).
@@ -100,6 +104,8 @@ Rules.
 {CloseBlock}             : make_token(close_block, TokenLine, TokenChars).
 {OpenList}               : make_token(open_list,   TokenLine, TokenChars).
 {CloseList}              : make_token(close_list,  TokenLine, TokenChars).
+{OpenOxford}             : make_token(open_oxford, TokenLine, TokenChars).
+{CloseOxford}            : make_token(close_oxford,TokenLine, TokenChars).
 
 {Sep}                    : make_token(sep,          TokenLine, TokenChars).
 {Send}                   : make_token(send_op,      TokenLine, TokenChars).

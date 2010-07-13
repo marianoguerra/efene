@@ -21,7 +21,8 @@ Nonterminals
     binary binary_items binary_item bin_type_def bin_type
     prefix_op attribute
     obj_def obj_attrs obj_attrs_tail
-    for_expr range signed_integer.
+    for_expr range signed_integer
+    meta_block astify.
 
 Terminals
     fn match open close open_block close_block
@@ -42,11 +43,12 @@ Terminals
     record
     attr gattr
     for in
-    object.
+    object
+    open_meta_block open_oxford close_oxford.
 
 Rootsymbol program.
 
-Expect 5.
+Expect 6.
 
 Left 50 arrow.
 Left 100 bool_orelse_op.
@@ -138,6 +140,9 @@ parameters -> send_expr : ['$1'].
 
 fn_block -> open_block send_expr close_block : ['$2'].
 fn_block -> open_block exprs close_block : '$2'.
+
+meta_block -> open_meta_block bool_expr close_block : fn_meta:eval('$2').
+astify -> open_oxford bool_expr close_oxford : fn_meta:astify(line('$1'), '$2').
 
 exprs -> send_expr endl : ['$1'].
 exprs -> send_expr endl exprs: ['$1'|'$3'].
@@ -309,6 +314,8 @@ literal -> rec_new              : '$1'.
 literal -> fun_call             : '$1'.
 literal -> binary               : '$1'.
 literal -> dotdotdot            : {dotdotdot, line('$1')}.
+literal -> meta_block           : '$1'.
+literal -> astify               : '$1'.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
@@ -459,6 +466,18 @@ binary_item -> literal split_op integer :
     {bin_element, line('$1'), '$1', '$3', default}.
 
 binary_item -> literal : {bin_element, line('$1'), '$1', default, default}.
+
+% used in @type
+
+binary_item -> var split_op var mul_op integer:
+    assert_atom('$1', '_'),
+    assert_atom('$3', '_'),
+    assert_atom('$4', '*'),
+    {bin_type_element, line('$2'), '$1', '$3', '$5'}.
+
+binary_item -> var split_op integer:
+    assert_atom('$1', '_'),
+    {bin_type_element, line('$2'), '$1', '$3'}.
 
 bin_type_def -> bin_type add_op bin_type_def :
     assert_atom('$2', '-'),

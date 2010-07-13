@@ -62,12 +62,10 @@ convert_one({tuple, Line, Val}) ->
 % convert emtpy list
 convert_one({nil, Line}) ->
     {type, Line, nil, []};
-% convert emtpy binary types
-convert_one({'bin', Line, []}) ->
-    {type, Line, binary, [{integer, Line, 0}, {integer, Line, 0}]};
 % convert binary types
-convert_one({'bin', Line, _Val}=Ast) ->
-    {type, Line, binary, convert(Ast)};
+convert_one({'bin', Line, Val}) ->
+    {type, Line, binary, convert_bin_type(Line, Val)};
+% convert binary type item
 % convert cons to list types that have ,... (non empty lists)
 convert_one({cons, Line, Type, {cons, _, {dotdotdot, _}, {nil, _}}}) ->
     {type, Line, nonempty_list, [convert_one(Type)]};
@@ -86,6 +84,23 @@ convert_one({type, _Line, union, _Types}=Ast) ->
     Ast;
 convert_one(Node) ->
     throw({error, {element(2, Node), fn_parser, ["Invalid syntax in spec in element: ",
+                    Node]}}).
+
+convert_bin_type(Line, []) ->
+    [{integer, Line, 0}, {integer, Line, 0}];
+
+convert_bin_type(Line, [{bin_type_element, _, {var, _, '_'}, {integer, _, Size}}]) ->
+    [{integer, Line, Size}, {integer, Line, 0}];
+
+convert_bin_type(Line, [{bin_type_element, _, {var, _, '_'}, {var, _, '_'}, {integer, _, Size}}]) ->
+    [{integer, Line, 0}, {integer, Line, Size}];
+
+convert_bin_type(Line, [{bin_type_element, _, {var, _, '_'}, {integer, _, Size1}},
+        {bin_type_element, _, {var, _, '_'}, {var, _, '_'}, {integer, _, Size2}}]) ->
+    [{integer, Line, Size1}, {integer, Line, Size2}];
+
+convert_bin_type(Line, Node) ->
+    throw({error, {Line, fn_parser, ["Invalid syntax in binary type: ",
                     Node]}}).
 
 convert_union({op, Line, 'bor', Ast1, Ast2}) ->

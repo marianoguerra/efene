@@ -9,6 +9,7 @@ erlc fn_errors.erl
 erlc fn_gen.erl
 erlc fn_object.erl
 erlc fn_spec.erl
+erlc fn_meta.erl
 mv *.beam ../ebin
 rm fn_lexer.erl
 rm fn_parser.erl
