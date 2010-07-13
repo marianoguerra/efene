@@ -22,11 +22,26 @@ literal_to_ast([H|T], Line) ->
     {cons, Line, literal_to_ast(H, Line), literal_to_ast(T, Line)}.
 
 % record declaration
-record(Line, Name, Fields) ->
-    {attribute, Line, record, {Name, record_fields(Line, Fields)}}.
+build_record(Line, Name, Fields) ->
+    global_attribute(Line, record, {Name, record_fields(Line, Fields)}).
+
+attribute(Line, Name) ->
+    attribute(Line, Name, nil).
+
+attribute(Line, Name, Args) ->
+    {attribute, Line, Name, Args}.
+
+global_attribute(Line, Name) ->
+    global_attribute(Line, Name, nil).
+
+global_attribute(Line, Name, Args) ->
+    {global_attribute, Line, Name, Args}.
 
 record_fields(Line, Fields) ->
     [record_field(Line, Field) || Field <- Fields].
+
+public(Line) ->
+    attribute(Line, public).
 
 record_field(Line, Field) ->
     {record_field, Line, {atom, Line, Field}}.

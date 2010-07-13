@@ -1,7 +1,6 @@
 # example on how to pass information from one object to another one
-obj1 = object(attr1, attr2, attr3)
-
-obj2 = object(attr1, attr2, attr3, attr4, attr5)
+!$(fn_object.build($line, obj1, [attr1, attr2, attr3]))
+!$(fn_object.build($line, obj2, [attr1, attr2, attr3, attr4, attr5]))
 
 @public
 run = fn ()

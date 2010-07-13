@@ -1,8 +1,8 @@
 -module(fn_object).
--export([to_ast/3]).
+-export([build/3]).
 
-to_ast(Line, Name, Fields) ->
-    RecordDef = fn_gen:record(Line, Name, Fields),
+build(Line, Name, Fields) ->
+    RecordDef = fn_gen:build_record(Line, Name, Fields),
     FromRecordArg = fn_gen:record_match(Line, Name, Fields),
     FromRecordArgLen = 1,
 
@@ -29,7 +29,7 @@ to_ast(Line, Name, Fields) ->
         [fn_gen:clause(Line, FromFieldsArgs,
             [BuildRecord, BuildWrapper, CallWrapper])]),
 
-    [FromFields, FromRecord, RecordDef].
+    [fn_gen:public(Line), RecordDef, fn_gen:public(Line), FromRecord, fn_gen:public(Line), FromFields].
 
 wrapper(Line, Name, Fields) ->
     VarName = fn_gen:atom_to_upper(Name),

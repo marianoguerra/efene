@@ -1,5 +1,5 @@
 
-thing = object(foo, bar, baz)
+!$(fn_object.build($line, thing, [foo, bar, baz]))
 
 @public
 run = fn () {
