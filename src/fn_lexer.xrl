@@ -31,7 +31,7 @@ OctNumber   = 0o[0-7]+
 HexNumber   = 0x[0-9a-fA-F]+
 
 % delimiters and operators
-OpenMetaBlock    = \${
+OpenMetaBlock    = \$\(
 OpenMetaOxford   = \$\[
 Open        = \(
 Close       = \)
@@ -203,6 +203,7 @@ map_escaped_char(Escaped, Line) ->
     $/ -> $/;
     $\" -> $\";
     $\' -> $\';
+    $\( -> $(;
     $b -> $\b;
     $d -> $\d;
     $e -> $\e;

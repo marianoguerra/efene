@@ -141,7 +141,7 @@ parameters -> send_expr : ['$1'].
 fn_block -> open_block send_expr close_block : ['$2'].
 fn_block -> open_block exprs close_block : '$2'.
 
-meta_block  -> open_meta_block  bool_expr close_block   : fn_meta:eval('$2').
+meta_block  -> open_meta_block  bool_expr close         : fn_meta:eval('$2').
 astify      -> open_oxford      bool_expr close_oxford  : fn_meta:astify(line('$1'), '$2').
 meta_astify -> open_meta_oxford bool_expr close_list    : fn_meta:astify(line('$1'), fn_meta:eval('$2')).
 
