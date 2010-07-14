@@ -46,7 +46,7 @@ Terminals
 
 Rootsymbol program.
 
-Expect 6.
+Expect 5.
 
 Left 50 arrow.
 Left 100 bool_orelse_op.
@@ -461,15 +461,14 @@ binary_item -> literal : {bin_element, line('$1'), '$1', default, default}.
 
 % used in @type
 
-binary_item -> var split_op var mul_op integer:
-    assert_atom('$1', '_'),
-    assert_atom('$3', '_'),
-    assert_atom('$4', '*'),
-    {bin_type_element, line('$2'), '$1', '$3', '$5'}.
+binary_item -> split_op mul_op integer:
+    assert_atom('$2', '*'),
+    Line = line('$1'),
+    {bin_type_element, Line, {var, Line, '_'}, {var, Line, '_'}, '$3'}.
 
-binary_item -> var split_op integer:
-    assert_atom('$1', '_'),
-    {bin_type_element, line('$2'), '$1', '$3'}.
+binary_item -> split_op integer:
+    Line = line('$1'),
+    {bin_type_element, Line, {var, Line, '_'}, '$2'}.
 
 bin_type_def -> bin_type add_op bin_type_def :
     assert_atom('$2', '-'),

@@ -53,7 +53,7 @@ calls() ->
 
 chars() ->
     tu:test_ast("$a", "$a"),
-    tu:test_ast("$(", "$("),
+    tu:test_ast("$\\(", "$("),
     tu:test_ast("$\\n", "$\\n").
 
 lists() ->
