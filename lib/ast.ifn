@@ -1,0 +1,149 @@
+
+@public
+@doc("
+transverse the Ast and call Fn for each node.
+replace the node with the value returned")
+
+transform = fn (Asts, Fn) when is_list(Asts)
+    transform(Asts, Fn, [])
+
+fn ((op=Op, Line, Val, CAst), Fn)
+    Fn((Op, Line, Val, transform(CAst, Fn)))
+
+fn ((op=Op, Line, Val, CAst1, CAst2), Fn)
+    Fn((Op, Line, Val, transform(CAst1, Fn), transform(CAst2, Fn)))
+
+fn (('if'=Op, Line, Asts), Fn)
+    Fn((Op, Line, transform(Asts, Fn)))
+
+fn (('case'=Op, Line, East, Clauses), Fn)
+    Fn((Op, Line, transform(East, Fn), transform(Clauses, Fn)))
+
+fn (('try'=Op, Line, East, Clauses, After), Fn)
+    Fn((Op, Line, transform(East, Fn), transform(Clauses, Fn), transform(After, Fn)))
+
+fn (('receive'=Op, Line, Asts), Fn)
+    Fn((Op, Line, transform(Asts, Fn)))
+
+fn (('receive'=Op, Line, Asts, East, After), Fn)
+    Fn((Op, Line, transform(Asts, Fn), transform(East, Fn), transform(After, Fn)))
+
+fn ((block=Op, Line, Asts), Fn)
+    Fn((Op, Line, transform(Asts, Fn)))
+
+fn ((lc=Op, Line, East, Asts), Fn)
+    Fn((Op, Line, transform(East, Fn), transform(Asts, Fn)))
+
+fn ((bc=Op, Line, East, Asts), Fn)
+    Fn((Op, Line, transform(East, Fn), transform(Asts, Fn)))
+
+fn ((generate=Op, Line, East1, East2), Fn)
+    Fn((Op, Line, transform(East1, Fn), transform(East2, Fn)))
+
+fn (('record'=Op, Line, East1, East2), Fn)
+    Fn((Op, Line, transform(East1, Fn), transform(East2, Fn)))
+
+fn (('record'=Op, Line, East1, East2, Asts), Fn)
+    Fn((Op, Line, transform(East1, Fn), transform(East2, Fn), transform(Asts, Fn)))
+
+fn ((record_field=Op, Line, East1, East2), Fn)
+    Fn((Op, Line, transform(East1, Fn), transform(East2, Fn)))
+
+fn ((clause, Line, Past, Gast, Bast), Fn)
+    Fn((clause, Line, transform(Past, Fn), transform(Gast, Fn), transform(Bast, Fn)))
+
+fn ((bin=Op, Line, Asts), Fn)
+    Fn((Op, Line, transform(Asts, Fn)))
+
+fn ((bin_element=Op, Line, East1, East2, East3), Fn)
+    Fn((Op, Line, transform(East1, Fn), transform(East2, Fn), transform(East3, Fn)))
+
+fn ((tuple=Op, Line, Asts), Fn)
+    Fn((Op, Line, transform(Asts, Fn)))
+
+fn ((cons=Op, Line, HAst, TAst), Fn)
+    Fn((Op, Line, transform(HAst, Fn), transform(TAst, Fn)))
+
+fn ((call=Op, Line, FAst, Args), Fn)
+    Fn((Op, Line, transform(FAst, Fn), transform(Args, Fn)))
+
+fn ((remote=Op, Line, MAst, FAst), Fn)
+    Fn((Op, Line, transform(MAst, Fn), transform(FAst, Fn)))
+
+fn ((fun=Op, Line, FAst), Fn)
+    Fn((Op, Line, transform(FAst, Fn)))
+
+fn ((function=Op, Line, FAst, Arity), Fn)
+    Fn((Op, Line, transform(FAst, Fn), transform(Arity, Fn)))
+
+fn ((function=Op, Line, MAst, FAst, Arity), Fn)
+    Fn((Op, Line, transform(MAst, Fn), transform(FAst, Fn), transform(Arity, Fn)))
+
+fn (Ast, Fn)
+    Fn(Ast)
+
+@public
+transform = fn ([], _Fn, Accum)
+    lists.reverse(Accum)
+
+fn ([H:T], Fn, Accum)
+    transform(T, Fn, [transform(H, Fn):Accum])
+
+@public
+@doc("replace an exact match with other
+
+>>> OnePlus = fn (B) { ast.replace([|1 + $(replaceme)|], replaceme, B) }
+#Fun<erl_eval.6.13229925>
+>>> OnePlus([|A|])
+{op,1,'+',{integer,1,1},{var,1,'A'}}
+>>> OnePlus([|5|])
+{op,1,'+',{integer,1,1},{integer,1,5}}")
+
+replace = fn (Ast, Old, New)
+    Replace= fn (Node)
+        if Node == Old
+            New
+        else
+            Node
+
+    transform(Ast, Replace)
+
+@public
+@doc("replace the name of a variable
+
+>>> ast.rename_var([|A + B|], 'A', 'Foo')
+{op,1,'+',{var,1,'Foo'},{var,1,'B'}}")
+
+rename_var = fn (Ast, OldName, NewName)
+    Rename = fn ((var, Line, Name))
+        if Name == OldName
+            (var, Line, NewName)
+        else
+            (var, Line, Name)
+    fn (Other)
+        Other
+
+    transform(Ast, Rename)
+
+@public
+@doc("update the Line field of all the items in the ast
+
+>>> ast.line([| 1 + 2 * 3 |], 5)
+{op,5,'+',{integer,5,1},{op,5,'*',{integer,5,2},{integer,5,3}}}")
+
+line = fn (Ast, Line)
+    transform(Ast, fn (A) { change_line(A, Line) })
+
+change_line = fn ((Op, _), Line)
+    (Op, Line)
+fn ((Op, _, A), Line)
+    (Op, Line, A)
+fn ((Op, _, A, B), Line)
+    (Op, Line, A, B)
+fn ((Op, _, A, B, C), Line)
+    (Op, Line, A, B, C)
+fn ((Op, _, A, B, C, D), Line)
+    (Op, Line, A, B, C, D)
+fn (Ast, Line)
+    [Op, _:T] = tuple_to_list(Ast)
+    list_to_tuple([Op, Line:T])
