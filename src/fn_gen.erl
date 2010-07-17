@@ -5,21 +5,39 @@ function(Line, Name, Args, Body) ->
     {function, Line, Name, length(Args),
         [{clause, Line, Args, [], Body}]}.
 
-literal_to_ast(Val, Line) when is_tuple(Val) ->
+literal_to_ast(Val, Line) ->
+    literal_to_ast(Val, Line, false).
+
+literal_to_ast(Val, Line, UpperAtomToVar) when is_tuple(Val) ->
     {tuple, Line,
-        [literal_to_ast(V, Line) || V <- tuple_to_list(Val)]};
-literal_to_ast(Val, Line) when is_boolean(Val) ->
+        [literal_to_ast(V, Line, UpperAtomToVar) || V <- tuple_to_list(Val)]};
+literal_to_ast(Val, Line, _UpperAtomToVar) when is_boolean(Val) ->
     {boolean, Line, Val};
-literal_to_ast(Val, Line) when is_integer(Val) ->
+literal_to_ast(Val, Line, _UpperAtomToVar) when is_integer(Val) ->
     {integer, Line, Val};
-literal_to_ast(Val, Line) when is_float(Val) ->
+literal_to_ast(Val, Line, _UpperAtomToVar) when is_float(Val) ->
     {float, Line, Val};
-literal_to_ast(Val, Line) when is_atom(Val) ->
-    {atom, Line, Val};
-literal_to_ast([], Line) ->
+literal_to_ast(Val, Line, UpperAtomToVar) when is_atom(Val) ->
+    if
+        UpperAtomToVar ->
+            IsUpper = is_upper_atom(Val),
+
+            if
+                IsUpper -> {var, Line, Val};
+                true -> {atom, Line, Val}
+            end;
+
+        true ->
+            {atom, Line, Val}
+    end;
+literal_to_ast([], Line, _UpperAtomToVar) ->
     {nil, Line};
-literal_to_ast([H|T], Line) ->
-    {cons, Line, literal_to_ast(H, Line), literal_to_ast(T, Line)}.
+literal_to_ast([H|T], Line, UpperAtomToVar) ->
+    {cons, Line, literal_to_ast(H, Line, UpperAtomToVar), literal_to_ast(T, Line, UpperAtomToVar)}.
+
+is_upper_atom(Atom) ->
+    [FirstChar|_] = atom_to_list(Atom),
+    FirstChar >= $A andalso FirstChar =< $Z.
 
 % record declaration
 build_record(Line, Name, Fields) ->

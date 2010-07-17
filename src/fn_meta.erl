@@ -7,4 +7,4 @@ eval(Ast) ->
     Result.
 
 astify(Line, Val) ->
-    fn_gen:literal_to_ast(Val, Line).
+    fn_gen:literal_to_ast(Val, Line, true).
