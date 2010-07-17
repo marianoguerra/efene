@@ -15,4 +15,7 @@ Statements
    arrow
    literals
    object
+   metaeval
+   astify
+   metaevalandastify
 
