@@ -1,6 +1,6 @@
 
 modules = fn ()
-    [mod, obj, mongomapper, rest, validate]
+    [mod, obj, mongomapper, rest, validate, ast, lst, dct]
 
 build_doc = fn (Mod)
     Path = "lib/" ++ atom_to_list(Mod) ++ ".rst"
