@@ -8,36 +8,33 @@ function(Line, Name, Args, Body) ->
 literal_to_ast(Val, Line) ->
     literal_to_ast(Val, Line, false).
 
-literal_to_ast(Val, Line, UpperAtomToVar) when is_tuple(Val) ->
+literal_to_ast(Val, Line, SpecialAtomToVar) when is_tuple(Val) ->
     {tuple, Line,
-        [literal_to_ast(V, Line, UpperAtomToVar) || V <- tuple_to_list(Val)]};
-literal_to_ast(Val, Line, _UpperAtomToVar) when is_boolean(Val) ->
+        [literal_to_ast(V, Line, SpecialAtomToVar) || V <- tuple_to_list(Val)]};
+literal_to_ast(Val, Line, _SpecialAtomToVar) when is_boolean(Val) ->
     {boolean, Line, Val};
-literal_to_ast(Val, Line, _UpperAtomToVar) when is_integer(Val) ->
+literal_to_ast(Val, Line, _SpecialAtomToVar) when is_integer(Val) ->
     {integer, Line, Val};
-literal_to_ast(Val, Line, _UpperAtomToVar) when is_float(Val) ->
+literal_to_ast(Val, Line, _SpecialAtomToVar) when is_float(Val) ->
     {float, Line, Val};
-literal_to_ast(Val, Line, UpperAtomToVar) when is_atom(Val) ->
+literal_to_ast(Val, Line, SpecialAtomToVar) when is_atom(Val) ->
     if
-        UpperAtomToVar ->
-            IsUpper = is_upper_atom(Val),
+        SpecialAtomToVar ->
+            [FirstChar|VarName] = atom_to_list(Val),
+
 
             if
-                IsUpper -> {var, Line, Val};
+                FirstChar == $$ -> {var, Line, list_to_atom(VarName)};
                 true -> {atom, Line, Val}
             end;
 
         true ->
             {atom, Line, Val}
     end;
-literal_to_ast([], Line, _UpperAtomToVar) ->
+literal_to_ast([], Line, _SpecialAtomToVar) ->
     {nil, Line};
-literal_to_ast([H|T], Line, UpperAtomToVar) ->
-    {cons, Line, literal_to_ast(H, Line, UpperAtomToVar), literal_to_ast(T, Line, UpperAtomToVar)}.
-
-is_upper_atom(Atom) ->
-    [FirstChar|_] = atom_to_list(Atom),
-    FirstChar >= $A andalso FirstChar =< $Z.
+literal_to_ast([H|T], Line, SpecialAtomToVar) ->
+    {cons, Line, literal_to_ast(H, Line, SpecialAtomToVar), literal_to_ast(T, Line, SpecialAtomToVar)}.
 
 % record declaration
 build_record(Line, Name, Fields) ->

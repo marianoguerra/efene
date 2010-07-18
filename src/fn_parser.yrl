@@ -146,7 +146,7 @@ meta_block  -> open_meta_block  bool_expr close         :
 
     if
         Type == var ->
-            unwrap('$2');
+            list_to_atom([$$|atom_to_list(unwrap('$2'))]);
         true ->
             fn_meta:eval('$2')
     end.
