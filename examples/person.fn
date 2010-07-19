@@ -1,5 +1,5 @@
 
-!$(fn_object.build($line, person, [firstname, lastname, mail]))
+!$(obj.new($line, person, (firstname, lastname, mail)))
 
 @public
 run = fn () {

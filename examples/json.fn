@@ -1,5 +1,5 @@
 
-!$(fn_object.build($line, thing, [foo, bar, baz]))
+!$(obj.new($line, thing, (foo, bar, baz)))
 
 @public
 run = fn () {

@@ -12,7 +12,7 @@ literal_to_ast(Val, Line, SpecialAtomToVar) when is_tuple(Val) ->
     {tuple, Line,
         [literal_to_ast(V, Line, SpecialAtomToVar) || V <- tuple_to_list(Val)]};
 literal_to_ast(Val, Line, _SpecialAtomToVar) when is_boolean(Val) ->
-    {boolean, Line, Val};
+    {atom, Line, Val};
 literal_to_ast(Val, Line, _SpecialAtomToVar) when is_integer(Val) ->
     {integer, Line, Val};
 literal_to_ast(Val, Line, _SpecialAtomToVar) when is_float(Val) ->
@@ -31,10 +31,35 @@ literal_to_ast(Val, Line, SpecialAtomToVar) when is_atom(Val) ->
         true ->
             {atom, Line, Val}
     end;
-literal_to_ast([], Line, _SpecialAtomToVar) ->
+literal_to_ast(Val, Line, SpecialAtomToVar) when is_list(Val) ->
+    list_or_string_to_ast(Val, Line, SpecialAtomToVar).
+
+list_or_string_to_ast(List, Line, SpecialAtomToVar) ->
+    IsString = is_string(List),
+
+    if
+        IsString ->
+            {string, Line, List};
+        true ->
+            list_to_ast(List, Line, SpecialAtomToVar)
+    end.
+
+list_to_ast([], Line, _SpecialAtomToVar) ->
     {nil, Line};
-literal_to_ast([H|T], Line, SpecialAtomToVar) ->
+list_to_ast([H|T], Line, SpecialAtomToVar) ->
     {cons, Line, literal_to_ast(H, Line, SpecialAtomToVar), literal_to_ast(T, Line, SpecialAtomToVar)}.
+
+is_string([]) ->
+    false;
+is_string(List) ->
+    is_string1(List).
+
+is_string1([]) ->
+    true;
+is_string1([H|T]) when is_integer(H), H >= 0 andalso H < 256 ->
+    is_string1(T);
+is_string1(_) ->
+    false.
 
 % record declaration
 build_record(Line, Name, Fields) ->

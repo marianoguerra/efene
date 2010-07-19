@@ -1,7 +1,12 @@
 
+@@todo("refine types and specs and add the missing ones")
+@type(ast()) -> tuple()
+@type(asts()) -> [ast(), ...]
+@type(rec_field()) -> atom()|tuple(atom(), any())
+@type(rec_fields()) -> [rec_field(), ...]
+
 @public
-@doc("
-transverse the Ast and call Fn for each node.
+@doc("transverse the Ast and call Fn for each node.
 replace the node with the value returned")
 
 transform = fn (Asts, Fn) when is_list(Asts)
@@ -40,14 +45,23 @@ fn ((bc=Op, Line, East, Asts), Fn)
 fn ((generate=Op, Line, East1, East2), Fn)
     Fn((Op, Line, transform(East1, Fn), transform(East2, Fn)))
 
-fn (('record'=Op, Line, East1, East2), Fn)
-    Fn((Op, Line, transform(East1, Fn), transform(East2, Fn)))
+fn (('record'=Op, Line, Name, Attrs), Fn)
+    Fn((Op, Line, Name, transform(Attrs, Fn)))
 
-fn (('record'=Op, Line, East1, East2, Asts), Fn)
-    Fn((Op, Line, transform(East1, Fn), transform(East2, Fn), transform(Asts, Fn)))
+fn (('record'=Op, Line, East1, RecName, Asts), Fn)
+    Fn((Op, Line, transform(East1, Fn), RecName, transform(Asts, Fn)))
+
+fn ((record_field=Op, Line, East1), Fn)
+    Fn((Op, Line, transform(East1, Fn)))
 
 fn ((record_field=Op, Line, East1, East2), Fn)
     Fn((Op, Line, transform(East1, Fn), transform(East2, Fn)))
+
+fn ((record_field=Op, Line, East1, RecName, East2), Fn)
+    Fn((Op, Line, transform(East1, Fn), RecName, transform(East2, Fn)))
+
+fn ((clauses, Cast), Fn)
+    Fn((clauses, transform(Cast, Fn)))
 
 fn ((clause, Line, Past, Gast, Bast), Fn)
     Fn((clause, Line, transform(Past, Fn), transform(Gast, Fn), transform(Bast, Fn)))
@@ -73,11 +87,8 @@ fn ((remote=Op, Line, MAst, FAst), Fn)
 fn ((fun=Op, Line, FAst), Fn)
     Fn((Op, Line, transform(FAst, Fn)))
 
-fn ((function=Op, Line, FAst, Arity), Fn)
-    Fn((Op, Line, transform(FAst, Fn), transform(Arity, Fn)))
-
-fn ((function=Op, Line, MAst, FAst, Arity), Fn)
-    Fn((Op, Line, transform(MAst, Fn), transform(FAst, Fn), transform(Arity, Fn)))
+fn ((function=Op, Line, Name, Arity, FAst), Fn)
+    Fn((Op, Line, Name, Arity, transform(FAst, Fn)))
 
 fn (Ast, Fn)
     Fn(Ast)
@@ -90,18 +101,18 @@ fn ([H:T], Fn, Accum)
     transform(T, Fn, [transform(H, Fn):Accum])
 
 @public
-@doc("replace an exact match with other
+@doc("replace an exact match with other::
 
->>> OnePlus = fn (B) { ast.replace([|1 + $(replaceme)|], replaceme, B) }
-#Fun<erl_eval.6.13229925>
->>> OnePlus([|A|])
-{op,1,'+',{integer,1,1},{var,1,'A'}}
->>> OnePlus([|5|])
-{op,1,'+',{integer,1,1},{integer,1,5}}")
+    >>> OnePlus = fn (B) { ast.replace([|1 + $(replaceme)|], replaceme, B) }
+    #Fun<erl_eval.6.13229925>
+    >>> OnePlus([|A|])
+    {op,1,'+',{integer,1,1},{var,1,'A'}}
+    >>> OnePlus([|5|])
+    {op,1,'+',{integer,1,1},{integer,1,5}}")
 
 replace = fn (Ast, Old, New)
-    Replace= fn (Node)
-        if Node == Old
+    Replace = fn (Node)
+        if Node === Old
             New
         else
             Node
@@ -109,10 +120,10 @@ replace = fn (Ast, Old, New)
     transform(Ast, Replace)
 
 @public
-@doc("replace the name of a variable
+@doc("replace the name of a variable::
 
->>> ast.rename_var([|A + B|], 'A', 'Foo')
-{op,1,'+',{var,1,'Foo'},{var,1,'B'}}")
+    >>> ast.rename_var([|A + B|], 'A', 'Foo')
+    {op,1,'+',{var,1,'Foo'},{var,1,'B'}}")
 
 rename_var = fn (Ast, OldName, NewName)
     Rename = fn ((var, Line, Name))
@@ -126,24 +137,246 @@ rename_var = fn (Ast, OldName, NewName)
     transform(Ast, Rename)
 
 @public
-@doc("update the Line field of all the items in the ast
+@doc("replace the value of an atom::
 
->>> ast.line([| 1 + 2 * 3 |], 5)
-{op,5,'+',{integer,5,1},{op,5,'*',{integer,5,2},{integer,5,3}}}")
+    >>> ast.replace_atom([|foo|], foo, bar)
+    {atom,1,bar}
 
-line = fn (Ast, Line)
-    transform(Ast, fn (A) { change_line(A, Line) })
+    >>> ast.replace_atom([|recordname.RecordVar[attribute]|], attribute, name)
+    {record_field,1,{var,1,'RecordVar'},recordname,{atom,1,name}}
 
-change_line = fn ((Op, _), Line)
+    >>> ast.replace_atom([|recordname.RecordVar[attribute=\"foo\"]|], attribute, name)
+    {record,1,
+            {var,1,'RecordVar'},
+            recordname,
+            [{record_field,1,{atom,1,name},{string,1,\"foo\"}}]}")
+
+replace_atom = fn (Ast, Old, New)
+    Fn = fn ((atom, Line, Value))
+        if Value == Old
+            (atom, Line, New)
+        else
+            (atom, Line, Value)
+    fn (Other)
+        Other
+
+    transform(Ast, Fn)
+
+@public
+@doc("replace the parts of a record::
+
+    >>> ast.replace_record([|record_name.RecordVar[field_name]|], record_name,
+        person, 'RecordVar', 'P', field_name, name)
+
+    {record_field,1,{var,1,'P'},person,{atom,1,name}}
+
+    >>> ast.replace_record([|record_name.RecordVar[field_name=Val]|],
+         record_name, person, 'RecordVar', 'P', field_name, name)
+
+    {record,1,
+            {var,1,'P'},
+            person,
+            [{record_field,1,{atom,1,field_name},{var,1,'Val'}}]}")
+
+
+replace_record = fn (Ast, OldRecName, NewRecName, OldVarName, NewVarName, OldFieldName, NewFieldName)
+
+    Fn = fn ((record_field, Line, (var, Line1, VarName), RecName,
+                (atom, Line2, FieldName))=RecAst)
+
+        if VarName == OldVarName and
+            RecName == OldRecName and
+            FieldName == OldFieldName
+
+             (record_field, Line, (var, Line1, NewVarName),
+                NewRecName, (atom, Line2, NewFieldName))
+        else
+            RecAst
+
+    fn (('record', Line, (var, Line1, VarName), RecName, RecAttrs))
+
+        if VarName == OldVarName and
+            RecName == OldRecName
+
+            ('record', Line, (var, Line1, NewVarName), NewRecName, RecAttrs)
+    fn (Other)
+        Other
+
+    transform(Ast, Fn)
+
+@public
+@doc("update the Line field of all the items in the ast::
+
+    >>> ast.line(5, [| 1 + 2 * 3 |])
+    {op,5,'+',{integer,5,1},{op,5,'*',{integer,5,2},{integer,5,3}}}")
+
+line = fn (Line, Ast)
+    transform(Ast, fn (A) { change_line(Line, A) })
+
+change_line = fn (_Line, (clauses, _)=Ast)
+    Ast
+fn (Line, (Op, _))
     (Op, Line)
-fn ((Op, _, A), Line)
+fn (Line, (Op, _, A))
     (Op, Line, A)
-fn ((Op, _, A, B), Line)
+fn (Line, (Op, _, A, B))
     (Op, Line, A, B)
-fn ((Op, _, A, B, C), Line)
+fn (Line, (Op, _, A, B, C))
     (Op, Line, A, B, C)
-fn ((Op, _, A, B, C, D), Line)
+fn (Line, (Op, _, A, B, C, D))
     (Op, Line, A, B, C, D)
-fn (Ast, Line)
+fn (Line, Ast)
     [Op, _:T] = tuple_to_list(Ast)
     list_to_tuple([Op, Line:T])
+
+@public
+@doc("extract the first clause Ast from a fun definition")
+clause = fn (FunAst)
+    hd(clauses(FunAst))
+
+@public
+@doc("extract the first clause Ast from a fun definition and update line
+numbers::
+
+    >>> ast.clause(4, [|fn (X) { X + 1 }|])
+    {clause,4,[{var,4,'X'}],[],[{op,4,'+',{var,4,'X'},{integer,4,1}}]}
+    >>> ast.clause(4, [|fn (X) when X > 4 { X + 1 }|])
+    {clause,4,
+            [{var,4,'X'}],
+            [[{op,4,'>',{var,4,'X'},{integer,4,4}}]],
+            [{op,4,'+',{var,4,'X'},{integer,4,1}}]}")
+
+clause = fn (Line, FunAst)
+    line(Line, clause(FunAst))
+
+@public
+@doc("extract the clauses AST from a fun definition")
+
+clauses = fn (FunAst)
+    element(2, element(3, FunAst))
+
+@public
+@doc("extract the clauses AST from a fun definition and update line numbers::
+
+    >>> ast.clauses(42, [|fn (1) { 1 } fn (X) { X }|])
+    [{clause,42,[{integer,42,1}],[],[{integer,42,1}]},
+     {clause,42,[{var,42,'X'}],[],[{var,42,'X'}]}]")
+
+clauses = fn (Line, FunAst)
+    line(Line, clauses(FunAst))
+
+@public
+@doc("return the AST representing a fun where the clauses are the ones passed
+as parameter")
+
+clauses_to_fun = fn (Line, Clauses)
+    (fun, Line, (clauses, Clauses))
+
+@public
+@doc("return the ast representation of a efene data structure::")
+@todo("reimplement it in efene")
+
+to_ast = fn (Line, Literal)
+    to_ast(Line, Literal, false)
+
+@public
+@doc("return the ast representation of a efene data structure.
+Replace the atoms that start with $ to a var AST node::")
+@todo("reimplement it in efene")
+
+to_ast = fn (Line, Literal, SpecialAtomToVar)
+    fn_gen.literal_to_ast(Literal, Line, SpecialAtomToVar)
+
+@public
+@doc("return the AST representation of an attribute definition")
+attribute = fn (Line, Name)
+    (attribute, Line, Name, nil)
+
+@public
+@doc("return the AST representation of an attribute definition")
+attribute = fn (Line, Name, Args)
+    (attribute, Line, Name, Args)
+
+@public
+@doc("return the AST representation of a global attribute definition")
+global_attribute = fn (Line, Name, Args)
+    (global_attribute, Line, Name, Args)
+
+@public
+@doc("return the public attribute")
+public = fn (Line)
+    attribute(Line, public)
+
+@public
+@spec(Line :: integer(), Name :: atom(), Attrs :: rec_fields()) -> ast()
+@doc("return the AST to define a new record type::
+
+    >>> ast.rec($line, person, [firstname, lastname, (mail, \"none\")])
+    {global_attribute,1,record,
+                      {person,[{record_field,1,{atom,1,firstname}},
+                               {record_field,1,{atom,1,lastname}},
+                               {record_field,1,{atom,1,mail},{string,1,\"none\"}}]}}")
+
+rec = fn (Line, Name, Attrs)
+    global_attribute(Line, 'record', (Name, rec_fields(Line, Attrs)))
+
+@spec(Line :: integer(), Attr :: rec_field()) -> asts()
+@doc("return the AST that defines a field in a record type definition")
+
+rec_field = fn (Line, (Name, Default))
+    (record_field, Line, (atom, Line, Name), to_ast(Line, Default, true))
+
+fn (Line, Name)
+    (record_field, Line, (atom, Line, Name))
+
+@spec(Line :: integer(), Attrs :: rec_fields()) -> asts()
+@doc("return the AST that defines fields in a record type definition")
+
+rec_fields = fn (Line, Attrs)
+    [rec_field(Line, Attr) for Attr in Attrs]
+
+@public
+@spec(Line :: integer(), Name :: atom(), Attrs :: rec_fields()) -> ast()
+@doc("return the AST that matches record attributes, used in instantiation and
+pattern matching::
+
+    >>> ast.rec_match(3, person, [(firstname, '$FirstName'), (lastname, '$LastName'), (mail, '$Mail')])
+    {record,3,person,
+            [{record_field,3,{atom,3,firstname},{var,3,'FirstName'}},
+             {record_field,3,{atom,3,lastname},{var,3,'LastName'}},
+             {record_field,3,{atom,3,mail},{var,3,'Mail'}}]}")
+
+rec_match = fn (Line, Name, Attrs)
+    ('record', Line, Name, rec_fields(Line, Attrs))
+
+@public
+@spec(Line :: integer(), Name :: atom(), FunAst :: ast()) -> ast()
+@doc("return the AST for a top level function definition from a anonymous
+function definition::
+
+    >>> ast.function_from_fun(4, add, [|fn (A, B) { A + B } |])
+    {function,4,add,2,
+              [{clause,4,
+                       [{var,4,'A'},{var,4,'B'}],
+                       [],
+                       [{op,4,'+',{var,4,'A'},{var,4,'B'}}]}]}")
+
+function_from_fun = fn (Line, Name, FunAst)
+    FirstClause = clause(FunAst)
+    Clauses = clauses(FunAst)
+    Args = element(3, FirstClause)
+    ArgsLen = length(Args)
+
+    line(Line, (function, Line, Name, ArgsLen, Clauses))
+
+@public
+@doc("replace the arguments from a clause")
+
+set_clause_args = fn ((clause, Line, _Args, Guards, Body), NewArgs)
+    (clause, Line, NewArgs, Guards, Body)
+
+@public
+@doc("replace the arguments from a fun")
+
+set_fun_args = fn ((fun, Line, (clauses, [Clause])), NewArgs)
+    (fun, Line, (clauses, [set_clause_args(Clause, NewArgs)]))
