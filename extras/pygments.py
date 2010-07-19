@@ -49,11 +49,9 @@ class EfeneLexer(RegexLexer):
         'and', 'andd', 'not', 'or', 'xor', 'orr'
         ]
 
-    atom_re = r"(?:[a-z][a-zA-Z0-9_]*|'[^\n']*[^\\]')"
+    atom_re = r"(?:[a-z][a-zA-Z0-9_]*|'[^\n']*[^\\]|\$[a-zA-Z][a-zA-Z0-9_]*')"
 
     variable_re = r'(?:[A-Z_][a-zA-Z0-9_]*)'
-
-    escape_re = r'(?:\\(?:[bdefnrstv\'"\\/]|[0-7][0-7]?[0-7]?|\^[a-zA-Z]))'
 
     base_re = r'(?:[2-9]|[12][0-9]|3[0-6])'
 
@@ -72,7 +70,6 @@ class EfeneLexer(RegexLexer):
             (atom_re, Name),
             (r'('+atom_re+')(\.)', bygroups(Name.Namespace, Punctuation)),
             (r'^('+atom_re+r')\s*(=)\s*(fn)\s*(\()', bygroups(Name.Function, Operator, Keyword, Punctuation)),
-            (r'\$(?:'+escape_re+r'|\\[ %]|[^\\])', String.Char),
             (r'#'+atom_re+r'(:?\.'+atom_re+r')?', Name.Label),
         ],
         'numbers': [

@@ -16,7 +16,7 @@ An example of an object containing the information of an user:
 
 .. code-block:: efene
         
-        user = object(username, mail, password)
+        !$(obj.new($line, user,(username, mail, password))
 
 Creation
 ~~~~~~~~

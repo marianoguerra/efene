@@ -20,7 +20,12 @@ An example of an object containing the information of an user:
 
 .. code-block:: efene
         
-        user = object(username, mail, password)
+        !$(obj.new($line, user,(username, mail, password))
+
+.. note::
+        objects are not part of the efene languaje. 
+
+        objects are implemented using metaprogramming and the obj module.
 
 For more information about how to instantiate and manipulate objects see
 the section about object expressions.
