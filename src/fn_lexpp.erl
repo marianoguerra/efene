@@ -104,6 +104,9 @@ post_cleanup([{open_block, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
 % patterns of openblock and endlines after it
 post_cleanup([{endl, _, _}, {open_block, _, _}=Token|Tokens], Accum) ->
     post_cleanup([Token|Tokens], Accum);
+% remove endlines before |]
+post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {close_oxford, _, _}=Token|Tokens], Accum) ->
+    post_cleanup(Tokens, [Token|[Close|Accum]]);
 post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {'case', _}=Token|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|[Close|Accum]]);
 post_cleanup([Head|Tokens], Accum) ->
