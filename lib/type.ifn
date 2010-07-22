@@ -1,0 +1,12 @@
+
+@public
+attribute = fn (local, Line, (return, Args, Return))
+    if length(Args) != 1
+        (error, "one argument expected in type attribute")
+    else
+        (Name, Type) = spec.convert_type(hd(Args))
+        (global_attribute, Line, type, (Name, hd(spec.convert([Return])), Type))
+
+fn (_Type, _Line, _Args)
+    not_implemented
+

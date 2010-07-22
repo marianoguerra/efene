@@ -1,0 +1,138 @@
+
+@public
+attribute = fn (local, Line, (return, Args, Return))
+    (attribute, Line, spec, [(type, Line, fun,
+        [(type, Line, product, convert(Args)), hd(convert([Return]))])])
+
+fn (_Type, _Line, _Args)
+    not_implemented
+
+# convert ast to spec ast
+@public
+convert = fn (Ast)
+    convert(Ast, [])
+
+convert = fn ([], Accum)
+    lists.reverse(Accum)
+
+fn ([(op, _Line, 'bor', _Ast1, _Ast2)=Bor:T], Accum)
+    convert(T, [convert_union(Bor):Accum])
+
+fn ([H:T], Accum)
+    convert(T, [convert_one(H):Accum])
+
+@public
+convert_one = fn ((call, Line, (remote, _, Mod, Fun), []))
+    (remote_type, Line, [Mod, Fun, []])
+
+fn ((call, Line, (remote, _, (atom, _, lists), (atom, _, seq)), [Start, Stop]))
+    (type, Line, range, [convert_one(Start), convert_one(Stop)])
+
+# the tuple type is translated into a different type than the other types
+fn ((call, Line, (atom, _, tuple), []))
+    (type, Line, tuple, any)
+# when the fun definition has ... as arguments
+fn ((call, Line, (atom, _, 'fun'), [(def, DefLine, (dotdotdot, _), Spec)]))
+    (type, Line, 'fun', [(type, DefLine, any), convert_one(Spec)])
+# the case when the fun definition has more than one argument
+fn ((call, Line, (atom, _, 'fun'), [(def, DefLine, (tuple, _, TupleItems), Spec)]))
+    (type, Line, 'fun',
+        [(type, DefLine, product, convert(TupleItems)), convert_one(Spec)])
+# when the fun definition has only one argument (an expression in parenthesis)
+fn ((call, Line, (atom, _, 'fun'), [(def, DefLine, Args, Spec)]))
+    (type, Line, 'fun',
+        [(type, DefLine, product, [convert_one(Args)]), convert_one(Spec)])
+
+fn ((call, Line, (atom, _, Name), Args))
+    (type, Line, Name, convert(Args))
+
+fn ((def, Line, VarAst, Spec))
+    (ann_type, Line, [VarAst, convert_one(Spec)])
+
+fn ((atom, _Line, _Val)=Ast)
+    Ast
+
+fn ((op, _Line, '-', (Type, Line, Val)))
+    (Type, Line, -Val)
+
+fn ((integer, _Line, _Val)=Ast)
+    Ast
+
+fn ((var, _Line, _Val)=Ast)
+    Ast
+
+fn (('record', Line, Name, Attrs))
+    (type, Line, 'record', [(atom, Line, Name):convert(Attrs)])
+
+# convert typed record fields to a type
+fn ((typed_record_field, (record_field, Line, Name), Type))
+    (type, Line, field_type,[convert_one(Name), convert_one(Type)])
+# convert ... to the any type
+fn ((dotdotdot, Line))
+    (type, Line, any)
+# convert tuples to tuple type
+fn ((tuple, Line, Val))
+    (type, Line, tuple, convert(Val))
+# convert emtpy list
+fn ((nil, Line))
+    (type, Line, nil, [])
+# convert binary types
+fn (('bin', Line, Val))
+    (type, Line, binary, convert_bin_type(Line, Val))
+# convert binary type item
+# convert cons to list types that have ,... (non empty lists)
+fn ((cons, Line, Type, (cons, _, (dotdotdot, _), (nil, _))))
+    (type, Line, nonempty_list, [convert_one(Type)])
+# convert cons to list types
+fn ((cons, Line, _Head, _Tail)=Ast)
+    (type, Line, list, convert_list(Ast))
+# convert the binary or operator to unions
+fn ((op, _Line, 'bor', _Ast1, _Ast2)=Ast)
+    convert_union(Ast)
+# the types inside a record with type declaration for a filed that has type and
+# not default value
+fn ((type, _, union, [(atom, _, undefined), Type]))
+    Type
+
+# the types inside a record with type declaration
+fn ((type, _Line, union, _Types)=Ast)
+    Ast
+
+fn (Node)
+    throw((error, (element(2, Node), fn_parser, ["Invalid syntax in spec in element: ", Node])))
+
+convert_bin_type = fn (Line, [])
+    [(integer, Line, 0), (integer, Line, 0)]
+
+fn (Line, [(bin_type_element, _, (var, _, '_'), (integer, _, Size))])
+    [(integer, Line, Size), (integer, Line, 0)]
+
+fn (Line, [(bin_type_element, _, (var, _, '_'), (var, _, '_'), (integer, _, Size))])
+    [(integer, Line, 0), (integer, Line, Size)]
+
+fn (Line, [(bin_type_element, _, (var, _, '_'), (integer, _, Size1)),
+        (bin_type_element, _, (var, _, '_'), (var, _, '_'), (integer, _, Size2))])
+
+    [(integer, Line, Size1), (integer, Line, Size2)]
+
+fn (Line, Node)
+    throw((error, (Line, fn_parser, ["Invalid syntax in binary type: ", Node])))
+
+convert_union = fn ((op, Line, 'bor', Ast1, Ast2))
+    (type, Line, union, lists.flatten([convert_union_left(Ast1), [convert_one(Ast2)]]))
+
+convert_union_left = fn ((op, _Line, 'bor', Ast1, Ast2))
+    [convert_union_left(Ast1), convert_one(Ast2)]
+
+fn (Ast)
+    convert_one(Ast)
+
+convert_list = fn ((cons, _, Head, (nil, _)))
+        [convert_one(Head)]
+
+fn ((cons, _, Head, Tail))
+        [convert_one(Head):convert_list(Tail)]
+
+@public
+convert_type = fn((call, _Line, (atom, _Line, Name), Args))
+    (Name, convert(Args))

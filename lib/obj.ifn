@@ -272,7 +272,7 @@ get_special = fn (Line, Name, Fields)
 
     ast.clauses(Line, Ast)
 
-#@spec(Line :: integer(), Name :: atom(), Fields :: tuple(atom())) -> ast.ast()
+@spec(Line :: integer(), Name :: atom(), Fields :: tuple(atom())) -> ast.ast()
 @doc("return the AST of the closure that represents an object")
 
 closure = fn (Line, Name, Fields)
@@ -299,7 +299,7 @@ atom_to_var = fn (Atom)
     list_to_atom("$" ++ atom_to_list(atom_to_upper(Atom)))
 
 @public
-#@spec(Line :: integer(), Name :: atom(), Fields :: tuple(atom())) -> ast.asts()
+@spec(Line :: integer(), Name :: atom(), Fields :: tuple(atom())) -> ast.asts()
 @doc("return the AST for an object")
 
 new = fn (Line, Name, Fields)

@@ -1,9 +1,9 @@
 
 @@todo("refine types and specs and add the missing ones")
-#@type(ast()) -> tuple()
-#@type(asts()) -> [ast(), ...]
-#@type(rec_field()) -> atom()|tuple(atom(), any())
-#@type(rec_fields()) -> [rec_field(), ...]
+@type(ast()) -> tuple()
+@type(asts()) -> [ast(), ...]
+@type(rec_field()) -> atom()|tuple(atom(), any())
+@type(rec_fields()) -> [rec_field(), ...]
 
 @public
 @doc("transverse the Ast and call Fn for each node.
@@ -308,7 +308,7 @@ public = fn (Line)
     attribute(Line, public)
 
 @public
-#@spec(Line :: integer(), Name :: atom(), Attrs :: rec_fields()) -> ast()
+@spec(Line :: integer(), Name :: atom(), Attrs :: rec_fields()) -> ast()
 @doc("return the AST to define a new record type::
 
     >>> ast.rec($line, person, [firstname, lastname, (mail, \"none\")])
@@ -320,7 +320,7 @@ public = fn (Line)
 rec = fn (Line, Name, Attrs)
     global_attribute(Line, 'record', (Name, rec_fields(Line, Attrs)))
 
-#@spec(Line :: integer(), Attr :: rec_field()) -> asts()
+@spec(Line :: integer(), Attr :: rec_field()) -> asts()
 @doc("return the AST that defines a field in a record type definition")
 
 rec_field = fn (Line, (Name, Default))
@@ -329,14 +329,14 @@ rec_field = fn (Line, (Name, Default))
 fn (Line, Name)
     (record_field, Line, (atom, Line, Name))
 
-#@spec(Line :: integer(), Attrs :: rec_fields()) -> asts()
+@spec(Line :: integer(), Attrs :: rec_fields()) -> asts()
 @doc("return the AST that defines fields in a record type definition")
 
 rec_fields = fn (Line, Attrs)
     [rec_field(Line, Attr) for Attr in Attrs]
 
 @public
-#@spec(Line :: integer(), Name :: atom(), Attrs :: rec_fields()) -> ast()
+@spec(Line :: integer(), Name :: atom(), Attrs :: rec_fields()) -> ast()
 @doc("return the AST that matches record attributes, used in instantiation and
 pattern matching::
 
@@ -350,7 +350,7 @@ rec_match = fn (Line, Name, Attrs)
     ('record', Line, Name, rec_fields(Line, Attrs))
 
 @public
-#@spec(Line :: integer(), Name :: atom(), FunAst :: ast()) -> ast()
+@spec(Line :: integer(), Name :: atom(), FunAst :: ast()) -> ast()
 @doc("return the AST for a top level function definition from a anonymous
 function definition::
 
