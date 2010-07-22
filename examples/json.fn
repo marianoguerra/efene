@@ -1,5 +1,4 @@
-
-!$(obj.new($line, thing, (foo, bar, baz)))
+@obj(thing) -> (foo, bar, baz)
 
 @public
 run = fn () {

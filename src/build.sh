@@ -7,7 +7,6 @@ erlc fn_shell.erl
 erlc fn_pp.erl
 erlc fn_errors.erl
 erlc fn_gen.erl
-erlc fn_spec.erl
 erlc fn_meta.erl
 mv *.beam ../ebin
 rm fn_lexer.erl

@@ -1,6 +1,6 @@
 # example on how to pass information from one object to another one
-!$(obj.new($line, obj1, (attr1, attr2, attr3)))
-!$(obj.new($line, obj2, (attr1, attr2, attr3, attr4, attr5)))
+@obj(obj1) -> (attr1, attr2, attr3)
+@obj(obj2) -> (attr1, attr2, attr3, attr4, attr5)
 
 @public
 run = fn ()

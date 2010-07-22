@@ -525,7 +525,9 @@ run_attribute(Type, Attr, Line, Args) ->
         Attr:attribute(Type, Line, Args)
     catch
         error:undef ->
-            handle_undef_attribute(Type, Attr, Line, Args)
+            handle_undef_attribute(Type, Attr, Line, Args);
+        _:Desc ->
+            fail(Line, "error parsing attribute", {Type, Attr, Desc})
     end,
 
     case Result of

@@ -1,5 +1,4 @@
-
-!$(obj.new($line, person, (firstname, lastname, mail)))
+@obj(person) -> (firstname, lastname, mail)
 
 @public
 run = fn () {

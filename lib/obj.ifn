@@ -7,6 +7,31 @@ to use those functions.")
 
 @@todo("refine types and specs and add the missing ones")
 
+@public
+@doc("handle the @obj attribute, receive an object definition and return the
+ast of that object")
+
+attribute = fn (local, Line, (return, [NameAst], FieldsAst))
+    Name = erl_parse.normalise(NameAst)
+    Fields = erl_parse.normalise(FieldsAst)
+
+    if not is_atom(Name)
+        (error, "object name must be an atom")
+    else if not is_tuple(Fields)
+        (error, "fields must be a tuple")
+    else
+        new(Line, Name, Fields)
+
+fn (local, _Line, (return, _NameAst, _FieldsAst))
+        (error, "object attribute receives one parameter")
+
+fn (local, _Line, _Args)
+        (error, "object attribute must contain field definition after ->")
+
+fn (_Type, _Line, _Args)
+    not_implemented
+
+
 @doc("return a list of two item tuples containing as key the name of the
 attribute as string and as value the value of that attribute")
 
