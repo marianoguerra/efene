@@ -81,44 +81,23 @@ tl_expr -> send_op meta_block endl  : '$2'.
 tl_expr -> send_op astify endl      : '$2'.
 tl_expr -> send_op meta_astify endl : '$2'.
 
-attribute -> attr : {attribute, line('$1'), unwrap('$1'), nil}.
+attribute -> attr :
+    run_attribute(local, unwrap('$1'), line('$1'), []).
+
 attribute -> attr open parameters close :
-    case unwrap('$1') of
-        spec ->
-            fail(line('$1'), "return type expected in ", unwrap('$1'));
-        type ->
-            fail(line('$1'), "type definition expected in ", unwrap('$1'));
-        _ ->
-            case length('$3') of
-                1 ->
-                    {attribute, line('$1'), unwrap('$1'), erl_parse:normalise(hd('$3'))};
-                _ ->
-                    fail(line('$1'), "one argument expected in attribute ", unwrap('$1'))
-            end
-    end.
+    run_attribute(local, unwrap('$1'), line('$1'), '$3').
 
 attribute -> attr open parameters close arrow send_expr :
-    Return = hd(fn_spec:convert(['$6'])),
+    run_attribute(local, unwrap('$1'), line('$1'), {return, '$3', '$6'}).
 
-    case unwrap('$1') of
-        spec ->
-            {attribute, line('$1'), unwrap('$1'),
-                [{type, line('$1'), 'fun',
-                    [{type, line('$1'), product, fn_spec:convert('$3')}, Return]}]};
-        type ->
-            case length('$3') of
-                1 ->
-                    {Name, Args} = fn_spec:convert_type(hd('$3')),
+attribute -> gattr :
+    run_attribute(global, unwrap('$1'), line('$1'), []).
 
-                    {global_attribute, line('$1'), unwrap('$1'), {Name, Return, Args}};
-                _ ->
-                    fail(line('$1'), "one argument expected in ", unwrap('$1'))
-            end;
-        _ ->
-            fail(line('$1'), "'spec' or 'type' expected got ", unwrap('$1'))
-    end.
+attribute -> gattr open parameters close :
+    run_attribute(global, unwrap('$1'), line('$1'), '$3').
 
-attribute -> gattr open literal close : {global_attribute, line('$1'), unwrap('$1'), erl_parse:normalise('$3')}.
+attribute -> gattr open parameters close arrow send_expr :
+    run_attribute(global, unwrap('$1'), line('$1'), {return, '$3', '$6'}).
 
 fn_def -> atom match fn_patterns:
     Arity = get_arity('$3'),
@@ -540,3 +519,56 @@ unwrap_signed_integer({op, _Line, '+', {integer, _Line, Value}}) ->
     Value;
 unwrap_signed_integer({integer, _Line, Value}) ->
     Value.
+
+run_attribute(Type, Attr, Line, Args) ->
+    Result = try
+        Attr:attribute(Type, Line, Args)
+    catch
+        error:undef ->
+            handle_undef_attribute(Type, Attr, Line, Args)
+    end,
+
+    case Result of
+        not_implemented ->
+            fail(Line, "attribute not implemented", {Type, Attr});
+        {error, Error} ->
+            fail(Line, "error in attribute", {Type, Attr, Error});
+        _ ->
+            Result
+    end.
+
+% @attr
+handle_undef_attribute(local, Attr, Line, []) ->
+    {attribute, Line, Attr, nil};
+% @attr(arg)
+handle_undef_attribute(local, Attr, Line, [Arg]) ->
+    {attribute, Line, Attr, erl_parse:normalise(Arg)};
+
+% @attr(arg) -> return
+handle_undef_attribute(local, Attr, Line, {return, [Arg], Return}) ->
+    {attribute, Line, Attr, {return, erl_parse:normalise(Arg), Return}};
+% @attr(arg1, ..., argN) -> return
+handle_undef_attribute(local, Attr, Line, {return, Args, Return}) ->
+    {attribute, Line, Attr, {return, [erl_parse:normalise(Arg) || Arg <- Args], Return}};
+
+% @attr(arg1, ..., argN)
+handle_undef_attribute(local, Attr, Line, Args) ->
+    {attribute, Line, Attr, [erl_parse:normalise(Arg) || Arg <- Args]};
+
+% @@attr
+handle_undef_attribute(global, Attr, Line, []) ->
+    {global_attribute, Line, Attr, nil};
+% @@attr(arg)
+handle_undef_attribute(global, Attr, Line, [Arg]) ->
+    {global_attribute, Line, Attr, erl_parse:normalise(Arg)};
+
+% @@attr(arg) -> return
+handle_undef_attribute(global, Attr, Line, {return, [Arg], Return}) ->
+    {global_attribute, Line, Attr, {return, erl_parse:normalise(Arg), Return}};
+% @@attr(arg1, ..., argN) -> return
+handle_undef_attribute(global, Attr, Line, {return, Args, Return}) ->
+    {global_attribute, Line, Attr, {return, [erl_parse:normalise(Arg) || Arg <- Args], Return}};
+
+% @@attr(arg1, ..., argN)
+handle_undef_attribute(global, Attr, Line, Args) ->
+    {global_attribute, Line, Attr, [erl_parse:normalise(Arg) || Arg <- Args]}.

@@ -1,5 +1,4 @@
-@@moddoc("
-This module provides a mapper between efene objects and mongodb
+@@moddoc("This module provides a mapper between efene objects and mongodb
 through the `emongo`__ library.
 
 __ http://github.com/JacobVorreuter/emongo
