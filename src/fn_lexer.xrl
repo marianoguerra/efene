@@ -176,7 +176,6 @@ is_reserved("after")   -> true;
 is_reserved("case")    -> true;
 is_reserved("switch")  -> true;
 is_reserved("when")    -> true;
-is_reserved("record")  -> true;
 is_reserved("fn")      -> true;
 is_reserved("for")     -> true;
 is_reserved("in")      -> true;

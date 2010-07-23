@@ -1,0 +1,40 @@
+
+@public
+@doc("handle the @rec attribute, receive a record definition and return the
+ast of that record")
+
+attribute = fn (local, Line, (return, [NameAst], FieldsAst))
+    Name = erl_parse.normalise(NameAst)
+    Fields = erl_parse.normalise(FieldsAst)
+
+    if not is_atom(Name)
+        (error, "record name must be an atom")
+    else if not is_tuple(Fields)
+        (error, "fields must be a tuple")
+    else
+        new(Line, Name, Fields)
+
+fn (local, _Line, (return, _NameAst, _FieldsAst))
+        (error, "record attribute receives one parameter")
+
+fn (local, _Line, _Args)
+        (error, "record attribute must contain field definition after ->")
+
+fn (_Type, _Line, _Args)
+    not_implemented
+
+@public
+new = fn (Line, Name, Fields)
+    (global_attribute, Line, record, (Name, fields(Line, tuple_to_list(Fields))))
+
+@public
+field = fn (Line, (Name, Default)) when is_atom(Name)
+    (record_field, Line, (atom, Line, Name),
+        fn_gen.literal_to_ast(Default, Line))
+
+fn (Line, Name) when is_atom(Name)
+    (record_field, Line, (atom, Line, Name))
+
+@public
+fields = fn (Line, Names)
+    [field(Line, Field) for Field in Names]

@@ -17,7 +17,7 @@ Nonterminals
     arrow_chains arrow_chain
     list_comp list_generator list_generators
     bin_comp
-    rec rec_def rec_set rec_new attr_sets attr_set
+    rec rec_set rec_new attr_sets attr_set
     binary binary_items binary_item bin_type_def bin_type
     prefix_op attribute
     for_expr range signed_integer
@@ -39,7 +39,6 @@ Terminals
     open_list close_list sep split_op split_def_op dot dotdot dotdotdot
     arrow
     open_bin close_bin
-    record
     attr gattr
     for in
     open_meta_block open_oxford close_oxford open_meta_oxford.
@@ -75,7 +74,6 @@ tl_exprs -> tl_expr : ['$1'].
 tl_exprs -> tl_expr tl_exprs : ['$1'|'$2'].
 
 tl_expr -> fn_def endl    : '$1'.
-tl_expr -> rec_def endl   : '$1'.
 tl_expr -> attribute endl : '$1'.
 tl_expr -> send_op meta_block endl  : '$2'.
 tl_expr -> send_op astify endl      : '$2'.
@@ -393,9 +391,6 @@ list_generator -> for bool_expr in bool_expr if bool_expr :
 % records
 
 rec -> atom dot var open_list atom close_list : {'record_field', line('$2'), '$3', unwrap('$1'), '$5'}.
-
-rec_def -> atom match record open attr_sets close :
-    {global_attribute, line('$2'), record, {unwrap('$1'), '$5'}}.
 
 rec_set -> atom dot var open_list close_list :
     {'record', line('$2'), '$3', unwrap('$1'), []}.
