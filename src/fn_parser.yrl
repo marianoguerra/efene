@@ -1,47 +1,23 @@
 Nonterminals
-    program tl_exprs tl_expr
-    fn_def fun_def fn_patterns fn_pattern fn_parameters parameters fn_block
-    exprs literal bool_lit
-    send_expr match_expr def_expr
-    bool_expr bool_and_expr comp_expr concat_expr
-    add_expr mul_expr
-    block_expr arrow_expr
-    when_expr when_patterns when_pattern
-    if_expr
-    case_expr case_body case_patterns case_pattern
-    try_expr catch_patterns catch_pattern
-    recv_expr receive_patterns receive_pattern
-    list list_items
-    tuple tuple_items
-    fun_call farity
-    arrow_chains arrow_chain
-    list_comp list_generator list_generators
-    bin_comp
-    rec rec_set rec_new attr_sets attr_set
-    binary binary_items binary_item bin_type_def bin_type
-    prefix_op attribute
-    for_expr range signed_integer
-    meta_block astify meta_astify.
+    program tl_exprs tl_expr fn_def fun_def fn_patterns fn_pattern
+    fn_parameters parameters fn_block exprs literal bool_lit send_expr
+    match_expr def_expr bool_expr bool_and_expr comp_expr concat_expr add_expr
+    mul_expr block_expr arrow_expr when_expr when_patterns when_pattern if_expr
+    case_expr case_body case_patterns case_pattern try_expr catch_patterns
+    catch_pattern recv_expr receive_patterns receive_pattern list list_items
+    tuple tuple_items fun_call farity arrow_chains arrow_chain list_comp
+    list_generator list_generators bin_comp rec rec_set rec_new attr_sets
+    attr_set binary binary_items binary_item bin_type_def bin_type prefix_op
+    attribute for_expr range signed_integer meta_block astify meta_astify attrs.
 
 Terminals
-    fn match open close open_block close_block
-    integer float string var char boolean atom endl
-    send_op
-    bool_orelse_op bool_andalso_op
-    bool_or_op bool_and_op
-    comp_op concat_op
-    and_op or_op shift_op bin_not bool_not
-    add_op mul_op
-    if else when
-    switch case
-    try catch
-    receive after
-    open_list close_list sep split_op split_def_op dot dotdot dotdotdot
-    arrow
-    open_bin close_bin
-    attr gattr
-    for in
-    open_meta_block open_oxford close_oxford open_meta_oxford.
+    fn match open close open_block close_block integer float string var char
+    boolean atom endl send_op bool_orelse_op bool_andalso_op bool_or_op
+    bool_and_op comp_op concat_op and_op or_op shift_op bin_not bool_not add_op
+    mul_op if else when switch case try catch receive after open_list
+    close_list sep split_op split_def_op dot dotdot dotdotdot arrow open_bin
+    close_bin attr gattr for in open_meta_block open_oxford close_oxford
+    open_meta_oxford.
 
 Rootsymbol program.
 
@@ -79,23 +55,26 @@ tl_expr -> send_op meta_block endl  : '$2'.
 tl_expr -> send_op astify endl      : '$2'.
 tl_expr -> send_op meta_astify endl : '$2'.
 
-attribute -> attr :
-    run_attribute(local, unwrap('$1'), line('$1'), []).
+attribute -> attrs :
+    run_attribute(attr_level('$1'), unwrap('$1'), line('$1'), []).
 
-attribute -> attr open parameters close :
-    run_attribute(local, unwrap('$1'), line('$1'), '$3').
+attribute -> attrs dot atom :
+    run_attribute(attr_level('$1'), unwrap('$1'), unwrap('$3'), line('$1'), []).
 
-attribute -> attr open parameters close arrow send_expr :
-    run_attribute(local, unwrap('$1'), line('$1'), {return, '$3', '$6'}).
+attribute -> attrs open parameters close :
+    run_attribute(attr_level('$1'), unwrap('$1'), line('$1'), '$3').
 
-attribute -> gattr :
-    run_attribute(global, unwrap('$1'), line('$1'), []).
+attribute -> attrs dot atom open parameters close :
+    run_attribute(attr_level('$1'), unwrap('$1'), unwrap('$3'), line('$1'), '$5').
 
-attribute -> gattr open parameters close :
-    run_attribute(global, unwrap('$1'), line('$1'), '$3').
+attribute -> attrs open parameters close arrow send_expr :
+    run_attribute(attr_level('$1'), unwrap('$1'), line('$1'), {return, '$3', '$6'}).
 
-attribute -> gattr open parameters close arrow send_expr :
-    run_attribute(global, unwrap('$1'), line('$1'), {return, '$3', '$6'}).
+attribute -> attrs dot atom open parameters close arrow send_expr :
+    run_attribute(attr_level('$1'), unwrap('$1'), unwrap('$3'), line('$1'), {return, '$5', '$8'}).
+
+attrs -> attr  : '$1'.
+attrs -> gattr : '$1'.
 
 fn_def -> atom match fn_patterns:
     Arity = get_arity('$3'),
@@ -468,6 +447,9 @@ unwrap({_,_,V}) -> V.
 line(T) when is_tuple(T) -> element(2, T);
 line([H|_T]) -> element(2, H).
 
+attr_level({attr,  _, _}) -> local;
+attr_level({gattr, _, _}) -> global.
+
 get_arity([{clause, _, Params, _, _}|_T]) -> length(Params).
 
 op('%') -> 'rem';
@@ -516,11 +498,19 @@ unwrap_signed_integer({integer, _Line, Value}) ->
     Value.
 
 run_attribute(Type, Attr, Line, Args) ->
+    run_attribute(Type, Attr, attribute, Line, Args).
+
+run_attribute(Type, Attr, Function, Line, Args) ->
     Result = try
-        Attr:attribute(Type, Line, Args)
+        Attr:Function(Type, Line, Args)
     catch
         error:undef ->
-            handle_undef_attribute(Type, Attr, Line, Args);
+            if
+                Function == attribute ->
+                    handle_undef_attribute(Type, Attr, Line, Args);
+                true ->
+                    fail(Line, "attribute handler not found", {Type, Attr, Function})
+            end;
         _:Desc ->
             fail(Line, "error parsing attribute", {Type, Attr, Desc})
     end,
@@ -534,38 +524,19 @@ run_attribute(Type, Attr, Line, Args) ->
             Result
     end.
 
-% @attr
-handle_undef_attribute(local, Attr, Line, []) ->
-    {attribute, Line, Attr, nil};
-% @attr(arg)
-handle_undef_attribute(local, Attr, Line, [Arg]) ->
-    {attribute, Line, Attr, erl_parse:normalise(Arg)};
-
-% @attr(arg) -> return
-handle_undef_attribute(local, Attr, Line, {return, [Arg], Return}) ->
-    {attribute, Line, Attr, {return, erl_parse:normalise(Arg), Return}};
-% @attr(arg1, ..., argN) -> return
-handle_undef_attribute(local, Attr, Line, {return, Args, Return}) ->
-    {attribute, Line, Attr, {return, [erl_parse:normalise(Arg) || Arg <- Args], Return}};
-
-% @attr(arg1, ..., argN)
 handle_undef_attribute(local, Attr, Line, Args) ->
-    {attribute, Line, Attr, [erl_parse:normalise(Arg) || Arg <- Args]};
+    {attribute, Line, Attr, normalise_args(Args)};
 
-% @@attr
-handle_undef_attribute(global, Attr, Line, []) ->
-    {global_attribute, Line, Attr, nil};
-% @@attr(arg)
-handle_undef_attribute(global, Attr, Line, [Arg]) ->
-    {global_attribute, Line, Attr, erl_parse:normalise(Arg)};
-
-% @@attr(arg) -> return
-handle_undef_attribute(global, Attr, Line, {return, [Arg], Return}) ->
-    {global_attribute, Line, Attr, {return, erl_parse:normalise(Arg), Return}};
-% @@attr(arg1, ..., argN) -> return
-handle_undef_attribute(global, Attr, Line, {return, Args, Return}) ->
-    {global_attribute, Line, Attr, {return, [erl_parse:normalise(Arg) || Arg <- Args], Return}};
-
-% @@attr(arg1, ..., argN)
 handle_undef_attribute(global, Attr, Line, Args) ->
-    {global_attribute, Line, Attr, [erl_parse:normalise(Arg) || Arg <- Args]}.
+    {global_attribute, Line, Attr, normalise_args(Args)}.
+
+normalise_args([]) ->
+    nil;
+normalise_args([Arg]) ->
+    erl_parse:normalise(Arg);
+normalise_args({return, [Arg], Return}) ->
+    {return, erl_parse:normalise(Arg), erl_parse:normalise(Return)};
+normalise_args({return, Args, Return}) ->
+    {return, [erl_parse:normalise(Arg) || Arg <- Args], erl_parse:normalise(Return)};
+normalise_args(Args) ->
+    [erl_parse:normalise(Arg) || Arg <- Args].
