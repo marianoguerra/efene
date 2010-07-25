@@ -4,7 +4,7 @@
 
 @public
 doc = fn (Mod)
-    (moddoc, Preamble) = attribute(Mod, moddoc, (moddoc, "Module documentation"))
+    (moddoc, Preamble) = get_attribute(Mod, moddoc, (moddoc, "Module documentation"))
     Docs = attributes(Mod, doc)
     Exports = Mod.module_info(exports)
 
@@ -81,7 +81,7 @@ format_doc = fn (((Name, Arity), Doc))
 found")
 
 @public
-attribute = fn (Mod, Name, Default)
+get_attribute = fn (Mod, Name, Default)
     switch lists.keyfind(Name, 1, Mod.module_info(attributes))
         case false
             Default
@@ -105,4 +105,27 @@ attributes = fn (Mod, Name)
         false
 
     lists.filter(Filter, Info)
+
+@public
+@doc("define a parametrized module")
+
+attribute = fn (local, Line, (return, [NameAst], FieldsAst))
+    Name = erl_parse.normalise(NameAst)
+
+    if not is_atom(Name)
+        (error, "module name must be an atom")
+    else if element(1, FieldsAst) != tuple
+        (error, "fields must be a tuple")
+    else
+        Fields = element(3, FieldsAst)
+        (global_attribute, Line, module, (Name, [VarName for (var, _, VarName) in Fields]))
+
+fn (local, _Line, (return, _NameAst, _FieldsAst))
+        (error, "module attribute receives one parameter")
+
+fn (local, _Line, _Args)
+        (error, "module attribute must contain field definition after ->")
+
+fn (_Type, _Line, _Args)
+    not_implemented
 

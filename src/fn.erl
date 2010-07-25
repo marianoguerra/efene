@@ -1,26 +1,14 @@
 -module(fn).
--export([get_lex/2,
-        print_lex/2,
-        get_tree/2,
-        print_tree/2,
-        get_ast/2,
-        print_ast/2,
-        get_publics/1,
-        get_publics/2,
-        get_attrs/1,
-        get_attrs/2,
-        build_module/1,
-        print_module/1,
-        compile/2,
-        compile_files/2,
-        get_erlang/2,
-        from_erlang/1,
-        print_erlang/2,
-        erl_to_ast/1,
-        erlmod_to_ast/2,
-        mod_to_ast/2,
-        run/0,
-        run/1]).
+-export([get_lex/2, print_lex/2,
+        get_tree/2, print_tree/2,
+        get_ast/2, print_ast/2,
+        get_publics/1, get_publics/2,
+        get_attrs/1, get_attrs/2,
+        build_module/1, print_module/1,
+        compile/2, compile_files/2,
+        get_erlang/2, from_erlang/1, print_erlang/2,
+        erl_to_ast/1, erlmod_to_ast/2, mod_to_ast/2,
+        run/0, run/1]).
 
 % lexer functions
 
@@ -246,8 +234,21 @@ compile_files([File|Files], Dir) ->
 build_module(Name) ->
     {Publics, Ast, Attrs} = tree_to_ast(file, Name),
 
-    [{attribute, 1, module, get_module_name(Name)}|
-        [{attribute, 2, export, Publics}|Attrs]] ++ Ast.
+    ModDefault = {attribute, 1, module, get_module_name(Name)},
+
+    {ModAttr, NewAttrs} = if
+        Attrs == [] ->
+            {ModDefault, Attrs};
+        true ->
+            case lists:last(Attrs) of
+                {attribute, _, module, _}=Module ->
+                    {Module, lists:sublist(Attrs, length(Attrs) - 1)};
+                _ ->
+                    {ModDefault, Attrs}
+            end
+    end,
+
+    [ModAttr|[{attribute, 2, export, Publics}|NewAttrs]] ++ Ast.
 
 print_module(Name) ->
     io:format("~p~n", [build_module(Name)]).
