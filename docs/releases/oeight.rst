@@ -22,22 +22,37 @@ New Language Syntax
 * added :ref:`range statement <rangestatement>` *..* to specify ranges like lists:seq
 * allow parenthesis in :ref:`for expression <forexpression>`
 * allow :ref:`typed record fields <typedrecords>`
+* added meta programming similar to template haskell through :ref:`[|...|] <astify>`, :ref:`$(...) <metaeval>` and :ref:`$[...] <metaevalandastify>` statemens
+* allow attribute manipulation and generation by efene code.
+
+  + objects, record, spec and type definitions are handled using this technique
 
 Internal Changes
 ~~~~~~~~~~~~~~~~
 
 * macro variables are replaced after the lexer instead of in the parser, simpler code, added example.
-* make the build scritps use the local versions of fnc and fnc.sh instead of the global ones
+* make the build scripts use the local versions of fnc and fnc.sh instead of the global ones
 * add tests that compare the ast of a whole file
 * added tool to see the difference between two asts
 * added all the type declarations found in the erlang source code and the equivalent in efene
+* moved object and record definition to efene modules
+* improved error reporting
+* lots of new tests
 
 New Modules or Functions
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 * renamed some libs to make more sense (names try to avoid erlang lib names)
- + *d* is now *dct*
- + *l* is now *lst*
+
+  + *d* is now *dct*
+  + *l* is now *lst*
+
+* new *rec* module allows record definition
+* new *spec* module allows spec definitions
+* new *type* module allows type definitions
+* new *ast* module allows ast manipulation
+
+* *obj* module allows object definition
 
 Documentation
 ~~~~~~~~~~~~~
@@ -47,14 +62,14 @@ Documentation
 More Information
 ~~~~~~~~~~~~~~~~
 
- * `Download the latest snapshot`_
- * `Website`_
- * `Documentation`_
- * `Tutorial`_
- * `Blog`_
- * `Central repo`_
- * `Issue Tracker`_
- * `Rosetta code page`_
+* `Download the latest snapshot`_
+* `Website`_
+* `Documentation`_
+* `Tutorial`_
+* `Blog`_
+* `Central repo`_
+* `Issue Tracker`_
+* `Rosetta code page`_
 
 .. _Issue Tracker: http://github.com/marianoguerra/efene/issues
 .. _Central repo: http://github.com/marianoguerra/efene
