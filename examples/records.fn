@@ -1,5 +1,5 @@
 
-@rec(person) ->(firstname, lastname, (mail, "none"))
+@rec(person) ->(firstname, lastname, mail="none")
 
 @public
 run = fn () {
