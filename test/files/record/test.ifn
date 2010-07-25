@@ -1,0 +1,11 @@
+
+
+@rec(one) -> (one,)
+@rec(one_type) -> (one :: integer(),)
+@rec(one_type_default) -> (one=42 :: integer(),)
+
+@rec(two) -> (one, two)
+@rec(two_type) -> (one :: integer(), two :: string() | binary())
+@rec(two_type_default) -> (one=42 :: integer(), two="foo" :: string() | binary())
+
+@rec(mixed) -> (one, two="foo", tres :: integer(), vier=4 :: integer(), fuenf="asd" :: string() | binary())

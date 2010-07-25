@@ -21,7 +21,7 @@ Terminals
 
 Rootsymbol program.
 
-Expect 5.
+Expect 4.
 
 Left 50 arrow.
 Left 100 bool_orelse_op.
@@ -120,7 +120,6 @@ match_expr -> def_expr                         : '$1'.
 
 def_expr -> literal split_def_op bool_expr : {def, line('$2'), '$1', '$3'}.
 def_expr -> bool_expr : '$1'.
-
 
 bool_expr -> bool_and_expr bool_orelse_op bool_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
 bool_expr -> bool_and_expr                          : '$1'.
@@ -386,16 +385,6 @@ rec_new -> atom open_list attr_sets close_list :
 attr_sets -> attr_set sep attr_sets : ['$1'|'$3'].
 attr_sets -> atom sep attr_sets     : [{record_field, line('$1'), '$1'}|'$3'].
 attr_sets -> attr_set               : ['$1'].
-
-attr_set -> atom split_def_op add_expr:
-    {typed_record_field,
-          {record_field, line('$2'), '$1'},
-          {type, line('$2'), union, [{atom, line('$2'), undefined}, fn_spec:convert_one('$3')]}}.
-
-attr_set -> atom match bool_expr split_def_op add_expr:
-    {typed_record_field,
-          {record_field, line('$2'), '$1', '$3'},
-          fn_spec:convert_one('$5')}.
 
 attr_set  -> atom match bool_expr : {record_field, line('$2'), '$1', '$3'}.
 
