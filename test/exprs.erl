@@ -8,8 +8,8 @@ send() ->
     ok.
 
 match() ->
-    tu:test_ast("a = b", "a = b"),
-    tu:test_ast("a = b = c", "a = b = c"),
+    tu:test_ast("(a = b)", "a = b"),
+    tu:test_ast("(a = b = c)", "a = b = c"),
     tu:test_ast("A = B", "A = B"),
     tu:test_ast("A = B = C", "A = B = C"),
     tu:test_ast("A = B = C = 1", "A = B = C = 1"),
