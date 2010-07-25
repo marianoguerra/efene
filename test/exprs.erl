@@ -106,6 +106,12 @@ random() ->
         "1 + (2 - 3 bor 4) bxor 5 bor ((4 - 3 + 2) + 1 * 2) / 3 rem 4 band 5 rem 4 / 3 * 2"),
     ok.
 
+block() ->
+    tu:test_ast("begin { A }", "begin A end"),
+    tu:test_ast("begin { A; B; }", "begin A, B end"),
+    tu:test_ast("begin { A = 1; B = 2; A + B; }", "begin A = 1, B = 2, A + B end"),
+    ok.
+
 all() ->
     tu:test(?MODULE, send),
     tu:test(?MODULE, match),
@@ -115,4 +121,5 @@ all() ->
     tu:test(?MODULE, add),
     tu:test(?MODULE, mul),
     tu:test(?MODULE, random),
+    tu:test(?MODULE, block),
     ok.
