@@ -24,7 +24,14 @@ fn (_Type, _Line, _Args)
 
 @public
 new = fn (Line, Name, Fields)
-    (global_attribute, Line, record, (Name, fields(Line, Fields)))
+    RecFields = fields(Line, Fields)
+
+    switch epp.normalize_typed_record_fields(RecFields)
+        case (typed, NewFields)
+            [(global_attribute, Line, record, (Name, NewFields)),
+                (global_attribute, Line, type, ((record, Name), RecFields, []))]
+        case not_typed
+            (global_attribute, Line, record, (Name, RecFields))
 
 @public
 field = fn (Line, (match, _, (atom, _, _Name)=NameAst, (def, _, Default, Type)))
@@ -33,9 +40,15 @@ field = fn (Line, (match, _, (atom, _, _Name)=NameAst, (def, _, Default, Type)))
         spec.convert_one(Type))
 
 fn (Line, (def, _, (atom, _, _Name)=NameAst, Type))
+    TypeDef = switch spec.convert_one(Type)
+        case (type, LineNum, union, Types)
+            (type, LineNum, union, [(atom, LineNum, undefined):Types])
+        case (type, LineNum, _TypeName, _TypeArgs)=TypeAst
+            (type, LineNum, union, [(atom, LineNum, undefined), TypeAst])
+
+
     (typed_record_field,
-        (record_field, Line, NameAst),
-        spec.convert_one(Type))
+        (record_field, Line, NameAst), TypeDef)
 
 fn (Line, (match, _, (atom, _, _Name)=NameAst, Default))
     (record_field, Line, NameAst, Default)
