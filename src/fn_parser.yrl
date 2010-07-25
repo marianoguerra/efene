@@ -39,8 +39,8 @@ Left 1000 match send_op.
 Left 1100 open.
 
 
-prefix_op -> add_op : '$1'.
-prefix_op -> bin_not : '$1'.
+prefix_op -> add_op   : '$1'.
+prefix_op -> bin_not  : '$1'.
 prefix_op -> bool_not : '$1'.
 
 program -> exprs    : '$1'.
@@ -55,30 +55,29 @@ tl_expr -> send_op meta_block endl  : '$2'.
 tl_expr -> send_op astify endl      : '$2'.
 tl_expr -> send_op meta_astify endl : '$2'.
 
-attribute -> attrs :
+attribute -> attrs:
     run_attribute(attr_level('$1'), unwrap('$1'), line('$1'), []).
 
-attribute -> attrs dot atom :
+attribute -> attrs dot atom:
     run_attribute(attr_level('$1'), unwrap('$1'), unwrap('$3'), line('$1'), []).
 
-attribute -> attrs open parameters close :
+attribute -> attrs open parameters close:
     run_attribute(attr_level('$1'), unwrap('$1'), line('$1'), '$3').
 
-attribute -> attrs dot atom open parameters close :
+attribute -> attrs dot atom open parameters close:
     run_attribute(attr_level('$1'), unwrap('$1'), unwrap('$3'), line('$1'), '$5').
 
-attribute -> attrs open parameters close arrow send_expr :
+attribute -> attrs open parameters close arrow send_expr:
     run_attribute(attr_level('$1'), unwrap('$1'), line('$1'), {return, '$3', '$6'}).
 
-attribute -> attrs dot atom open parameters close arrow send_expr :
+attribute -> attrs dot atom open parameters close arrow send_expr:
     run_attribute(attr_level('$1'), unwrap('$1'), unwrap('$3'), line('$1'), {return, '$5', '$8'}).
 
 attrs -> attr  : '$1'.
 attrs -> gattr : '$1'.
 
 fn_def -> atom match fn_patterns:
-    Arity = get_arity('$3'),
-    {function, line('$1'), unwrap('$1'), Arity, '$3'}.
+    {function, line('$1'), unwrap('$1'), get_arity('$3'), '$3'}.
 
 fun_def -> fn_patterns : {'fun', element(2, hd('$1')), {clauses, '$1'}}.
 
@@ -109,14 +108,14 @@ meta_block  -> open_meta_block  bool_expr close         :
 astify      -> open_oxford      bool_expr close_oxford  : fn_meta:astify(line('$1'), '$2').
 meta_astify -> open_meta_oxford bool_expr close_list    : fn_meta:astify(line('$1'), fn_meta:eval('$2')).
 
-exprs -> send_expr endl : ['$1'].
+exprs -> send_expr endl      : ['$1'].
 exprs -> send_expr endl exprs: ['$1'|'$3'].
 
-send_expr -> match_expr send_op send_expr        : {op, line('$2'), unwrap('$2'), '$1', '$3'}.
-send_expr -> match_expr                         : '$1'.
+send_expr -> match_expr send_op send_expr : {op, line('$2'), unwrap('$2'), '$1', '$3'}.
+send_expr -> match_expr                   : '$1'.
 
-match_expr -> def_expr match match_expr         : {match, line('$2'), '$1', '$3'}.
-match_expr -> def_expr                         : '$1'.
+match_expr -> def_expr match match_expr : {match, line('$2'), '$1', '$3'}.
+match_expr -> def_expr                  : '$1'.
 
 def_expr -> literal split_def_op bool_expr : {def, line('$2'), '$1', '$3'}.
 def_expr -> bool_expr : '$1'.
@@ -127,57 +126,57 @@ bool_expr -> bool_and_expr                          : '$1'.
 bool_and_expr -> comp_expr bool_andalso_op bool_and_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
 bool_and_expr -> comp_expr                               : '$1'.
 
-comp_expr -> concat_expr comp_op concat_expr    : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-comp_expr -> concat_expr                        : '$1'.
+comp_expr -> concat_expr comp_op concat_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+comp_expr -> concat_expr                     : '$1'.
 
-concat_expr -> add_expr concat_op concat_expr   : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-concat_expr -> add_expr                         : '$1'.
+concat_expr -> add_expr concat_op concat_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+concat_expr -> add_expr                       : '$1'.
 
-add_expr -> add_expr add_op mul_expr         : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-add_expr -> add_expr or_op mul_expr          : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-add_expr -> add_expr bool_or_op mul_expr     : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-add_expr -> add_expr shift_op mul_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-add_expr -> mul_expr                         : '$1'.
+add_expr -> add_expr add_op mul_expr     : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+add_expr -> add_expr or_op mul_expr      : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+add_expr -> add_expr bool_or_op mul_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+add_expr -> add_expr shift_op mul_expr   : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+add_expr -> mul_expr                     : '$1'.
 
-mul_expr -> mul_expr mul_op block_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> mul_expr and_op block_expr       : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> mul_expr bool_and_op block_expr  : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
-mul_expr -> block_expr                       : '$1'.
+mul_expr -> mul_expr mul_op block_expr      : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> mul_expr and_op block_expr      : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> mul_expr bool_and_op block_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
+mul_expr -> block_expr                      : '$1'.
 
 signed_integer -> add_op integer : {op, line('$2'), unwrap('$1'), '$2'}.
 
 signed_integer -> integer : '$1'.
 
-block_expr -> if_expr           : '$1'.
-block_expr -> for_expr          : '$1'.
-block_expr -> when_expr         : '$1'.
-block_expr -> arrow_expr        : '$1'.
-block_expr -> case_expr         : '$1'.
-block_expr -> try_expr          : '$1'.
-block_expr -> recv_expr         : '$1'.
-block_expr -> fun_def           : '$1'.
+block_expr -> if_expr    : '$1'.
+block_expr -> for_expr   : '$1'.
+block_expr -> when_expr  : '$1'.
+block_expr -> arrow_expr : '$1'.
+block_expr -> case_expr  : '$1'.
+block_expr -> try_expr   : '$1'.
+block_expr -> recv_expr  : '$1'.
+block_expr -> fun_def    : '$1'.
 
 % when expression
-when_expr  -> when when_patterns      : {'if', line('$1'), '$2'}.
+when_expr  -> when when_patterns : {'if', line('$1'), '$2'}.
 
 when_patterns -> when_pattern else fn_block :
     ['$1'|[{clause, line('$2'), [], [[{atom, line('$2'), true}]], '$3'}]].
 
-when_patterns -> when_pattern else when when_patterns          : ['$1'|'$4'].
-when_patterns -> when_pattern                              : ['$1'].
-when_pattern  -> bool_expr fn_block                      : {clause, line('$1'), [], [['$1']], '$2'}.
+when_patterns -> when_pattern else when when_patterns : ['$1'|'$4'].
+when_patterns -> when_pattern                         : ['$1'].
+when_pattern  -> bool_expr fn_block                   : {clause, line('$1'), [], [['$1']], '$2'}.
 
 % if expression
 
-if_expr     -> if bool_expr fn_block :
+if_expr -> if bool_expr fn_block :
      {'case', line('$1'), '$2', [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'}]}.
 
-if_expr     -> if bool_expr fn_block else if_expr :
+if_expr -> if bool_expr fn_block else if_expr :
      {'case', line('$1'), '$2',
          [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'},
           {clause, line('$3'), [{atom, line('$3'), false}], [], ['$5']}]}.
 
-if_expr     -> if bool_expr fn_block else fn_block:
+if_expr -> if bool_expr fn_block else fn_block:
      {'case', line('$1'), '$2',
          [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'},
           {clause, line('$3'), [{atom, line('$3'), false}], [], '$5'}]}.
@@ -197,14 +196,14 @@ for_expr -> for open match_expr in bool_expr if bool_expr close fn_block :
     {lc, line('$1'), {block, line('$1'), '$9'}, [{generate, line('$4'), '$3', '$5'}, '$7']}.
 
 % case expression
-case_expr -> switch bool_expr case_body            : {'case', line('$1'), '$2', '$3'}.
+case_expr -> switch bool_expr case_body : {'case', line('$1'), '$2', '$3'}.
 
 case_body -> open_block case_patterns else fn_block endl close_block:
     '$2' ++ [{'clause', line('$3'), [{var, line('$3'), '_'}], [], '$4'}].
 case_body -> open_block case_patterns endl close_block : '$2'.
 
-case_patterns -> case_pattern case_patterns            : ['$1'|'$2'].
-case_patterns -> case_pattern                          : ['$1'].
+case_patterns -> case_pattern case_patterns : ['$1'|'$2'].
+case_patterns -> case_pattern               : ['$1'].
 case_pattern -> case match_expr fn_block :
     {'clause', line('$1'), ['$2'], [], '$3'}.
 case_pattern -> case match_expr when bool_expr fn_block :
@@ -330,24 +329,24 @@ tuple_items -> match_expr sep tuple_items : ['$1'|'$3'].
 
 % function call
 
-fun_call -> atom fn_parameters           : {call, line('$1'), '$1', '$2'}.
-fun_call -> var fn_parameters            : {call, line('$1'), '$1', '$2'}.
-fun_call -> atom dot atom fn_parameters  :
+fun_call -> atom fn_parameters: {call, line('$1'), '$1', '$2'}.
+fun_call -> var fn_parameters : {call, line('$1'), '$1', '$2'}.
+fun_call -> atom dot atom fn_parameters:
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> atom dot var fn_parameters  :
+fun_call -> atom dot var fn_parameters:
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> var dot atom fn_parameters  :
+fun_call -> var dot atom fn_parameters:
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> var dot var fn_parameters  :
+fun_call -> var dot var fn_parameters:
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> fun_call fn_parameters       : {call, line('$1'), '$1', '$2'}.
+fun_call -> fun_call fn_parameters: {call, line('$1'), '$1', '$2'}.
 
 % function arity
 
-farity -> fn atom split_op integer   :
+farity -> fn atom split_op integer:
     {'fun', line('$1'), {function, unwrap('$2'), unwrap('$4')}}.
 
-farity -> fn atom dot atom split_op integer   :
+farity -> fn atom dot atom split_op integer:
     {'fun', line('$1'), {function, unwrap('$2'), unwrap('$4'), unwrap('$6')}}.
 
 % list comprehension
@@ -355,10 +354,10 @@ farity -> fn atom dot atom split_op integer   :
 list_comp -> open_list match_expr list_generators close_list : {lc, line('$1'), '$2', lists:flatten('$3')}.
 bin_comp  -> open_bin match_expr list_generators close_bin   : {bc, line('$1'), '$2', lists:flatten('$3')}.
 
-list_generators -> list_generator list_generators   : ['$1'|'$2'].
-list_generators -> list_generator                   : '$1'.
+list_generators -> list_generator list_generators: ['$1'|'$2'].
+list_generators -> list_generator                : '$1'.
 
-list_generator -> for bool_expr in bool_expr :
+list_generator -> for bool_expr in bool_expr:
     Line = line('$1'),
     [{generate, Line, '$2', '$4'}].
 
@@ -368,18 +367,18 @@ list_generator -> for bool_expr in bool_expr if bool_expr :
 
 % records
 
-rec -> atom dot var open_list atom close_list : {'record_field', line('$2'), '$3', unwrap('$1'), '$5'}.
+rec -> atom dot var open_list atom close_list: {'record_field', line('$2'), '$3', unwrap('$1'), '$5'}.
 
-rec_set -> atom dot var open_list close_list :
+rec_set -> atom dot var open_list close_list:
     {'record', line('$2'), '$3', unwrap('$1'), []}.
 
-rec_set -> atom dot var open_list attr_sets close_list :
+rec_set -> atom dot var open_list attr_sets close_list:
     {'record', line('$2'), '$3', unwrap('$1'), '$5'}.
 
-rec_new -> atom open_list sep close_list :
+rec_new -> atom open_list sep close_list:
     {'record', line('$2'), unwrap('$1'), []}.
 
-rec_new -> atom open_list attr_sets close_list :
+rec_new -> atom open_list attr_sets close_list:
     {'record', line('$2'), unwrap('$1'), '$3'}.
 
 attr_sets -> attr_set sep attr_sets : ['$1'|'$3'].
@@ -390,24 +389,24 @@ attr_set  -> atom match bool_expr : {record_field, line('$2'), '$1', '$3'}.
 
 % binary
 
-binary -> open_bin binary_items close_bin : {'bin', line('$1'), '$2'}.
-binary -> open_bin close_bin : {'bin', line('$1'), []}.
+binary -> open_bin binary_items close_bin: {'bin', line('$1'), '$2'}.
+binary -> open_bin close_bin: {'bin', line('$1'), []}.
 
-binary_items -> binary_item sep binary_items : ['$1'|'$3'].
-binary_items -> binary_item : ['$1'].
+binary_items -> binary_item sep binary_items: ['$1'|'$3'].
+binary_items -> binary_item: ['$1'].
 
-binary_item -> literal split_op integer mul_op bin_type_def :
+binary_item -> literal split_op integer mul_op bin_type_def:
     assert_atom('$4', '/'),
     {bin_element, line('$1'), '$1', '$3', '$5'}.
 
-binary_item -> literal mul_op bin_type_def :
+binary_item -> literal mul_op bin_type_def:
     assert_atom('$2', '/'),
     {bin_element, line('$1'), '$1', default, '$3'}.
 
-binary_item -> literal split_op integer :
+binary_item -> literal split_op integer:
     {bin_element, line('$1'), '$1', '$3', default}.
 
-binary_item -> literal : {bin_element, line('$1'), '$1', default, default}.
+binary_item -> literal: {bin_element, line('$1'), '$1', default, default}.
 
 % used in @type
 
@@ -420,13 +419,13 @@ binary_item -> split_op integer:
     Line = line('$1'),
     {bin_type_element, Line, {var, Line, '_'}, '$2'}.
 
-bin_type_def -> bin_type add_op bin_type_def :
+bin_type_def -> bin_type add_op bin_type_def:
     assert_atom('$2', '-'),
     ['$1'|'$3'].
-bin_type_def -> bin_type : ['$1'].
+bin_type_def -> bin_type: ['$1'].
 
-bin_type -> atom split_op integer : {unwrap('$1'), unwrap('$3')}.
-bin_type -> atom : unwrap('$1').
+bin_type -> atom split_op integer: {unwrap('$1'), unwrap('$3')}.
+bin_type -> atom: unwrap('$1').
 
 Erlang code.
 
