@@ -27,7 +27,17 @@ new = fn (Line, Name, Fields)
     (global_attribute, Line, record, (Name, fields(Line, Fields)))
 
 @public
-field = fn (Line, (match, _, (atom, _, _Name)=NameAst, Default))
+field = fn (Line, (match, _, (atom, _, _Name)=NameAst, (def, _, Default, Type)))
+    (typed_record_field,
+        (record_field, Line, NameAst, Default),
+        spec.convert_one(Type))
+
+fn (Line, (def, _, (atom, _, _Name)=NameAst, Type))
+    (typed_record_field,
+        (record_field, Line, NameAst),
+        spec.convert_one(Type))
+
+fn (Line, (match, _, (atom, _, _Name)=NameAst, Default))
     (record_field, Line, NameAst, Default)
 
 fn (Line, (atom, _, _Name)=NameAst)
