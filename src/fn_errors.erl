@@ -14,7 +14,7 @@ format_error(_, {error, enoent}) ->
 format_error(Type, Error) ->
     Stacktrace = erlang:get_stacktrace(),
     PF = fun(Term, I1) -> pp(Term, I1) end,
-    SF = fun(_M, _F, _A) -> false end,
+    SF = fun(M, _F, _A) -> (M =:= fn_shell) or (M =:= erl_eval) or (M =:= init) end,
     io:format("~s~n", [lib:format_exception(1, Type, Error, Stacktrace, SF, PF)]).
 
 format_error(Error) ->
