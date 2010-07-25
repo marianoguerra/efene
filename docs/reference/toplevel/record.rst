@@ -20,7 +20,7 @@ An example of a record containing the information of an user:
 
 .. code-block:: efene
         
-        user = record(username="", mail="", password="")
+        @rec(user) ->(username="", mail="", password="")
 
 Default values for the fields can be specified after an equal sign.
 
@@ -29,7 +29,7 @@ The type of the attribute can be defined:
 
 .. code-block:: efene
         
-        person = record(username="" :: string(), age :: integer())
+        @rec(person) -> (username="" :: string(), age :: integer())
 
 For more information about how to instantiate and manipulate records see
 the section about record expressions.
