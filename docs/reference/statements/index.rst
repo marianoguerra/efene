@@ -12,6 +12,7 @@ Statements
    add
    mul
    unary
+   block
    arrow
    literals
    object
