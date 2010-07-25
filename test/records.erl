@@ -1,13 +1,10 @@
 -module(records).
 -compile(export_all).
 
-simple() ->
-    tu:test_mod_ast("\n\n@rec(person) -> ((firstname, \"Mariano\"), (lastname, \"Guerra\"), (age, 24))\n",
-        "-module(temp).\n-export([]).\n-record(person, {firstname=\"Mariano\", lastname=\"Guerra\", age=24}).\n", "temp"),
-    tu:test_mod_ast("\n\n@rec(person) -> ((firstname, 1.2), (lastname, false), (age, atom))\n",
-        "-module(temp).\n-export([]).\n-record(person, {firstname=1.2, lastname=false, age=atom}).\n", "temp"),
+complex() ->
+    tu:test_file("files/record/test.ifn", "files/record/test.erl"),
     ok.
 
 all() ->
-    tu:test(?MODULE, simple).
+    tu:test(?MODULE, complex).
 
