@@ -5,14 +5,13 @@ ast of that record")
 
 attribute = fn (local, Line, (return, [NameAst], FieldsAst))
     Name = erl_parse.normalise(NameAst)
-    Fields = erl_parse.normalise(FieldsAst)
 
     if not is_atom(Name)
         (error, "record name must be an atom")
-    else if not is_tuple(Fields)
+    else if element(1, FieldsAst) != tuple
         (error, "fields must be a tuple")
     else
-        new(Line, Name, Fields)
+        new(Line, Name, element(3, FieldsAst))
 
 fn (local, _Line, (return, _NameAst, _FieldsAst))
         (error, "record attribute receives one parameter")
@@ -25,15 +24,14 @@ fn (_Type, _Line, _Args)
 
 @public
 new = fn (Line, Name, Fields)
-    (global_attribute, Line, record, (Name, fields(Line, tuple_to_list(Fields))))
+    (global_attribute, Line, record, (Name, fields(Line, Fields)))
 
 @public
-field = fn (Line, (Name, Default)) when is_atom(Name)
-    (record_field, Line, (atom, Line, Name),
-        fn_gen.literal_to_ast(Default, Line))
+field = fn (Line, (match, _, (atom, _, _Name)=NameAst, Default))
+    (record_field, Line, NameAst, Default)
 
-fn (Line, Name) when is_atom(Name)
-    (record_field, Line, (atom, Line, Name))
+fn (Line, (atom, _, _Name)=NameAst)
+    (record_field, Line, NameAst)
 
 @public
 fields = fn (Line, Names)

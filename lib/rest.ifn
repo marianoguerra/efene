@@ -1,7 +1,7 @@
 @@moddoc("Module to make REST APIs by using function attributes")
 
-@rec(route) -> ((method, get), (path, "^/$"), (transforms, nil),
-    (accepts, nil), (produces, text), (handler, nil))
+@rec(route) -> (method=get, path="^/$", transforms=nil,
+    accepts=nil, produces=text, handler=nil)
 
 @doc("start the webserver serving the REST APIs available in the modules passed
 as parameter (an atom or a list of atoms), use default values for IP
