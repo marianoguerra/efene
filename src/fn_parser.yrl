@@ -14,7 +14,7 @@ Terminals
     fn match open close open_block close_block integer float string var char
     boolean atom endl send_op bool_orelse_op bool_andalso_op bool_or_op
     bool_and_op comp_op concat_op and_op or_op shift_op bin_not bool_not add_op
-    mul_op if else when switch case try catch receive after open_list
+    mul_op if else when switch case try catch receive after begin open_list
     close_list sep split_op split_def_op dot dotdot dotdotdot arrow open_bin
     close_bin attr gattr for in open_meta_block open_oxford close_oxford
     open_meta_oxford.
@@ -280,6 +280,7 @@ literal -> dotdotdot            : {dotdotdot, line('$1')}.
 literal -> meta_block           : '$1'.
 literal -> astify               : '$1'.
 literal -> meta_astify          : '$1'.
+literal -> begin fn_block       : {block, line('$1'), '$2'}.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
