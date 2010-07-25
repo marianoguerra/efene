@@ -19,12 +19,13 @@ New Language Syntax
 
 * :ref:`spec expression <specexpression>` support (EEP 8)
 * :ref:`type expression <typeexpression>` support (EEP 8)
-* added :ref:`range statement <rangestatement>` *..* to specify ranges like lists:seq
-* added :ref:`block statement <blockstatement>` to have full compatibility with erlang
+* :ref:`range statement <rangestatement>` *..* to specify ranges like lists:seq
+* :ref:`block statement <blockstatement>` to have full compatibility with erlang
 * allow parenthesis in :ref:`for expression <forexpression>`
 * allow :ref:`typed record fields <typedrecords>`
-* added meta programming similar to template haskell through :ref:`[|...|] <astify>`, :ref:`$(...) <metaeval>` and :ref:`$[...] <metaevalandastify>` statemens
-* allow attribute manipulation and generation by efene code.
+* meta programming similar to template haskell through :ref:`[|...|] <astify>`, :ref:`$(...) <metaeval>` and :ref:`$[...] <metaevalandastify>` statemens
+* :ref:`parametrized module <parametrized>` support
+* allow attribute manipulation and generation by efene code
 
   + objects, record, spec and type definitions are handled using this technique
 
