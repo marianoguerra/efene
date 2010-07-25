@@ -510,9 +510,7 @@ run_attribute(Type, Attr, Function, Line, Args) ->
                     handle_undef_attribute(Type, Attr, Line, Args);
                 true ->
                     fail(Line, "attribute handler not found", {Type, Attr, Function})
-            end;
-        _:Desc ->
-            fail(Line, "error parsing attribute", {Type, Attr, Desc})
+            end
     end,
 
     case Result of
