@@ -1,4 +1,4 @@
-.. _block:
+.. _blockstatement:
 
 Block Expression
 ----------------
