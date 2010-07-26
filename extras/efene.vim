@@ -20,63 +20,69 @@ endif
 
 syn case ignore
 
+syn keyword efeneStatement	false true
+syn keyword efeneFunction	fn begin
+syn keyword efeneConditional	else if receive after case switch when
+syn keyword efeneRepeat		for in
+syn keyword efeneOperator	and in not or xor orr andd
+syn keyword efeneException	try catch
 
-syn keyword efeneCommentTodo      TODO FIXME XXX TBD contained
-syn region efeneLineComment start="#" skip="\\$" end="\n" keepend contains=efeneCommentTodo,@Spell
+syn match   efeneComment	"#.*$" contains=efeneTodo,@Spell
+syn keyword efeneTodo		FIXME NOTE NOTES TODO XXX contained
 
+syn match efeneFunction	"^@@\=\a\+"
+
+syn match   efeneNumber	"\<0[oO]\=\o\+[Ll]\=\>"
+syn match   efeneNumber	"\<0[xX]\x\+[Ll]\=\>"
+syn match   efeneNumber	"\<0[bB][01]\+[Ll]\=\>"
+syn match   efeneNumber	"\<\%([1-9]\d*\|0\)[Ll]\=\>"
+syn match   efeneNumber	"\<\d\+[jJ]\>"
+syn match   efeneNumber	"\<\d\+[eE][+-]\=\d\+[jJ]\=\>"
+syn match   efeneNumber
+\ "\<\d\+\.\%([eE][+-]\=\d\+\)\=[jJ]\=\%(\W\|$\)\@="
+syn match   efeneNumber
+\ "\%(^\|\W\)\@<=\d*\.\d\+\%([eE][+-]\=\d\+\)\=[jJ]\=\>"
 syn region  efeneStringD	       start=+"+  skip=+\n\\\\\|\\"+  end=+"+ 
 
+syn keyword efeneBuiltin	abs throw
+syn match   efeneSpaceError	display "\t"
+
 syn match   efeneSpecialCharacter "'\\.'"
-syn match   efeneNumber	       "-\=\<\d\+L\=\>\|0[xob][0-9a-fA-F]\+\>"
 
-syn keyword efeneConditional	if else for in receive after switch case when try catch object record
-syn keyword efeneBoolean		true false
-
-syn keyword	efeneFunction      public fn 
 syn match	efeneBraces	   "[{}\[\]\.,]"
 syn match	efeneParens	   "[()]"
-syn match	efeneOperator	   "[\+\-\*/\|\^\&~=]"
-syn keyword     efeneOperator	   and or andd orr xor not
-syn match	efeneBraces	   "->"
+syn match	efeneOperator	   "[\$\+\-\*/\|\^\&~=]"
+syn match	efeneSep	   ":"
+syn match	efeneSep	   "::"
+syn match	efeneSep	   "->"
 
 syn sync fromstart
 syn sync maxlines=100
 
-"if main_syntax == "efene"
-"  syn sync ccomment efeneComment
-"endif
-
 " Define the default highlighting.
 " For version 5.7 and earlier: only when not done already
 " For version 5.8 and later: only when an item doesn't have highlighting yet
-if version >= 508 || !exists("did_efene_syn_inits")
-  if version < 508
-    let did_efene_syn_inits = 1
-    command -nargs=+ HiLink hi link <args>
-  else
-    command -nargs=+ HiLink hi def link <args>
-  endif
-  HiLink efeneLineComment		Comment
-  HiLink efeneCommentTodo		Todo
-  HiLink efeneSpecial			Special
-  HiLink efeneStringD			String
-  HiLink efeneSpecialCharacter		efeneSpecial
-  HiLink efeneNumber			Number	
-  HiLink efeneConditional		Conditional
-  HiLink efeneOperator			Operator
-  HiLink efeneParens			Function
-  HiLink efeneType			Type
-  HiLink efeneStatement			Statement
-  HiLink efeneFunction			Function
-  HiLink efeneBraces			Function
-  HiLink efeneError			Error
-  HiLink javaScrParenError		efeneError
-  HiLink efeneBoolean			Boolean
+command -nargs=+ HiLink hi def link <args>
+" The default highlight links.  Can be overridden later.
+HiLink efeneStatement	Statement
+HiLink efeneConditional	Conditional
+HiLink efeneRepeat		Repeat
+HiLink efeneOperator		Operator
+HiLink efeneSep		Operator
+HiLink efeneException	Exception
+HiLink efeneComment		Comment
+HiLink efeneTodo		Todo
+HiLink efeneNumber		Number
+HiLink efeneBuiltin	Function
+HiLink efeneSpaceError	Error
+HiLink efeneStringD			String
+HiLink efeneSpecialCharacter		efeneSpecial
+HiLink efeneSpecialCharacter		efeneSpecial
+HiLink efeneParens			Function
+HiLink efeneBraces			Function
+HiLink efeneFunction			Function
 
-  HiLink efeneIdentifier		Identifier
-
-  delcommand HiLink
-endif
+delcommand HiLink
 
 let b:current_syntax = "efene"
 if main_syntax == 'efene'
