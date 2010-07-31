@@ -13,4 +13,5 @@ all() ->
     tu:test(attrs),
     tu:test(specc),
     tu:test(typee),
+    tu:test(endlines),
     ok.

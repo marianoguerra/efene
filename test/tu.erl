@@ -46,6 +46,17 @@ same_file_ast(FnPath, ErlPath) ->
         error:_Error -> {error, FnAst, ErlAst}
     end.
 
+same_file_ast_fn(FnPath1, FnPath2) ->
+    [_|FnAst1] = fn:build_module(FnPath1),
+    [_|FnAst2] = fn:build_module(FnPath2),
+
+    try
+        FnAst1 = FnAst2,
+        ok
+    catch
+        error:_Error -> {error, FnAst1, FnAst2}
+    end.
+
 test_ast(FnExpr, ErlExpr) ->
     test_ast(FnExpr, ErlExpr, same_ast).
 
@@ -69,6 +80,14 @@ test_file(FnPath, ErlPath) ->
             io:format("ok: ~p = ~p~n", [FnPath, ErlPath]);
         {error, _FnAst, _ErlAst} ->
             io:format("error: ~p = ~p~n", [FnPath, ErlPath])
+    end.
+
+test_file_fn(FnPath1, FnPath2) ->
+    case same_file_ast_fn(FnPath1, FnPath2) of
+        ok ->
+            io:format("ok: ~p = ~p~n", [FnPath1, FnPath2]);
+        {error, _FnAst1, _FnAst2} ->
+            io:format("error: ~p = ~p~n", [FnPath1, FnPath2])
     end.
 
 test_mod_ast(FnMod, ErlMod, ModName) ->
