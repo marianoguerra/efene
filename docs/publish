@@ -2,6 +2,7 @@
 
 fnc build_lib.ifn
 fnc -r build_lib run
+rst2man reference/fnc.rst fnc.man
 
 make html
 cd _build
