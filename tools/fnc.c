@@ -32,6 +32,18 @@ char* get_efene_path_from_env() {
 
 void show_usage() {
 	printf("usage:\n");
+	printf("\tfnc -s: run the interactive shell\n");
+	printf("\tfnc -c \"expression\": eval expression\n");
+	printf("\tfnc -C \"expression\": eval expression, print the translation in erlang\n");
+	printf("options:\n");
+	printf("\t-t: type, can be beam (the default), lex, tree, ast, mod, erl or erl2ast\n");
+	printf("\t-o: output path, the path where the compiled files will be written\n");
+	printf("examples:\n");
+	printf("\tfnc foo.ifn: compile foo.ifn, write the result in the current directory\n");
+	printf("\tfnc foo.ifn bar.fn baz.ifn: same as before but multiple files compiled\n");
+	printf("\tfnc foo.ifn -o /tmp: compile foo.ifn, write the result in /tmp\n");
+	printf("\tfnc -t beam -o /tmp foo.ifn: same as before but with the type set\n");
+	printf("\tfnc -t erl foo.ifn: translate foo.ifn to erlang\n");
 }
 
 int is_dir(const char *path) {
@@ -39,20 +51,17 @@ int is_dir(const char *path) {
 	return (stat(path, &st) == 0 && S_ISDIR(st.st_mode));
 }
 
-void run_shell(const char *basepath) {
+int fn_run(const char *args, char *argv0) {
 	int count, status;
-	char *fnpath, buffer[STR_BUFFER_SIZE];
+	char *fnpath, buffer[STR_BUFFER_SIZE], *basepath;
 	fnpath = get_efene_path_from_env();
+	basepath = dirname(dirname(argv0));
 
 	if (fnpath == NULL) {
 		if (!is_dir("../ebin")) {
 
 			count = snprintf(buffer, STR_BUFFER_SIZE, "%s/ebin", basepath);
-
-			if(count > STR_BUFFER_SIZE) {
-				fprintf(stderr, "base path seems huge, can't run command\n");
-				exit(EXIT_FAILURE);
-			}
+			assert(count <= STR_BUFFER_SIZE);
 
 			fnpath = strdup(buffer);
 			assert(fnpath != NULL);
@@ -62,39 +71,41 @@ void run_shell(const char *basepath) {
 				fprintf(stderr, " * set $FNPATH to the path where efene is installed\n");
 				fprintf(stderr, " * run fnc -s from the bin directory\n");
 				fprintf(stderr, " * stop doing maginc tricks with your path\n");
-				exit(EXIT_FAILURE);
+				status = EXIT_FAILURE;
 			}
+			else {
+				count = snprintf(buffer, STR_BUFFER_SIZE,
+					"erl -run fn run %s -run init stop -noshell -pa \"%s\"",
+					args, fnpath);
 
-			count = snprintf(buffer, STR_BUFFER_SIZE,
-				"erl -run fn run shell -run init stop -noshell -pa \"%s\"\n",
-				fnpath);
-
-			if(count > STR_BUFFER_SIZE) {
-				fprintf(stderr, "command path seems huge, can't run command\n");
-				exit(EXIT_FAILURE);
+				assert(count <= STR_BUFFER_SIZE);
+				status = system(buffer);
 			}
-
-			status = system(buffer);
 		}
 		else {
-			status = system("erl -run fn run shell -run init stop -noshell -pa ../ebin\n");
+			count = snprintf(buffer, STR_BUFFER_SIZE,
+				"erl -run fn run %s -run init stop -noshell -pa \"../ebin\"",
+				args);
+
+			assert(count <= STR_BUFFER_SIZE);
+			status = system(buffer);
 		}
 	}
 	else {
 		count = snprintf(buffer, STR_BUFFER_SIZE,
-			"erl -run fn run shell -run init stop -noshell -pa %s/ebin\n",
-			fnpath);
+			"erl -run fn run %s -run init stop -noshell -pa \"%s/ebin\"",
+			args, fnpath);
 
-		if(count > STR_BUFFER_SIZE) {
-			fprintf(stderr, "$FNPATH seems huge, can't run command\n");
-			exit(EXIT_FAILURE);
-		}
-
+		assert(count <= STR_BUFFER_SIZE);
 		status = system(buffer);
 		free(fnpath);
 	}
 
 	exit(status);
+}
+
+void run_shell(char *argv0) {
+	exit(fn_run("shell", argv0));
 }
 
 struct FnOptions* fn_options_new() {
@@ -103,6 +114,7 @@ struct FnOptions* fn_options_new() {
 	if (options != NULL) {
 		options->output_path = NULL;
 		options->files = NULL;
+		options->files_num = 0;
 		options->output_type = NULL;
 		options->is_eval = 0;
 		options->is_erl_eval = 0;
@@ -242,7 +254,7 @@ struct FnOptions* parse_options (int argc, char **argv) {
 
 				break;
 			case 's':
-				run_shell(dirname(dirname(argv[0])));
+				run_shell(argv[0]);
 				exit(EXIT_SUCCESS);
 			case '?':
 				if (optopt == 'o') {
@@ -262,15 +274,75 @@ struct FnOptions* parse_options (int argc, char **argv) {
 		}
 	}
 
+	if (options->output_type == NULL) {
+		options->output_type = strdup("beam");
+	}
+
+	if (options->output_path == NULL) {
+		options->output_path = strdup(".");
+	}
+
 	fn_options_copy_extra_args(options, optind, argc, argv);
 
 	return options;
 }
 
+char* str_join(int count, char **strs) {
+	int i, size = 0, len, offset = 0;
+	char *result;
+	assert(count > 0);
+	assert(strs != NULL);
+
+	for (i = 0; i < count; i++) {
+		// the + 1 is for the spaces in all and for \0 in the last one
+		size += strlen(strs[i]) + 1;
+	}
+
+	result = (char*) malloc(sizeof(char) * size);
+	assert(result != NULL);
+
+	for (i = 0; i < count; i++) {
+		len = strlen(strs[i]);
+		strncpy(result + offset, strs[i], len);
+		offset += len;
+		result[offset] = ' ';
+		offset++;
+	}
+
+	result[offset] = '\0';
+	return result;
+}
+
 int main (int argc, char **argv) {
+	int count;
+	char buffer[STR_BUFFER_SIZE], *extra_args;
 	struct FnOptions* options = parse_options(argc, argv);
 
-	fn_options_print(options);
+
+	if (strcmp(options->output_type, "beam") == 0) {
+		if (options->files_num == 0) {
+			fprintf(stderr, "no files to compile\n");
+			return EXIT_FAILURE;
+		}
+
+		extra_args = str_join(options->files_num, options->files);
+		count = snprintf(buffer, STR_BUFFER_SIZE, "%s %s %s",
+				options->output_type, options->output_path, extra_args);
+	}
+	else {
+		if (options->files_num != 1) {
+			fprintf(stderr, "one extra argument required\n");
+			return EXIT_FAILURE;
+		}
+
+		extra_args = str_join(options->files_num, options->files);
+		count = snprintf(buffer, STR_BUFFER_SIZE, "%s %s",
+				options->output_type, extra_args);
+	}
+
+	assert(count <= STR_BUFFER_SIZE);
+	free(extra_args);
 	fn_options_delete(options);
-	return 0;
+
+	return fn_run(buffer, argv[0]);
 }
