@@ -34,15 +34,18 @@ void show_usage() {
 	printf("usage:\n");
 	printf("\tfnc -s: run the interactive shell\n");
 	printf("\tfnc -h: shows this help\n");
+	printf("\tfnc -r module function [argumens*]: runs function from module passing optional arguments\n");
 	printf("options:\n");
 	printf("\t-t: type, can be beam (the default), lex, tree, ast, mod, erl or erl2ast\n");
 	printf("\t-o: output path, the path where the compiled files will be written\n");
+	printf("\t-T: test, instead of running the command print it to the screen\n");
 	printf("examples:\n");
 	printf("\tfnc foo.ifn: compile foo.ifn, write the result in the current directory\n");
 	printf("\tfnc foo.ifn bar.fn baz.ifn: same as before but multiple files compiled\n");
 	printf("\tfnc foo.ifn -o /tmp: compile foo.ifn, write the result in /tmp\n");
 	printf("\tfnc -t beam -o /tmp foo.ifn: same as before but with the type set\n");
 	printf("\tfnc -t erl foo.ifn: translate foo.ifn to erlang\n");
+	printf("\tfnc -r foo run: runs the run function in the foo module\n");
 }
 
 int is_dir(const char *path) {
@@ -50,7 +53,7 @@ int is_dir(const char *path) {
 	return (stat(path, &st) == 0 && S_ISDIR(st.st_mode));
 }
 
-int fn_run(const char *args, char *argv0) {
+int fn_run(const char *args, char *argv0, int is_test) {
 	int count, status;
 	char *fnpath, buffer[STR_BUFFER_SIZE], *basepath;
 	fnpath = get_efene_path_from_env();
@@ -78,7 +81,13 @@ int fn_run(const char *args, char *argv0) {
 					args, fnpath);
 
 				assert(count <= STR_BUFFER_SIZE);
-				status = system(buffer);
+
+				if (is_test) {
+					printf("%s\n", buffer);
+				}
+				else {
+					status = system(buffer);
+				}
 			}
 		}
 		else {
@@ -87,7 +96,13 @@ int fn_run(const char *args, char *argv0) {
 				args);
 
 			assert(count <= STR_BUFFER_SIZE);
-			status = system(buffer);
+
+			if (is_test) {
+				printf("%s\n", buffer);
+			}
+			else {
+				status = system(buffer);
+			}
 		}
 	}
 	else {
@@ -96,26 +111,34 @@ int fn_run(const char *args, char *argv0) {
 			args, fnpath);
 
 		assert(count <= STR_BUFFER_SIZE);
-		status = system(buffer);
+
+		if (is_test) {
+			printf("%s\n", buffer);
+		}
+		else {
+			status = system(buffer);
+		}
+
 		free(fnpath);
 	}
 
 	exit(status);
 }
 
-void run_shell(char *argv0) {
-	exit(fn_run("shell", argv0));
+void run_shell(char *argv0, int is_test) {
+	exit(fn_run("shell", argv0, is_test));
 }
 
 struct FnOptions* fn_options_new() {
 	struct FnOptions* options = (struct FnOptions*) malloc(sizeof(struct FnOptions));
 
-	if (options != NULL) {
-		options->output_path = NULL;
-		options->files = NULL;
-		options->files_num = 0;
-		options->output_type = NULL;
-	}
+	assert(options != NULL);
+	options->output_path = NULL;
+	options->files = NULL;
+	options->files_num = 0;
+	options->output_type = NULL;
+	options->mode = '?';
+	options->is_test = 0;
 
 	return options;
 }
@@ -230,7 +253,7 @@ struct FnOptions* parse_options (int argc, char **argv) {
 	int c;
 	struct FnOptions* options = fn_options_new();
 
-	while ((c = getopt (argc, argv, "o:ht:s")) != -1) {
+	while ((c = getopt (argc, argv, "o:ht:sTr")) != -1) {
 		switch (c) {
 			case 'o':
 				if (fn_options_copy_output_path(options, optarg) == 0) {
@@ -241,6 +264,12 @@ struct FnOptions* parse_options (int argc, char **argv) {
 			case 'h':
 				show_usage();
 				exit(EXIT_SUCCESS);
+			case 'T':
+				options->is_test = 1;
+				break;
+			case 'r':
+				options->mode = 'r';
+				break;
 			case 't':
 				if (fn_options_copy_output_type(options, optarg) == 0) {
 					fprintf(stderr, "error copying output type\n");
@@ -248,7 +277,7 @@ struct FnOptions* parse_options (int argc, char **argv) {
 
 				break;
 			case 's':
-				run_shell(argv[0]);
+				run_shell(argv[0], options->is_test);
 				exit(EXIT_SUCCESS);
 			case '?':
 				if (optopt == 'o') {
@@ -313,13 +342,25 @@ int main (int argc, char **argv) {
 	struct FnOptions* options = parse_options(argc, argv);
 
 	if (options->files_num == 0) {
+		fn_options_delete(options);
 		fprintf(stderr, "at least one extra argument required\n");
 		return EXIT_FAILURE;
 	}
 
 	extra_args = str_join(options->files_num, options->files);
 
-	if (strcmp(options->output_type, "beam") == 0) {
+	if (options->mode == 'r') {
+		if (options->files_num < 2) {
+			fprintf(stderr, "at least two arguments required, got %d\n",
+					options->files_num);
+			fprintf(stderr, " -r module function [arguments*]\n");
+			fprintf(stderr, " -r module function [arguments*]\n");
+			return EXIT_FAILURE;
+		}
+
+		count = snprintf(buffer, STR_BUFFER_SIZE, "%s", extra_args);
+	}
+	else if (strcmp(options->output_type, "beam") == 0) {
 		count = snprintf(buffer, STR_BUFFER_SIZE, "fn run %s \"%s\" %s",
 				options->output_type, options->output_path, extra_args);
 	}
@@ -332,5 +373,5 @@ int main (int argc, char **argv) {
 	free(extra_args);
 	fn_options_delete(options);
 
-	return fn_run(buffer, argv[0]);
+	return fn_run(buffer, argv[0], options->is_test);
 }

@@ -6,6 +6,8 @@ struct FnOptions {
 	int files_num;
 	char **files;
 	char *output_type;
+	char mode;
+	int is_test;
 };
 
 #endif

@@ -4,7 +4,7 @@ main: fnc.o fnc
 		mv fnc ../bin/fnc
 
 clean:
-		rm -f fnc.o ../bin/fnc
+		rm -f fnc.o
 
 lint:
 		splint fnc.c
