@@ -5,6 +5,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <assert.h>
+#include <libgen.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -22,9 +23,8 @@ char* get_efene_path_from_env() {
 	fnpath = getenv("FNPATH");
 
 	if (fnpath != NULL) {
-		result = (char*) malloc(sizeof(char) * (strlen(fnpath) + 1));
+		result = strdup(fnpath);
 		assert(result != NULL);
-		strcpy(result, fnpath);
 	}
 
 	return result;
@@ -39,22 +39,49 @@ int is_dir(const char *path) {
 	return (stat(path, &st) == 0 && S_ISDIR(st.st_mode));
 }
 
-void run_shell() {
+void run_shell(const char *basepath) {
 	int count, status;
-	char *fnpath, command[STR_BUFFER_SIZE];
+	char *fnpath, buffer[STR_BUFFER_SIZE];
 	fnpath = get_efene_path_from_env();
 
 	if (fnpath == NULL) {
 		if (!is_dir("../ebin")) {
-			fprintf(stderr, "$FNPATH is not defined and ../ebin doesn't exist\n");
-			fprintf(stderr, "set $FNPATH to the path where efene is installed or run fnc -s from the bin directory\n");
-			exit(EXIT_FAILURE);
-		}
 
-		status = system("erl -run fn run shell -run init stop -noshell -pa ../ebin\n");
+			count = snprintf(buffer, STR_BUFFER_SIZE, "%s/ebin", basepath);
+
+			if(count > STR_BUFFER_SIZE) {
+				fprintf(stderr, "base path seems huge, can't run command\n");
+				exit(EXIT_FAILURE);
+			}
+
+			fnpath = strdup(buffer);
+			assert(fnpath != NULL);
+
+			if (!is_dir(fnpath)) {
+				fprintf(stderr, "$FNPATH is not defined, %s and ../ebin don't exist, options:\n", fnpath);
+				fprintf(stderr, " * set $FNPATH to the path where efene is installed\n");
+				fprintf(stderr, " * run fnc -s from the bin directory\n");
+				fprintf(stderr, " * stop doing maginc tricks with your path\n");
+				exit(EXIT_FAILURE);
+			}
+
+			count = snprintf(buffer, STR_BUFFER_SIZE,
+				"erl -run fn run shell -run init stop -noshell -pa \"%s\"\n",
+				fnpath);
+
+			if(count > STR_BUFFER_SIZE) {
+				fprintf(stderr, "command path seems huge, can't run command\n");
+				exit(EXIT_FAILURE);
+			}
+
+			status = system(buffer);
+		}
+		else {
+			status = system("erl -run fn run shell -run init stop -noshell -pa ../ebin\n");
+		}
 	}
 	else {
-		count = snprintf(command, STR_BUFFER_SIZE,
+		count = snprintf(buffer, STR_BUFFER_SIZE,
 			"erl -run fn run shell -run init stop -noshell -pa %s/ebin\n",
 			fnpath);
 
@@ -63,7 +90,7 @@ void run_shell() {
 			exit(EXIT_FAILURE);
 		}
 
-		status = system(command);
+		status = system(buffer);
 		free(fnpath);
 	}
 
@@ -150,8 +177,8 @@ int fn_options_copy_output_type(struct FnOptions* options, const char* arg) {
 		free(options->output_type);
 	}
 
-	options->output_type = (char*) malloc(sizeof(char) * (strlen(arg) + 1));
-	strcpy(options->output_type, optarg);
+	options->output_type = strdup(optarg);
+	assert(options->output_type != NULL);
 
 	return 1;
 }
@@ -165,8 +192,8 @@ int fn_options_copy_output_path(struct FnOptions* options, const char* arg) {
 		free(options->output_path);
 	}
 
-	options->output_path = (char*) malloc(sizeof(char) * (strlen(arg) + 1));
-	strcpy(options->output_path, optarg);
+	options->output_path = strdup(optarg);
+	assert(options->output_path != NULL);
 
 	return 1;
 }
@@ -188,8 +215,8 @@ void fn_options_copy_extra_args(struct FnOptions* options, int optind, int argc,
 	options->files = (char**) malloc(sizeof(char*) * options->files_num);
 
 	for (index = optind; index < argc; index++) {
-		options->files[index - optind] = (char*) malloc(sizeof(char) * (strlen(argv[index]) + 1));
-		strcpy(options->files[index - optind], argv[index]);
+		options->files[index - optind] = strdup(argv[index]);
+		assert(options->files[index - optind] != NULL);
 	}
 }
 
@@ -215,16 +242,14 @@ struct FnOptions* parse_options (int argc, char **argv) {
 
 				break;
 			case 's':
-				run_shell();
+				run_shell(dirname(dirname(argv[0])));
 				exit(EXIT_SUCCESS);
 			case '?':
 				if (optopt == 'o') {
 					fprintf(stderr, "output path option requires an argument\n");
-
 				}
 				else if (optopt == 't') {
 					fprintf(stderr, "output type option requires an argument\n");
-
 				}
 				else if (isprint(optopt)) {
 					fprintf(stderr, "Unknown option `-%c'.\n", optopt);

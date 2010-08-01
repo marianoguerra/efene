@@ -4,5 +4,6 @@ parser.erl
 src/*.fn
 erl_crash.dump
 .*.swp
+*.o
 docs/_build
 docs/lib/*.rst
