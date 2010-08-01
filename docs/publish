@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 fnc build_lib.ifn
-fn build_lib run
+fnc -r build_lib run
 
 make html
 cd _build

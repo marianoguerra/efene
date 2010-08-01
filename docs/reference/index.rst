@@ -9,3 +9,4 @@ Language Reference
    expressions/index
    toplevel/index
    extra/parametrized
+   fnc
