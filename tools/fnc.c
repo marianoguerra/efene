@@ -33,8 +33,7 @@ char* get_efene_path_from_env() {
 void show_usage() {
 	printf("usage:\n");
 	printf("\tfnc -s: run the interactive shell\n");
-	printf("\tfnc -c \"expression\": eval expression\n");
-	printf("\tfnc -C \"expression\": eval expression, print the translation in erlang\n");
+	printf("\tfnc -h: shows this help\n");
 	printf("options:\n");
 	printf("\t-t: type, can be beam (the default), lex, tree, ast, mod, erl or erl2ast\n");
 	printf("\t-o: output path, the path where the compiled files will be written\n");
@@ -75,7 +74,7 @@ int fn_run(const char *args, char *argv0) {
 			}
 			else {
 				count = snprintf(buffer, STR_BUFFER_SIZE,
-					"erl -run fn run %s -run init stop -noshell -pa \"%s\"",
+					"erl -run %s -run init stop -noshell -pa \"%s\"",
 					args, fnpath);
 
 				assert(count <= STR_BUFFER_SIZE);
@@ -84,7 +83,7 @@ int fn_run(const char *args, char *argv0) {
 		}
 		else {
 			count = snprintf(buffer, STR_BUFFER_SIZE,
-				"erl -run fn run %s -run init stop -noshell -pa \"../ebin\"",
+				"erl -run %s -run init stop -noshell -pa \"../ebin\"",
 				args);
 
 			assert(count <= STR_BUFFER_SIZE);
@@ -93,7 +92,7 @@ int fn_run(const char *args, char *argv0) {
 	}
 	else {
 		count = snprintf(buffer, STR_BUFFER_SIZE,
-			"erl -run fn run %s -run init stop -noshell -pa \"%s/ebin\"",
+			"erl -run %s -run init stop -noshell -pa \"%s/ebin\"",
 			args, fnpath);
 
 		assert(count <= STR_BUFFER_SIZE);
@@ -116,8 +115,6 @@ struct FnOptions* fn_options_new() {
 		options->files = NULL;
 		options->files_num = 0;
 		options->output_type = NULL;
-		options->is_eval = 0;
-		options->is_erl_eval = 0;
 	}
 
 	return options;
@@ -171,9 +168,6 @@ void fn_options_print(struct FnOptions* options) {
 		if (options->output_type != NULL) {
 			printf("\toutput type: %s\n", options->output_type);
 		}
-
-		printf("\tis eval: %d\n", options->is_eval);
-		printf("\tis erlang eval: %d\n", options->is_erl_eval);
 	}
 	else {
 		printf("options: NULL\n");
@@ -318,25 +312,19 @@ int main (int argc, char **argv) {
 	char buffer[STR_BUFFER_SIZE], *extra_args;
 	struct FnOptions* options = parse_options(argc, argv);
 
+	if (options->files_num == 0) {
+		fprintf(stderr, "at least one extra argument required\n");
+		return EXIT_FAILURE;
+	}
+
+	extra_args = str_join(options->files_num, options->files);
 
 	if (strcmp(options->output_type, "beam") == 0) {
-		if (options->files_num == 0) {
-			fprintf(stderr, "no files to compile\n");
-			return EXIT_FAILURE;
-		}
-
-		extra_args = str_join(options->files_num, options->files);
-		count = snprintf(buffer, STR_BUFFER_SIZE, "%s %s %s",
+		count = snprintf(buffer, STR_BUFFER_SIZE, "fn run %s \"%s\" %s",
 				options->output_type, options->output_path, extra_args);
 	}
 	else {
-		if (options->files_num != 1) {
-			fprintf(stderr, "one extra argument required\n");
-			return EXIT_FAILURE;
-		}
-
-		extra_args = str_join(options->files_num, options->files);
-		count = snprintf(buffer, STR_BUFFER_SIZE, "%s %s",
+		count = snprintf(buffer, STR_BUFFER_SIZE, "fn run %s %s",
 				options->output_type, extra_args);
 	}
 

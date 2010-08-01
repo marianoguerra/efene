@@ -6,8 +6,6 @@ struct FnOptions {
 	int files_num;
 	char **files;
 	char *output_type;
-	int is_eval;
-	int is_erl_eval;
 };
 
 #endif
