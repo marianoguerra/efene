@@ -13,6 +13,7 @@ Contents:
 
    releases/index
    reference/index
+   build/index
    lib/index
    faq
 
