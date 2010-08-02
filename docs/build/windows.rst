@@ -72,3 +72,25 @@ You should see the erlang shell, type::
         >>> halt()
 
 And press enter to quit.
+
+Building fnc.exe
+::::::::::::::::
+
+.. note:
+
+        you don't need to build fnc.exe since it's already available in *bin/*
+        when you download efene.
+
+        This step is only needed if you want to work on fnc.c
+
+Install `MinGW`__
+
+__ http://sourceforge.net/downloads/mingw/Automated%20MinGW%20Installer/MinGW%205.1.6/MinGW-5.1.6.exe/
+
+Add the path to the bin directory inside MinGW to the Path environment variable.
+
+Inside cmd.exe go to the tools directory inside efene and type::
+
+        build.bat
+
+It will compile fnc.c and move it to the *bin/* directory.

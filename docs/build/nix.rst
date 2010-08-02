@@ -44,3 +44,15 @@ You should see the erlang shell, type::
         >>> halt()
 
 And press enter to quit.
+
+Building fnc
+::::::::::::
+
+To build fnc you need gcc and make installed, this depends on the operating
+system and/or distribution you are using.
+
+Once you have gcc and make installed, cd to efene/tools and type::
+
+        make
+
+It should build fnc and move it to *bin/*
