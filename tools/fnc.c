@@ -126,7 +126,7 @@ int fn_run(const char *args, char *argv0, int is_test) {
 }
 
 void run_shell(char *argv0, int is_test) {
-	exit(fn_run("shell", argv0, is_test));
+	exit(fn_run("fn run shell", argv0, is_test));
 }
 
 struct FnOptions* fn_options_new() {
