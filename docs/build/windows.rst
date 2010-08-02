@@ -52,7 +52,7 @@ Building efene
 ::::::::::::::
 
 Open cmd.exe (Windows + r or Start -> run -> cmd.exe), cd to the src folder
-inside efene, in my case it's:
+inside efene, in my case it's::
 
         C:\Documents and Settings\Mariano Guerra\My Documents\efene\src
 
