@@ -1,7 +1,4 @@
 #!/usr/bin/env sh
-../bin/fnc spec.ifn type.ifn
-mv *.beam ../ebin
-../bin/fnc rec.ifn
-mv *.beam ../ebin
-../bin/fnc *.ifn
-mv *.beam ../ebin
+fnc spec.ifn type.ifn -o ../ebin
+fnc rec.ifn -o ../ebin
+fnc *.ifn -o ../ebin
