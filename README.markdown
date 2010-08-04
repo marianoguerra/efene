@@ -34,7 +34,7 @@ fnc hello.fn
 ### run (call the run function from the hello module)
 <pre>
 <code>
-fn hello run
+fnc -r hello run
 </code>
 </pre>
 
@@ -58,7 +58,7 @@ fnc hello.ifn
 ### run (call the run function from the hello module)
 <pre>
 <code>
-fn hello run
+fnc -r hello run
 </code>
 </pre>
 
@@ -189,7 +189,7 @@ fnc demo.fn
 ### run
 <pre>
 <code>
-fn demo run
+fnc -r demo run
 </code>
 </pre>
 
@@ -295,7 +295,7 @@ fnc demo.ifn
 ### run
 <pre>
 <code>
-fn demo run
+fnc -r demo run
 </code>
 </pre>
 
