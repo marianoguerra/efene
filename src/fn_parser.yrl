@@ -8,16 +8,17 @@ Nonterminals
     tuple tuple_items fun_call farity arrow_chains arrow_chain list_comp
     list_generator list_generators bin_comp rec rec_set rec_new attr_sets
     attr_set binary binary_items binary_item bin_type_def bin_type prefix_op
-    attribute for_expr range signed_integer meta_block astify meta_astify attrs.
+    attribute for_expr range signed_integer meta_block astify meta_astify attrs
+    fat_arrow_expr.
 
 Terminals
     fn match open close open_block close_block integer float string var char
     boolean atom endl send_op bool_orelse_op bool_andalso_op bool_or_op
     bool_and_op comp_op concat_op and_op or_op shift_op bin_not bool_not add_op
     mul_op if else when switch case try catch receive after begin open_list
-    close_list sep split_op split_def_op dot dotdot dotdotdot arrow open_bin
-    close_bin attr gattr for in open_meta_block open_oxford close_oxford
-    open_meta_oxford.
+    close_list sep split_op split_def_op dot dotdot dotdotdot arrow larrow
+    fatarrow open_bin close_bin attr gattr for in open_meta_block open_oxford
+    close_oxford open_meta_oxford.
 
 Rootsymbol program.
 
@@ -96,7 +97,7 @@ parameters -> send_expr : ['$1'].
 fn_block -> open_block send_expr close_block : ['$2'].
 fn_block -> open_block exprs close_block : '$2'.
 
-meta_block  -> open_meta_block  bool_expr close         :
+meta_block  -> open_meta_block  fat_arrow_expr close         :
     Type = element(1, '$2'),
 
     if
@@ -105,8 +106,8 @@ meta_block  -> open_meta_block  bool_expr close         :
         true ->
             fn_meta:eval('$2')
     end.
-astify      -> open_oxford      bool_expr close_oxford  : fn_meta:astify(line('$1'), '$2').
-meta_astify -> open_meta_oxford bool_expr close_list    : fn_meta:astify(line('$1'), fn_meta:eval('$2')).
+astify      -> open_oxford      fat_arrow_expr close_oxford  : fn_meta:astify(line('$1'), '$2').
+meta_astify -> open_meta_oxford fat_arrow_expr close_list    : fn_meta:astify(line('$1'), fn_meta:eval('$2')).
 
 exprs -> send_expr endl      : ['$1'].
 exprs -> send_expr endl exprs: ['$1'|'$3'].
@@ -117,8 +118,11 @@ send_expr -> match_expr                   : '$1'.
 match_expr -> def_expr match match_expr : {match, line('$2'), '$1', '$3'}.
 match_expr -> def_expr                  : '$1'.
 
-def_expr -> literal split_def_op bool_expr : {def, line('$2'), '$1', '$3'}.
-def_expr -> bool_expr : '$1'.
+def_expr -> literal split_def_op fat_arrow_expr: {def, line('$2'), '$1', '$3'}.
+def_expr -> fat_arrow_expr : '$1'.
+
+fat_arrow_expr -> bool_expr fatarrow bool_expr : {tuple, line('$2'), ['$1', '$3']}.
+fat_arrow_expr -> bool_expr : '$1'.
 
 bool_expr -> bool_and_expr bool_orelse_op bool_expr : {op, line('$2'), op(unwrap('$2')), '$1', '$3'}.
 bool_expr -> bool_and_expr                          : '$1'.
@@ -248,8 +252,8 @@ recv_expr -> receive receive_patterns after literal fn_block      : {'receive', 
 
 receive_patterns -> receive_pattern else receive receive_patterns : ['$1'|'$4'].
 receive_patterns -> receive_pattern                               : ['$1'].
-receive_pattern  -> bool_expr fn_block                            : {'clause', line('$1'), ['$1'], [], '$2'}.
-receive_pattern  -> bool_expr when bool_expr fn_block             : {'clause', line('$1'), ['$1'], ['$3'], '$4'}.
+receive_pattern  -> fat_arrow_expr fn_block                            : {'clause', line('$1'), ['$1'], [], '$2'}.
+receive_pattern  -> fat_arrow_expr when bool_expr fn_block             : {'clause', line('$1'), ['$1'], ['$3'], '$4'}.
 
 arrow_expr  -> literal arrow_chains : add_first_param('$1', '$2').
 arrow_expr  -> literal : '$1'.
@@ -358,11 +362,11 @@ bin_comp  -> open_bin match_expr list_generators close_bin   : {bc, line('$1'), 
 list_generators -> list_generator list_generators: ['$1'|'$2'].
 list_generators -> list_generator                : '$1'.
 
-list_generator -> for bool_expr in bool_expr:
+list_generator -> for fat_arrow_expr in bool_expr:
     Line = line('$1'),
     [{generate, Line, '$2', '$4'}].
 
-list_generator -> for bool_expr in bool_expr if bool_expr :
+list_generator -> for fat_arrow_expr in bool_expr if bool_expr :
     Line = line('$1'),
     [{generate, Line, '$2', '$4'},'$6'].
 
@@ -386,7 +390,7 @@ attr_sets -> attr_set sep attr_sets : ['$1'|'$3'].
 attr_sets -> atom sep attr_sets     : [{record_field, line('$1'), '$1'}|'$3'].
 attr_sets -> attr_set               : ['$1'].
 
-attr_set  -> atom match bool_expr : {record_field, line('$2'), '$1', '$3'}.
+attr_set  -> atom match fat_arrow_expr : {record_field, line('$2'), '$1', '$3'}.
 
 % binary
 

@@ -51,6 +51,8 @@ SplitDef    = ::
 Split       = :
 Dot         = \.
 Arrow       = ->
+LArrow       = <-
+FatArrow    = =>
 Send        = !
 
 % string stuff
@@ -117,6 +119,8 @@ Rules.
 {Dot}{Dot}               : make_token(dotdot,       TokenLine, TokenChars).
 {Dot}                    : make_token(dot,          TokenLine, TokenChars).
 {Arrow}                  : make_token(arrow,        TokenLine, TokenChars).
+{LArrow}                 : make_token(larrow,       TokenLine, TokenChars).
+{FatArrow}               : make_token(fatarrow,     TokenLine, TokenChars).
 
 % string stuff
 {String}                 : build_string(string, TokenChars, TokenLine, TokenLen).

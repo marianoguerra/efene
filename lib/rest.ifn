@@ -310,9 +310,7 @@ request = fn (Req)
     simple_bridge.make_request(mochiweb_request_bridge, (Req, root()))
 
 get_or_create_route = fn (Dict, Key, Module)
-    IsKey = dict.is_key(Key, Dict)
-
-    when IsKey
+    if dict.is_key(Key, Dict)
         (Dict, dict.fetch(Key, Dict))
     else
         Route = route[handler=(Module, element(1, Key))]
