@@ -1,3 +1,4 @@
+@@license("New BSD License, part of efene, see LICENSE for details")
 @@moddoc("module to get useful validation functions to be used with obj.validate")
 
 @doc("returns a validator that checks if the parameter is a string")

@@ -1,3 +1,4 @@
+@@license("New BSD License, part of efene, see LICENSE for details")
 @@moddoc("functions to manipulate modules")
 
 @doc("return the documentation of *Mod* as a string")

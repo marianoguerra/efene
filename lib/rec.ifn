@@ -1,3 +1,4 @@
+@@license("New BSD License, part of efene, see LICENSE for details")
 
 @public
 @doc("handle the @rec attribute, receive a record definition and return the

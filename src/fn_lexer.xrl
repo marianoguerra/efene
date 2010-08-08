@@ -1,3 +1,5 @@
+% New BSD License, part of efene, see LICENSE for details
+
 Definitions.
 
 % binary operators

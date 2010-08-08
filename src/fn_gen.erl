@@ -1,6 +1,8 @@
 -module(fn_gen).
 -compile(export_all).
 
+-license("New BSD License, part of efene, see LICENSE for details").
+
 literal_to_ast(Val, Line) ->
     literal_to_ast(Val, Line, false).
 

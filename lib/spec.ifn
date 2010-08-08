@@ -1,3 +1,4 @@
+@@license("New BSD License, part of efene, see LICENSE for details")
 
 @public
 attribute = fn (local, Line, (return, Args, Return))

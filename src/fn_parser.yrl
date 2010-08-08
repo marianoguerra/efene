@@ -1,3 +1,5 @@
+% New BSD License, part of efene, see LICENSE for details
+
 Nonterminals
     program tl_exprs tl_expr fn_def fun_def fn_patterns fn_pattern
     fn_parameters parameters fn_block exprs literal bool_lit send_expr

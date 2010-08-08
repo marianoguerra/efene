@@ -10,6 +10,8 @@
         erl_to_ast/1, erlmod_to_ast/2, mod_to_ast/2,
         run/0, run/1]).
 
+-license("New BSD License, part of efene, see LICENSE for details").
+
 % lexer functions
 
 get_lex_from_str(String, FileName) ->

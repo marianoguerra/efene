@@ -1,3 +1,4 @@
+@@license("New BSD License, part of efene, see LICENSE for details")
 @@moddoc("Module to make REST APIs by using function attributes")
 
 @rec(route) -> (method=get, path="^/$", transforms=nil,

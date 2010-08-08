@@ -1,6 +1,8 @@
 -module(fn_errors).
 -export([handle/1, fail_on_tab/1, format_error/1]).
 
+-license("New BSD License, part of efene, see LICENSE for details").
+
 format_error(_, {error, {Line, fn, {illegal, tab}}}) ->
     io:format("line ~p: illegal tab found on ifene source (use spaces for indentation)~n", [Line]);
 format_error(_, {error, {Line, fn_lexer, {illegal, Char}}, _Unk}) ->

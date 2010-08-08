@@ -1,6 +1,7 @@
 -module(fn_shell).
-
 -export([start/0]).
+
+-license("New BSD License, part of efene, see LICENSE for details").
 
 start() ->
     loop(erl_eval:new_bindings()).

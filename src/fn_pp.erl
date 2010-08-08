@@ -1,6 +1,8 @@
 -module(fn_pp).
 -export([pretty_print/2]).
 
+-license("New BSD License, part of efene, see LICENSE for details").
+
 % pretty print from tokens, the tokens must be in the final format
 % that means with blocks and no whitespaces or tabs
 pretty_print(Tokens, PrintBlocks) ->
