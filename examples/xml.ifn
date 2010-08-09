@@ -17,6 +17,11 @@ run = fn ()
 
             child2 => "only content",
             emptychild,
+            a => [
+                attrs => [
+                    href => "http://www.google.com"],
+
+                "google.com"],
             child3 => [
                 items => [
                     deep => "child of child"]]]]]
@@ -26,3 +31,23 @@ run = fn ()
     io.format("indent only:~n~s~n", [fxml.xml(Xml, [indent => 2])])
     io.format("new line and 4 space indent:~n~s~n", [fxml.xml(Xml, [new_line, indent => 4])])
 
+    show_tag("empty tag", emptytag)
+    show_tag("with content", withcontent => "this is the content")
+    show_tag("only attrs", onlyattrs => [attrs => [number => 4, boolean => false]])
+    show_tag("both", both => [attrs => [number => 4, boolean => false], "body"])
+    show_tag("only childs", onlychilds=> [items => [number => 4, boolean => false]])
+    show_tag("childs and attrs",
+        onlyattrs => [
+            attrs => [
+                number => 4,
+                boolean => false],
+            items => [
+                child1 => "only content",
+                child2 => [
+                    attrs => [someattr => "some value"]]]])
+
+show_xml = fn (Msg, Xml, Options)
+    io.format("~s:~n  ~s~n~n", [Msg, fxml.xml(Xml)])
+
+show_tag = fn (Msg, Tag)
+    io.format("~s:~n  ~s~n~n", [Msg, fxml.tag(Tag)])
