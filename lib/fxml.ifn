@@ -22,7 +22,7 @@ fn ([Tag:Tail], Result, Options, Level)
     xml(Tail, [tag(Tag, Options, Level):Result], Options, Level)
 
 @public
-@doc("format a tag:: ")
+@doc("format a tag")
 
 tag = fn (Tag)
     tag(Tag, [], 0)
