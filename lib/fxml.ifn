@@ -1,0 +1,119 @@
+@@license("New BSD License, part of efene, see LICENSE for details")
+
+@@moddoc("module to transform a tuple list data structure to xml string::
+    @public
+    run = fn ()
+        Xml = [root => [
+            attrs => [
+                attr1 => atom,
+                attr2 => \"string\",
+                attr3 => 42,
+                attr4 => 12.3,
+                attr5 => false,
+                attr6 => nil],
+
+            items => [
+                child1 => [
+                    attrs => [
+                        type => \"only attrs\"]],
+
+                child2 => \"only content\",
+                emptychild,
+                child3 => [
+                    items => [
+                        deep => \"child of child\"]]]]]
+
+        io.format(\"default options:~n~s~n\", [fxml.xml(Xml)])
+        io.format(\"new line only:~n~s~n\", [fxml.xml(Xml, [new_line])])
+        io.format(\"indent only:~n~s~n\", [fxml.xml(Xml, [indent => 2])])
+        io.format(\"new line and 4 space indent:~n~s~n\", [fxml.xml(Xml, [new_line, indent => 4])])
+")
+
+@public
+@doc("render a dict like data structure to a xml string")
+
+xml = fn (Dct)
+    xml(Dct, [], [new_line, indent => 1], 0)
+
+@public
+xml = fn (Dct, Options)
+    xml(Dct, [], Options, 0)
+
+@public
+xml = fn ([], Result, _Options, _Level)
+    lists.reverse(Result)
+
+fn ([Tag:Tail], Result, Options, Level)
+    xml(Tail, [tag(Tag, Options, Level):Result], Options, Level)
+
+@public
+tag = fn (Tag => [attrs => Attrs, items => Items], Options, Level)
+    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s~s>~s~s~s</~s>~s",
+        [Indent, StrTag, attrs(Attrs), NewLine,
+         xml(Items, [], Options, Level + 1), Indent, StrTag, NewLine])
+
+fn (Tag => [items => Items], Options, Level)
+    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s>~s~s~s</~s>~s",
+        [Indent, StrTag, NewLine, xml(Items, [], Options, Level + 1), Indent,
+            StrTag, NewLine])
+
+fn (Tag => [attrs => Attrs], Options, Level)
+    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s~s></~s>~s", [Indent, StrTag, attrs(Attrs), StrTag, NewLine])
+
+fn (Tag => Val, Options, Level)
+    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s>~s</~s>~s", [Indent, StrTag, to_str(Val),
+        StrTag, NewLine])
+
+fn (Tag, Options, Level)
+    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s></~s>~s", [Indent, StrTag, StrTag, NewLine])
+
+get_tag_data = fn (Tag, Options, Level)
+    (to_str(Tag), get_new_line(Options), get_indent(Options, Level))
+
+is_new_line = fn (Options)
+    lists.member(new_line, Options)
+
+get_new_line = fn (Options)
+    if is_new_line(Options)
+        "\n"
+    else
+        ""
+
+get_indent = fn (Options, Level)
+    switch lists.keyfind(indent, 1, Options)
+        case false
+            ""
+        case indent => Val
+            lists.duplicate(Val * Level, " ")
+
+@public
+attrs = fn ([])
+    ""
+
+fn (Attrs)
+    attrs(Attrs, [])
+
+@public
+attrs = fn ([], Result)
+    lists.append(lists.reverse(Result))
+
+fn ([Attr => Value:Tail], Result)
+    attrs(Tail, [attr(Attr => Value):Result])
+
+@public
+attr = fn (Attr => Value)
+    io_lib.format(" ~s=\"~s\"", [to_str(Attr), to_str(Value)])
+
+@public
+@doc("convert basic data types to string")
+to_str = fn (Val) when is_list(Val)
+    Val
+
+fn (Val)
+    io_lib.format("~p", [Val])
+
