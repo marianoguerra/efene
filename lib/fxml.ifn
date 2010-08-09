@@ -1,33 +1,7 @@
 @@license("New BSD License, part of efene, see LICENSE for details")
 
-@@moddoc("module to transform a tuple list data structure to xml string::
-    @public
-    run = fn ()
-        Xml = [root => [
-            attrs => [
-                attr1 => atom,
-                attr2 => \"string\",
-                attr3 => 42,
-                attr4 => 12.3,
-                attr5 => false,
-                attr6 => nil],
-
-            items => [
-                child1 => [
-                    attrs => [
-                        type => \"only attrs\"]],
-
-                child2 => \"only content\",
-                emptychild,
-                child3 => [
-                    items => [
-                        deep => \"child of child\"]]]]]
-
-        io.format(\"default options:~n~s~n\", [fxml.xml(Xml)])
-        io.format(\"new line only:~n~s~n\", [fxml.xml(Xml, [new_line])])
-        io.format(\"indent only:~n~s~n\", [fxml.xml(Xml, [indent => 2])])
-        io.format(\"new line and 4 space indent:~n~s~n\", [fxml.xml(Xml, [new_line, indent => 4])])
-")
+@@moddoc("module to transform a tuple list data structure to xml string.
+see examples/xml.ifn for usage examples")
 
 @public
 @doc("render a dict like data structure to a xml string")
@@ -36,10 +10,11 @@ xml = fn (Dct)
     xml(Dct, [], [new_line, indent => 1], 0)
 
 @public
+@doc("like xml/1 but specifying formatting options")
+
 xml = fn (Dct, Options)
     xml(Dct, [], Options, 0)
 
-@public
 xml = fn ([], Result, _Options, _Level)
     lists.reverse(Result)
 
@@ -47,11 +22,21 @@ fn ([Tag:Tail], Result, Options, Level)
     xml(Tail, [tag(Tag, Options, Level):Result], Options, Level)
 
 @public
+@doc("format a tag:: ")
+
+tag = fn (Tag)
+    tag(Tag, [], 0)
+
 tag = fn (Tag => [attrs => Attrs, items => Items], Options, Level)
     (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
     io_lib.format("~s<~s~s>~s~s~s</~s>~s",
         [Indent, StrTag, attrs(Attrs), NewLine,
          xml(Items, [], Options, Level + 1), Indent, StrTag, NewLine])
+
+fn (Tag => [attrs => Attrs, Body], Options, Level)
+    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s~s>~s</~s>~s",
+        [Indent, StrTag, attrs(Attrs), to_str(Body), StrTag, NewLine])
 
 fn (Tag => [items => Items], Options, Level)
     (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
