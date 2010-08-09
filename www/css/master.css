@@ -104,6 +104,10 @@ h3{
  display: inline;
 }
 
+#flattr{
+  margin-left: 10%;
+ }
+
 a{
  text-decoration: none;
  color: #FC0082;
