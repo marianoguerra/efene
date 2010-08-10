@@ -1,5 +1,17 @@
 {% extends "!layout.html" %}
 
+{% block sidebarlogo %}
+<div style="float: right;">
+   <script type="text/javascript">
+    var flattr_url = 'http://marianoguerra.com.ar/efene';
+   </script>
+
+   <script src="http://api.flattr.com/button/load.js" type="text/javascript"></script>
+</div>
+
+{% endblock %}
+
+
 {%- block footer %}
 <div id="disqus_thread"></div>
 <script type="text/javascript">
