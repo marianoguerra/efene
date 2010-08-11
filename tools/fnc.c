@@ -333,12 +333,12 @@ char* str_join(int count, char **strs) {
 		offset++;
 	}
 
-	result[offset] = '\0';
+	result[offset - 1] = '\0';
 	return result;
 }
 
 int main (int argc, char **argv) {
-	int count;
+	int count, is_test;
 	char buffer[STR_BUFFER_SIZE], *extra_args;
 	struct FnOptions* options = parse_options(argc, argv);
 
@@ -372,7 +372,8 @@ int main (int argc, char **argv) {
 
 	assert(count <= STR_BUFFER_SIZE);
 	free(extra_args);
+	is_test = options->is_test;
 	fn_options_delete(options);
 
-	return fn_run(buffer, argv[0], options->is_test);
+	return fn_run(buffer, argv[0], is_test);
 }
