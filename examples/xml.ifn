@@ -15,7 +15,7 @@ run = fn ()
                 attrs => [
                     type => "only attrs"]],
 
-            child2 => "only content",
+            child2 => [body => "only content"],
             emptychild,
             a => [
                 attrs => [
@@ -24,7 +24,7 @@ run = fn ()
                 "google.com"],
             child3 => [
                 items => [
-                    deep => "child of child"]]]]]
+                    deep => [body => "child of child"]]]]]]
 
     io.format("default options:~n~s~n", [fxml.xml(Xml)])
     io.format("new line only:~n~s~n", [fxml.xml(Xml, [new_line])])
@@ -35,19 +35,19 @@ run = fn ()
     show_tag("with content", withcontent => "this is the content")
     show_tag("only attrs", onlyattrs => [attrs => [number => 4, boolean => false]])
     show_tag("both", both => [attrs => [number => 4, boolean => false], "body"])
-    show_tag("only childs", onlychilds=> [items => [number => 4, boolean => false]])
+    show_tag("only childs", onlychilds => [
+        items => [
+            number => [body => 4],
+            boolean => [body => false]]])
+
     show_tag("childs and attrs",
         onlyattrs => [
             attrs => [
                 number => 4,
                 boolean => false],
             items => [
-                child1 => "only content",
-                child2 => [
-                    attrs => [someattr => "some value"]]]])
-
-show_xml = fn (Msg, Xml, Options)
-    io.format("~s:~n  ~s~n~n", [Msg, fxml.xml(Xml)])
+                child1 => [body => "only content"],
+                child2 => [attrs => [someattr => "some value"]]]])
 
 show_tag = fn (Msg, Tag)
-    io.format("~s:~n  ~s~n~n", [Msg, fxml.tag(Tag)])
+    io.format("~s:~n~s~n~n", [Msg, fxml.xml(Tag)])

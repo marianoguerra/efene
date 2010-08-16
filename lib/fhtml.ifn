@@ -1,0 +1,72 @@
+@@moddoc("module with helpers to generate html")
+@@compile(export_all)
+
+input = fn (Type, Id)
+    input(Type, Id, "")
+
+input = fn (Type, Id, Value)
+    input => [
+        attrs => [
+            id    => Id,
+            type  => Type,
+            value => Value],
+        close => none]
+
+input = fn (Type, Id, Value, Name)
+    input => [
+        attrs => [
+            id    => Id,
+            type  => Type,
+            name  => Name,
+            value => Value],
+        close => none]
+
+label = fn (For, Label)
+    label => [attrs => ['for' => For], body=> Label, close => none]
+
+text = fn (Id)
+    text(Id, "")
+
+text = fn (Id, Value)
+    input("text", Id, Value)
+
+text = fn (Id, Value, Name)
+    input("text", Id, Value, Name)
+
+password = fn (Id)
+    password(Id, "")
+
+password = fn (Id, Value)
+    input("password", Id, Value)
+
+password = fn (Id, Value, Name)
+    input("password", Id, Value, Name)
+
+script = fn (Src)
+    script => [attrs => [src => Src]]
+
+css = fn (Path)
+    css(Path, "screen", "utf-8")
+
+css = fn (Path, Media)
+    css(Path, Media, "utf-8")
+
+css = fn (Path, Media, Charset)
+    link => [
+        attrs => [
+            rel     => "stylesheet",
+            href    => Path,
+            type    => "text/css",
+            media   => Media,
+            charset => Charset],
+        close => none]
+
+icon = fn (Path)
+    link => [
+        attrs => [
+            rel  => "shortcut icon",
+            href => Path],
+        close => self]
+
+title = fn (Title)
+    title => Title

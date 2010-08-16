@@ -6,8 +6,11 @@ see examples/xml.ifn for usage examples")
 @public
 @doc("render a dict like data structure to a xml string")
 
-xml = fn (Dct)
+xml = fn (Dct) when is_list(Dct)
     xml(Dct, [], [new_line, indent => 1], 0)
+
+fn (Dct)
+    xml([Dct], [], [new_line, indent => 1], 0)
 
 @public
 @doc("like xml/1 but specifying formatting options")
@@ -27,38 +30,76 @@ fn ([Tag:Tail], Result, Options, Level)
 tag = fn (Tag)
     tag(Tag, [], 0)
 
-tag = fn (Tag => [attrs => Attrs, items => Items], Options, Level)
-    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
-    io_lib.format("~s<~s~s>~s~s~s</~s>~s",
-        [Indent, StrTag, attrs(Attrs), NewLine,
-         xml(Items, [], Options, Level + 1), Indent, StrTag, NewLine])
+@public
+tag = fn (Tag, Options)
+    tag(Tag, Options, 0)
 
-fn (Tag => [attrs => Attrs, Body], Options, Level)
-    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
-    io_lib.format("~s<~s~s>~s</~s>~s",
-        [Indent, StrTag, attrs(Attrs), to_str(Body), StrTag, NewLine])
+tag = fn (Tag => Props, Options, Level)
+    Attrs = get(attrs, Props, nil)
+    Items = get(items, Props, nil)
+    Body  = get(body,  Props, nil)
+    Close = get(close, Props, tag)
+    NewLine = get_new_line(Options)
 
-fn (Tag => [items => Items], Options, Level)
-    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
+    if Items != nil and Body != nil
+        throw(invalid_tag => "items and body can't be in the same tag")
+    else
+        tag(Tag, Attrs, Items, Body, Close, NewLine, Options, Level)
+
+fn (Tag, Options, Level) when is_atom(Tag)
+    tag(Tag => [], Options, Level)
+
+
+tag = fn (Tag, nil, nil, nil, Close, NewLine, Options, Level)
+    (StrTag, Indent) = get_tag_data(Tag, Options, Level)
+
+    switch Close
+        case tag
+            io_lib.format("~s<~s></~s>~s", [Indent, StrTag, StrTag, NewLine])
+        case self
+            io_lib.format("~s<~s />~s", [Indent, StrTag, NewLine])
+        case none
+            io_lib.format("~s<~s>~s", [Indent, StrTag, NewLine])
+
+fn (Tag, nil, nil, Body, _Close, NewLine, Options, Level)
+    (StrTag, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s>~s</~s>~s", [Indent, StrTag, to_str(Body),
+        StrTag, NewLine])
+
+fn (Tag, nil, Items, nil, _Close, NewLine, Options, Level)
+    (StrTag, Indent) = get_tag_data(Tag, Options, Level)
     io_lib.format("~s<~s>~s~s~s</~s>~s",
         [Indent, StrTag, NewLine, xml(Items, [], Options, Level + 1), Indent,
             StrTag, NewLine])
 
-fn (Tag => [attrs => Attrs], Options, Level)
-    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
-    io_lib.format("~s<~s~s></~s>~s", [Indent, StrTag, attrs(Attrs), StrTag, NewLine])
+fn (Tag, Attrs, nil, nil, Close, NewLine, Options, Level)
+    (StrTag, Indent) = get_tag_data(Tag, Options, Level)
 
-fn (Tag => Val, Options, Level)
-    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
-    io_lib.format("~s<~s>~s</~s>~s", [Indent, StrTag, to_str(Val),
-        StrTag, NewLine])
+    switch Close
+        case tag
+            io_lib.format("~s<~s~s></~s>~s", [Indent, StrTag, attrs(Attrs),
+                StrTag, NewLine])
+        case self
+            io_lib.format("~s<~s~s />~s", [Indent, StrTag, attrs(Attrs),
+                NewLine])
+        case none
+            io_lib.format("~s<~s~s>~s", [Indent, StrTag, attrs(Attrs),
+                NewLine])
 
-fn (Tag, Options, Level)
-    (StrTag, NewLine, Indent) = get_tag_data(Tag, Options, Level)
-    io_lib.format("~s<~s></~s>~s", [Indent, StrTag, StrTag, NewLine])
+fn (Tag, Attrs, nil, Body, _Close, NewLine, Options, Level)
+    (StrTag, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s~s>~s</~s>~s",
+        [Indent, StrTag, attrs(Attrs), to_str(Body), StrTag, NewLine])
+
+fn (Tag, Attrs, Items, nil, _Close, NewLine, Options, Level)
+    (StrTag, Indent) = get_tag_data(Tag, Options, Level)
+    io_lib.format("~s<~s~s>~s~s~s</~s>~s",
+        [Indent, StrTag, attrs(Attrs), NewLine,
+         xml(Items, [], Options, Level + 1), Indent, StrTag, NewLine])
+
 
 get_tag_data = fn (Tag, Options, Level)
-    (to_str(Tag), get_new_line(Options), get_indent(Options, Level))
+    (to_str(Tag), get_indent(Options, Level))
 
 is_new_line = fn (Options)
     lists.member(new_line, Options)
@@ -102,3 +143,10 @@ to_str = fn (Val) when is_list(Val)
 fn (Val)
     io_lib.format("~p", [Val])
 
+@public
+get = fn (Attr, Attrs, Default)
+    switch lists.keyfind(Attr, 1, Attrs)
+        case false
+            Default
+        case Attr => Value
+            Value
