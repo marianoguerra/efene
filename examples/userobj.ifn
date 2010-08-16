@@ -1,0 +1,32 @@
+@obj(user) -> (username, mail, password)
+
+@public
+run = fn ()
+    User = user("spongebob", "spongebob@nickelodeon.com", "jellyfish")
+    validate(User)
+    validate(User(setusername, atom))
+    validate(User(setusername, "sp"))
+    validate(User(setusername, "user!"))
+    User1 = User(setusername, "username")
+    validate(User1(setmail, "foo"))
+    validate(User1(setmail, "foo@bar"))
+    validate(User1(setpassword, 42))
+    validate(User1(setpassword, "ft"))
+
+validate = fn (User)
+    Result = obj.validate(User, [
+        username => [
+            validate.string() => "username must be a string",
+            validate.string_larger_than(2) => "username size must be at least 3 characters",
+            validate.match("^[a-z][a-zA-Z0-9_]+$") => "username must be alphanumeric and _ only"],
+        mail => [
+            validate.mail() => "invalid mail format"],
+        password => [
+            validate.string() => "password must be a string",
+            validate.string_larger_than(2) => "password size must be at least 3 characters"]])
+
+    switch Result
+        case ok
+            io.format("valid user ~p~n", [User(to, rec)])
+        case error => Reason
+            io.format("invalid user ~p: ~s~n", [User(to, rec), Reason])
