@@ -1,6 +1,9 @@
 @@moddoc("module with helpers to generate html")
 @@compile(export_all)
 
+str = fn (Xml)
+    fxml.xml(Xml)
+
 input = fn (Type, Id)
     input(Type, Id, "")
 
@@ -23,6 +26,13 @@ input = fn (Type, Id, Value, Name)
 
 label = fn (For, Label)
     label => [attrs => ['for' => For], body=> Label, close => none]
+
+meta = fn (Key, Value)
+    meta => [
+        attrs => [
+            'http-equiv' => Key,
+            content => Value],
+        close => none]
 
 text = fn (Id)
     text(Id, "")
@@ -68,5 +78,181 @@ icon = fn (Path)
             href => Path],
         close => self]
 
-title = fn (Title)
-    title => Title
+a = fn (Src, Body)
+    a(Src, Body, [])
+
+a = fn (Src, Body, Extra)
+    Attrs = [(href => Src):Extra]
+    a => [
+        attrs => Attrs,
+        body => Body,
+        close => self]
+
+ul = fn (Items)
+    list(ul, Items, nil, nil)
+
+ul = fn (Items, ItemExtra)
+    list(ul, Items, ItemExtra, nil)
+
+ul = fn (Items, ItemExtra, Extra)
+    list(ul, Items, ItemExtra, Extra)
+
+ol = fn (Items)
+    list(ol, Items, nil, nil)
+
+ol = fn (Items, ItemExtra)
+    list(ol, Items, ItemExtra, nil)
+
+ol = fn (Items, ItemExtra, Extra)
+    list(ol, Items, ItemExtra, Extra)
+
+list = fn (Tag, Items, ItemExtra, Extra)
+    # receive a one tuple item, two tuple item or any other
+    # and return a two tuple item with the first item and the
+    # second item or nil if not defined
+    Unpack = fn (Item) when is_tuple(Item) and length(Item) == 1
+        (Item, nil)
+    fn (Item) when is_tuple(Item) and length(Item) == 2
+        (First, Second) = Item
+        (First, Second ++ ItemExtra)
+    fn (Item)
+        (Item, nil)
+
+    Lis = for Item in Items
+        (Body, LiExtra) = Unpack(Item)
+        li(Body, LiExtra)
+
+    Tag => [attrs => Extra, items => Lis]
+
+div = fn (Body)
+    cont(div, Body, nil)
+
+div = fn (Body, Extra)
+    cont(div, Body, Extra)
+
+span = fn (Body)
+    cont(span, Body, nil)
+
+span = fn (Body, Extra)
+    cont(span, Body, Extra)
+
+li = fn (Body)
+    tag(li, Body, nil)
+
+li = fn (Body, Extra)
+    tag(li, Body, Extra)
+
+h1 = fn (Body)
+    tag(h1, Body, nil)
+
+h1 = fn (Body, Extra)
+    tag(h1, Body, Extra)
+
+h2 = fn (Body)
+    tag(h2, Body, nil)
+
+h2 = fn (Body, Extra)
+    tag(h2, Body, Extra)
+
+h3 = fn (Body)
+    tag(h3, Body, nil)
+
+h3 = fn (Body, Extra)
+    tag(h3, Body, Extra)
+
+h4 = fn (Body)
+    tag(h4, Body, nil)
+
+h4 = fn (Body, Extra)
+    tag(h4, Body, Extra)
+
+h5 = fn (Body)
+    tag(h5, Body, nil)
+
+h5 = fn (Body, Extra)
+    tag(h5, Body, Extra)
+
+h6 = fn (Body)
+    tag(h6, Body, nil)
+
+h6 = fn (Body, Extra)
+    tag(h6, Body, Extra)
+
+p = fn (Body)
+    tag(p, Body, nil)
+
+p = fn (Body, Extra)
+    tag(p, Body, Extra)
+
+strong = fn (Body)
+    tag(strong, Body, nil)
+
+strong = fn (Body, Extra)
+    tag(strong, Body, Extra)
+
+em = fn (Body)
+    tag(em, Body, nil)
+
+em = fn (Body, Extra)
+    tag(em, Body, Extra)
+
+fieldset = fn (Body)
+    cont(fieldset, Body, nil)
+
+fieldset = fn (Body, Extra)
+    cont(fieldset, Body, Extra)
+
+button = fn (Body)
+    tag(button, Body, nil)
+
+button = fn (Body, Extra)
+    tag(button, Body, Extra)
+
+html = fn (Body)
+    cont(html, Body, nil)
+
+html = fn (Body, Extra)
+    cont(html, Body, Extra)
+
+head = fn (Body)
+    cont(head, Body, nil)
+
+head = fn (Body, Extra)
+    cont(head, Body, Extra)
+
+body = fn (Body)
+    cont(body, Body, nil)
+
+body = fn (Body, Extra)
+    cont(body, Body, Extra)
+
+title = fn (Body)
+    tag(title, Body, nil)
+
+title = fn (Body, Extra)
+    tag(title, Body, Extra)
+
+textarea = fn (Body)
+    tag(textarea, Body, nil)
+
+textarea = fn (Body, Extra)
+    tag(textarea, Body, Extra)
+
+cont = fn (Tag, Body)
+    cont(Tag, Body, nil)
+
+cont = fn (Tag, Body, Attrs)
+    Tag => [
+        attrs => Attrs,
+        items => Body,
+        close => self]
+
+tag = fn (Tag, Body)
+    tag(Tag, Body, nil)
+
+tag = fn (Tag, Body, Attrs)
+    Tag => [
+        attrs => Attrs,
+        body => Body,
+        close => self]
+

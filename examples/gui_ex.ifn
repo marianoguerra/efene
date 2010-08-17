@@ -31,7 +31,17 @@ run = fn ()
 
     newline()
 
-    print(fhtml.title("I'm a title"))
-    print(fhtml.script("js/jquery.js"))
-    print(fhtml.css("style/main.css"))
-    print(fhtml.icon("favico.ico"))
+    Links = for Text in ["welcome", "about", "contact"]
+        fhtml.str(fhtml.a("#", Text,
+            [onclick => io_lib.format("ui.load('~s');", [Text])]))
+
+    T = fhtml
+    print(T.html([
+        T.head([
+            T.meta("content-type", "text/html; charset=utf-8"),
+            T.title("I'm a title"),
+            T.css("style/main.css"),
+            T.icon("favico.ico"),
+            T.script("js/jquery.js")]),
+        T.body([
+            T.ul(Links, [class => "navitem"], [class => "navbar"])])]))

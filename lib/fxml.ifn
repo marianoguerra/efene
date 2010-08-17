@@ -140,6 +140,9 @@ attr = fn (Attr => Value)
 to_str = fn (Val) when is_list(Val)
     Val
 
+fn (Val) when is_atom(Val)
+    atom_to_list(Val)
+
 fn (Val)
     io_lib.format("~p", [Val])
 
