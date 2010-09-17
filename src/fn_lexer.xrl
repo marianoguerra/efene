@@ -21,6 +21,7 @@ Add         = (\+|-)
 Mul         = (\*|//|/|%)
 Comp        = (<|<=|==|===|>=|>|!=|!==)
 Match       = =
+Set         = :=
 
 % list operators
 Concat      = (\+\+|--)
@@ -86,6 +87,7 @@ Rules.
 {Add}                    : make_token(add_op,  TokenLine, TokenChars).
 {Mul}                    : make_token(mul_op,  TokenLine, TokenChars).
 {Match}                  : make_token(match,   TokenLine, TokenChars).
+{Set}                    : make_token(set,     TokenLine, TokenChars).
 
 {Comp}                   : make_token(comp_op, TokenLine, TokenChars).
 
