@@ -1,0 +1,27 @@
+@@moddoc("modulo to manipulate struct data structures")
+
+@public
+@doc("access the value of an attribute in a struct")
+get = fn ((struct, Body), Name)
+    switch lists.keyfind(Name, 1, Body)
+        case false
+            throw(attribute_error =>
+                "struct has no attribute '" ++ atom_to_list(Name) ++ "'")
+        case Name => Value
+            Value
+
+fn (_, _Name)
+    throw(value_error => "value doesn't seem to be a struct")
+
+@public
+@doc("access the value of an attribute in a struct, used internally to display better errors")
+get = fn ((struct, Body), Name, AttrName)
+    switch lists.keyfind(Name, 1, Body)
+        case false
+            throw(attribute_error =>
+                atom_to_list(AttrName) ++ " struct has no attribute '" ++ atom_to_list(Name) ++ "'")
+        case Name => Value
+            Value
+
+fn (_, _Name, AttrName)
+    throw(value_error => atom_to_list(AttrName) ++ " doesn't seem to be a struct")

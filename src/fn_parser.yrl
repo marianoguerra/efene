@@ -11,7 +11,8 @@ Nonterminals
     list_generator list_generators bin_comp rec rec_set rec_new attr_sets
     attr_set binary binary_items binary_item bin_type_def bin_type prefix_op
     attribute for_expr range signed_integer meta_block astify meta_astify attrs
-    fat_arrow_expr struct struct_items struct_item.
+    fat_arrow_expr
+    struct struct_items struct_item struct_get struct_attrs struct_attr.
 
 Terminals
     fn match open close open_block close_block integer float string var char
@@ -20,7 +21,7 @@ Terminals
     mul_op if else when switch case try catch receive after begin open_list
     close_list sep split_op split_def_op dot dotdot dotdotdot arrow larrow
     fatarrow open_bin close_bin attr gattr for in open_meta_block open_oxford
-    close_oxford open_meta_oxford.
+    close_oxford open_meta_oxford obj.
 
 Rootsymbol program.
 
@@ -288,6 +289,7 @@ literal -> astify               : '$1'.
 literal -> meta_astify          : '$1'.
 literal -> begin fn_block       : {block, line('$1'), '$2'}.
 literal -> struct               : '$1'.
+literal -> struct_get           : '$1'.
 
 struct -> open_block struct_items close_block :
     {tuple, line('$1'), [{atom, line('$1'), struct}, '$2']}.
@@ -297,6 +299,13 @@ struct_items -> struct_item : {cons, line('$1'), '$1', {nil, line('$1')}}.
 
 struct_item -> atom split_op literal : {tuple, line('$2'), ['$1', '$3']}.
 struct_item -> string split_op literal : {tuple, line('$2'), ['$1', '$3']}.
+
+struct_get -> obj struct_attrs : struct_get({var, line('$1'), unwrap('$1')}, line('$1'), {atom, line('$1'), unwrap('$1')}, '$2').
+
+struct_attrs -> struct_attr struct_attrs : ['$1'|'$2'].
+struct_attrs -> struct_attr : ['$1'].
+
+struct_attr -> dot atom : unwrap('$2').
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
@@ -543,3 +552,14 @@ normalise_args({return, Args, Return}) ->
     {return, [erl_parse:normalise(Arg) || Arg <- Args], erl_parse:normalise(Return)};
 normalise_args(Args) ->
     [erl_parse:normalise(Arg) || Arg <- Args].
+
+struct_get(Value, _Line, _LastField, []) ->
+    Value;
+
+struct_get(Value, Line, LastField, [Field|Fields]) ->
+    NewValue = {call, Line,
+      {remote, Line, {atom, Line, struct}, {atom, Line, get}},
+      [Value, {atom, Line, Field}, LastField]},
+
+    struct_get(NewValue, Line, {atom, Line, Field}, Fields).
+
