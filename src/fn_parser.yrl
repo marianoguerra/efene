@@ -11,7 +11,7 @@ Nonterminals
     list_generator list_generators bin_comp rec rec_set rec_new attr_sets
     attr_set binary binary_items binary_item bin_type_def bin_type prefix_op
     attribute for_expr range signed_integer meta_block astify meta_astify attrs
-    fat_arrow_expr.
+    fat_arrow_expr struct struct_items struct_item.
 
 Terminals
     fn match open close open_block close_block integer float string var char
@@ -24,7 +24,7 @@ Terminals
 
 Rootsymbol program.
 
-Expect 4.
+Expect 6.
 
 Left 50 arrow.
 Left 100 bool_orelse_op.
@@ -287,6 +287,16 @@ literal -> meta_block           : '$1'.
 literal -> astify               : '$1'.
 literal -> meta_astify          : '$1'.
 literal -> begin fn_block       : {block, line('$1'), '$2'}.
+literal -> struct               : '$1'.
+
+struct -> open_block struct_items close_block :
+    {tuple, line('$1'), [{atom, line('$1'), struct}, '$2']}.
+
+struct_items -> struct_item sep struct_items : {cons, line('$2'), '$1', '$3'}.
+struct_items -> struct_item : {cons, line('$1'), '$1', {nil, line('$1')}}.
+
+struct_item -> atom split_op literal : {tuple, line('$2'), ['$1', '$3']}.
+struct_item -> string split_op literal : {tuple, line('$2'), ['$1', '$3']}.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
