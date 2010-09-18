@@ -1,55 +1,138 @@
 @@moddoc("modulo to manipulate struct data structures")
 
+not_found = fn (Struct, Name)
+    not_found(Struct, struct, Name)
+
+not_found = fn (_Struct, AttrName, Name) when is_atom(Name)
+    throw(attribute_error =>
+        atom_to_list(AttrName) ++ " has no attribute '" ++ atom_to_list(Name) ++ "'")
+
+fn (_Struct, AttrName, Name) when is_list(Name)
+    throw(attribute_error =>
+        atom_to_list(AttrName) ++ " has no attribute '" ++ Name ++ "'")
+
+get_found = fn (_Struct, _Name, Value)
+    Value
+
+get_found = fn (_Struct, _AttrName, _Name, Value)
+    Value
+
+set_found = fn (Value)
+    fn ((struct, Body), Name, _OldValue)
+        (struct, lists.keyreplace(Name, 1, Body, Name => Value))
+
+set_found_internal = fn (Value)
+    fn ((struct, Body), _AttrName, Name, _OldValue)
+        (struct, lists.keyreplace(Name, 1, Body, Name => Value))
+
 @public
 @doc("access the value of an attribute in a struct")
-get = fn ((struct, Body), Name)
-    switch lists.keyfind(Name, 1, Body)
-        case false
-            StrName = atom_to_list(Name)
-            switch lists.keyfind(StrName, 1, Body)
-                case false
-                    throw(attribute_error =>
-                        "struct has no attribute '" ++ atom_to_list(Name) ++ "'")
-                case _ => Value
-                    Value
-        case Name => Value
-            Value
-
-fn (_, _Name)
-    throw(value_error => "value doesn't seem to be a struct")
+get = fn (Struct, Name)
+    do(Struct, Name, fn get_found:3)
 
 @public
 @doc("access the value of an attribute in a struct, used internally to display better errors")
-get = fn ((struct, Body), Name, AttrName)
-    switch lists.keyfind(Name, 1, Body)
-        case false
-            StrName = atom_to_list(Name)
-            switch lists.keyfind(StrName, 1, Body)
-                case false
-                    throw(attribute_error =>
-                        atom_to_list(AttrName) ++ " struct has no attribute '" ++ atom_to_list(Name) ++ "'")
-                case _ => Value
-                    Value
-        case Name => Value
-            Value
+get = fn (Struct, AttrName, Name)
+    do(Struct, AttrName, Name, fn get_found:4, fn not_found:3)
 
-fn (_, _Name, AttrName)
-    throw(value_error => atom_to_list(AttrName) ++ " doesn't seem to be a struct")
+@public
+@doc("replace the value of an attribute in a struct")
+set = fn (Struct, Name, Value)
+    do(Struct, Name, set_found(Value))
 
 @public
 @doc("replace the value of an attribute in a struct, used internally to display better errors")
-set = fn ((struct, Body), Name, AttrName, Value)
+set = fn (Struct, AttrName, Name, Value)
+    do(Struct, AttrName, Name, set_found_internal(Value), fn not_found:2)
+
+@public
+@doc("return true if the struct has the given attribute as atom or string,
+false otherwise.
+
+throw an exception if the given parameter is not a valid struct")
+has = fn (Struct, Name)
+    Found = fn (_Struct, _Name, _Value)
+        true
+
+    NotFound = fn (_Struct, _Name)
+        false
+
+    do(Struct, Name, Found, NotFound)
+
+@public
+@doc("return all the field names of a struct.
+
+the types are preserved, so if a struct has some string keys (posible if
+decoding json) then those keys will be returned as strings.
+
+it's your job to check that. This is done this way to avoid creating atoms
+")
+fields = fn ((struct, Body))
+    [Key for (Key, _Val) in Body]
+
+fn (_)
+    throw(value_error => "value doesn't seem to be a struct")
+
+@public
+@doc("look for an attribute and call a function when found")
+do = fn (Struct, Name, FoundFn)
+    do(Struct, Name, FoundFn, fn not_found:2)
+
+@public
+@doc("look for an attribute and call a function when found, and other if not
+found.
+
+if *Name* is an atom and it's not found it will convert the atom to a string
+and check again using the string as key.
+
+if *Name* is a string it will only check for the key a string since atoms
+aren't garbage collected we don't want to be creating atoms for every attribute
+lookup.
+
+the FoundFn function will be called with the following parameters:
+ * Struct: the struct passed as parameter
+ * Name: the name of the attribute as passed to this function (atom or string)
+ * Value: the found value of the attribute
+
+the NotFoundFn function will be called with the following parameters:
+ * Struct: the struct passed as parameter
+ * Name: the name of the attribute as passed to this function (atom or string)
+")
+
+do = fn ((struct, Body)=Struct, Name, FoundFn, NotFoundFn)
     switch lists.keyfind(Name, 1, Body)
         case false
-            StrName = atom_to_list(Name)
-            switch lists.keyfind(StrName, 1, Body)
-                case false
-                    throw(attribute_error =>
-                        atom_to_list(AttrName) ++ " struct has no attribute '" ++ atom_to_list(Name) ++ "'")
-                case _
-                    (struct, lists.keyreplace(StrName, 1, Body, StrName => Value))
-        case _
-            (struct, lists.keyreplace(Name, 1, Body, Name => Value))
+            if is_atom(Name)
+                StrName = atom_to_list(Name)
+                switch lists.keyfind(StrName, 1, Body)
+                    case false
+                        NotFoundFn(Struct, Name)
+                    case _ => Value
+                        FoundFn(Struct, Name, Value)
+            else
+                NotFoundFn(Struct, Name)
+        case _ => Value
+            FoundFn(Struct, Name, Value)
 
-fn (_, _Name, AttrName, _Value)
+fn (_, _Name, _FoundFn, _NotFoundFn)
+    throw(value_error => "value doesn't seem to be a struct")
+
+@public
+@doc("same as do/4 but used internally to display better errors")
+do = fn ((struct, Body)=Struct, AttrName, Name, FoundFn, NotFoundFn)
+    switch lists.keyfind(Name, 1, Body)
+        case false
+            if is_atom(Name)
+                StrName = atom_to_list(Name)
+                switch lists.keyfind(StrName, 1, Body)
+                    case false
+                        NotFoundFn(Struct, AttrName, Name)
+                    case _ => Value
+                        FoundFn(Struct, AttrName, Name, Value)
+            else
+                NotFoundFn(Struct, AttrName, Name)
+        case _ => Value
+            FoundFn(Struct, AttrName, Name, Value)
+
+fn (_, AttrName, _Name, _FoundFn, _NotFoundFn)
     throw(value_error => atom_to_list(AttrName) ++ " doesn't seem to be a struct")

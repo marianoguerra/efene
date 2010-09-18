@@ -565,7 +565,7 @@ struct_get(Value, _Line, _LastField, []) ->
 struct_get(Value, Line, LastField, [Field|Fields]) ->
     NewValue = {call, Line,
       {remote, Line, {atom, Line, struct}, {atom, Line, get}},
-      [Value, {atom, Line, Field}, LastField]},
+      [Value, LastField, {atom, Line, Field}]},
 
     struct_get(NewValue, Line, {atom, Line, Field}, Fields).
 
@@ -581,11 +581,11 @@ call_get(Value, LastField, Field, Line) ->
     {call, Line,
         {remote, Line,
             {atom, Line, struct}, {atom, Line, get}},
-            [Value, {atom, Line, Field}, LastField]}.
+            [Value, LastField, {atom, Line, Field}]}.
 
 call_set(Value, LastField, Field, Line, Literal) ->
     {call, Line,
         {remote, Line,
             {atom, Line, struct}, {atom, Line, set}},
-            [Value, {atom, Line, Field}, LastField, Literal]}.
+            [Value, LastField, {atom, Line, Field}, Literal]}.
 
