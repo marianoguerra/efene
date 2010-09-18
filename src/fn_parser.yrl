@@ -239,6 +239,8 @@ catch_pattern -> catch atom literal fn_block:
         false ->
             fail(line('$1'), "'throw', 'error' or 'exit' expected on catch got:", AtomName)
     end.
+catch_pattern -> catch var fn_block:
+    {clause, line('$1'), [{tuple, line('$1'), [{atom, line('$1'), throw}, '$2', {var, line('$1'), '_'}]}], [], '$3'}.
 catch_pattern -> catch var literal fn_block:
     {clause, line('$1'), [{tuple, line('$1'), ['$2', '$3', {var, line('$1'), '_'}]}], [], '$4'}.
 catch_pattern -> catch open var literal close fn_block:
