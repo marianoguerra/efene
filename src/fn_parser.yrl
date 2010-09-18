@@ -11,8 +11,8 @@ Nonterminals
     list_generator list_generators bin_comp rec rec_set rec_new attr_sets
     attr_set binary binary_items binary_item bin_type_def bin_type prefix_op
     attribute for_expr range signed_integer meta_block astify meta_astify attrs
-    fat_arrow_expr struct struct_items struct_item struct_get struct_attrs
-    struct_attr.
+    fat_arrow_expr struct struct_items struct_item struct_get struct_set
+    struct_attrs struct_attr struct_call.
 
 Terminals
     fn match set open close open_block close_block integer float string var
@@ -291,7 +291,13 @@ literal -> astify               : '$1'.
 literal -> meta_astify          : '$1'.
 literal -> begin fn_block       : {block, line('$1'), '$2'}.
 literal -> struct               : '$1'.
-literal -> struct_get           : '$1'.
+literal -> struct_get           :
+    {Var, Line, Last, Attrs} = '$1',
+    struct_get(Var, Line, Last, Attrs).
+literal -> struct_set           :
+    {Var, Line, Last, Attrs, Value} = '$1',
+    struct_set(Var, Line, Last, Attrs, Value).
+literal -> struct_call          : '$1'.
 
 struct -> open_block struct_items close_block :
     {tuple, line('$1'), [{atom, line('$1'), struct}, '$2']}.
@@ -303,17 +309,24 @@ struct_item -> atom split_op literal : {tuple, line('$2'), ['$1', '$3']}.
 struct_item -> string split_op literal : {tuple, line('$2'), ['$1', '$3']}.
 
 struct_get -> obj struct_attrs :
-     struct_get({var, line('$1'), unwrap('$1')}, line('$1'),
-        {atom, line('$1'), unwrap('$1')}, '$2').
+     {{var, line('$1'), unwrap('$1')}, line('$1'),
+        {atom, line('$1'), unwrap('$1')}, '$2'}.
 
-struct_get -> obj struct_attrs set literal :
-    struct_set({var, line('$1'), unwrap('$1')}, line('$1'),
-        {atom, line('$1'), unwrap('$1')}, '$2', '$4').
+struct_set -> obj struct_attrs set literal :
+    {{var, line('$1'), unwrap('$1')}, line('$1'),
+        {atom, line('$1'), unwrap('$1')}, '$2', '$4'}.
 
 struct_attrs -> struct_attr struct_attrs : ['$1'|'$2'].
 struct_attrs -> struct_attr : ['$1'].
 
 struct_attr -> dot atom : unwrap('$2').
+
+struct_call -> struct_get fn_parameters :
+    {Var, Line, Last, Attrs} = '$1',
+    Get = struct_get(Var, Line, Last, Attrs),
+    Parent = lists:sublist(Attrs, length(Attrs) - 1),
+    GetParent = struct_get(Var, Line, Last, Parent),
+    {call, Line, Get, [GetParent|'$2']}.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
