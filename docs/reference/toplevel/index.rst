@@ -8,7 +8,6 @@ Top Level expressions
 
    function
    record
-   object
    globalattrs
    localattrs
    type

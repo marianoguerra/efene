@@ -15,7 +15,6 @@ Statements
    block
    arrow
    literals
-   object
    metaeval
    astify
    metaevalandastify

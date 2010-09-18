@@ -79,6 +79,16 @@ pre_cleanup([{fatarrow, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum)
 pre_cleanup([{fatarrow, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
     pre_cleanup(Tokens, [Token|Accum]);
 
+pre_cleanup([{split_op, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{split_op, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{open_block, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{open_block, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
 pre_cleanup([{open_list, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
     pre_cleanup(Tokens, [Token|Accum]);
 pre_cleanup([{open_list, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
