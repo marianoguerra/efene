@@ -5,8 +5,13 @@
 get = fn ((struct, Body), Name)
     switch lists.keyfind(Name, 1, Body)
         case false
-            throw(attribute_error =>
-                "struct has no attribute '" ++ atom_to_list(Name) ++ "'")
+            StrName = atom_to_list(Name)
+            switch lists.keyfind(StrName, 1, Body)
+                case false
+                    throw(attribute_error =>
+                        "struct has no attribute '" ++ atom_to_list(Name) ++ "'")
+                case _ => Value
+                    Value
         case Name => Value
             Value
 
@@ -18,8 +23,13 @@ fn (_, _Name)
 get = fn ((struct, Body), Name, AttrName)
     switch lists.keyfind(Name, 1, Body)
         case false
-            throw(attribute_error =>
-                atom_to_list(AttrName) ++ " struct has no attribute '" ++ atom_to_list(Name) ++ "'")
+            StrName = atom_to_list(Name)
+            switch lists.keyfind(StrName, 1, Body)
+                case false
+                    throw(attribute_error =>
+                        atom_to_list(AttrName) ++ " struct has no attribute '" ++ atom_to_list(Name) ++ "'")
+                case _ => Value
+                    Value
         case Name => Value
             Value
 
@@ -31,8 +41,13 @@ fn (_, _Name, AttrName)
 set = fn ((struct, Body), Name, AttrName, Value)
     switch lists.keyfind(Name, 1, Body)
         case false
-            throw(attribute_error =>
-                atom_to_list(AttrName) ++ " struct has no attribute '" ++ atom_to_list(Name) ++ "'")
+            StrName = atom_to_list(Name)
+            switch lists.keyfind(StrName, 1, Body)
+                case false
+                    throw(attribute_error =>
+                        atom_to_list(AttrName) ++ " struct has no attribute '" ++ atom_to_list(Name) ++ "'")
+                case _
+                    (struct, lists.keyreplace(StrName, 1, Body, StrName => Value))
         case _
             (struct, lists.keyreplace(Name, 1, Body, Name => Value))
 
