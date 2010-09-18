@@ -47,14 +47,22 @@ set = fn (Struct, AttrName, Name, Value)
 
 @public
 @doc("return a pretty representation of a struct")
-format = fn ((struct, Body))
+format = fn (Struct)
+    format(Struct, false)
+
+format = fn ((struct, Body), ShowFuns)
     io_lib.format("<struct~s/>",
-        [[io_lib.format(" ~p=~p", [Key, Val]) for Key => Val in Body]])
+        [[io_lib.format(" ~p=~p", [Key, Val]) for Key => Val in Body if not is_function(Val) or ShowFuns]])
 
 @public
 @doc("pretty print a struct")
-print = fn ((struct, _Body)=Struct)
-    io.format("~s~n", [format(Struct)])
+print = fn (Struct)
+    print(Struct, false)
+
+@public
+@doc("pretty print a struct")
+print = fn (Struct, ShowFuns)
+    io.format("~s~n", [format(Struct, ShowFuns)])
 
 @public
 @doc("return true if the struct has the given attribute as atom or string,

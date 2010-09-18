@@ -1,0 +1,22 @@
+
+@public
+present = fn (Self)
+    io.format("Hi!, I'm ~s ~s, my email is ~s~n",
+        [@Self.firstname, @Self.lastname, @Self.email])
+
+@public
+new = fn (Firstname, Lastname, Email)
+    New = {
+        firstname: Firstname,
+        lastname: Lastname,
+        email: Email,
+        show: fn struct.print:1,
+        present: fn present:1}
+
+    New
+
+@public
+run = fn ()
+    P = new("mariano", "guerra", "foo@bar.com")
+    @P.show()
+    @P.present()
