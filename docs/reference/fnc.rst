@@ -63,6 +63,39 @@ programs using *fnc*::
         # run the program using fnc
         fnc -r mymodule run
 
+Adding paths to look for modules
+::::::::::::::::::::::::::::::::
+
+When you start a program or start the shell you can instruct efene to add some
+extra paths to look for modules.
+
+To do this there are two options that add paths:
+
+*-a <path>*
+        append the path to the path list
+
+*-p <path>*
+        prepend the path to the path list
+
+An example of this, imagine you have a directory with you modules in /home/user/lib
+and you want to start the shell with that path so you can access those modules::
+
+        fnc -s -a /home/user/lib
+
+Now imagine that in /home/user/lib you have a newer version of a module that is
+already available in the path where erlang looks for modules.
+
+Adding the path to the end will make the other module to load instead of the one located at
+/home/user/lib.
+
+To load your version first you have to prepend your module (insert at the beggining)::
+
+        fnc -s -p /home/user/lib
+
+You can use this options as much as you need for example::
+
+        fnc -r server start -p /home/user/lib -a mods -p libs -a modules
+
 Transform a module to erlang
 ::::::::::::::::::::::::::::
 

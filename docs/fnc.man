@@ -98,6 +98,53 @@ erlc mymodule.erl
 fnc \-r mymodule run
 .ft P
 .fi
+.SH Adding paths to look for modules
+.sp
+When you start a program or start the shell you can instruct efene to add some
+extra paths to look for modules.
+.sp
+To do this there are two options that add paths:
+.INDENT 0.0
+.TP
+.B \fI\-a <path>\fP
+.sp
+append the path to the path list
+.TP
+.B \fI\-p <path>\fP
+.sp
+prepend the path to the path list
+.UNINDENT
+.sp
+An example of this, imagine you have a directory with you modules in /home/user/lib
+and you want to start the shell with that path so you can access those modules:
+.sp
+.nf
+.ft C
+fnc \-s \-a /home/user/lib
+.ft P
+.fi
+.sp
+Now imagine that in /home/user/lib you have a newer version of a module that is
+already available in the path where erlang looks for modules.
+.sp
+Adding the path to the end will make the other module to load instead of the one located at
+/home/user/lib.
+.sp
+To load your version first you have to prepend your module (insert at the beggining):
+.sp
+.nf
+.ft C
+fnc \-s \-p /home/user/lib
+.ft P
+.fi
+.sp
+You can use this options as much as you need for example:
+.sp
+.nf
+.ft C
+fnc \-r server start \-p /home/user/lib \-a mods \-p libs \-a modules
+.ft P
+.fi
 .SH Transform a module to erlang
 .sp
 To transform an efene or ifene module to erlang source code run:
