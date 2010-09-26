@@ -51,8 +51,14 @@ format = fn (Struct)
     format(Struct, false)
 
 format = fn ((struct, Body), ShowFuns)
-    io_lib.format("<struct~s/>",
-        [[io_lib.format(" ~p=~p", [Key, Val]) for Key => Val in Body if not is_function(Val) or ShowFuns]])
+    Items = for Key => Val in Body if not is_function(Val) or ShowFuns
+        if schema.is_object(Val)
+            io_lib.format("~p: ~s, ", [Key, format(Val, ShowFuns)])
+        else
+            io_lib.format("~p: ~p, ", [Key, Val])
+
+    Items1 = lists.flatten(Items)
+    io_lib.format("{~s}", [lists.sublist(Items1, length(Items1) - 2)])
 
 @public
 @doc("pretty print a struct")
