@@ -12,7 +12,8 @@
 
 #include "fnc.h"
 
-#define STR_BUFFER_SIZE 512
+#define STR_BUFFER_SIZE 2048
+#define PATHS_SIZE 512
 
 // copy the path to efene from the environment variable FNPATH if available
 // if not found return NULL
@@ -126,10 +127,6 @@ int fn_run(const char *args, char *argv0, int is_test) {
 	exit(status);
 }
 
-void run_shell(char *argv0, int is_test) {
-	exit(fn_run("fn run shell", argv0, is_test));
-}
-
 struct FnOptions* fn_options_new() {
 	struct FnOptions* options = (struct FnOptions*) malloc(sizeof(struct FnOptions));
 
@@ -140,6 +137,10 @@ struct FnOptions* fn_options_new() {
 	options->output_type = NULL;
 	options->mode = '?';
 	options->is_test = 0;
+	options->appends  = (char*) malloc(sizeof(char) * PATHS_SIZE);
+	options->prepends = (char*) malloc(sizeof(char) * PATHS_SIZE);
+	options->appends[0]  = '\0';
+	options->prepends[0] = '\0';
 
 	return options;
 }
@@ -169,6 +170,8 @@ void fn_options_delete(struct FnOptions* options) {
 			free(options->output_type);
 		}
 
+		free(options->appends);
+		free(options->prepends);
 		free(options);
 	}
 }
@@ -250,12 +253,36 @@ void fn_options_copy_extra_args(struct FnOptions* options, int optind, int argc,
 	}
 }
 
+void set_mode(struct FnOptions *options, char new_mode) {
+	if (options->mode != '?') {
+		fprintf(stderr, "warning! overriding %c flag with %c flag\n", options->mode, new_mode);
+	}
+
+	options->mode = new_mode;
+}
+
 struct FnOptions* parse_options (int argc, char **argv) {
 	int c;
 	struct FnOptions* options = fn_options_new();
 
-	while ((c = getopt (argc, argv, "o:ht:sTr")) != -1) {
+	while ((c = getopt (argc, argv, "o:ht:sTra:p:")) != -1) {
 		switch (c) {
+			case 'a':
+				if (options->appends[0] == '\0') {
+					strcat(options->appends, " -pa");
+				}
+
+				strcat(options->appends, " ");
+				strncat(options->appends, optarg, PATHS_SIZE);
+				break;
+			case 'p':
+				if (options->prepends[0] == '\0') {
+					strcat(options->prepends, " -pz");
+				}
+
+				strcat(options->prepends, " ");
+				strncat(options->prepends, optarg, PATHS_SIZE);
+				break;
 			case 'o':
 				if (fn_options_copy_output_path(options, optarg) == 0) {
 					fprintf(stderr, "error copying output path\n");
@@ -269,7 +296,7 @@ struct FnOptions* parse_options (int argc, char **argv) {
 				options->is_test = 1;
 				break;
 			case 'r':
-				options->mode = 'r';
+				set_mode(options, 'r');
 				break;
 			case 't':
 				if (fn_options_copy_output_type(options, optarg) == 0) {
@@ -278,8 +305,8 @@ struct FnOptions* parse_options (int argc, char **argv) {
 
 				break;
 			case 's':
-				run_shell(argv[0], options->is_test);
-				exit(EXIT_SUCCESS);
+				set_mode(options, 's');
+				break;
 			case '?':
 				if (optopt == 'o') {
 					fprintf(stderr, "output path option requires an argument\n");
@@ -342,36 +369,44 @@ int main (int argc, char **argv) {
 	char buffer[STR_BUFFER_SIZE], *extra_args;
 	struct FnOptions* options = parse_options(argc, argv);
 
-	if (options->files_num == 0) {
-		fn_options_delete(options);
-		fprintf(stderr, "at least one extra argument required\n");
-		return EXIT_FAILURE;
+	if (options->mode == 's') {
+		count = snprintf(buffer, STR_BUFFER_SIZE, "fn run shell%s%s",
+				options->appends, options->prepends);
 	}
-
-	extra_args = str_join(options->files_num, options->files);
-
-	if (options->mode == 'r') {
-		if (options->files_num < 2) {
-			fprintf(stderr, "at least two arguments required, got %d\n",
-					options->files_num);
-			fprintf(stderr, " -r module function [arguments*]\n");
-			fprintf(stderr, " -r module function [arguments*]\n");
+	else {
+		if (options->files_num == 0) {
+			fn_options_delete(options);
+			fprintf(stderr, "at least one extra argument required\n");
 			return EXIT_FAILURE;
 		}
 
-		count = snprintf(buffer, STR_BUFFER_SIZE, "%s", extra_args);
-	}
-	else if (strcmp(options->output_type, "beam") == 0) {
-		count = snprintf(buffer, STR_BUFFER_SIZE, "fn run %s \"%s\" %s",
-				options->output_type, options->output_path, extra_args);
-	}
-	else {
-		count = snprintf(buffer, STR_BUFFER_SIZE, "fn run %s %s",
-				options->output_type, extra_args);
+		extra_args = str_join(options->files_num, options->files);
+
+		if (options->mode == 'r') {
+			if (options->files_num < 2) {
+				fprintf(stderr, "at least two arguments required, got %d\n",
+						options->files_num);
+				fprintf(stderr, " -r module function [arguments*]\n");
+				fprintf(stderr, " -r module function [arguments*]\n");
+				return EXIT_FAILURE;
+			}
+
+			count = snprintf(buffer, STR_BUFFER_SIZE, "%s%s%s", extra_args,
+					options->appends, options->prepends);
+		}
+		else if (strcmp(options->output_type, "beam") == 0) {
+			count = snprintf(buffer, STR_BUFFER_SIZE, "fn run %s \"%s\" %s",
+					options->output_type, options->output_path, extra_args);
+		}
+		else {
+			count = snprintf(buffer, STR_BUFFER_SIZE, "fn run %s %s",
+					options->output_type, extra_args);
+		}
+
+		free(extra_args);
 	}
 
 	assert(count <= STR_BUFFER_SIZE);
-	free(extra_args);
 	is_test = options->is_test;
 	fn_options_delete(options);
 

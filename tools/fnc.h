@@ -9,6 +9,8 @@ struct FnOptions {
 	char *output_type;
 	char mode;
 	int is_test;
+	char *appends;
+	char *prepends;
 };
 
 #endif
