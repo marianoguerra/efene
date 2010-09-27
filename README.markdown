@@ -1,17 +1,19 @@
-# efene git
+# Efene
 
-efene is a programming language that runs on the erlang virtual machine.
+Efene is a programming language that runs on the erlang virtual machine.
 
-the idea is to provide an alternative syntax to erlang that is most suitable
-for people coming from languages like Java, C, C++, C#, Javascript.
+the idea is to provide an alternative syntax to Erlang that is most suitable
+for people coming from languages like Java, C, C++, C#, Javascript, or Python.
 
-the language is almost 100% compatible with erlang (and will be), the compiler
-allows to translate an efene source file into a readable erlang one or compile it directly to bytecode.
+Efene comes in two language dialects: Efene (Javascript style) and Ifene (Python style).
+
+The language is almost 100% compatible with Erlang (and will be), the compiler
+allows to translate an Efene source file into a readable Erlang one or compile it directly to BEAM bytecode.
 It also adds some syntactic sugar in some places to make some tasks easier.
 
-to see how it looks you can go to the [examples dir](http://github.com/marianoguerra/efene/tree/master/examples/)
+To see how it looks you can go to the [examples](http://github.com/marianoguerra/efene/tree/master/examples/) dir.
 
-## fast! show me an example!
+## Fast! Show me an example!
 
 ### efene (hello.fn)
 <pre>
@@ -62,7 +64,7 @@ fnc -r hello run
 </code>
 </pre>
 
-## that was simple, a more complex one!
+## That was simple, a more complex one!
 
 ### efene (demo.fn)
 <pre>
@@ -301,31 +303,40 @@ fnc -r demo run
 
 ## Participate
 
-a mailing list is available at [librelist](http://librelist.com) just send a mail to efene@librelist.com to subscribe.
+A mailing-list is available at [librelist](http://librelist.com) just send a mail to [efene@librelist.com](efene@librelist.com) to subscribe.
 
-as first mail you may send a hello world program in efene and present yourself by saying your name, where you are, how did you heard about efene and anything else you would like to say.
+As first mail you may send a hello world program in Efene and present yourself by saying your name, where you are, how did you heard about Efene and anything else you would like to say.
 
-## Build instructions
+## Quick build instructions
 
-### clone the repository with the latest code
-git clone git://github.com/marianoguerra/efene.git
+    $ git clone git://github.com/marianoguerra/efene.git
+    $ cd efene
+    $ ./build.sh
 
-### go to the source directory
-cd efene/src/
+## General build instructions
 
-### build the binaries
-./build.sh
+The build instructions create the Efene compiler, compile the Efene source and some libraries. To compile Efene source code, a binary of `fnc` (the Efene compiler) is provided for Linux (32 bits) and Windows. If you are on different OSor architecture (e.g. OSX) you first will need to compile `fnc` under `./tools` for your needs.
 
-a binary of fnc is provided for linux (32 bits) if you are on other OS or architecture you will need the go programming language compilers installed and set up.
+    $ git clone git://github.com/marianoguerra/efene.git
+    $ cd efene
+    $ pushd tools ; make ; popd
+    $ pushd src ; ./build.sh ; popd
+    $ pushd lib ; ./build.sh ; popd
 
-### go to the examples folder
-cd ../examples/
+## Examples
 
-### build the examples
-./build.sh
+Additionally you can build and run the examples:
 
-### run the examples
-./run.sh
+    $ cd examples
+    $ ./build.sh
+    $ ./run.sh
+
+## Requirements
+
+To create the Efene compiler you will need a C compiler like GCC or LLVM-GCC. For the main purpose you will need any recent Erlang/OTP release.
+
+* Erlang
+* (GCC or LLVM-GCC)
 
 ## Useful links
 
@@ -334,6 +345,6 @@ cd ../examples/
 * [Documentation](http://marianoguerra.com.ar/efene/docs)
 * [Tutorial](http://marianoguerra.com.ar/efene/tutorial)
 * [Blog](http://efene.tumblr.com)
-* [Central repo](http://github.com/marianoguerra/efene) (fork this one)
+* [Central git repo](http://github.com/marianoguerra/efene) (fork this one)
 * [Tracker](http://github.com/marianoguerra/efene/issues)
 * [Rosetta code page](http://rosettacode.org/wiki/Efene)

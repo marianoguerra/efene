@@ -10,7 +10,3 @@ erlc fn_meta.erl
 move *.beam ../ebin
 del fn_lexer.erl
 del fn_parser.erl
-cd ../lib
-./build.bat
-cd ../src
-

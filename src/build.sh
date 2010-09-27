@@ -11,7 +11,3 @@ erlc fn_meta.erl
 mv *.beam ../ebin
 rm fn_lexer.erl
 rm fn_parser.erl
-cd ../lib
-./build.sh
-cd ../src
-
