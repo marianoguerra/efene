@@ -1,0 +1,57 @@
+
+check = fn (Expr, Repr)
+    Format = lists.flatten(fio.format(Expr))
+
+    try
+        Format = Repr
+        io.format("ok: ~s = ~s~n", [Format, Repr])
+    catch error _
+        io.format("error: ~s != ~s~n", [Format, Repr])
+
+test_simple = fn ()
+    check(1, "1")
+    check(42, "42")
+    check(1.2, "1.2")
+
+    check((,), "(,)")
+    check((1,), "(1,)")
+    check((1, 2), "(1, 2)")
+    check((1.2, 2, false), "(1.2, 2, false)")
+
+    check([], "[]")
+    check([1], "[1]")
+    check([1, 2], "[1, 2]")
+    check([1.2, 2, false], "[1.2, 2, false]")
+
+    check({u: 1}, "{u: 1}")
+    check({u: 1, d: 1.2}, "{u: 1, d: 1.2}")
+    check({u: 1, d: 1.2, t: tres}, "{u: 1, d: 1.2, t: tres}")
+
+test_nested = fn ()
+    check(((,),), "((,),)")
+    check(((1,),), "((1,),)")
+    check(((1, 2),), "((1, 2),)")
+    check(((1, 2), (,)), "((1, 2), (,))")
+
+    check([[]], "[[]]")
+    check([[1]], "[[1]]")
+    check([[1], 2], "[[1], 2]")
+    check([[1], [[2]]], "[[1], [[2]]]")
+
+    check({u: 1, d: {t: foo}}, "{u: 1, d: {t: foo}}")
+    check({z: {u: 1, d: {t: foo}}}, "{z: {u: 1, d: {t: foo}}}")
+
+test_nested_mixed = fn ()
+    check(([],), "([],)")
+    check(([(,)],), "([(,)],)")
+    check(([([],)],), "([([],)],)")
+    check(([([],[])],[]), "([([], [])], [])")
+    check(([([1],[1.2])],[false]), "([([1], [1.2])], [false])")
+
+    check({u: 1, d: [1.2], t: (tres,)}, "{u: 1, d: [1.2], t: (tres,)}")
+
+@public
+run = fn ()
+    test_simple()
+    test_nested()
+    test_nested_mixed()
