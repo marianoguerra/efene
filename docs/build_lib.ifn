@@ -1,6 +1,6 @@
 
 modules = fn ()
-    [mod, rest, ast, lst, dct, struct]
+    [ast, dct, fio, lst, mod, rest, struct]
 
 build_doc = fn (Mod)
     Path = "lib/" ++ atom_to_list(Mod) ++ ".rst"
