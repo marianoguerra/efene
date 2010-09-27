@@ -111,6 +111,12 @@ list_comp() ->
     tu:test_ast("[(A, C) for A in B if A > 0 for C in D if C > A]",
         "[{A, C} || A <- B, A > 0, C <- D, C > A]").
 
+bin_comp() ->
+    tu:test_ast("<[ <[A]> for <[A]> <- B]>", "<< <<A>> || <<A>> <= B>>"),
+    tu:test_ast("<[ <[(X + Y)]> for <[X]> <- <[1,2,3,4]> for <[Y]> <- <[1,2]> ]>",
+        "<< <<(X+Y)>> || <<X>> <= <<1,2,3,4>>, <<Y>> <= <<1,2>> >>"),
+    ok.
+
 records() ->
     tu:test_ast("a.B[c]", "B#a.c"),
     tu:test_ast("a[,]", "#a{}"),
@@ -144,6 +150,7 @@ all() ->
     tu:test(?MODULE, tuples),
     tu:test(?MODULE, farity),
     tu:test(?MODULE, list_comp),
+    tu:test(?MODULE, bin_comp),
     tu:test(?MODULE, records),
     tu:test(?MODULE, binaries),
     ok.
