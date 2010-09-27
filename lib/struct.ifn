@@ -64,7 +64,7 @@ format = fn ((struct, Body), ShowFuns)
         if schema.is_object(Val)
             io_lib.format("~p: ~s, ", [Key, format(Val, ShowFuns)])
         else
-            io_lib.format("~p: ~p, ", [Key, Val])
+            io_lib.format("~p: ~s, ", [Key, fio.format(Val)])
 
     Items1 = lists.flatten(Items)
     io_lib.format("{~s}", [lists.sublist(Items1, length(Items1) - 2)])
