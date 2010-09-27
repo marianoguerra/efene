@@ -1,4 +1,5 @@
-@@moddoc("modulo to manipulate struct data structures")
+@@license("New BSD License, part of efene, see LICENSE for details")
+@@moddoc("module to manipulate struct data structures")
 
 not_found = fn (Struct, Name)
     not_found(Struct, struct, Name)
@@ -34,6 +35,14 @@ get = fn (Struct, Name)
 @doc("access the value of an attribute in a struct, used internally to display better errors")
 get = fn (Struct, AttrName, Name)
     do(Struct, AttrName, Name, fn get_found:4, fn not_found:3)
+
+@public
+@doc("access the value of an attribute in a struct, if not found return default")
+get_or_default = fn (Struct, Name, Default)
+    NotFound = fn (_Struct, _Name)
+        Default
+
+    do(Struct, Name, fn get_found:3, NotFound)
 
 @public
 @doc("replace the value of an attribute in a struct")

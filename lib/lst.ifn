@@ -1,4 +1,5 @@
 @@license("New BSD License, part of efene, see LICENSE for details")
+@@moddoc("helpers to make the arrow statement easy to use on lists")
 
 @public
 each = fn (List, Fun)
