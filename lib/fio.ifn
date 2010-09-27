@@ -35,3 +35,18 @@ fn (Val) when is_list(Val)
 
 fn (Val)
     io_lib.format("~p", [Val])
+
+@doc("like io.format but for efene terms")
+@public
+print = fn (Val)
+    io.format("~s", [format(Val)])
+
+@doc("like print but adding a new line")
+@public
+println = fn (Val)
+    io.format("~s~n", [format(Val)])
+
+@doc("request information to the user printing *Prompt*, return it as a string")
+@public
+input = fn (Prompt)
+    io.get_line(Prompt)

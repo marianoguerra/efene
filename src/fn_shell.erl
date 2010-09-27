@@ -12,16 +12,8 @@ loop(Bindings) ->
            try Ast = fn:get_ast(string, Expression),
                {value, Result, NewBindings} = erl_eval:exprs(Ast,
                                                              Bindings),
-               if
-                   is_tuple(Result) andalso
-                       element(1, Result) == struct andalso
-                       size(Result) == 2 andalso
-                       is_list(element(2, Result)) ->
 
-                        struct:print(Result);
-                   true ->
-                       io:format("~p~n", [Result])
-                end,
+               fio:println(Result),
                loop(NewBindings)
            catch
              _:Error -> fn_errors:format_error(Error), loop(Bindings)
