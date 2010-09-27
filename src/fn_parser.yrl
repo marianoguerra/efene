@@ -8,11 +8,11 @@ Nonterminals
     case_expr case_body case_patterns case_pattern try_expr catch_patterns
     catch_pattern recv_expr receive_patterns receive_pattern list list_items
     tuple tuple_items fun_call farity arrow_chains arrow_chain list_comp
-    list_generator list_generators bin_comp rec rec_set rec_new attr_sets
-    attr_set binary binary_items binary_item bin_type_def bin_type prefix_op
-    attribute for_expr range signed_integer meta_block astify meta_astify attrs
-    fat_arrow_expr struct struct_items struct_item struct_get struct_set
-    struct_attrs struct_attr struct_call.
+    list_generator list_generators bin_comp bin_generators bin_generator rec
+    rec_set rec_new attr_sets attr_set binary binary_items binary_item
+    bin_type_def bin_type prefix_op attribute for_expr range signed_integer
+    meta_block astify meta_astify attrs fat_arrow_expr struct struct_items
+    struct_item struct_get struct_set struct_attrs struct_attr struct_call.
 
 Terminals
     fn match set open close open_block close_block integer float string var
@@ -400,6 +400,7 @@ farity -> fn atom dot atom split_op integer:
 
 list_comp -> open_list match_expr list_generators close_list : {lc, line('$1'), '$2', lists:flatten('$3')}.
 bin_comp  -> open_bin match_expr list_generators close_bin   : {bc, line('$1'), '$2', lists:flatten('$3')}.
+bin_comp  -> open_bin match_expr bin_generators close_bin   : {bc, line('$1'), '$2', lists:flatten('$3')}.
 
 list_generators -> list_generator list_generators: ['$1'|'$2'].
 list_generators -> list_generator                : '$1'.
@@ -411,6 +412,17 @@ list_generator -> for fat_arrow_expr in bool_expr:
 list_generator -> for fat_arrow_expr in bool_expr if bool_expr :
     Line = line('$1'),
     [{generate, Line, '$2', '$4'},'$6'].
+
+bin_generators -> bin_generator bin_generators: ['$1'|'$2'].
+bin_generators -> bin_generator                : '$1'.
+
+bin_generator -> for fat_arrow_expr larrow bool_expr:
+    Line = line('$1'),
+    [{b_generate, Line, '$2', '$4'}].
+
+bin_generator -> for fat_arrow_expr larrow bool_expr if bool_expr :
+    Line = line('$1'),
+    [{b_generate, Line, '$2', '$4'},'$6'].
 
 % records
 
