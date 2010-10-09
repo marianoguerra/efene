@@ -332,13 +332,8 @@ struct_call -> struct_get fn_parameters :
     GetParent = struct_get(Var, Line, Last, Parent),
     {call, Line, Get, [GetParent|'$2']}.
 
-struct_in -> atom in struct_get :
-    Line = line('$2'),
-    {call, Line, {remote, Line, {atom, Line, struct}, {atom, Line, has}}, ['$3', '$1']}.
-
-struct_in -> string in struct_get :
-    Line = line('$2'),
-    {call, Line, {remote, Line, {atom, Line, struct}, {atom, Line, has}}, ['$3', '$1']}.
+struct_in -> atom in struct_get : build_struct_in('$1', line('$2'), '$3').
+struct_in -> string in struct_get : build_struct_in('$1', line('$2'), '$3').
 
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
@@ -629,3 +624,13 @@ call_set(Value, LastField, Field, Line, Literal) ->
             {atom, Line, struct}, {atom, Line, set}},
             [Value, LastField, {atom, Line, Field}, Literal]}.
 
+build_struct_in(Val, Line, Struct) ->
+    StructAst = if
+        element(1, Struct) == var ->
+            Struct;
+        true ->
+            {Var, Line, Last, Attrs} = Struct,
+            struct_get(Var, Line, Last, Attrs)
+    end,
+
+    {call, Line, {remote, Line, {atom, Line, struct}, {atom, Line, has}}, [StructAst, Val]}.
