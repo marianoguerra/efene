@@ -15,6 +15,7 @@ Statements
    block
    arrow
    literals
+   struct
    metaeval
    astify
    metaevalandastify
