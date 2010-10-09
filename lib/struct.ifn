@@ -88,7 +88,9 @@ has = fn (Struct, Name)
     Found = fn (_Struct, _Name, _Value)
         true
 
-    NotFound = fn (_Struct, _Name)
+    NotFound = fn (Struct1, Name1) when is_atom(Name1)
+        has(Struct1, atom_to_list(Name1))
+    fn (_Struct, _Name)
         false
 
     do(Struct, Name, Found, NotFound)
