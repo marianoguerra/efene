@@ -75,3 +75,11 @@ when we modify a struct we need to assign the resulting value to another
 variable::
 
         >>> Person1 = @Person.name := "Mariano"
+
+the name of the attributes can be atoms or strings, all access made using an
+atom will lookup the attribute as string if not found, if a string is given
+then the attribute will be looked up only as string. This is made to avoid
+converting strings to atoms since atoms are not garbage collected. Other reason
+for doing this is that JSON structs comming from the outside get keys converted
+to strings, to avoid converting those unknown strings to atoms is another
+reason for this convention.
