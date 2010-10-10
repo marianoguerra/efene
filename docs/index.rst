@@ -16,4 +16,5 @@ Contents:
    build/index
    lib/index
    faq
+   reference/features
 
