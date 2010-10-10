@@ -22,7 +22,7 @@ Terminals
     mul_op if else when switch case try catch receive after begin open_list
     close_list sep split_op split_def_op dot dotdot dotdotdot arrow larrow
     fatarrow open_bin close_bin attr gattr for in open_meta_block open_oxford
-    close_oxford open_meta_oxford obj.
+    close_oxford open_meta_oxford modvar.
 
 Rootsymbol program.
 
@@ -310,14 +310,12 @@ struct_items -> struct_item : {cons, line('$1'), '$1', {nil, line('$1')}}.
 struct_item -> atom split_op literal : {tuple, line('$2'), ['$1', '$3']}.
 struct_item -> string split_op literal : {tuple, line('$2'), ['$1', '$3']}.
 
-struct_get -> obj : {var, line('$1'), unwrap('$1')}.
-
-struct_get -> obj struct_attrs :
-     {{var, line('$1'), unwrap('$1')}, line('$1'),
+struct_get -> var struct_attrs :
+     {'$1', line('$1'),
         {atom, line('$1'), unwrap('$1')}, '$2'}.
 
-struct_set -> obj struct_attrs set literal :
-    {{var, line('$1'), unwrap('$1')}, line('$1'),
+struct_set -> var struct_attrs set literal :
+    {'$1', line('$1'),
         {atom, line('$1'), unwrap('$1')}, '$2', '$4'}.
 
 struct_attrs -> struct_attr struct_attrs : ['$1'|'$2'].
@@ -390,8 +388,8 @@ fun_call -> atom dot atom fn_parameters:
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
 fun_call -> atom dot var fn_parameters:
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
-fun_call -> var dot atom fn_parameters:
-    {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
+fun_call -> modvar dot atom fn_parameters:
+    {call, line('$2'), {remote, line('$2'), {var, line('$1'), unwrap('$1')}, '$3'}, '$4'}.
 fun_call -> var dot var fn_parameters:
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
 fun_call -> fun_call fn_parameters: {call, line('$1'), '$1', '$2'}.

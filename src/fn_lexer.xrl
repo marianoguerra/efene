@@ -133,7 +133,7 @@ Rules.
 
 % identifiers and atoms
 {Identifier}             : make_token(var, TokenLine, TokenChars).
-@{Identifier}            : make_token(obj, TokenLine, tl(TokenChars)).
+@{Identifier}            : make_token(modvar, TokenLine, tl(TokenChars)).
 {Atom}                   : {token, atom_or_identifier(TokenChars, TokenLine)}.
 @@{Atom}                 : make_token(gattr, TokenLine, tl(tl(TokenChars))).
 @{Atom}                  : make_token(attr, TokenLine, tl(TokenChars)).
