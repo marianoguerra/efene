@@ -323,9 +323,9 @@ struct_attr -> dot atom : unwrap('$2').
 
 struct_call -> struct_get fn_parameters :
     {Var, Line, Last, Attrs} = '$1',
-    Get = struct_get(Var, Line, Last, Attrs),
+    Get = struct_get(Var, Line, Last, Attrs, getx),
     Parent = lists:sublist(Attrs, length(Attrs) - 1),
-    GetParent = struct_get(Var, Line, Last, Parent),
+    GetParent = struct_get(Var, Line, Last, Parent, getx),
     {call, Line, Get, [GetParent|'$2']}.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
@@ -586,15 +586,18 @@ normalise_args({return, Args, Return}) ->
 normalise_args(Args) ->
     [erl_parse:normalise(Arg) || Arg <- Args].
 
-struct_get(Value, _Line, _LastField, []) ->
+struct_get(Value, Line, LastField, Fields) ->
+    struct_get(Value, Line, LastField, Fields, get).
+
+struct_get(Value, _Line, _LastField, [], _Fun) ->
     Value;
 
-struct_get(Value, Line, LastField, [Field|Fields]) ->
+struct_get(Value, Line, LastField, [Field|Fields], Fun) ->
     NewValue = {call, Line,
-      {remote, Line, {atom, Line, struct}, {atom, Line, get}},
+      {remote, Line, {atom, Line, struct}, {atom, Line, Fun}},
       [Value, LastField, {atom, Line, Field}]},
 
-    struct_get(NewValue, Line, {atom, Line, Field}, Fields).
+    struct_get(NewValue, Line, {atom, Line, Field}, Fields, Fun).
 
 struct_set(Value, Line, LastField, [Field], Literal) ->
     call_set(Value, LastField, Field, Line, Literal);

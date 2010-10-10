@@ -1,0 +1,23 @@
+@moddoc("example of prototype usage, by adding an attribute called proto_ to a
+struct we can share common functions between structs")
+
+@public
+run = fn ()
+    Has = fn struct.has:2
+    Get = fn struct.get:2
+    Set = fn struct.set:3
+
+    Proto = {has: Has, get: Get, set: Set}
+
+    Obj = {name: "mariano", age: 25, proto_: Proto}
+    Print = fn (What)
+        io.format("~p~n", [What])
+
+    Print(Obj.name)
+    Print(Obj.proto_)
+    Print(Obj.has(name))
+    Print(Obj.get(age))
+
+    Obj1 = Obj.set(name, "Mariano")
+
+    Print(Obj1.name)

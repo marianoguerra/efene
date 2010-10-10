@@ -12,6 +12,19 @@ fn (_Struct, AttrName, Name) when is_list(Name)
     throw(attribute_error =>
         atom_to_list(AttrName) ++ " has no attribute '" ++ Name ++ "'")
 
+@doc("function called from getx when the attribute wasn't found on the struct,
+look if there is a proto_ attribute and look inside it to search for the
+value")
+not_found_proto = fn (Struct, AttrName, Name) when is_atom(Name)
+    if struct.has(Struct, proto_)
+        Proto = Struct.proto_
+        if struct.has(Proto, Name)
+            struct.get(Proto, Name)
+        else
+            not_found(Struct, AttrName, Name)
+    else
+        not_found(Struct, AttrName, Name)
+
 get_found = fn (_Struct, _Name, Value)
     Value
 
@@ -45,6 +58,12 @@ get_or_default = fn (Struct, Name, Default)
     do(Struct, Name, fn get_found:3, NotFound)
 
 @public
+@doc("access the value of an attribute in a struct, if not found in the struct
+look inside the proto_ attribute, used internally to display better errors")
+getx = fn (Struct, AttrName, Name)
+    do(Struct, AttrName, Name, fn get_found:4, fn not_found_proto:3)
+
+@public
 @doc("replace the value of an attribute in a struct")
 set = fn (Struct, Name, Value)
     do(Struct, Name, set_found(Value))
@@ -67,7 +86,13 @@ format = fn ((struct, Body), ShowFuns)
             io_lib.format("~p: ~s, ", [Key, fio.format(Val)])
 
     Items1 = lists.flatten(Items)
-    io_lib.format("{~s}", [lists.sublist(Items1, length(Items1) - 2)])
+    Items1Len = length(Items1)
+
+    if Items1Len == 0
+        io_lib.format("{}")
+    else
+        # TODO: seems to enter here with Items1Len == 0 (?)
+        io_lib.format("{~s}", [lists.sublist(Items1, Items1Len - 2)])
 
 @public
 @doc("pretty print a struct")
