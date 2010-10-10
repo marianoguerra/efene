@@ -112,13 +112,6 @@ block() ->
     tu:test_ast("begin { A = 1; B = 2; A + B; }", "begin A = 1, B = 2, A + B end"),
     ok.
 
-has() ->
-    tu:test_ast("a in @B", "struct:has(B, a)"),
-    tu:test_ast("\"a\" in @B", "struct:has(B, \"a\")"),
-    tu:test_ast("\"a\" in @B.c", "struct:has(struct:get(B, 'B', c), \"a\")"),
-    tu:test_ast("\"a\" in @B.c.d", "struct:has(struct:get(struct:get(B, 'B', c), c, d), \"a\")"),
-    ok.
-
 all() ->
     tu:test(?MODULE, send),
     tu:test(?MODULE, match),
@@ -129,5 +122,4 @@ all() ->
     tu:test(?MODULE, mul),
     tu:test(?MODULE, random),
     tu:test(?MODULE, block),
-    tu:test(?MODULE, has),
     ok.

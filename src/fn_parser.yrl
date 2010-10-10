@@ -12,8 +12,7 @@ Nonterminals
     rec_set rec_new attr_sets attr_set binary binary_items binary_item
     bin_type_def bin_type prefix_op attribute for_expr range signed_integer
     meta_block astify meta_astify attrs fat_arrow_expr struct struct_items
-    struct_item struct_get struct_set struct_attrs struct_attr struct_call
-    struct_in.
+    struct_item struct_get struct_set struct_attrs struct_attr struct_call.
 
 Terminals
     fn match set open close open_block close_block integer float string var
@@ -299,7 +298,6 @@ literal -> struct_set           :
     {Var, Line, Last, Attrs, Value} = '$1',
     struct_set(Var, Line, Last, Attrs, Value).
 literal -> struct_call          : '$1'.
-literal -> struct_in            : '$1'.
 
 struct -> open_block struct_items close_block :
     {tuple, line('$1'), [{atom, line('$1'), struct}, '$2']}.
@@ -329,10 +327,6 @@ struct_call -> struct_get fn_parameters :
     Parent = lists:sublist(Attrs, length(Attrs) - 1),
     GetParent = struct_get(Var, Line, Last, Parent),
     {call, Line, Get, [GetParent|'$2']}.
-
-struct_in -> atom in struct_get : build_struct_in('$1', line('$2'), '$3').
-struct_in -> string in struct_get : build_struct_in('$1', line('$2'), '$3').
-
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
 
@@ -622,13 +616,3 @@ call_set(Value, LastField, Field, Line, Literal) ->
             {atom, Line, struct}, {atom, Line, set}},
             [Value, LastField, {atom, Line, Field}, Literal]}.
 
-build_struct_in(Val, Line, Struct) ->
-    StructAst = if
-        element(1, Struct) == var ->
-            Struct;
-        true ->
-            {Var, Line, Last, Attrs} = Struct,
-            struct_get(Var, Line, Last, Attrs)
-    end,
-
-    {call, Line, {remote, Line, {atom, Line, struct}, {atom, Line, has}}, [StructAst, Val]}.

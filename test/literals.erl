@@ -48,7 +48,7 @@ calls() ->
     tu:test_ast("a.b()", "a:b()"),
     tu:test_ast("a.B()", "a:B()"),
     tu:test_ast("A.B()", "A:B()"),
-    tu:test_ast("A.b()", "A:b()"),
+    tu:test_ast("@A.b()", "A:b()"),
     tu:test_ast("A()()", "(A())()").
 
 chars() ->
