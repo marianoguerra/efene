@@ -324,10 +324,20 @@ representing the name::
         lists
         >>> Mod.F([1,2,3], [4,5,6])
         [1,2,3,4,5,6]
-        >>> Mod.append([1,2,3], [4,5,6])
+        >>> @Mod.append([1,2,3], [4,5,6])
         [1,2,3,4,5,6]
         >>> lists.F([1,2,3], [4,5,6])
         [1,2,3,4,5,6]
+
+.. warning::
+
+        when calling a function as an atom with a module stored in a variable
+        an @ sign should be added to the expression to differentiate the
+        function call in a module from a method call in a struct.
+
+        see the @Mod.append example above.
+
+        The syntax is in this expression since it's less often used than structs.
 
 Binary
 ~~~~~~
