@@ -51,7 +51,7 @@ get = fn (Struct, AttrName, Name)
 
 @public
 @doc("access the value of an attribute in a struct, if not found return default")
-get_or_default = fn (Struct, Name, Default)
+getdef = fn (Struct, Name, Default)
     NotFound = fn (_Struct, _Name)
         Default
 
@@ -80,7 +80,9 @@ format = fn (Struct)
 
 format = fn ((struct, Body), ShowFuns)
     Items = for Key => Val in Body if not is_function(Val) or ShowFuns
-        if schema.is_object(Val)
+        if Key == proto_
+            ""
+        else if schema.is_object(Val)
             io_lib.format("~p: ~s, ", [Key, format(Val, ShowFuns)])
         else
             io_lib.format("~p: ~s, ", [Key, fio.format(Val)])
@@ -129,10 +131,40 @@ decoding json) then those keys will be returned as strings.
 it's your job to check that. This is done this way to avoid creating atoms
 ")
 fields = fn ((struct, Body))
-    [Key for (Key, _Val) in Body]
+    [Key for (Key, _Val) in Body if Key != proto_]
 
 fn (_)
     throw(value_error => "value doesn't seem to be a struct")
+
+@public
+@doc("extend the struct by adding an attribute named *Key* with value *Value*")
+extend = fn ((struct, Body), Key, Value)
+    if is_atom(Key) or is_list(Key)
+        (struct, [Key => Value:Body])
+    else
+        throw(value_error => "key isn't a string or an atom")
+
+fn (_, _Key, _Value)
+    throw(value_error => "value doesn't seem to be a struct")
+
+@public
+@doc("return the prototype for a basic struct that can do the operations
+defined in this module")
+prototype = fn ()
+    Get = fn get:2
+    Has = fn has:2
+    Set = fn set:3
+    GetX = fn getx:3
+    GetDef = fn getdef:3
+    Fields = fn fields:1
+    Extend = fn extend:3
+    Format = fn format:1
+    Print  = fn print:1
+
+    Prototype = {get: Get, has: Has, set: Set, getx: GetX, fields: Fields,
+        extend: Extend, getdef: GetDef, format: Format, print: Print}
+
+    Prototype
 
 @public
 @doc("look for an attribute and call a function when found")
