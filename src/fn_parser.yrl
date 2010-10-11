@@ -83,7 +83,14 @@ attrs -> gattr : '$1'.
 fn_def -> atom match fn_patterns:
     {function, line('$1'), unwrap('$1'), get_arity('$3'), '$3'}.
 
-fun_def -> fn_patterns : {'fun', element(2, hd('$1')), {clauses, '$1'}}.
+fun_def -> fn_patterns :
+    Clauses = '$1',
+    [FirstClause|TClauses] = Clauses,
+
+    ArgCount = length(element(3, FirstClause)),
+    check_clauses_arity(TClauses, ArgCount),
+
+    {'fun', element(2, FirstClause), {clauses, Clauses}}.
 
 fn_patterns -> fn_pattern : ['$1'].
 fn_patterns -> fn_pattern fn_patterns : ['$1'|'$2'].
@@ -534,6 +541,9 @@ assert_atom(Token, Atom) ->
         true -> ok
     end.
 
+fail(Line, Reason) ->
+    throw({error, {Line, fn_parser, [Reason]}}).
+
 fail(Line, Reason, Cause) ->
     throw({error, {Line, fn_parser, [Reason, Cause]}}).
 
@@ -619,3 +629,19 @@ call_set(Value, LastField, Field, Line, Literal) ->
             {atom, Line, struct}, {atom, Line, set}},
             [Value, LastField, {atom, Line, Field}, Literal]}.
 
+check_clauses_arity([], _Count) ->
+    ok;
+check_clauses_arity([Clause|Clauses], Count) ->
+    ArgCount = length(element(3, Clause)),
+    Line = element(2, Clause),
+
+    if
+        Count == ArgCount ->
+            check_clauses_arity(Clauses, Count);
+        true ->
+            Message = io_lib:format(
+                "invalid number of arguments for function clause, expected ~p, got ~p",
+                [Count, ArgCount]),
+
+            fail(Line, Message)
+    end.

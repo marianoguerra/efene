@@ -9,8 +9,10 @@ format_error(_, {error, {Line, fn_lexer, {illegal, Char}}, _Unk}) ->
     io:format("line ~p: illegal character: \"~s\"~n", [Line, Char]);
 format_error(_, {error, {Line, fn_lexer, [Reason, Cause]}}) ->
     io:format("line ~p: ~p ~p~n", [Line, Reason, Cause]);
+format_error(_, {error, {Line, fn_parser, [Reason]}}) ->
+    io:format("line ~p: ~s~n", [Line, Reason]);
 format_error(_, {error, {Line, fn_parser, [Reason, Cause]}}) ->
-    io:format("line ~p: ~p ~p~n", [Line, Reason, Cause]);
+    io:format("line ~p: ~s ~p~n", [Line, Reason, Cause]);
 format_error(_, {error, enoent}) ->
     io:format("Error: File doesn't exist~n");
 format_error(Type, Error) ->
