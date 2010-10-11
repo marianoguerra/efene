@@ -161,10 +161,8 @@ prototype = fn ()
     Format = fn format:1
     Print  = fn print:1
 
-    Prototype = {get: Get, has: Has, set: Set, getx: GetX, fields: Fields,
+    {get: Get, has: Has, set: Set, getx: GetX, fields: Fields,
         extend: Extend, getdef: GetDef, format: Format, print: Print}
-
-    Prototype
 
 @public
 @doc("look for an attribute and call a function when found")

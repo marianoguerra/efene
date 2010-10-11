@@ -122,6 +122,11 @@ post_cleanup([{endl, _, _}, {'after', _}=Token|Tokens], Accum) ->
 % remove the new lines after a opening block, makes parsing easier
 post_cleanup([{open_block, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|Accum]);
+% don't remove endlines before an open block that is part of a struct
+% definition. This may create syntax errors if the if the previout tokens were
+% } \n { since it will join the closing and opening blocks
+post_cleanup([{endl, _, _}=Endl, {open_block, _, _}=Token, Something, {split_op, _, _}=Split|Tokens], Accum) ->
+    post_cleanup(Tokens, [Split|[Something|[Token|[Endl|Accum]]]]);
 % remove endlines before opening blocks, reinsert in tokens to process
 % patterns of openblock and endlines after it
 post_cleanup([{endl, _, _}, {open_block, _, _}=Token|Tokens], Accum) ->
