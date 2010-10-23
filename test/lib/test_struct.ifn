@@ -1,0 +1,81 @@
+
+hasntstr = fn (S, Name)
+    if struct.hasstr(S, Name)
+        io.format("error: struct ~p shouldn't have ~p~n", [element(2, S), Name])
+    else
+        io.format("ok: struct ~p has ~p~n", [element(2, S), Name])
+
+hasstr = fn (S, Name)
+    if struct.hasstr(S, Name)
+        io.format("ok: struct ~p has ~p~n", [element(2, S), Name])
+    else
+        io.format("error: struct ~p should have ~p~n", [element(2, S), Name])
+
+hasnt = fn (S, Names)
+    if struct.has(S, Names)
+        io.format("error: struct ~p shouldn't have ~p~n", [element(2, S), Names])
+    else
+        io.format("ok: struct ~p has ~p~n", [element(2, S), Names])
+
+has = fn (S, Names)
+    if struct.has(S, Names)
+        io.format("ok: struct ~p has ~p~n", [element(2, S), Names])
+    else
+        io.format("error: struct ~p should have ~p~n", [element(2, S), Names])
+
+test_has = fn (S)
+    has(S, foo)
+    hasnt(S, asd)
+
+    has(S, [foo])
+    has(S, [foo, bar])
+    has(S, [foo, bar, baz])
+
+    hasnt(S, [asd])
+    hasnt(S, [asd, bar])
+    hasnt(S, [asd, bar, baz])
+
+    hasnt(S, [foo, asd])
+    hasnt(S, [foo, bar, asd])
+    hasnt(S, [foo, bar, baz, asd])
+
+test_has_atom_keys = fn ()
+    S = {foo: {bar: {baz: 1}}}
+    test_has(S)
+
+test_has_str_keys = fn ()
+    S = {"foo": {"bar": {"baz": 1}}}
+    test_has(S)
+
+    hasstr(S, "foo")
+    hasntstr(S, "asd")
+
+    has(S, ["foo"])
+    has(S, ["foo", "bar"])
+    has(S, ["foo", "bar", "baz"])
+
+    hasnt(S, ["asd"])
+    hasnt(S, ["asd", "bar"])
+    hasnt(S, ["asd", "bar", "baz"])
+
+    hasnt(S, ["foo", "asd"])
+    hasnt(S, ["foo", "bar", "asd"])
+    hasnt(S, ["foo", "bar", "baz", "asd"])
+
+test_hasstr = fn ()
+    S = {foo: 1, "bar": 2, baz: asd}
+
+    has(S, foo)
+    has(S, [foo])
+
+    hasntstr(S, "foo")
+    hasnt(S, ["foo"])
+
+    hasstr(S, "bar")
+    has(S, ["bar"])
+
+@public
+run = fn ()
+    test_has_atom_keys()
+    test_has_str_keys()
+    test_hasstr()
