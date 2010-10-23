@@ -67,6 +67,9 @@ MacroVar    = \$[a-z][a-zA-Z0-9\_]+
 Identifier  = [A-Z\_][a-zA-Z0-9\_]*
 Atom        = ([a-z][a-zA-Z0-9\_@]*)|('(\\\^.|\\.|[^\'])*')
 
+% others
+Question   = \?
+
 Rules.
 
 % binary operators
@@ -142,6 +145,9 @@ Rules.
 {Endls}                 : make_token(endl,  TokenLine, endls(TokenChars)).
 {Whites}                : make_token(white, TokenLine, length(TokenChars)).
 {Tabs}                  : make_token(tab,   TokenLine, length(TokenChars)).
+
+% others
+{Question}              : make_token(question, TokenLine, TokenChars).
 
 Erlang code.
 

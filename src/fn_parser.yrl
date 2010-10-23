@@ -21,7 +21,7 @@ Terminals
     mul_op if else when switch case try catch receive after begin open_list
     close_list sep split_op split_def_op dot dotdot dotdotdot arrow larrow
     fatarrow open_bin close_bin attr gattr for in open_meta_block open_oxford
-    close_oxford open_meta_oxford modvar.
+    close_oxford open_meta_oxford modvar question.
 
 Rootsymbol program.
 
@@ -298,12 +298,18 @@ literal -> astify               : '$1'.
 literal -> meta_astify          : '$1'.
 literal -> begin fn_block       : {block, line('$1'), '$2'}.
 literal -> struct               : '$1'.
+literal -> struct_get question  :
+    {Var, Line, _Last, Attrs} = '$1',
+    struct_query(Var, Line, Attrs).
+
 literal -> struct_get           :
     {Var, Line, Last, Attrs} = '$1',
     struct_get(Var, Line, Last, Attrs).
+
 literal -> struct_set           :
     {Var, Line, Last, Attrs, Value} = '$1',
     struct_set(Var, Line, Last, Attrs, Value).
+
 literal -> struct_call          : '$1'.
 
 struct -> open_block struct_items close_block :
@@ -616,6 +622,15 @@ struct_set(Value, Line, LastField, [Field|Fields], Literal) ->
     call_set(Value, LastField, Field, Line,
         struct_set(call_get(Value, LastField, Field, Line), Line,
             {atom, Line, Field}, Fields, Literal)).
+
+struct_query(Var, Line, Attrs) ->
+    AttrListAst = erl_parse:abstract(Attrs),
+
+    {call, Line,
+        {remote, Line,
+            {atom, Line, struct}, {atom, Line, has}},
+            [Var, AttrListAst]}.
+
 
 call_get(Value, LastField, Field, Line) ->
     {call, Line,
