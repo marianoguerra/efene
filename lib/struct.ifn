@@ -118,21 +118,32 @@ print = fn (Struct, ShowFuns)
 @doc("return true if the struct has the given attribute as atom or string,
 false otherwise.
 
+the second parameter must be an atom or a list of atoms/strings
+
+to check if a struct has an attribute with a string use hasstr
+
 throw an exception if the given parameter is not a valid struct")
 has = fn (_Struct, [])
     true
 
 fn (Struct, [Name:Names])
 
-    if has(Struct, Name)
-        NewStruct = get(Struct, Name)
+    CheckFun = if is_atom(Name)
+        has
+    else
+        hasstr
+
+    if struct.CheckFun(Struct, Name)
 
         if length(Names) == 0
             true
-        else if is_struct(NewStruct)
-            has(NewStruct, Names)
         else
-            false
+            NewStruct = get(Struct, Name)
+
+            if is_struct(NewStruct)
+                has(NewStruct, Names)
+            else
+                false
     else
         false
 
@@ -147,6 +158,11 @@ fn (Struct, Name)
 
     do(Struct, Name, Found, NotFound)
 
+@public
+@doc("return true if the struct has the given attribute as string,
+false otherwise.
+
+throw an exception if the given parameter is not a valid struct")
 hasstr = fn (Struct, StrName)
     Found = fn (_Struct, _Name, _Value)
         true
