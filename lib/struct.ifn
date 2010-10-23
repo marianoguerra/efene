@@ -40,6 +40,14 @@ set_found_internal = fn (Value)
         (struct, lists.keyreplace(Name, 1, Body, Name => Value))
 
 @public
+@doc("return true if the parameter is a valid struct, false otherwise")
+is_struct = fn ((struct, Values)) when is_list(Values)
+    true
+
+fn (_)
+    false
+
+@public
 @doc("access the value of an attribute in a struct")
 get = fn (Struct, Name)
     do(Struct, Name, fn get_found:3)
@@ -111,16 +119,42 @@ print = fn (Struct, ShowFuns)
 false otherwise.
 
 throw an exception if the given parameter is not a valid struct")
-has = fn (Struct, Name)
+has = fn (_Struct, [])
+    true
+
+fn (Struct, [Name:Names])
+
+    if has(Struct, Name)
+        NewStruct = get(Struct, Name)
+
+        if length(Names) == 0
+            true
+        else if is_struct(NewStruct)
+            has(NewStruct, Names)
+        else
+            false
+    else
+        false
+
+fn (Struct, Name)
     Found = fn (_Struct, _Name, _Value)
         true
 
     NotFound = fn (Struct1, Name1) when is_atom(Name1)
-        has(Struct1, atom_to_list(Name1))
+        hasstr(Struct1, atom_to_list(Name1))
     fn (_Struct, _Name)
         false
 
     do(Struct, Name, Found, NotFound)
+
+hasstr = fn (Struct, StrName)
+    Found = fn (_Struct, _Name, _Value)
+        true
+
+    NotFound = fn (_Struct, _Name)
+        false
+
+    do(Struct, StrName, Found, NotFound)
 
 @public
 @doc("return all the field names of a struct.
