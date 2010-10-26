@@ -303,8 +303,8 @@ literal -> struct_get question  :
     struct_query(Var, Line, Attrs).
 
 literal -> struct_get           :
-    {Var, Line, Last, Attrs} = '$1',
-    struct_get(Var, Line, Last, Attrs).
+    {Var, Line, _Last, Attrs} = '$1',
+    struct_get(Var, Line, Attrs).
 
 literal -> struct_set           :
     {Var, Line, Last, Attrs, Value} = '$1',
@@ -335,10 +335,17 @@ struct_attrs -> struct_attr : ['$1'].
 struct_attr -> dot atom : unwrap('$2').
 
 struct_call -> struct_get fn_parameters :
-    {Var, Line, Last, Attrs} = '$1',
-    Get = struct_get(Var, Line, Last, Attrs, getx),
-    Parent = lists:sublist(Attrs, length(Attrs) - 1),
-    GetParent = struct_get(Var, Line, Last, Parent, getx),
+    {Var, Line, _Last, Attrs} = '$1',
+    Get = struct_get(Var, Line, Attrs, getx),
+
+    GetParent = if
+        length(Attrs) == 1 ->
+            Var;
+        true ->
+            Parent = lists:sublist(Attrs, length(Attrs) - 1),
+            struct_get(Var, Line, Parent)
+    end,
+
     {call, Line, Get, [GetParent|'$2']}.
 
 bool_lit -> boolean             : {atom, line('$1'), unwrap('$1')}.
@@ -602,18 +609,16 @@ normalise_args({return, Args, Return}) ->
 normalise_args(Args) ->
     [erl_parse:normalise(Arg) || Arg <- Args].
 
-struct_get(Value, Line, LastField, Fields) ->
-    struct_get(Value, Line, LastField, Fields, get).
+struct_get(Value, Line, Attrs) ->
+    struct_get(Value, Line, Attrs, get).
 
-struct_get(Value, _Line, _LastField, [], _Fun) ->
-    Value;
+struct_get(Value, Line, Attrs, Fun) ->
+    AttrListAst = erl_parse:abstract(Attrs),
 
-struct_get(Value, Line, LastField, [Field|Fields], Fun) ->
-    NewValue = {call, Line,
-      {remote, Line, {atom, Line, struct}, {atom, Line, Fun}},
-      [Value, LastField, {atom, Line, Field}]},
-
-    struct_get(NewValue, Line, {atom, Line, Field}, Fields, Fun).
+    {call, Line,
+        {remote, Line,
+            {atom, Line, struct}, {atom, Line, Fun}},
+            [Value, AttrListAst]}.
 
 struct_set(Value, Line, LastField, [Field], Literal) ->
     call_set(Value, LastField, Field, Line, Literal);
