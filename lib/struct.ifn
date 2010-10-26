@@ -1,42 +1,31 @@
 @@license("New BSD License, part of efene, see LICENSE for details")
 @@moddoc("module to manipulate struct data structures")
 
-not_found = fn (Struct, Name)
-    not_found(Struct, struct, Name)
-
-not_found = fn (_Struct, AttrName, Name) when is_atom(Name)
-    throw(attribute_error =>
-        atom_to_list(AttrName) ++ " has no attribute '" ++ atom_to_list(Name) ++ "'")
-
-fn (_Struct, AttrName, Name) when is_list(Name)
-    throw(attribute_error =>
-        atom_to_list(AttrName) ++ " has no attribute '" ++ Name ++ "'")
+not_found = fn (_Struct, Name)
+    throw(attribute_error => "struct has no attribute '" ++ atom_to_list(Name) ++ "'")
 
 @doc("function called from getx when the attribute wasn't found on the struct,
 look if there is a proto_ attribute and look inside it to search for the
 value")
-not_found_proto = fn (Struct, AttrName, Name) when is_atom(Name)
+not_found_proto = fn (Struct, Name) when is_atom(Name)
     if struct.has(Struct, proto_)
         Proto = Struct.proto_
         if struct.has(Proto, Name)
             struct.get(Proto, Name)
         else
-            not_found(Struct, AttrName, Name)
+            not_found(Struct, Name)
     else
-        not_found(Struct, AttrName, Name)
+        not_found(Struct, Name)
+
+@doc("throw an exception stating that the value is not a valid struct")
+not_struct = fn (Val)
+    throw(value_error => io_lib.format("value ~p doesn't seem to be a struct", [Val]))
 
 get_found = fn (_Struct, _Name, Value)
     Value
 
-get_found = fn (_Struct, _AttrName, _Name, Value)
-    Value
-
 set_found = fn (Value)
     fn ((struct, Body), Name, _OldValue)
-        (struct, lists.keyreplace(Name, 1, Body, Name => Value))
-
-set_found_internal = fn (Value)
-    fn ((struct, Body), _AttrName, Name, _OldValue)
         (struct, lists.keyreplace(Name, 1, Body, Name => Value))
 
 @public
@@ -49,37 +38,36 @@ fn (_)
 
 @public
 @doc("access the value of an attribute in a struct")
-get = fn (Struct, Name)
-    do(Struct, Name, fn get_found:3)
+get = fn (Struct, [])
+    Struct
 
-@public
-@doc("access the value of an attribute in a struct, used internally to display better errors")
-get = fn (Struct, AttrName, Name)
-    do(Struct, AttrName, Name, fn get_found:4, fn not_found:3)
+fn (Struct, [Name:Names])
+    get(do(Struct, Name, fn get_found:3), Names)
 
 @public
 @doc("access the value of an attribute in a struct, if not found return default")
-getdef = fn (Struct, Name, Default)
+getdef = fn (Struct, [], _Default)
+    Struct
+
+fn (Struct, [Name:Names], Default)
     NotFound = fn (_Struct, _Name)
         Default
 
-    do(Struct, Name, fn get_found:3, NotFound)
+    NotStruct = fn (_Val)
+        Default
+
+    getdef(do(Struct, Name, fn get_found:3, NotFound, NotStruct), Names, Default)
 
 @public
 @doc("access the value of an attribute in a struct, if not found in the struct
-look inside the proto_ attribute, used internally to display better errors")
-getx = fn (Struct, AttrName, Name)
-    do(Struct, AttrName, Name, fn get_found:4, fn not_found_proto:3)
+look inside the proto_ attribute")
+getx = fn (Struct, Name)
+    do(Struct, Name, fn get_found:3, fn not_found_proto:2)
 
 @public
 @doc("replace the value of an attribute in a struct")
 set = fn (Struct, Name, Value)
     do(Struct, Name, set_found(Value))
-
-@public
-@doc("replace the value of an attribute in a struct, used internally to display better errors")
-set = fn (Struct, AttrName, Name, Value)
-    do(Struct, AttrName, Name, set_found_internal(Value), fn not_found:2)
 
 @public
 @doc("return a pretty representation of a struct")
@@ -138,7 +126,7 @@ fn (Struct, [Name:Names])
         if length(Names) == 0
             true
         else
-            NewStruct = get(Struct, Name)
+            NewStruct = get(Struct, [Name])
 
             if is_struct(NewStruct)
                 has(NewStruct, Names)
@@ -183,8 +171,8 @@ it's your job to check that. This is done this way to avoid creating atoms
 fields = fn ((struct, Body))
     [Key for (Key, _Val) in Body if Key != proto_]
 
-fn (_)
-    throw(value_error => "value doesn't seem to be a struct")
+fn (Val)
+    not_struct(Val)
 
 @public
 @doc("extend the struct by adding an attribute named *Key* with value *Value*")
@@ -204,7 +192,7 @@ prototype = fn ()
     Get = fn get:2
     Has = fn has:2
     Set = fn set:3
-    GetX = fn getx:3
+    GetX = fn getx:2
     GetDef = fn getdef:3
     Fields = fn fields:1
     Extend = fn extend:3
@@ -239,41 +227,27 @@ the NotFoundFn function will be called with the following parameters:
  * Struct: the struct passed as parameter
  * Name: the name of the attribute as passed to this function (atom or string)
 ")
+do = fn (Struct, Name, FoundFn, NotFoundFn)
+    do(Struct, Name, FoundFn, NotFoundFn, fn not_struct:1)
 
-do = fn ((struct, Body)=Struct, Name, FoundFn, NotFoundFn)
+@public
+@doc("like do/4 but with a callback to be called when the parameter is not a struct")
+do = fn ((struct, Body)=Struct, Name, FoundFn, NotFoundFn, _NotStruct)
     switch lists.keyfind(Name, 1, Body)
         case false
             if is_atom(Name)
                 StrName = atom_to_list(Name)
+
                 switch lists.keyfind(StrName, 1, Body)
                     case false
                         NotFoundFn(Struct, Name)
                     case _ => Value
                         FoundFn(Struct, Name, Value)
+
             else
                 NotFoundFn(Struct, Name)
         case _ => Value
             FoundFn(Struct, Name, Value)
 
-fn (_, _Name, _FoundFn, _NotFoundFn)
-    throw(value_error => "value doesn't seem to be a struct")
-
-@public
-@doc("same as do/4 but used internally to display better errors")
-do = fn ((struct, Body)=Struct, AttrName, Name, FoundFn, NotFoundFn)
-    switch lists.keyfind(Name, 1, Body)
-        case false
-            if is_atom(Name)
-                StrName = atom_to_list(Name)
-                switch lists.keyfind(StrName, 1, Body)
-                    case false
-                        NotFoundFn(Struct, AttrName, Name)
-                    case _ => Value
-                        FoundFn(Struct, AttrName, Name, Value)
-            else
-                NotFoundFn(Struct, AttrName, Name)
-        case _ => Value
-            FoundFn(Struct, AttrName, Name, Value)
-
-fn (_, AttrName, _Name, _FoundFn, _NotFoundFn)
-    throw(value_error => atom_to_list(AttrName) ++ " doesn't seem to be a struct")
+fn (Val, _Name, _FoundFn, _NotFoundFn, NotStruct)
+    NotStruct(Val)
