@@ -1,4 +1,19 @@
 
+same = fn (A, A)
+    io.format("ok: both terms are ~p~n", [A])
+
+fn (A, B)
+    io.format("error: ~p != ~p~n", [A, B])
+
+throws = fn (ExName, Expr)
+    try
+        Expr()
+        io.format("error: expression should throw ~p~n", [ExName])
+    catch (ExName => _Desc)
+        io.format("ok: expression throws ~p~n", [ExName])
+    catch _ (OtherEx => _Desc)
+        io.format("error: expression should throw ~p not ~p~n", [ExName, OtherEx])
+
 hasntstr = fn (S, Name)
     if struct.hasstr(S, Name)
         io.format("error: struct ~p shouldn't have ~p~n", [element(2, S), Name])
@@ -74,8 +89,37 @@ test_hasstr = fn ()
     hasstr(S, "bar")
     has(S, ["bar"])
 
+test_get = fn ()
+    S = {a: {b: {c: 42}, d: 1}, e:2}
+
+    same(struct.get(S, [a]), {b: {c: 42}, d: 1})
+    same(struct.get(S, [a, b]), {c: 42})
+    same(struct.get(S, [a, b, c]), 42)
+
+    throws(attribute_error, fn () { struct.get(S, [z]) })
+    throws(attribute_error, fn () { struct.get(S, [a, z]) })
+    throws(attribute_error, fn () { struct.get(S, [a, b, z]) })
+
+    throws(value_error, fn () { struct.get(S, [a, b, c, z]) })
+    throws(value_error, fn () { struct.get(S, [a, b, c, d, z]) })
+
+test_getdef = fn ()
+    S = {a: {b: {c: 42}, d: 1}, e:2}
+
+    same(struct.getdef(S, [a], nil), {b: {c: 42}, d: 1})
+    same(struct.getdef(S, [a, b], nil), {c: 42})
+    same(struct.getdef(S, [a, b, c], nil), 42)
+
+    same(struct.getdef(S, [z], nil), nil)
+    same(struct.getdef(S, [a, z], nil), nil)
+    same(struct.getdef(S, [a, b, z], nil), nil)
+    same(struct.getdef(S, [a, b, c, z], nil), nil)
+    same(struct.getdef(S, [a, b, c, d, z], nil), nil)
+
 @public
 run = fn ()
     test_has_atom_keys()
     test_has_str_keys()
     test_hasstr()
+    test_get()
+    test_getdef()
