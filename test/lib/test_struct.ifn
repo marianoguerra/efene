@@ -116,6 +116,21 @@ test_getdef = fn ()
     same(struct.getdef(S, [a, b, c, z], nil), nil)
     same(struct.getdef(S, [a, b, c, d, z], nil), nil)
 
+test_set = fn ()
+    S = {a: {b: {c: 42}, d: 1}, e:2}
+
+    same(struct.set(S, [a], 2), {a: 2, e: 2})
+    same(struct.set(S, [a, b], 3), {a: {b: 3, d: 1}, e: 2})
+    same(struct.set(S, [a, b, c], 4), {a: {b: {c: 4}, d: 1}, e: 2})
+
+    throws(attribute_error, fn () { struct.set(S, [z], 1) })
+    throws(attribute_error, fn () { struct.set(S, [a, z], 1) })
+    throws(attribute_error, fn () { struct.set(S, [a, b, z], 1) })
+    throws(value_error, fn () { struct.set(S, [a, b, c, z], 1) })
+
+    throws(attribute_error, fn () { struct.set(S, [z, a], 1) })
+    throws(attribute_error, fn () { struct.set(S, [a, z, x], 1) })
+
 @public
 run = fn ()
     test_has_atom_keys()
@@ -123,3 +138,4 @@ run = fn ()
     test_hasstr()
     test_get()
     test_getdef()
+    test_set()
