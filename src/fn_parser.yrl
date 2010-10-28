@@ -307,8 +307,8 @@ literal -> struct_get           :
     struct_get(Var, Line, Attrs).
 
 literal -> struct_set           :
-    {Var, Line, Last, Attrs, Value} = '$1',
-    struct_set(Var, Line, Last, Attrs, Value).
+    {Var, Line, _Last, Attrs, Value} = '$1',
+    struct_set(Var, Line, Attrs, Value).
 
 literal -> struct_call          : '$1'.
 
@@ -620,13 +620,13 @@ struct_get(Value, Line, Attrs, Fun) ->
             {atom, Line, struct}, {atom, Line, Fun}},
             [Value, AttrListAst]}.
 
-struct_set(Value, Line, LastField, [Field], Literal) ->
-    call_set(Value, LastField, Field, Line, Literal);
+struct_set(Value, Line, Attrs, Literal) ->
+    AttrListAst = erl_parse:abstract(Attrs),
 
-struct_set(Value, Line, LastField, [Field|Fields], Literal) ->
-    call_set(Value, LastField, Field, Line,
-        struct_set(call_get(Value, LastField, Field, Line), Line,
-            {atom, Line, Field}, Fields, Literal)).
+    {call, Line,
+        {remote, Line,
+            {atom, Line, struct}, {atom, Line, set}},
+            [Value, AttrListAst, Literal]}.
 
 struct_query(Var, Line, Attrs) ->
     AttrListAst = erl_parse:abstract(Attrs),
@@ -635,19 +635,6 @@ struct_query(Var, Line, Attrs) ->
         {remote, Line,
             {atom, Line, struct}, {atom, Line, has}},
             [Var, AttrListAst]}.
-
-
-call_get(Value, LastField, Field, Line) ->
-    {call, Line,
-        {remote, Line,
-            {atom, Line, struct}, {atom, Line, get}},
-            [Value, LastField, {atom, Line, Field}]}.
-
-call_set(Value, LastField, Field, Line, Literal) ->
-    {call, Line,
-        {remote, Line,
-            {atom, Line, struct}, {atom, Line, set}},
-            [Value, LastField, {atom, Line, Field}, Literal]}.
 
 check_clauses_arity([], _Count) ->
     ok;
