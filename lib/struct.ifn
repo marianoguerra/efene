@@ -24,10 +24,6 @@ not_struct = fn (Val)
 get_found = fn (_Struct, _Name, Value)
     Value
 
-set_found = fn (Value)
-    fn ((struct, Body), Name, _OldValue)
-        (struct, lists.keyreplace(Name, 1, Body, Name => Value))
-
 @public
 @doc("return true if the parameter is a valid struct, false otherwise")
 is_struct = fn ((struct, Values)) when is_list(Values)
@@ -66,8 +62,12 @@ getx = fn (Struct, Name)
 
 @public
 @doc("replace the value of an attribute in a struct")
-set = fn (Struct, Name, Value)
-    do(Struct, Name, set_found(Value))
+set = fn ((struct, Body), [Name], Value)
+    (struct, lists.keyreplace(Name, 1, Body, Name => Value))
+
+fn ((struct, Body)=Struct, [Name:Names], Value)
+    NewChild = set(get(Struct, [Name]), Names, Value)
+    (struct, lists.keyreplace(Name, 1, Body, Name => NewChild))
 
 @public
 @doc("return a pretty representation of a struct")
