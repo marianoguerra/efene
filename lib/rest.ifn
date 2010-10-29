@@ -2,7 +2,7 @@
 @@moddoc("Module to make REST APIs by using function attributes")
 
 @rec(route) -> (method=get, path="^/$", transforms=nil,
-    accepts=nil, produces=text, handler=nil)
+    accepts=nil, produces=any, handler=nil)
 
 @doc("start the webserver serving the REST APIs available in the modules passed
 as parameter (an atom or a list of atoms), use default values for IP
@@ -104,11 +104,11 @@ serve_static = fn (Path)
     Mime = mime_from_path(Path)
 
     switch file.read_file(Path)
-        case (ok, Binary)
+        case ok => Binary
             (200, Mime, Binary)
-        case (error, enoent)
+        case error => enoent
             (404, Mime, "Not Found")
-        case (error, eacces)
+        case error => eacces
             (401, Mime, "Unauthorized")
 
 @doc("return an atom representing the mime type of a file depending on
@@ -180,7 +180,7 @@ fn ([(route[path=RoutePath])=Route:Handlers], Path)
     switch re.run(Path, RoutePath)
         case nomatch
             find_handler_aux(Handlers, Path)
-        case (match, Captured)
+        case match => Captured
             (Route, Captured)
 
 @doc("transform an atom describing a mime type to its string representation")
@@ -217,9 +217,10 @@ fn (Unk) when is_list(Unk)
 
 @doc("get the rest api of a module, Module is the module name as atom")
 
+@public
 rest_api = fn (Module)
     Dict = dict.new()
-    Api = rest_api(Module.module_info(attributes), Module, Dict)
+    Api = rest_api(@Module.module_info(attributes), Module, Dict)
 
     Gets = filter_get_methods(Api)
     Puts = filter_put_methods(Api)
@@ -310,54 +311,28 @@ fn (Req, Status, ContentType, Data)
 request = fn (Req)
     simple_bridge.make_request(mochiweb_request_bridge, (Req, root()))
 
-get_or_create_route = fn (Dict, Key, Module)
-    if dict.is_key(Key, Dict)
-        (Dict, dict.fetch(Key, Dict))
-    else
-        Route = route[handler=(Module, element(1, Key))]
-        (dict.store(Key, Route, Dict), Route)
-
-update_route = fn (Dict, Key, Val)
-    dict.store(Key, Val, Dict)
-
-set_method = fn (Method, Path, Api, Fun, Module, Tail)
-    (Api0, Route0) = get_or_create_route(Api, Fun, Module)
-
+set_handler = fn (Method, Path, Api, (FunName, _Arity)=Fun, Module, Accepts, Produces, Tail)
     Transforms = token_transformers(Path)
-    Route = route.Route0[method=Method, path=transform_url(Path),
-        transforms=Transforms]
+    Route = route[handler=(Module, FunName), method=Method, path=transform_url(Path),
+        transforms=Transforms, accepts=Accepts, produces=Produces]
+    NewApi = dict.store(Fun, Route, Api)
 
-    NewApi = update_route(Api0, Fun, Route)
     rest_api(Tail, Module, NewApi)
 
 rest_api = fn ([], _Module, Api)
     Api
 
-fn ([(get=Method, [((_Name, _Arity)=Fun, Path):_]):T], Module, Api)
-    set_method(Method, Path, Api, Fun, Module, T)
+# {get,[{{index,1},{return,[json,"/asd"],html}}]}
+fn ([(Method, [((_Name, _Arity)=Fun, (return, Args, Produces))]):T], Module, Api)
+    io.format("path ~p, length ~p~n", [Args, length(Args)])
 
-fn ([(post=Method, [((_Name, _Arity)=Fun, Path):_]):T], Module, Api)
-    set_method(Method, Path, Api, Fun, Module, T)
+    (Accepts, Path) = if length(Args) == 2
+        [Acc:[Pth]] = Args
+        (Acc, Pth)
+    else
+        (any, Args)
 
-fn ([(put=Method, [((_Name, _Arity)=Fun, Path):_]):T], Module, Api)
-    set_method(Method, Path, Api, Fun, Module, T)
-
-fn ([(delete=Method, [((_Name, _Arity)=Fun, Path):_]):T], Module, Api)
-    set_method(Method, Path, Api, Fun, Module, T)
-
-fn ([(accepts, [((_Name, _Arity)=Fun, ContentType):_]):T], Module, Api)
-    (Api0, Route0) = get_or_create_route(Api, Fun, Module)
-    Route = route.Route0[accepts=ContentType]
-
-    NewApi = update_route(Api0, Fun, Route)
-    rest_api(T, Module, NewApi)
-
-fn ([(produces, [((_Name, _Arity)=Fun, ContentType):_]):T], Module, Api)
-    (Api0, Route0) = get_or_create_route(Api, Fun, Module)
-    Route = route.Route0[produces=ContentType]
-
-    NewApi = update_route(Api0, Fun, Route)
-    rest_api(T, Module, NewApi)
+    set_handler(Method, Path, Api, Fun, Module, Accepts, Produces, T)
 
 fn ([_:T], Module, Api)
     rest_api(T, Module, Api)
