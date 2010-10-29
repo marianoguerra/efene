@@ -404,8 +404,8 @@ fun_call -> atom dot var fn_parameters:
     {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
 fun_call -> modvar dot atom fn_parameters:
     {call, line('$2'), {remote, line('$2'), {var, line('$1'), unwrap('$1')}, '$3'}, '$4'}.
-fun_call -> var dot var fn_parameters:
-    {call, line('$2'), {remote, line('$2'), '$1', '$3'}, '$4'}.
+fun_call -> modvar dot var fn_parameters:
+    {call, line('$2'), {remote, line('$2'), {var, line('$1'), unwrap('$1')}, '$3'}, '$4'}.
 fun_call -> fun_call fn_parameters: {call, line('$1'), '$1', '$2'}.
 
 % function arity
@@ -613,12 +613,17 @@ struct_get(Value, Line, Attrs) ->
     struct_get(Value, Line, Attrs, get).
 
 struct_get(Value, Line, Attrs, Fun) ->
-    AttrListAst = erl_parse:abstract(Attrs),
+    AttrAst = if
+        Fun == get ->
+            erl_parse:abstract(Attrs);
+        Fun == getx ->
+            erl_parse:abstract(hd(Attrs))
+    end,
 
     {call, Line,
         {remote, Line,
             {atom, Line, struct}, {atom, Line, Fun}},
-            [Value, AttrListAst]}.
+            [Value, AttrAst]}.
 
 struct_set(Value, Line, Attrs, Literal) ->
     AttrListAst = erl_parse:abstract(Attrs),
