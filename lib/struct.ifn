@@ -40,6 +40,9 @@ get = fn (Struct, [])
 fn (Struct, [Name:Names])
     get(do(Struct, Name, fn get_found:3), Names)
 
+fn (Struct, Name) when is_atom(Name)
+    do(Struct, Name, fn get_found:3)
+
 @public
 @doc("access the value of an attribute in a struct, if not found return default")
 getdef = fn (Struct, [], _Default)
@@ -53,6 +56,9 @@ fn (Struct, [Name:Names], Default)
         Default
 
     getdef(do(Struct, Name, fn get_found:3, NotFound, NotStruct), Names, Default)
+
+fn (Struct, Name, Default) when is_atom(Name)
+    getdef(Struct, [Name], Default)
 
 @public
 @doc("access the value of an attribute in a struct, if not found in the struct
@@ -71,6 +77,9 @@ set = fn ((struct, Body)=Struct, [Name], Value)
 fn ((struct, Body)=Struct, [Name:Names], Value)
     NewChild = set(get(Struct, [Name]), Names, Value)
     (struct, lists.keyreplace(Name, 1, Body, Name => NewChild))
+
+fn (Struct, Name, Value) when is_atom(Name)
+    set(Struct, [Name], Value)
 
 fn (_, _Names, _Value)
     throw(value_error => "value doesn't seem to be a struct")
