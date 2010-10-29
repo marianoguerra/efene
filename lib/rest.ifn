@@ -324,8 +324,6 @@ rest_api = fn ([], _Module, Api)
 
 # {get,[{{index,1},{return,[json,"/asd"],html}}]}
 fn ([(Method, [((_Name, _Arity)=Fun, (return, Args, Produces))]):T], Module, Api)
-    io.format("path ~p, length ~p~n", [Args, length(Args)])
-
     (Accepts, Path) = if length(Args) == 2
         [Acc:[Pth]] = Args
         (Acc, Pth)
