@@ -29,7 +29,7 @@ start = fn (Ip, Port, [], Api)
     Loop = fn (Req)
         loop(Req, Api)
 
-    mochiweb_http.start([(name, mochiweb_example_app), (loop, Loop) : Options])
+    mochiweb_http.start([(name, fn_rest), (loop, Loop) : Options])
 
 fn (Ip, Port, [Module:Modules], Api)
     start(Ip, Port, Modules, rest_api(Module, Api))
@@ -47,8 +47,10 @@ loop = fn (Req, Api)
     else
         (Route, Captured) = Handler
         (Module, Function) = route.Route[handler]
+
         Produces = route.Route[produces]
-        Accepts  = route.Route[accepts]
+        Accepts = route.Route[accepts]
+
         Args     = args_from_request(Request, Captured)
 
         Transforms = lists.zip(route.Route[transforms], Args)
@@ -98,7 +100,7 @@ build_body_args = fn (Req, Request, json, Args)
     [Request, Json:Args]
 
 fn (_Req, Request, _Accepts, Args)
-    [Request, Request.request_body():Args]
+    [Request, @Request.request_body():Args]
 
 serve_static = fn (Path)
     Mime = mime_from_path(Path)
@@ -145,7 +147,7 @@ the path return a list with request as first parameter and then all the matched
 arguments")
 
 args_from_request = fn (Request, Captured)
-    args_from_request(Request.path(), tl(Captured), [])
+    args_from_request(@Request.path(), tl(Captured), [])
 
 args_from_request = fn (_Path, [], Args)
     lists.reverse(Args)
@@ -170,8 +172,10 @@ fn ((api, _, _, _, Deletes), 'DELETE')
 if not found (doh!)")
 
 find_handler = fn (Api, Req)
-    Handlers = method_handlers(Api, Req.request_method())
-    find_handler_aux(Handlers, Req.path())
+    io.format("~p ~p~n", [Api, @Req.request_method()])
+    Handlers = method_handlers(Api, @Req.request_method())
+    io.format("~p~n", [Handlers])
+    find_handler_aux(Handlers, @Req.path())
 
 find_handler_aux = fn ([], _Path)
     notfound
@@ -180,7 +184,7 @@ fn ([(route[path=RoutePath])=Route:Handlers], Path)
     switch re.run(Path, RoutePath)
         case nomatch
             find_handler_aux(Handlers, Path)
-        case match => Captured
+        case (match, Captured)
             (Route, Captured)
 
 @doc("transform an atom describing a mime type to its string representation")
@@ -210,6 +214,8 @@ fn (gif)
      "image/gif"
 fn (jpg)
      "image/jpeg"
+fn (any)
+     "*/*"
 fn (Unk) when is_atom(Unk)
      atom_to_list(Unk)
 fn (Unk) when is_list(Unk)
@@ -293,18 +299,18 @@ response = fn (Req)
 
 response = fn (Req, 303=Status, ContentType, Data)
     Response = response(Req)
-    Response1 = Response.status_code(Status)
-    Response2 = Response1.header("Content-Type", ContentType)
-    Response3 = Response2.header("Location", Data)
-    Response4 = Response3.data("")
-    Response4.build_response()
+    Response1 = @Response.status_code(Status)
+    Response2 = @Response1.header("Content-Type", ContentType)
+    Response3 = @Response2.header("Location", Data)
+    Response4 = @Response3.data("")
+    @Response4.build_response()
 
 fn (Req, Status, ContentType, Data)
     Response = response(Req)
-    Response1 = Response.status_code(Status)
-    Response2 = Response1.header("Content-Type", ContentType)
-    Response3 = Response2.data(Data)
-    Response3.build_response()
+    Response1 = @Response.status_code(Status)
+    Response2 = @Response1.header("Content-Type", ContentType)
+    Response3 = @Response2.data(Data)
+    @Response3.build_response()
 
 @doc("build a simple bridge request from a mochiweb request")
 
