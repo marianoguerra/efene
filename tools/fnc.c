@@ -41,6 +41,8 @@ void show_usage() {
 	printf("\t-t: type, can be beam (the default), lex, tree, ast, mod, erl or erl2ast\n");
 	printf("\t-o: output path, the path where the compiled files will be written\n");
 	printf("\t-T: test, instead of running the command print it to the screen\n");
+	printf("\t-a: append a path to look for modules\n");
+	printf("\t-p: prepend a path to look for modules\n");
 	printf("examples:\n");
 	printf("\tfnc foo.ifn: compile foo.ifn, write the result in the current directory\n");
 	printf("\tfnc foo.ifn bar.fn baz.ifn: same as before but multiple files compiled\n");
