@@ -172,9 +172,7 @@ fn ((api, _, _, _, Deletes), 'DELETE')
 if not found (doh!)")
 
 find_handler = fn (Api, Req)
-    io.format("~p ~p~n", [Api, @Req.request_method()])
     Handlers = method_handlers(Api, @Req.request_method())
-    io.format("~p~n", [Handlers])
     find_handler_aux(Handlers, @Req.path())
 
 find_handler_aux = fn ([], _Path)
