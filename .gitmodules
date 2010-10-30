@@ -1,0 +1,7 @@
+[submodule "mochiweb"]
+	path = lib/thirdparty/mochiweb
+	url = git://github.com/mochi/mochiweb.git
+
+[submodule "ibrowse"]
+	path = lib/thirdparty/ibrowse
+	url = git://github.com/cmullaparthi/ibrowse.git
