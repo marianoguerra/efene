@@ -142,6 +142,17 @@ test_to_plist = fn ()
     same(struct.to_plist(S2), [a => 1, b => 2])
     same(struct.to_plist(S3), ["a" => 1, "b" => 2])
 
+test_from_plist = fn ()
+    PList = [a => 1, b => 2]
+    PList1 = ["a" => 1, "b" => 2]
+
+    same(PList->struct.from_plist()->struct.to_plist(), PList)
+    same(PList1->struct.from_plist()->struct.to_plist(), PList1)
+
+    throws(value_error, fn () { struct.from_plist(1) })
+    throws(value_error, fn () { struct.from_plist([1]) })
+    throws(value_error, fn () { struct.from_plist([a => 1, b]) })
+
 test_set_prototype = fn ()
     S = {a: 1, b: 2}
 
@@ -160,4 +171,5 @@ run = fn ()
     test_getdef()
     test_set()
     test_to_plist()
+    test_from_plist()
     test_set_prototype()

@@ -292,3 +292,20 @@ to_plist = fn ((struct, Body))
 fn (Val)
     not_struct(Val)
 
+@public
+@doc("return a struct that contains the values provided by the proplist")
+
+from_plist = fn (PList) when is_list(PList)
+    Check = fn (_Key => _Val)
+        true
+
+    fn (_)
+        false
+
+    if lists.all(Check, PList)
+        (struct, PList)
+    else
+        throw(value_error => "parameter is not a valid proplist")
+
+fn (_)
+    throw(value_error => "parameter is not a valid proplist")
