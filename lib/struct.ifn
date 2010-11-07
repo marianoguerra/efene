@@ -223,7 +223,7 @@ prototype = fn ()
 @public
 @doc("set the default prototype to Struct")
 set_prototype = fn (Struct)
-    extend(Struct, proto_, prototype())
+    set_prototype(Struct, prototype())
 
 @public
 @doc("set the givent prototype to Struct")
