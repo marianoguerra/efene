@@ -142,6 +142,15 @@ test_to_plist = fn ()
     same(struct.to_plist(S2), [a => 1, b => 2])
     same(struct.to_plist(S3), ["a" => 1, "b" => 2])
 
+test_set_prototype = fn ()
+    S = {a: 1, b: 2}
+
+    S1 = struct.set_prototype(S)
+
+    same(S1.to_plist(), [a => 1, b => 2])
+    same(S1.fields(), [a, b])
+    same(S1.has(a), true)
+
 @public
 run = fn ()
     test_has_atom_keys()
@@ -151,3 +160,4 @@ run = fn ()
     test_getdef()
     test_set()
     test_to_plist()
+    test_set_prototype()

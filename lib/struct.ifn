@@ -206,6 +206,7 @@ defined in this module")
 prototype = fn ()
     Get = fn get:2
     Has = fn has:2
+    HasStr = fn hasstr:2
     Set = fn set:3
     GetX = fn getx:2
     GetDef = fn getdef:3
@@ -215,9 +216,19 @@ prototype = fn ()
     Print  = fn print:1
     ToPList = fn to_plist:1
 
-    {get: Get, has: Has, set: Set, getx: GetX, fields: Fields,
+    {get: Get, has: Has, hasstr: HasStr, set: Set, getx: GetX, fields: Fields,
         extend: Extend, getdef: GetDef, format: Format, print: Print,
-        to_plit: ToPList}
+        to_plist: ToPList}
+
+@public
+@doc("set the default prototype to Struct")
+set_prototype = fn (Struct)
+    extend(Struct, proto_, prototype())
+
+@public
+@doc("set the givent prototype to Struct")
+set_prototype = fn (Struct, Prototype)
+    extend(Struct, proto_, Prototype)
 
 @public
 @doc("look for an attribute and call a function when found")
