@@ -213,9 +213,11 @@ prototype = fn ()
     Extend = fn extend:3
     Format = fn format:1
     Print  = fn print:1
+    ToPList = fn to_plist:1
 
     {get: Get, has: Has, set: Set, getx: GetX, fields: Fields,
-        extend: Extend, getdef: GetDef, format: Format, print: Print}
+        extend: Extend, getdef: GetDef, format: Format, print: Print,
+        to_plit: ToPList}
 
 @public
 @doc("look for an attribute and call a function when found")
@@ -266,3 +268,16 @@ do = fn ((struct, Body)=Struct, Name, FoundFn, NotFoundFn, _NotStruct)
 
 fn (Val, _Name, _FoundFn, _NotFoundFn, NotStruct)
     NotStruct(Val)
+
+@public
+@doc("return a prop list with the attributes of the struct, this function
+doesn't return attributes that are functions or the proto_ attribute")
+to_plist = fn ((struct, Body))
+    Filter = fn ((Key, Val))
+        Key != proto_ and not is_function(Val) and Key != "proto_"
+
+    lists.filter(Filter, Body)
+
+fn (Val)
+    not_struct(Val)
+

@@ -131,6 +131,17 @@ test_set = fn ()
     throws(attribute_error, fn () { struct.set(S, [z, a], 1) })
     throws(attribute_error, fn () { struct.set(S, [a, z, x], 1) })
 
+test_to_plist = fn ()
+    S = {a: 1, b: 2, c: fn lists.seq:2, proto_: nil}
+    S1 = {"a": 1, "b": 2, "c": fn lists.seq:2, "proto_": nil}
+    S2 = {a: 1, b: 2}
+    S3 = {"a": 1, "b": 2}
+
+    same(struct.to_plist(S), [a => 1, b => 2])
+    same(struct.to_plist(S1), ["a" => 1, "b" => 2])
+    same(struct.to_plist(S2), [a => 1, b => 2])
+    same(struct.to_plist(S3), ["a" => 1, "b" => 2])
+
 @public
 run = fn ()
     test_has_atom_keys()
@@ -139,3 +150,4 @@ run = fn ()
     test_get()
     test_getdef()
     test_set()
+    test_to_plist()
