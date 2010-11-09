@@ -315,6 +315,9 @@ literal -> struct_call          : '$1'.
 struct -> open_block struct_items close_block :
     {tuple, line('$1'), [{atom, line('$1'), struct}, '$2']}.
 
+struct -> open_block struct_items endl close_block :
+    {tuple, line('$1'), [{atom, line('$1'), struct}, '$2']}.
+
 struct_items -> struct_item sep struct_items : {cons, line('$2'), '$1', '$3'}.
 struct_items -> struct_item : {cons, line('$1'), '$1', {nil, line('$1')}}.
 
