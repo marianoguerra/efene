@@ -7,7 +7,7 @@
 doc = fn (Mod)
     (moddoc, Preamble) = get_attribute(Mod, moddoc, (moddoc, "Module documentation"))
     Docs = attributes(Mod, doc)
-    Exports = Mod.module_info(exports)
+    Exports = @Mod.module_info(exports)
 
     PublicFilter = fn ((doc, [(FunDef, _)]))
         lists.member(FunDef, Exports)
@@ -29,7 +29,7 @@ doc_to_file = fn (Mod, FilePath)
 
 @public
 fundoc = fn (Mod, Fun, Arity)
-    Info = Mod.module_info(attributes)
+    Info = @Mod.module_info(attributes)
 
     FilterDoc = fn ((doc, [((Fun1, Arity1), _)]))
         when Fun == Fun1 and Arity == Arity1
@@ -98,7 +98,7 @@ with the name of the attribute as the first element")
 
 @public
 attributes = fn (Mod, Name)
-    Info = Mod.module_info(attributes)
+    Info = @Mod.module_info(attributes)
 
     Filter = fn (Attr) when element(1, Attr) == Name
         true
