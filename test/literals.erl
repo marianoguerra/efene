@@ -133,6 +133,7 @@ binaries() ->
     tu:test_ast("<[\"mariano\"]>", "<<\"mariano\">>"),
     tu:test_ast("<[$a, $b, 1]>", "<<$a, $b, 1>>"),
     tu:test_ast("<[1024/utf8]>", "<<1024/utf8>>"),
+    tu:test_ast("<[X:S/binary]>", "<<X:S/binary>>"),
     tu:test_ast("<[X:4/little-signed-integer-unit:8]>",
         "<<X:4/little-signed-integer-unit:8>>"),
     tu:test_ast("<[X:4/little-signed-integer-unit:8, Y:4/little-unsigned-unit:8]>",
