@@ -481,6 +481,10 @@ binary_item -> literal split_op integer mul_op bin_type_def:
     assert_atom('$4', '/'),
     {bin_element, line('$1'), '$1', '$3', '$5'}.
 
+binary_item -> literal split_op var mul_op bin_type_def:
+    assert_atom('$4', '/'),
+    {bin_element, line('$1'), '$1', '$3', '$5'}.
+
 binary_item -> literal mul_op bin_type_def:
     assert_atom('$2', '/'),
     {bin_element, line('$1'), '$1', default, '$3'}.
