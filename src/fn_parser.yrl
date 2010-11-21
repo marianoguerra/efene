@@ -336,6 +336,7 @@ struct_attrs -> struct_attr struct_attrs : ['$1'|'$2'].
 struct_attrs -> struct_attr : ['$1'].
 
 struct_attr -> dot atom : unwrap('$2').
+struct_attr -> dot var : '$2'.
 
 struct_call -> struct_get fn_parameters :
     {Var, Line, _Last, Attrs} = '$1',
@@ -622,9 +623,9 @@ struct_get(Value, Line, Attrs) ->
 struct_get(Value, Line, Attrs, Fun) ->
     AttrAst = if
         Fun == get ->
-            erl_parse:abstract(Attrs);
+            abstract_struct_attrs(Attrs, Line);
         Fun == getx ->
-            erl_parse:abstract(hd(Attrs))
+            abstract_struct_attrs(hd(Attrs), Line)
     end,
 
     {call, Line,
@@ -633,7 +634,7 @@ struct_get(Value, Line, Attrs, Fun) ->
             [Value, AttrAst]}.
 
 struct_set(Value, Line, Attrs, Literal) ->
-    AttrListAst = erl_parse:abstract(Attrs),
+    AttrListAst = abstract_struct_attrs(Attrs, Line),
 
     {call, Line,
         {remote, Line,
@@ -641,12 +642,30 @@ struct_set(Value, Line, Attrs, Literal) ->
             [Value, AttrListAst, Literal]}.
 
 struct_query(Var, Line, Attrs) ->
-    AttrListAst = erl_parse:abstract(Attrs),
+    AttrListAst = abstract_struct_attrs(Attrs, Line),
 
     {call, Line,
         {remote, Line,
             {atom, Line, struct}, {atom, Line, has}},
             [Var, AttrListAst]}.
+
+% abstract atoms to an ast that represent an atom
+% leave ast from vars as is
+% create ast of a list containg the two above items
+abstract_struct_attrs(Attr, Line) when is_atom(Attr) ->
+    {atom, Line, Attr};
+abstract_struct_attrs({var, _Line, _Name}=Attr, _L) ->
+    Attr;
+abstract_struct_attrs(Attrs, Line) when is_list(Attrs) ->
+    [Last|NewAttrs] = lists:reverse(Attrs),
+    abstract_struct_attrs_list(NewAttrs, Line,
+        {cons, Line, abstract_struct_attrs(Last, Line), {nil, Line}}).
+
+abstract_struct_attrs_list([], _Line, Accum) ->
+    Accum;
+abstract_struct_attrs_list([H|T], Line, Accum) ->
+    Cons = {cons, Line, abstract_struct_attrs(H, Line), Accum},
+    abstract_struct_attrs_list(T, Line, Cons).
 
 check_clauses_arity([], _Count) ->
     ok;
