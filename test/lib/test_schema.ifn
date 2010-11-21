@@ -1,0 +1,254 @@
+@moddoc("test fschema module")
+
+throws = fn (ExName, Expr)
+    try
+        Expr()
+        io.format("error: expression should throw ~p~n", [ExName])
+    catch (ExName => _Desc)
+        io.format("ok: expression throws ~p~n", [ExName])
+    catch _ (OtherEx => _Desc)
+        io.format("error: expression should throw ~p not ~p~n", [ExName, OtherEx])
+
+test_is_string = fn ()
+    true = schema.is(string, "")
+    true = schema.is(string, "a")
+    true = schema.is(string, "1")
+    true = schema.is(string, [$a])
+    true = schema.is(string, "§%§&/$%()(&§")
+
+    false = schema.is(string, 1)
+    false = schema.is(string, foo)
+    false = schema.is(string, [foo])
+    false = schema.is(string, [["asd"]])
+
+test_is_integer = fn ()
+    true = schema.is(integer, 1)
+    true = schema.is(integer, -1)
+    true = schema.is(integer, 0)
+    true = schema.is(integer, 99999999999999)
+
+    false = schema.is(integer, 1.0)
+    false = schema.is(integer, 1.2)
+    false = schema.is(integer, foo)
+    false = schema.is(integer, [1])
+    false = schema.is(integer, "1")
+
+test_is_number = fn ()
+    true = schema.is(number, 1)
+    true = schema.is(number, 1)
+    true = schema.is(number, -1)
+    true = schema.is(number, 1.0)
+    true = schema.is(number, -1.0)
+    true = schema.is(number, 0)
+    true = schema.is(number, 0.0)
+    true = schema.is(number, 99999999999999)
+    true = schema.is(number, 99999999999999.0)
+
+    false = schema.is(number, foo)
+    false = schema.is(number, [1])
+    false = schema.is(number, "1")
+    false = schema.is(number, "1.0")
+
+test_is_boolean = fn ()
+    true = schema.is(boolean, true)
+    true = schema.is(boolean, false)
+
+    false = schema.is(boolean, 'False')
+    false = schema.is(boolean, 'True')
+    false = schema.is(boolean, "False")
+    false = schema.is(boolean, "True")
+    false = schema.is(boolean, 1)
+    false = schema.is(boolean, 0)
+    false = schema.is(boolean, [1])
+    false = schema.is(boolean, "1")
+    false = schema.is(boolean, "1.0")
+
+test_is_object = fn ()
+    true = schema.is(object, struct => ["foo" => 1, "bar" => "asd"])
+
+    false = schema.is(object, ["foo" => 1, "bar" => "asd"])
+    false = schema.is(object, "foo" => 1)
+    false = schema.is(object, foo)
+    false = schema.is(object, [1])
+    false = schema.is(object, "1")
+    false = schema.is(object, "1.0")
+
+test_is_array = fn ()
+    true = schema.is(array, ["foo" => 1, "bar" => "asd"])
+    true = schema.is(array, ["foo", "bar"])
+    true = schema.is(array, [])
+    true = schema.is(array, [1])
+    true = schema.is(array, [1, false, nil, 1.2, "asd"])
+
+    false = schema.is(array, "foo" => 1)
+    false = schema.is(array, foo)
+    false = schema.is(array, 1)
+    false = schema.is(array, 1.2)
+
+test_is_null = fn ()
+    true = schema.is(null, null)
+
+    false = schema.is(null, "null")
+    false = schema.is(null, nil)
+    false = schema.is(null, "foo" => 1)
+    false = schema.is(null, foo)
+    false = schema.is(null, 1)
+    false = schema.is(null, 1.2)
+
+test_is_any= fn ()
+    true = schema.is(any, 1)
+    true = schema.is(any, 1)
+    true = schema.is(any, -1)
+    true = schema.is(any, 1.0)
+    true = schema.is(any, -1.0)
+    true = schema.is(any, 0)
+    true = schema.is(any, 0.0)
+    true = schema.is(any, 99999999999999)
+    true = schema.is(any, 99999999999999.0)
+
+    true = schema.is(any, null)
+
+    true = schema.is(any, ["foo" => 1, "bar" => "asd"])
+    true = schema.is(any, ["foo", "bar"])
+    true = schema.is(any, [])
+    true = schema.is(any, [1])
+    true = schema.is(any, [1, false, nil, 1.2, "asd"])
+
+    true = schema.is(any, struct => ["foo" => 1, "bar" => "asd"])
+
+    true = schema.is(any, true)
+    true = schema.is(any, false)
+
+test_validate = fn ()
+    Obj = {name: "Mariano", lastname: "Guerra", age: 25, points: 42}
+    Obj1 = {name: "Mariano", lastname: "Guerra"}
+
+    Pattern = "^[A-Z][a-z]+$"
+
+    Schema =
+        name: "User",
+        properties:
+            name:
+                type: string,
+                pattern: Pattern,
+                minLength: 3,
+                maxLength: 7
+            ,lastname:
+                type: string,
+                optional: false
+            ,age:
+                type: integer,
+                minimum: 0,
+                maximum: 100,
+                optional: true,
+                divisibleBy: 5
+            ,points:
+                type: integer,
+                optional: true,
+                minimumCanEqual: 0,
+                maximumCanEqual: 9000
+
+    throws(value_error, fn () { schema.validate(Obj, {name: "User"}) })
+    ok = schema.validate(Obj, Schema)
+    ok = schema.validate(Obj1, Schema)
+
+    (error => (not_found => lastname)) = schema.validate({name: "Mariano"}, Schema)
+    (error => (type => (age, integer))) = schema.validate(Obj.age := "25", Schema)
+
+    (error => (divisibleBy => (age, 5))) = schema.validate(Obj.age := 26, Schema)
+
+    ok = schema.validate(Obj.name:= "Mar", Schema)
+    (error => (minLength => (name, 3))) = schema.validate(Obj.name:= "Ma", Schema)
+    (error => (maxLength => (name, 7))) = schema.validate(Obj.name:= "Luismariano", Schema)
+
+    (error => (minimum => (age, 0))) = schema.validate(Obj.age := 0, Schema)
+    (error => (minimum => (age, 0))) = schema.validate(Obj.age := -1, Schema)
+
+    (error => (maximum => (age, 100))) = schema.validate(Obj.age := 100, Schema)
+    (error => (maximum => (age, 100))) = schema.validate(Obj.age := 101, Schema)
+
+    ok = schema.validate(Obj.points := 0, Schema)
+    (error => (minimumCanEqual => (points, 0))) = schema.validate(Obj.points := -1, Schema)
+
+    ok = schema.validate(Obj.points := 9000, Schema)
+    (error => (maximumCanEqual => (points, 9000))) = schema.validate(Obj.points := 9001, Schema)
+
+    (error => (pattern => (name, Pattern))) = schema.validate(Obj.name := "Marian!", Schema)
+    (error => (pattern => (name, Pattern))) = schema.validate(Obj.name := "mariano", Schema)
+
+test_validate_requires = fn ()
+    Obj = {country: "Argentina", state: "Cordoba", city: "Cordoba"}
+    Obj1 = {country: "Argentina", city: "Cordoba"}
+    Obj2 = {country: "Argentina"}
+
+    Schema =
+        name: "Location",
+        properties:
+            country:
+                type: string,
+                optional: false
+            ,state:
+                type: string,
+                optional: true
+            ,city:
+                requires: state,
+                optional: true
+
+    ok = schema.validate(Obj, Schema)
+    ok = schema.validate(Obj2, Schema)
+    (error => (requires => (city, state))) = schema.validate(Obj1, Schema)
+
+test_validate_xitems = fn ()
+    Obj = {name: "efene", tags: [language, functional]}
+
+    Schema =
+        name: "Programming Language",
+        properties:
+            name:
+                type: string
+            ,tags:
+                type: array,
+                minItems: 1,
+                maxItems: 3,
+                uniqueItems: true
+
+    ok = schema.validate(Obj, Schema)
+    ok = schema.validate(Obj.tags := [onlyOne], Schema)
+    ok = schema.validate(Obj.tags := [one, two, tres], Schema)
+    (error => (minItems => (tags, 1))) = schema.validate(Obj.tags := [], Schema)
+    (error => (maxItems => (tags, 3))) = schema.validate(Obj.tags := [a, b, c, d], Schema)
+    (error => (uniqueItems => tags)) = schema.validate(Obj.tags := [a, b, a], Schema)
+
+test_validate_enum = fn ()
+    Obj = {name: "efene", paradigm: "functional"}
+    Paradigms = ["functional", "OO", "procedural"]
+
+    Schema =
+        name: "Programming Language",
+        properties:
+            name:
+                type: string
+            ,paradigm:
+                type: string,
+                enum: Paradigms
+
+    ok = schema.validate(Obj, Schema)
+    (error => (enum, (paradigm, Paradigms))) = schema.validate(Obj.paradigm := "random", Schema)
+
+@public
+run = fn ()
+    test_is_string()
+    test_is_integer()
+    test_is_number()
+    test_is_boolean()
+    test_is_object()
+    test_is_array()
+    test_is_null()
+    test_is_any()
+
+    test_validate()
+    test_validate_requires()
+    test_validate_xitems()
+    test_validate_enum()
+
+
