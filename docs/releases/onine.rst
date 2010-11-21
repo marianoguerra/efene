@@ -64,6 +64,7 @@ New Modules or Functions
 
 * make rest parse simplified attributes, just one attribute required to describe a REST API for a function
 * new struct module
+* new schema module that allows to define a schema for validation using struct syntax and json schema format to validate structs
 * removed obj code, libraries and examples
 * started adding tests to efene libs
 * third party libs bundled with efene
