@@ -83,7 +83,7 @@ found")
 
 @public
 get_attribute = fn (Mod, Name, Default)
-    switch lists.keyfind(Name, 1, Mod.module_info(attributes))
+    switch lists.keyfind(Name, 1, @Mod.module_info(attributes))
         case false
             Default
         case Attr

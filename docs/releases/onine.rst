@@ -17,21 +17,21 @@ make some tasks easier.
 New Language Syntax
 ~~~~~~~~~~~~~~~~~~~
 
-* :ref:`structs <structs>`
-* fat arrow expressions
-* structs
+* :ref:`structs <struct>` expressions
+* :ref:`fat arrow <fatarrow>` expressions
 
 * allow new lines after opening list
+* allow variables in a binary item like: *<[Val:Var/binary]>*
 * source code parsing works with windows line break CR+LF
 * allow lambdas defined as function parameters
 * allow lightweight struct syntax in ifene
+* add support for binary generators
 
 Syntax Changes
 ~~~~~~~~~~~~~~
 
 * changed syntax to access modules from variables
 * pretty print structs in the shell
-* add support for binary generators
 
 License Changes
 ~~~~~~~~~~~~~~~

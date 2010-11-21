@@ -1,5 +1,7 @@
-Struct
-------
+.. _struct:
+
+Struct Expression
+-----------------
 
 defining a struct literal::
 

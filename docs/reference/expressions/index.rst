@@ -27,6 +27,7 @@ Expressions
 
    arrow
    struct
+   fatarrow
 
    metaeval
    metaevalandastify
