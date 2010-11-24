@@ -69,7 +69,7 @@ loop = fn (Req, Api)
                 [Request:TArgs]
 
         (Status, Mime, Return) = switch apply(Module, Function, NewArgs)
-            case (ok, OMsg)
+            case ok => OMsg
                 (200, Produces, OMsg)
             case (created, CMsg)
                 (201, Produces, CMsg)
@@ -81,7 +81,7 @@ loop = fn (Req, Api)
                 (401, Produces, UMsg)
             case (redirect, Url)
                 (303, Produces, Url)
-            case (static, Path)
+            case file => Path
                 serve_static(Path)
             case Msg
                 (200, Produces, Msg)
