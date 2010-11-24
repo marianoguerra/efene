@@ -22,6 +22,9 @@ modules passed as parameter (an atom or a list of atoms)")
 start = fn (Ip, Port, [Module:Modules])
     start(Ip, Port, Modules, rest_api(Module))
 
+fn (Ip, Port, Module) when is_atom(Module)
+    start(Ip, Port, [Module])
+
 
 start = fn (Ip, Port, [], Api)
     Options = [(ip, Ip), (port, Port)]
