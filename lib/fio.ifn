@@ -1,14 +1,14 @@
 @@license("New BSD License, part of efene, see LICENSE for details")
 @@moddoc("module to handle io special cases for efene")
 
-format_result = fn (Items)
+format_result = fn (Items, Open, Close)
     FItems = lists.flatten(Items)
     FItemsLen = length(FItems)
 
     if FItemsLen == 0
-        "{}"
+        Open ++ Close
     else
-        io_lib.format("{~s}", [lists.sublist(FItems, length(FItems) - 2)])
+        io_lib.format("~s~s~s", [Open, lists.sublist(FItems, length(FItems) - 2), Close])
 
 @doc("like io_lib.format but for efene terms")
 @public
@@ -19,7 +19,7 @@ format = fn ((struct, Body))
         else
             io_lib.format("~p: ~s, ", [Key, format(Val)])
 
-    format_result(Items)
+    format_result(Items, "{", "}")
 
 fn (Val) when is_tuple(Val) and size(Val) == 0
     "(,)"
@@ -31,7 +31,7 @@ fn (Val) when is_tuple(Val)
     Items = for Item in tuple_to_list(Val)
         format(Item) ++ ", "
 
-    format_result(Items)
+    format_result(Items, "{", "}")
 
 fn (Val) when is_list(Val) and length(Val) == 0
     "[]"
@@ -40,7 +40,7 @@ fn (Val) when is_list(Val)
     Items = for Item in Val
         format(Item) ++ ", "
 
-    format_result(Items)
+    format_result(Items, "[", "]")
 
 fn (Val)
     io_lib.format("~p", [Val])
