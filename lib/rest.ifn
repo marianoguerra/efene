@@ -86,7 +86,12 @@ loop = fn (Req, Api)
             case Msg
                 (200, Produces, Msg)
 
-        response(Req, Status, mime(Mime), Return)
+        Result = if Mime == json
+            mochijson2.encode(Return)
+        else
+            Return
+
+        response(Req, Status, mime(Mime), Result)
 
 @doc("return a list with the parameters that are going to be passed
 to a handler that handles a PUT or a POST, the first parameter is
