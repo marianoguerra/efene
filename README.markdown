@@ -319,9 +319,9 @@ The build instructions create the Efene compiler, compile the Efene source and s
 
     $ git clone git://github.com/marianoguerra/efene.git
     $ cd efene
-    $ pushd tools ; make ; popd
-    $ pushd src ; ./build.sh ; popd
-    $ pushd lib ; ./build.sh ; popd
+    $ cd tools ; make ; cd ..
+    $ cd src ; ./build.sh ; cd ..
+    $ cd lib ; ./build.sh ; cd ..
 
 ## Examples
 
@@ -337,6 +337,8 @@ To create the Efene compiler you will need a C compiler like GCC or LLVM-GCC. Fo
 
 * Erlang
 * (GCC or LLVM-GCC)
+
+Note: in debian based distributions the package erlang-parsetools  is required to compile efene.
 
 ## Useful links
 
