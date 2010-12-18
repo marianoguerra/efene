@@ -83,11 +83,11 @@ validate_properties = fn (Val, Props)
                     else if Property.maximum? and ValAttr >= Property.maximum
                         throw(maximum => (AttrName, Property.maximum))
 
-                    else if Property.minimumCanEqual? and ValAttr < Property.minimumCanEqual
-                        throw(minimumCanEqual => (AttrName, Property.minimumCanEqual))
+                    else if Property.exclusiveMinimum? and ValAttr < Property.exclusiveMinimum
+                        throw(exclusiveMinimum => (AttrName, Property.exclusiveMinimum))
 
-                    else if Property.maximumCanEqual? and ValAttr > Property.maximumCanEqual
-                        throw(maximumCanEqual => (AttrName, Property.maximumCanEqual))
+                    else if Property.exclusiveMaximum? and ValAttr > Property.exclusiveMaximum
+                        throw(exclusiveMaximum => (AttrName, Property.exclusiveMaximum))
 
                     else if Property.divisibleBy? and ValAttr % Property.divisibleBy != 0
                         throw(divisibleBy => (AttrName, Property.divisibleBy))
@@ -129,12 +129,13 @@ validate_properties = fn (Val, Props)
 
 
             # check required attributes of this attribute
-            if Property.requires?
-                Requires = Property.requires
-                if struct.has(Val, Requires)
+            if Property.dependencies?
+                Dependencies = Property.dependencies
+
+                if struct.has(Val, Dependencies)
                     ok
                 else
-                    throw(requires => (AttrName, Requires))
+                    throw(dependencies => (AttrName, Dependencies))
             else
                 ok
 
@@ -144,7 +145,7 @@ validate_properties = fn (Val, Props)
             else
                 ok
 
-        else if Property.optional? and Property.optional
+        else if Property.required? and not Property.required
             ok
         else
             throw(not_found => AttrName)

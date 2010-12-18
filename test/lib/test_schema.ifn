@@ -135,18 +135,18 @@ test_validate = fn ()
                 maxLength: 7
             ,lastname:
                 type: string,
-                optional: false
+                required: true
             ,age:
                 type: integer,
                 minimum: 0,
                 maximum: 100,
-                optional: true,
+                required: false,
                 divisibleBy: 5
             ,points:
                 type: integer,
-                optional: true,
-                minimumCanEqual: 0,
-                maximumCanEqual: 9000
+                required: false,
+                exclusiveMinimum: 0,
+                exclusiveMaximum: 9000
 
     throws(value_error, fn () { schema.validate(Obj, {name: "User"}) })
     ok = schema.validate(Obj, Schema)
@@ -168,15 +168,15 @@ test_validate = fn ()
     (error => (maximum => (age, 100))) = schema.validate(Obj.age := 101, Schema)
 
     ok = schema.validate(Obj.points := 0, Schema)
-    (error => (minimumCanEqual => (points, 0))) = schema.validate(Obj.points := -1, Schema)
+    (error => (exclusiveMinimum => (points, 0))) = schema.validate(Obj.points := -1, Schema)
 
     ok = schema.validate(Obj.points := 9000, Schema)
-    (error => (maximumCanEqual => (points, 9000))) = schema.validate(Obj.points := 9001, Schema)
+    (error => (exclusiveMaximum => (points, 9000))) = schema.validate(Obj.points := 9001, Schema)
 
     (error => (pattern => (name, Pattern))) = schema.validate(Obj.name := "Marian!", Schema)
     (error => (pattern => (name, Pattern))) = schema.validate(Obj.name := "mariano", Schema)
 
-test_validate_requires = fn ()
+test_validate_dependencies = fn ()
     Obj = {country: "Argentina", state: "Cordoba", city: "Cordoba"}
     Obj1 = {country: "Argentina", city: "Cordoba"}
     Obj2 = {country: "Argentina"}
@@ -186,17 +186,17 @@ test_validate_requires = fn ()
         properties:
             country:
                 type: string,
-                optional: false
+                required: true
             ,state:
                 type: string,
-                optional: true
+                required: false
             ,city:
-                requires: state,
-                optional: true
+                dependencies: state,
+                required: false
 
     ok = schema.validate(Obj, Schema)
     ok = schema.validate(Obj2, Schema)
-    (error => (requires => (city, state))) = schema.validate(Obj1, Schema)
+    (error => (dependencies => (city, state))) = schema.validate(Obj1, Schema)
 
 test_validate_xitems = fn ()
     Obj = {name: "efene", tags: [language, functional]}
@@ -247,7 +247,7 @@ run = fn ()
     test_is_any()
 
     test_validate()
-    test_validate_requires()
+    test_validate_dependencies()
     test_validate_xitems()
     test_validate_enum()
 
