@@ -58,6 +58,8 @@ Internal Changes
 * build scripts for windows
 * Add global build script to build tools, src, and libs
 * check that all function clauses have the same number of arguments, print a nice error if not
+* the else branch in the if expression translate to match _ instead of false to avoid an exception when the expression in the if doesn't evaluate to a boolean
+* pretty print the results in the shell with efene syntax
 
 New Modules or Functions
 ~~~~~~~~~~~~~~~~~~~~~~~~
