@@ -42,6 +42,11 @@ fn (Val) when is_list(Val)
 
     format_result(Items, "[", "]")
 
+fn (Val) when is_binary(Val)
+    [Repr] = io_lib.format("~p", [Val])
+    Content = lists.nth(3, Repr)
+    "<[" ++ Content ++ "]>"
+
 fn (Val)
     io_lib.format("~p", [Val])
 
