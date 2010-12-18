@@ -12,7 +12,8 @@ Nonterminals
     rec_set rec_new attr_sets attr_set binary binary_items binary_item
     bin_type_def bin_type prefix_op attribute for_expr range signed_integer
     meta_block astify meta_astify attrs fat_arrow_expr struct struct_items
-    struct_item struct_get struct_set struct_attrs struct_attr struct_call.
+    struct_item struct_get struct_ask struct_set struct_attrs
+    struct_attr struct_call.
 
 Terminals
     fn match set open close open_block close_block integer float string var
@@ -298,19 +299,19 @@ literal -> astify               : '$1'.
 literal -> meta_astify          : '$1'.
 literal -> begin fn_block       : {block, line('$1'), '$2'}.
 literal -> struct               : '$1'.
-literal -> struct_get question  :
-    {Var, Line, _Last, Attrs} = '$1',
-    struct_query(Var, Line, Attrs).
+literal -> struct_ask           : '$1'.
 
-literal -> struct_get           :
-    {Var, Line, _Last, Attrs} = '$1',
-    struct_get(Var, Line, Attrs).
+literal -> struct_get           : gen_struct_get('$1').
 
 literal -> struct_set           :
     {Var, Line, _Last, Attrs, Value} = '$1',
     struct_set(Var, Line, Attrs, Value).
 
 literal -> struct_call          : '$1'.
+
+struct_ask -> struct_get question:
+    {Var, Line, _Last, Attrs} = '$1',
+    struct_query(Var, Line, Attrs).
 
 struct -> open_block struct_items close_block :
     {tuple, line('$1'), [{atom, line('$1'), struct}, '$2']}.
@@ -372,6 +373,8 @@ range -> signed_integer dotdot signed_integer :
 range -> signed_integer : '$1'.
 range -> bin_not integer: {op, line('$2'), op(unwrap('$1')), '$2'}.
 range -> prefix_op float: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> prefix_op struct_ask : {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> prefix_op struct_get : {op, line('$2'), op(unwrap('$1')), gen_struct_get('$2')}.
 range -> add_op char: {op, line('$2'), op(unwrap('$1')), '$2'}.
 range -> bin_not char: {op, line('$2'), op(unwrap('$1')), '$2'}.
 range -> bool_not bool_lit: {op, line('$2'), op(unwrap('$1')), '$2'}.
@@ -683,3 +686,6 @@ check_clauses_arity([Clause|Clauses], Count) ->
 
             fail(Line, Message)
     end.
+
+gen_struct_get({Var, Line, _Last, Attrs}) ->
+    struct_get(Var, Line, Attrs).
