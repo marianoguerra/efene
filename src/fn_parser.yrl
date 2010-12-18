@@ -189,12 +189,12 @@ if_expr -> if bool_expr fn_block :
 if_expr -> if bool_expr fn_block else if_expr :
      {'case', line('$1'), '$2',
          [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'},
-          {clause, line('$3'), [{atom, line('$3'), false}], [], ['$5']}]}.
+          {clause, line('$3'), [{var, line('$3'), '_'}], [], ['$5']}]}.
 
 if_expr -> if bool_expr fn_block else fn_block:
      {'case', line('$1'), '$2',
          [{clause, line('$3'), [{atom, line('$3'), true}], [], '$3'},
-          {clause, line('$3'), [{atom, line('$3'), false}], [], '$5'}]}.
+          {clause, line('$3'), [{var, line('$3'), '_'}], [], '$5'}]}.
 
 % for expression
 

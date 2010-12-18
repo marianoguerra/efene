@@ -13,15 +13,15 @@ whens() ->
 ifs() ->
     tu:test_ast("if foo(X) { A }", "case foo(X) of true -> A end"),
     tu:test_ast("if foo(X) { A } else { B }",
-        "case foo(X) of true -> A; false -> B end"),
+        "case foo(X) of true -> A; _ -> B end"),
     tu:test_ast("if foo(X) { A } else if bar(Y) { B }",
-        "case foo(X) of true -> A; false -> case bar(Y) of true -> B end end"),
+        "case foo(X) of true -> A; _ -> case bar(Y) of true -> B end end"),
     tu:test_ast("if foo(X) { A } else if bar(Y) { B } else { C }",
-        "case foo(X) of true -> A; false -> case bar(Y) of true -> B; false -> C end end"),
+        "case foo(X) of true -> A; _ -> case bar(Y) of true -> B; _ -> C end end"),
     tu:test_ast("if foo(X) { A } else if bar(Y) { B } else if baz(Z) { C }",
-        "case foo(X) of true -> A; false -> case bar(Y) of true -> B; false -> case baz(Z) of true -> C end end end"),
+        "case foo(X) of true -> A; _ -> case bar(Y) of true -> B; _ -> case baz(Z) of true -> C end end end"),
     tu:test_ast("if foo(X) { A } else if bar(Y) { B } else if baz(Z) { C } else { D }",
-        "case foo(X) of true -> A; false -> case bar(Y) of true -> B; false -> case baz(Z) of true -> C; false -> D end end end"),
+        "case foo(X) of true -> A; _ -> case bar(Y) of true -> B; _ -> case baz(Z) of true -> C; _ -> D end end end"),
     ok.
 
 tries() ->
