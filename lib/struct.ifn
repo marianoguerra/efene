@@ -177,15 +177,42 @@ fn (Val)
     not_struct(Val)
 
 @public
-@doc("extend the struct by adding an attribute named *Key* with value *Value*")
-extend = fn ((struct, Body), Key, Value)
-    if is_atom(Key) or is_list(Key)
-        (struct, [Key => Value:Body])
-    else
-        throw(value_error => "key isn't a string or an atom")
+@doc("extend the struct by adding an attribute named *Key* with value *Value*
+if *Key* already exists replace it")
+extend = fn ((struct, _Body)=Struct, Key, Value) when is_atom(Key) or is_list(Key)
+    extend(Struct, Key, Value, replace)
 
-fn (_, _Key, _Value)
-    throw(value_error => "value doesn't seem to be a struct")
+fn (Value, _Key, _Value)
+    not_struct(Value)
+
+@public
+@doc("extend the struct by adding an attribute named *Key* with value *Value*
+the last argument specifies the action to take if *Key* already exists,
+posible values are:
+
+replace:
+    replace the old value
+
+fail:
+    throw an exception
+
+ignore:
+    keep the old value")
+extend = fn ((struct, Body), Key, Value, fail)
+    if proplists.is_defined(Key, Body)
+        throw(key_exists)
+    else
+        (struct, [Key => Value:Body])
+
+fn ((struct, Body)=Struct, Key, Value, ignore)
+    if proplists.is_defined(Key, Body)
+        Struct
+    else
+        (struct, [Key => Value:Body])
+
+fn ((struct, Body), Key, Value, replace)
+    NewBody = proplists.delete(Key, Body)
+    (struct, [Key => Value:NewBody])
 
 @public
 @doc("return the prototype for a basic struct that can do the operations
@@ -197,7 +224,7 @@ prototype = fn ()
     HasOwn = fn hasown:2
     Set = fn set:3
     Fields = fn fields:1
-    Extend = fn extend:3
+    Extend = fn extend:4
     Format = fn format:1
     Print  = fn print:1
     ToPList = fn to_plist:1
