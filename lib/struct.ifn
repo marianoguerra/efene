@@ -102,41 +102,65 @@ print = fn (Struct)
 print = fn (Struct, ShowFuns)
     io.format("~s~n", [format(Struct, ShowFuns)])
 
+has_not_found = fn ((struct, Body)=Struct, FName)
+    # avoid calling has or has_h inside a call to has or has_h ;)
+    if lists.keyfind(proto_, 1, Body) != false
+        has_h(Struct.proto_, FName, fn has_not_found:2)
+    else
+        false
+
 @public
 @doc("return true if the struct has the given attribute as atom or string,
 false otherwise.
 
+if not found on its attributes, look on parent ones
+
 the second parameter must be an atom or a list of atoms/strings")
 
-has = fn (_Struct, [])
+has = fn (Struct, Names)
+    FnNotFound = fn has_not_found:2
+    has(Struct, Names, FnNotFound)
+
+has = fn (_Struct, [], _FnNotFound)
     true
 
-fn (Struct, [Name:Names])
-    switch has_h(Struct, Name)
+fn (Struct, [Name:Names], FnNotFound)
+    switch has_h(Struct, Name, FnNotFound)
         case true => Value
-            has(Value, Names)
+            has(Value, Names, FnNotFound)
         case false
             false
 
-fn (Struct, Name) when is_atom(Name)
-    has(Struct, [Name])
+fn (Struct, Name, FnNotFound) when is_atom(Name)
+    has(Struct, [Name], FnNotFound)
 
+@public
 has_h = fn (Struct, Name)
+    FnNotFound = fn has_not_found:2
+    has_h(Struct, Name, FnNotFound)
+
+
+has_h = fn (Struct, Name, FnNotFound)
     FnFound = fn (_Struct, _Name, Value)
         true => Value
-
-    FnNotFound = fn ((struct, Body)=Struct1, FName)
-        # avoid calling has or has_h inside a call to has or has_h ;)
-        if lists.keyfind(proto_, 1, Body) != false
-            has_h(Struct1.proto_, FName)
-        else
-            false
 
     FnNotStruct = fn (_Val)
         false
 
     do(Struct, Name, FnFound, FnNotFound, FnNotStruct)
 
+@public
+@doc("return true if the struct has the given attribute as atom or string,
+false otherwise.
+
+only looks on it's attributes, doesn't look in parent ones
+
+the second parameter must be an atom or a list of atoms/strings")
+hasown = fn (Struct, Names)
+    FnNotFound = fn (_Struct, _Name)
+        false
+
+    has(Struct, Names, FnNotFound)
 
 @public
 @doc("return all the field names of a struct.
@@ -170,6 +194,7 @@ prototype = fn ()
     Get = fn get:2
     GetOwn = fn getown:2
     Has = fn has:2
+    HasOwn = fn hasown:2
     Set = fn set:3
     Fields = fn fields:1
     Extend = fn extend:3
@@ -177,7 +202,7 @@ prototype = fn ()
     Print  = fn print:1
     ToPList = fn to_plist:1
 
-    {get: Get, getown: GetOwn, has: Has, set: Set,
+    {get: Get, getown: GetOwn, has: Has, hasown: HasOwn, set: Set,
         fields: Fields, extend: Extend, format: Format, print: Print,
         to_plist: ToPList}
 
