@@ -14,23 +14,11 @@ throws = fn (ExName, Expr)
     catch _ (OtherEx => _Desc)
         io.format("error: expression should throw ~p not ~p~n", [ExName, OtherEx])
 
-hasntstr = fn (S, Name)
-    if struct.hasstr(S, Name)
-        io.format("error: struct ~p shouldn't have ~p~n", [element(2, S), Name])
-    else
-        io.format("ok: struct ~p has ~p~n", [element(2, S), Name])
-
-hasstr = fn (S, Name)
-    if struct.hasstr(S, Name)
-        io.format("ok: struct ~p has ~p~n", [element(2, S), Name])
-    else
-        io.format("error: struct ~p should have ~p~n", [element(2, S), Name])
-
 hasnt = fn (S, Names)
     if struct.has(S, Names)
         io.format("error: struct ~p shouldn't have ~p~n", [element(2, S), Names])
     else
-        io.format("ok: struct ~p has ~p~n", [element(2, S), Names])
+        io.format("ok: struct ~p has't ~p~n", [element(2, S), Names])
 
 has = fn (S, Names)
     if struct.has(S, Names)
@@ -40,7 +28,6 @@ has = fn (S, Names)
 
 test_has = fn (S)
     has(S, foo)
-    hasnt(S, asd)
 
     has(S, [foo])
     has(S, [foo, bar])
@@ -60,10 +47,20 @@ test_has_atom_keys = fn ()
 
 test_has_str_keys = fn ()
     S = {"foo": {"bar": {"baz": 1}}}
-    test_has(S)
+    test_has_str_keys(S)
 
-    hasstr(S, "foo")
-    hasntstr(S, "asd")
+test_has_str_keys_proto = fn ()
+    S = {"foo": {proto_: {"bar": {"baz": 1}}}}
+    test_has_str_keys(S)
+
+    S1 = {"foo": {proto_: {"bar": {"baz": 1}}}}
+    test_has_str_keys(S1)
+
+    S2 = {"foo": {proto_: {"bar": {proto_: {"baz": 1}}}}}
+    test_has_str_keys(S2)
+
+test_has_str_keys = fn (S)
+    test_has(S)
 
     has(S, ["foo"])
     has(S, ["foo", "bar"])
@@ -77,23 +74,34 @@ test_has_str_keys = fn ()
     hasnt(S, ["foo", "bar", "asd"])
     hasnt(S, ["foo", "bar", "baz", "asd"])
 
-test_hasstr = fn ()
-    S = {foo: 1, "bar": 2, baz: asd}
-
-    has(S, foo)
-    has(S, [foo])
-
-    hasntstr(S, "foo")
-    hasnt(S, ["foo"])
-
-    hasstr(S, "bar")
-    has(S, ["bar"])
-
 test_get = fn ()
     S = {a: {b: {c: 42}, d: 1}, e:2}
+    test_get(S)
 
     same(struct.get(S, [a]), {b: {c: 42}, d: 1})
     same(struct.get(S, [a, b]), {c: 42})
+
+test_get_proto = fn ()
+    S = {proto_: {a: {b: {c: 42}, d: 1}}, e:2}
+    test_get(S)
+
+    same(struct.get(S, [a]), {b: {c: 42}, d: 1})
+    same(struct.get(S, [a, b]), {c: 42})
+
+    S1 = {proto_: {a: {proto_: {b: {c: 42}, d: 1}}}, e:2}
+    test_get(S1)
+
+    same(struct.get(S1, [a]), {proto_: {b: {c: 42}, d: 1}})
+    same(struct.get(S1, [a, b]), {c: 42})
+
+    S2 = {proto_: {a: {b: {proto_: {c: 42}}, d: 1}}, e:2}
+    test_get(S2)
+
+    same(struct.get(S2, [a]), {b: {proto_: {c: 42}}, d: 1})
+    same(struct.get(S2, [a, b]), {proto_: {c: 42}})
+
+test_get = fn (S)
+
     same(struct.get(S, [a, b, c]), 42)
 
     throws(attribute_error, fn () { struct.get(S, [z]) })
@@ -102,19 +110,6 @@ test_get = fn ()
 
     throws(value_error, fn () { struct.get(S, [a, b, c, z]) })
     throws(value_error, fn () { struct.get(S, [a, b, c, d, z]) })
-
-test_getdef = fn ()
-    S = {a: {b: {c: 42}, d: 1}, e:2}
-
-    same(struct.getdef(S, [a], nil), {b: {c: 42}, d: 1})
-    same(struct.getdef(S, [a, b], nil), {c: 42})
-    same(struct.getdef(S, [a, b, c], nil), 42)
-
-    same(struct.getdef(S, [z], nil), nil)
-    same(struct.getdef(S, [a, z], nil), nil)
-    same(struct.getdef(S, [a, b, z], nil), nil)
-    same(struct.getdef(S, [a, b, c, z], nil), nil)
-    same(struct.getdef(S, [a, b, c, d, z], nil), nil)
 
 test_set = fn ()
     S = {a: {b: {c: 42}, d: 1}, e:2}
@@ -166,9 +161,9 @@ test_set_prototype = fn ()
 run = fn ()
     test_has_atom_keys()
     test_has_str_keys()
-    test_hasstr()
+    test_has_str_keys_proto()
     test_get()
-    test_getdef()
+    test_get_proto()
     test_set()
     test_to_plist()
     test_from_plist()

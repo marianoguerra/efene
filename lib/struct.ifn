@@ -4,16 +4,12 @@
 not_found = fn (_Struct, Name)
     throw(attribute_error => "struct has no attribute '" ++ atom_to_list(Name) ++ "'")
 
-@doc("function called from getx when the attribute wasn't found on the struct,
+@doc("function called from get when the attribute wasn't found on the struct,
 look if there is a proto_ attribute and look inside it to search for the
 value")
 not_found_proto = fn (Struct, Name) when is_atom(Name)
-    if struct.has(Struct, proto_)
-        Proto = Struct.proto_
-        if struct.has(Proto, Name)
-            struct.get(Proto, Name)
-        else
-            not_found(Struct, Name)
+    if Struct.proto_?
+        get(Struct.proto_, Name)
     else
         not_found(Struct, Name)
 
@@ -33,38 +29,27 @@ fn (_)
     false
 
 @public
-@doc("access the value of an attribute in a struct")
-get = fn (Struct, [])
-    Struct
-
-fn (Struct, [Name:Names])
-    get(do(Struct, Name, fn get_found:3), Names)
-
-fn (Struct, Name) when is_atom(Name)
-    do(Struct, Name, fn get_found:3)
-
-@public
-@doc("access the value of an attribute in a struct, if not found return default")
-getdef = fn (Struct, [], _Default)
-    Struct
-
-fn (Struct, [Name:Names], Default)
-    NotFound = fn (_Struct, _Name)
-        Default
-
-    NotStruct = fn (_Val)
-        Default
-
-    getdef(do(Struct, Name, fn get_found:3, NotFound, NotStruct), Names, Default)
-
-fn (Struct, Name, Default) when is_atom(Name)
-    getdef(Struct, [Name], Default)
-
-@public
 @doc("access the value of an attribute in a struct, if not found in the struct
-look inside the proto_ attribute")
-getx = fn (Struct, Name)
-    do(Struct, Name, fn get_found:3, fn not_found_proto:2)
+look inside the proto_ attribute recursively")
+
+get = fn (Struct, Names)
+    get_h(Struct, Names, fn not_found_proto:2)
+
+@public
+@doc("access the value of an attribute in a struct, if not found in the struct, fail")
+
+getown = fn (Struct, Names)
+    get_h(Struct, Names, fn not_found:2)
+
+@doc("internal helper to get a value and do something if not found")
+get_h = fn (Struct, [], _FnNotFound)
+    Struct
+
+fn (Struct, [Name:Names], FnNotFound)
+    get_h(get_h(Struct, Name, FnNotFound), Names, FnNotFound)
+
+fn (Struct, Name, FnNotFound) when is_atom(Name)
+    do(Struct, Name, fn get_found:3, FnNotFound)
 
 @public
 @doc("replace the value of an attribute in a struct")
@@ -121,59 +106,37 @@ print = fn (Struct, ShowFuns)
 @doc("return true if the struct has the given attribute as atom or string,
 false otherwise.
 
-the second parameter must be an atom or a list of atoms/strings
+the second parameter must be an atom or a list of atoms/strings")
 
-to check if a struct has an attribute with a string use hasstr
-
-throw an exception if the given parameter is not a valid struct")
 has = fn (_Struct, [])
     true
 
 fn (Struct, [Name:Names])
+    switch has_h(Struct, Name)
+        case true => Value
+            has(Value, Names)
+        case false
+            false
 
-    CheckFun = if is_atom(Name)
-        has
-    else
-        hasstr
+fn (Struct, Name) when is_atom(Name)
+    has(Struct, [Name])
 
-    if struct.CheckFun(Struct, Name)
+has_h = fn (Struct, Name)
+    FnFound = fn (_Struct, _Name, Value)
+        true => Value
 
-        if length(Names) == 0
-            true
+    FnNotFound = fn ((struct, Body)=Struct1, FName)
+        # avoid calling has or has_h inside a call to has or has_h ;)
+        if lists.keyfind(proto_, 1, Body) != false
+            has_h(Struct1.proto_, FName)
         else
-            NewStruct = get(Struct, [Name])
+            false
 
-            if is_struct(NewStruct)
-                has(NewStruct, Names)
-            else
-                false
-    else
+    FnNotStruct = fn (_Val)
         false
 
-fn (Struct, Name)
-    Found = fn (_Struct, _Name, _Value)
-        true
+    do(Struct, Name, FnFound, FnNotFound, FnNotStruct)
 
-    NotFound = fn (Struct1, Name1) when is_atom(Name1)
-        hasstr(Struct1, atom_to_list(Name1))
-    fn (_Struct, _Name)
-        false
-
-    do(Struct, Name, Found, NotFound)
-
-@public
-@doc("return true if the struct has the given attribute as string,
-false otherwise.
-
-throw an exception if the given parameter is not a valid struct")
-hasstr = fn (Struct, StrName)
-    Found = fn (_Struct, _Name, _Value)
-        true
-
-    NotFound = fn (_Struct, _Name)
-        false
-
-    do(Struct, StrName, Found, NotFound)
 
 @public
 @doc("return all the field names of a struct.
@@ -205,19 +168,17 @@ fn (_, _Key, _Value)
 defined in this module")
 prototype = fn ()
     Get = fn get:2
+    GetOwn = fn getown:2
     Has = fn has:2
-    HasStr = fn hasstr:2
     Set = fn set:3
-    GetX = fn getx:2
-    GetDef = fn getdef:3
     Fields = fn fields:1
     Extend = fn extend:3
     Format = fn format:1
     Print  = fn print:1
     ToPList = fn to_plist:1
 
-    {get: Get, has: Has, hasstr: HasStr, set: Set, getx: GetX, fields: Fields,
-        extend: Extend, getdef: GetDef, format: Format, print: Print,
+    {get: Get, getown: GetOwn, has: Has, set: Set,
+        fields: Fields, extend: Extend, format: Format, print: Print,
         to_plist: ToPList}
 
 @public

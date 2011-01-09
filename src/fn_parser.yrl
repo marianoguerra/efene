@@ -633,7 +633,7 @@ struct_get(Value, Line, Attrs, Fun) ->
 
     {call, Line,
         {remote, Line,
-            {atom, Line, struct}, {atom, Line, Fun}},
+            {atom, Line, struct}, {atom, Line, get}},
             [Value, AttrAst]}.
 
 struct_set(Value, Line, Attrs, Literal) ->
