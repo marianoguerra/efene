@@ -111,12 +111,21 @@ test_get = fn (S)
     throws(value_error, fn () { struct.get(S, [a, b, c, z]) })
     throws(value_error, fn () { struct.get(S, [a, b, c, d, z]) })
 
-test_set = fn ()
+test_set_atom = fn ()
     S = {a: {b: {c: 42}, d: 1}, e:2}
-
+    test_set(S)
     same(struct.set(S, [a], 2), {a: 2, e: 2})
     same(struct.set(S, [a, b], 3), {a: {b: 3, d: 1}, e: 2})
     same(struct.set(S, [a, b, c], 4), {a: {b: {c: 4}, d: 1}, e: 2})
+
+test_set_binary_string = fn ()
+    S = {"a": {"b": {"c": 42}, "d": 1}, "e":2}
+    test_set(S)
+    same(struct.set(S, [a], 2), {"a": 2, "e": 2})
+    same(struct.set(S, [a, b], 3), {"a": {"b": 3, "d": 1}, "e": 2})
+    same(struct.set(S, [a, b, c], 4), {"a": {"b": {"c": 4}, "d": 1}, "e": 2})
+
+test_set = fn (S)
 
     throws(attribute_error, fn () { struct.set(S, [z], 1) })
     throws(attribute_error, fn () { struct.set(S, [a, z], 1) })
@@ -133,9 +142,9 @@ test_to_plist = fn ()
     S3 = {"a": 1, "b": 2}
 
     same(struct.to_plist(S), [a => 1, b => 2])
-    same(struct.to_plist(S1), ["a" => 1, "b" => 2])
+    same(struct.to_plist(S1), [<["a"]> => 1, <["b"]> => 2])
     same(struct.to_plist(S2), [a => 1, b => 2])
-    same(struct.to_plist(S3), ["a" => 1, "b" => 2])
+    same(struct.to_plist(S3), [<["a"]> => 1, <["b"]> => 2])
 
 test_from_plist = fn ()
     PList = [a => 1, b => 2]
@@ -159,12 +168,16 @@ test_set_prototype = fn ()
 
 @public
 run = fn ()
-    test_has_atom_keys()
-    test_has_str_keys()
-    test_has_str_keys_proto()
-    test_get()
-    test_get_proto()
-    test_set()
-    test_to_plist()
-    test_from_plist()
-    test_set_prototype()
+    try
+        test_has_atom_keys()
+        test_has_str_keys()
+        test_has_str_keys_proto()
+        test_get()
+        test_get_proto()
+        test_set_atom()
+        test_set_binary_string()
+        test_to_plist()
+        test_from_plist()
+        test_set_prototype()
+    catch Error Msg
+        io.format("error: ~p ~p~n", [Error, Msg])
