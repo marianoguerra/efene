@@ -27,12 +27,12 @@ fn (Ip, Port, Module) when is_atom(Module)
 
 
 start = fn (Ip, Port, [], Api)
-    Options = [(ip, Ip), (port, Port)]
+    Options = [ip => Ip, port => Port]
 
     Loop = fn (Req)
         loop(Req, Api)
 
-    mochiweb_http.start([(name, fn_rest), (loop, Loop) : Options])
+    mochiweb_http.start([name => fn_rest, loop => Loop : Options])
 
 fn (Ip, Port, [Module:Modules], Api)
     start(Ip, Port, Modules, rest_api(Module, Api))
@@ -48,11 +48,11 @@ loop = fn (Req, Api)
     when Handler == notfound
         response(Req, 404, mime(text), "not found")
     else
-        (Route, Captured) = Handler
+        (Route, Captured)  = Handler
         (Module, Function) = route.Route[handler]
 
         Produces = route.Route[produces]
-        Accepts = route.Route[accepts]
+        Accepts  = route.Route[accepts]
 
         Args     = args_from_request(Request, Captured)
 
@@ -71,15 +71,15 @@ loop = fn (Req, Api)
         (Status, Mime, Return) = switch apply(Module, Function, NewArgs)
             case ok => OMsg
                 (200, Produces, OMsg)
-            case (created, CMsg)
+            case created => CMsg
                 (201, Produces, CMsg)
-            case (notfound, NMsg)
+            case notfound => NMsg
                 (404, Produces, NMsg)
-            case (error, EMsg)
+            case error => EMsg
                 (501, Produces, EMsg)
-            case (unauthorized, UMsg)
+            case unauthorized => UMsg
                 (401, Produces, UMsg)
-            case (redirect, Url)
+            case redirect => Url
                 (303, Produces, Url)
             case file => Path
                 serve_static(Path)
