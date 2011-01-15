@@ -343,7 +343,7 @@ fn (Val, _Name, _FoundFn, _NotFoundFn, NotStruct)
 doesn't return attributes that are functions or the proto_ attribute")
 to_plist = fn ((struct, Body))
     Filter = fn (Key => Val)
-        Key != proto_ and not is_function(Val) and Key != <["proto_"]>
+        Key != proto_ and not is_function(Val)
 
     lists.filter(Filter, Body)
 
