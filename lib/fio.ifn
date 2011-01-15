@@ -12,14 +12,8 @@ format_result = fn (Items, Open, Close)
 
 @doc("like io_lib.format but for efene terms")
 @public
-format = fn ((struct, Body))
-    Items = for Key => Val in Body if not is_function(Val)
-        if Key == proto_
-            ""
-        else
-            io_lib.format("~p: ~s, ", [Key, format(Val)])
-
-    format_result(Items, "{", "}")
+format = fn ((struct, _Body)=Struct)
+    struct.format(Struct)
 
 fn (Val) when is_tuple(Val) and size(Val) == 0
     "(,)"
