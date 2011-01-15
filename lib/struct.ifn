@@ -148,7 +148,7 @@ has = fn (Struct, Names)
 has = fn (_Struct, [], _FnNotFound)
     true
 
-fn (Struct, [Name:Names], FnNotFound)
+fn (Struct, [Name:Names], FnNotFound) when is_atom(Name) or is_binary(Name)
     switch has_h(Struct, Name, FnNotFound)
         case true => Value
             has(Value, Names, FnNotFound)
@@ -157,6 +157,17 @@ fn (Struct, [Name:Names], FnNotFound)
 
 fn (Struct, Name, FnNotFound) when is_atom(Name) or is_binary(Name)
     has(Struct, [Name], FnNotFound)
+
+# if Names is a list and the first item is a list, convert the first item to
+# binary and call the function again
+fn (Struct, [Name:Names], FnNotFound) when is_list(Name)
+    has(Struct, [list_to_binary(Name):Names], FnNotFound)
+
+# if the patterns above fail and Name if a list and the first item is an
+# integer then it must be a string, convert it to a binary string and call
+# the function again
+fn (Struct, [First:_]=Name, FnNotFound) when is_integer(First)
+    has(Struct, [list_to_binary(Name)], FnNotFound)
 
 @public
 has_h = fn (Struct, Name)

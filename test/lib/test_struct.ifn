@@ -29,6 +29,7 @@ has = fn (S, Names)
 test_has = fn (S)
     has(S, foo)
 
+    has(S, foo)
     has(S, [foo])
     has(S, [foo, bar])
     has(S, [foo, bar, baz])
@@ -73,6 +74,21 @@ test_has_str_keys = fn (S)
     hasnt(S, ["foo", "asd"])
     hasnt(S, ["foo", "bar", "asd"])
     hasnt(S, ["foo", "bar", "baz", "asd"])
+
+    has(S, "foo")
+    has(S, ["foo"])
+    has(S, ["foo", "bar"])
+    has(S, ["foo", "bar", "baz"])
+
+    has(S, <["foo"]>)
+    has(S, [<["foo"]>])
+    has(S, [<["foo"]>, <["bar"]>])
+    has(S, [<["foo"]>, <["bar"]>, <["baz"]>])
+
+    has(S, ["foo", bar, <["baz"]>])
+    has(S, [<["foo"]>, "bar", baz])
+    has(S, [foo, "bar", <["baz"]>])
+
 
 test_get = fn ()
     S = {a: {b: {c: 42}, d: 1}, e:2}
