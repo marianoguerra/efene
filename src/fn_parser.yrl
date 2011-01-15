@@ -323,7 +323,8 @@ struct_items -> struct_item sep struct_items : {cons, line('$2'), '$1', '$3'}.
 struct_items -> struct_item : {cons, line('$1'), '$1', {nil, line('$1')}}.
 
 struct_item -> atom split_op literal : {tuple, line('$2'), ['$1', '$3']}.
-struct_item -> string split_op literal : {tuple, line('$2'), ['$1', '$3']}.
+struct_item -> string split_op literal :
+    {tuple, line('$2'), [string_to_binstring('$1'), '$3']}.
 
 struct_get -> var struct_attrs :
      {'$1', line('$1'),
@@ -689,3 +690,6 @@ check_clauses_arity([Clause|Clauses], Count) ->
 
 gen_struct_get({Var, Line, _Last, Attrs}) ->
     struct_get(Var, Line, Attrs).
+
+string_to_binstring({string, Line, Content}) ->
+    {bin, Line, [{bin_element, Line, {string, Line, Content}, default, default}]}.
