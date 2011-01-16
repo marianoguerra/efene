@@ -6,6 +6,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   quickstart
    releases/index
    reference/index
    build/index

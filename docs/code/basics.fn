@@ -1,0 +1,49 @@
+
+@public
+if_demo = fn (Num) {
+    if Num < 0 {
+        io.format("< 0~n")
+    }
+    else if Num < 10 {
+        io.format(">= 0 and < 10~n")
+    }
+    else {
+        io.format(">= 10~n")
+    }
+}
+
+@public
+switch_demo = fn (Val) {
+    switch Val {
+        case 1 {
+            io.format("one!~n")
+        }
+
+        case 2 {
+            io.format("two!~n")
+        }
+
+        else {
+            io.format("not one nor two~n")
+        }
+    }
+}
+
+@public
+for_demo = fn (Items) {
+    for Item in Items {
+        io.format("~p~n", [Item])
+    }
+}
+
+@public
+run = fn () {
+    if_demo(-2)
+    if_demo(7)
+    if_demo(42)
+
+    switch_demo(1)
+    switch_demo(3)
+
+    for_demo(["spam", "eggs", "bacon"])
+}

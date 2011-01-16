@@ -1,0 +1,62 @@
+
+@public
+if_demo = fn (Age) {
+    Result = if Age < 0 {
+        "error"
+    }
+    else if Age < 21 {
+        "minor"
+    }
+    else {
+        "adult"
+    }
+
+    io.format("age: ~p = ~s~n", [Age, Result])
+}
+
+@public
+for_demo = fn () {
+    Items = 1 .. 10
+
+    ItemsPlusOne = for Item in Items {
+        io.format("item ~p~n", [Item])
+        Item + 1
+    }
+
+    io.format("items ~p~n", [Items])
+    io.format("items plus one ~p~n", [ItemsPlusOne])
+}
+
+@public
+switch_demo = fn (Place) {
+    Message = switch Place {
+        case 1 {
+            "Champion"
+        }
+        case 2 {
+            "First runner-up"
+        }
+
+        case 3 {
+            "Second runner-up"
+        }
+
+        else {
+            "Work hard next time!"
+        }
+    }
+
+    io.format("Place ~p = ~s~n", [Place, Message])
+}
+
+@public
+run = fn () {
+    for_demo()
+
+    if_demo(-2)
+    if_demo(15)
+    if_demo(25)
+
+    switch_demo(1)
+    switch_demo(5)
+}
