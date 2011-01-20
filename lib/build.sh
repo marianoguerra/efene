@@ -12,7 +12,7 @@ cd ../mochiweb
 make
 cp ebin/*.beam ../../../ebin/
 
-cd ../SimpleBridge
+cd ../simple_bridge
 make
 cp ebin/*.beam ../../../ebin/
 

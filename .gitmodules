@@ -4,6 +4,6 @@
 [submodule "lib/thirdparty/mochiweb"]
 	path = lib/thirdparty/mochiweb
 	url = git://github.com/mochi/mochiweb.git
-[submodule "lib/thirdparty/SimpleBridge"]
-	path = lib/thirdparty/SimpleBridge
-	url = git://github.com/rklophaus/SimpleBridge
+[submodule "lib/thirdparty/simple_bridge"]
+	path = lib/thirdparty/simple_bridge
+	url = git://github.com/nitrogen/simple_bridge.git
