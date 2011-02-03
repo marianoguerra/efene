@@ -48,7 +48,7 @@ get_h = fn (Struct, [], _FnNotFound)
 fn (Struct, [Name:Names], FnNotFound)
     get_h(get_h(Struct, Name, FnNotFound), Names, FnNotFound)
 
-fn (Struct, Name, FnNotFound) when is_atom(Name)
+fn (Struct, Name, FnNotFound) when is_atom(Name) or is_binary(Name)
     do(Struct, Name, fn get_found:3, FnNotFound)
 
 @public

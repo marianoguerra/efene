@@ -26,7 +26,7 @@ Terminals
 
 Rootsymbol program.
 
-Expect 6.
+Expect 7.
 
 Left 50 arrow.
 Left 100 bool_orelse_op.
@@ -339,6 +339,7 @@ struct_attrs -> struct_attr : ['$1'].
 
 struct_attr -> dot atom : unwrap('$2').
 struct_attr -> dot var : '$2'.
+struct_attr -> open_list literal close_list : normalize_struct_attr('$2').
 
 struct_call -> struct_get fn_parameters :
     {Var, Line, _Last, Attrs} = '$1',
@@ -654,16 +655,16 @@ struct_query(Var, Line, Attrs) ->
             [Var, AttrListAst]}.
 
 % abstract atoms to an ast that represent an atom
-% leave ast from vars as is
+% leave ast from unknown expressions as is
 % create ast of a list containg the two above items
 abstract_struct_attrs(Attr, Line) when is_atom(Attr) ->
     {atom, Line, Attr};
-abstract_struct_attrs({var, _Line, _Name}=Attr, _L) ->
-    Attr;
 abstract_struct_attrs(Attrs, Line) when is_list(Attrs) ->
     [Last|NewAttrs] = lists:reverse(Attrs),
     abstract_struct_attrs_list(NewAttrs, Line,
-        {cons, Line, abstract_struct_attrs(Last, Line), {nil, Line}}).
+        {cons, Line, abstract_struct_attrs(Last, Line), {nil, Line}});
+abstract_struct_attrs(Attr, _L) ->
+    Attr.
 
 abstract_struct_attrs_list([], _Line, Accum) ->
     Accum;
@@ -693,3 +694,7 @@ gen_struct_get({Var, Line, _Last, Attrs}) ->
 
 string_to_binstring({string, Line, Content}) ->
     {bin, Line, [{bin_element, Line, {string, Line, Content}, default, default}]}.
+
+normalize_struct_attr({string, Line, Val}) ->
+    {bin, Line, [{bin_element, Line, {string, Line, Val}, default, default}]};
+normalize_struct_attr(Ast) -> Ast.
