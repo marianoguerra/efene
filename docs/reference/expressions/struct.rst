@@ -106,3 +106,60 @@ strings to atoms is another reason for this convention.
 the convention is to use atoms as keys when creating structs in erlang and
 using binary strings as keys when loading structs from outside (for example
 decoding a JSON encoded string).
+
+accessing attributes with an expression
+:::::::::::::::::::::::::::::::::::::::
+
+in some situations you may have attributes that aren't valid unquoted atoms or
+you want to access an attribute which name is computed from an expression.
+
+in those cases you can use the alternative syntax to access attributes that is
+the same as javascript::
+
+        Struct[<expression>]
+
+some examples::
+
+        >>> S1 = {"b": 2, a: 1}
+        {"b": 2, a: 1}
+        >>> S1["b"]
+        2
+        >>> F1 = fn () { a }
+        #Fun<erl_eval.20.67289768>
+        >>> F2 = fn () { <["b"]> }
+        #Fun<erl_eval.20.67289768>
+        >>> S1[F1()]
+        1
+        >>> S1[F2()]
+        2
+        >>> S1['a']
+        1
+        >>> V1 = a
+        a
+        >>> V2 = <["b"]>
+        <["b"]>
+        >>> S1[V1]
+        1
+        >>> S1[V2]
+        2
+        >>> S1.V1
+        1
+        >>> S1.V2
+        2
+        >>> S2 = {a: {b: 42}}
+        {a: {b: 42}}
+        >>> S2.a.b
+        42
+        >>> S2[a].b
+        42
+        >>> S2.a[b]
+        42
+        >>> S2[F1()].b
+        42
+
+.. note::
+        if the expression evaluates to a string it must be a binary string to match the attribute,
+        explicit strings are converted to binary strings automatically at compile time but to avoid
+        adding a function call to all expressions you have to generate a binary string.
+
+        this behavior may change in the future, generating atoms is recommended and will not change.
