@@ -91,7 +91,7 @@ Examples:
 Variable
 ~~~~~~~~
 
-A term holding a value, it must start with a lower case letter followed by
+A term holding a value, it must start with a upper case letter followed by
 lower case, upper-case, numbers or underscore characters::
 
         >>> Number = 12
@@ -218,17 +218,17 @@ There exists a number of BIFs to manipulate tuples.
 
 Examples::
 
-        >>> P = (adam,24,(july,29)).
+        >>> P = (adam,24,(july,29))
         (adam,24,(july,29))
-        >>> element(1,P).
+        >>> element(1,P)
         adam
-        >>> element(3,P).
+        >>> element(3,P)
         (july,29)
-        >>> P2 = setelement(2,P,25).
+        >>> P2 = setelement(2,P,25)
         (adam,25,(july,29))
-        >>> tuple_size(P).
+        >>> tuple_size(P)
         3
-        >>> tuple_size(()).
+        >>> tuple_size((,))
         0
 
 Function Reference
@@ -352,11 +352,11 @@ eight are called Binaries
 Examples::
 
         >>> <[10,20]>
-        <<10,20>>
+        <[10,20]>
         >>>  <["ABC"]>
-        <<"ABC">>
+        <["ABC"]>
         >>> <[1:1,0:1]>
-        <<2:2>>
+        <[2:2]>
 
 .. _macrovariables:
 

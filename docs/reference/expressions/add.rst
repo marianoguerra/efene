@@ -14,7 +14,7 @@ The operators are:
 op       Description
 ====     ===================
 `+`      addition
-`-`      substraction
+`-`      subtraction
 `|`      binary or
 ^        binary xor
 orr      boolean or

@@ -303,7 +303,7 @@ fnc -r demo run
 
 ## Participate
 
-A mailing-list is available at [librelist](http://librelist.com) just send a mail to [efene@librelist.com](efene@librelist.com) to subscribe.
+A mailing-list is available at [librelist](http://librelist.com) just send a mail to [efene@librelist.com](mailto:efene@librelist.com) to subscribe.
 
 As first mail you may send a hello world program in Efene and present yourself by saying your name, where you are, how did you heard about Efene and anything else you would like to say.
 
