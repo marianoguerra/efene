@@ -107,6 +107,34 @@ the convention is to use atoms as keys when creating structs in erlang and
 using binary strings as keys when loading structs from outside (for example
 decoding a JSON encoded string).
 
+accessing attributes and checking existence
+:::::::::::::::::::::::::::::::::::::::::::
+
+if we want to dinamically access an attribute of a struct using a variable that holds the name of the attribute::
+
+        >>> Person = {name: "mariano", "age": 25}
+        {name: [109, 97, 114, 105, 97, 110, 111], "age": 25}
+        >>> Attr = age
+        age
+        >>> Person.age
+        25
+        >>> Person.Attr
+        25
+
+
+if we want to check if an attribute exists::
+
+        >>> Person.age?
+        true
+        >>> Person.Attr?
+        true
+        >>> Person.mail?
+        false
+        >>> Attr1 = mail
+        mail
+        >>> Person.Attr1?
+        false
+
 accessing attributes with an expression
 :::::::::::::::::::::::::::::::::::::::
 
