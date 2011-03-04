@@ -36,7 +36,9 @@ get_lex(file, Path) ->
     if
         IsFn  -> get_lex(string, Program, FilePath);
         IsIfn -> get_lex(istring, Program, FilePath);
-        true  -> exit(io_lib:format("Invalid file extension in '~s' (.fn or .ifn expected)~n", [Path]))
+        true  ->
+            io:format("Invalid file extension in '~s' (.fn or .ifn expected)~n", [Path]),
+            halt()
     end.
 
 get_lex(string, String, FileName) ->
