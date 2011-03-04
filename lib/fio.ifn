@@ -25,7 +25,7 @@ fn (Val) when is_tuple(Val)
     Items = for Item in tuple_to_list(Val)
         format(Item) ++ ", "
 
-    format_result(Items, "{", "}")
+    format_result(Items, "(", ")")
 
 fn (Val) when is_list(Val) and length(Val) == 0
     "[]"
