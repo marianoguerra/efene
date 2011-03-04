@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
-../bin/fnc spec.ifn type.ifn -o ../ebin
-../bin/fnc rec.ifn -o ../ebin
-../bin/fnc *.ifn -o ../ebin
+../bin/fnc -o ../ebin spec.ifn type.ifn
+../bin/fnc -o ../ebin rec.ifn
+../bin/fnc -o ../ebin *.ifn
 
 cd thirdparty/
 cd ibrowse/
