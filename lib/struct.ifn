@@ -49,7 +49,7 @@ get_found = fn (_Struct, _Name, Value)
 
 @public
 @doc("return true if the parameter is a valid struct, false otherwise")
-is_struct = fn (([Head:_]=Values,)) when is_tuple(Head) and size(Head) == 2
+is_struct = fn (([Head:_],)) when is_tuple(Head) and size(Head) == 2
     true
 
 fn (_)
@@ -370,7 +370,7 @@ fn (Val, _Name, _FoundFn, _NotFoundFn, NotStruct)
 doesn't return attributes that are functions or the proto_ attribute")
 to_plist = fn ((Body,))
     Filter = fn (Key => Val)
-        Key != proto_ and not is_function(Val)
+        Key != proto_ and Key != <["proto_"]> and not is_function(Val)
 
     lists.filter(Filter, Body)
 

@@ -16,15 +16,15 @@ throws = fn (ExName, Expr)
 
 hasnt = fn (S, Names)
     if struct.has(S, Names)
-        io.format("error: struct ~p shouldn't have ~p~n", [element(2, S), Names])
+        io.format("error: struct ~p shouldn't have ~p~n", [element(1, S), Names])
     else
-        io.format("ok: struct ~p has't ~p~n", [element(2, S), Names])
+        io.format("ok: struct ~p has't ~p~n", [element(1, S), Names])
 
 has = fn (S, Names)
     if struct.has(S, Names)
-        io.format("ok: struct ~p has ~p~n", [element(2, S), Names])
+        io.format("ok: struct ~p has ~p~n", [element(1, S), Names])
     else
-        io.format("error: struct ~p should have ~p~n", [element(2, S), Names])
+        io.format("error: struct ~p should have ~p~n", [element(1, S), Names])
 
 test_has = fn (S)
     has(S, foo)
@@ -184,7 +184,8 @@ test_set_prototype = fn ()
 
 @public
 run = fn ()
-    try
+    #try
+    if true
         test_has_atom_keys()
         test_has_str_keys()
         test_has_str_keys_proto()
@@ -195,5 +196,5 @@ run = fn ()
         test_to_plist()
         test_from_plist()
         test_set_prototype()
-    catch Error Msg
-        io.format("error: ~p ~p~n", [Error, Msg])
+    #catch Error Msg
+    #    io.format("error: ~p ~p~n", [Error, Msg])
