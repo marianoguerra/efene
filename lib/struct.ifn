@@ -1,6 +1,33 @@
 @@license("New BSD License, part of efene, see LICENSE for details")
 @@moddoc("module to manipulate struct data structures")
 
+@public
+@doc("encode a given data structure to json")
+encode = fn (([Head:_]=Values,)) when is_tuple(Head) and size(Head) == 2
+    Handler = fn((L,)) when is_list(L)
+        (struct, L)
+    fn (Bad)
+        exit((json_encode, (bad_term, Bad)))
+
+    mochijson2.encoder([(handler, Handler)])(Values)
+
+fn (Val)
+    not_struct(Val)
+
+@public
+@doc("decode json into a data structure")
+decode = fn (Str)
+
+    Fn = fn((struct, L))
+        (L,)
+
+    try
+        mochijson2.decoder([(object_hook, Fn)])(Str)
+
+    catch _Type _Error
+        throw((invalid_json, Str))
+
+
 not_found = fn (_Struct, Name)
     throw(attribute_error => "struct has no attribute '" ++ atom_to_list(Name) ++ "'")
 
@@ -22,7 +49,7 @@ get_found = fn (_Struct, _Name, Value)
 
 @public
 @doc("return true if the parameter is a valid struct, false otherwise")
-is_struct = fn ((struct, Values)) when is_list(Values)
+is_struct = fn (([Head:_]=Values,)) when is_tuple(Head) and size(Head) == 2
     true
 
 fn (_)
@@ -53,17 +80,17 @@ fn (Struct, Name, FnNotFound) when is_atom(Name) or is_binary(Name)
 
 @public
 @doc("replace the value of an attribute in a struct")
-set = fn ((struct, _Body)=Struct, [Name], Value)
+set = fn ((_Body,)=Struct, [Name], Value)
     Key = normalize_key(Name)
     replace_key(Struct, Key, Value)
 
-fn ((struct, _Body)=Struct, [Name:Names], Value)
+fn ((_Body,)=Struct, [Name:Names], Value)
     Key = normalize_key(Name)
 
     NewChild = set(get(Struct, Key), Names, Value)
     replace_key(Struct, Key, NewChild)
 
-fn ((struct, _Body)=Struct, Name, Value) when is_atom(Name) or is_binary(Name)
+fn ((_Body,)=Struct, Name, Value) when is_atom(Name) or is_binary(Name)
     set(Struct, [Name], Value)
 
 fn (Val, _Names, _Value)
@@ -72,17 +99,17 @@ fn (Val, _Names, _Value)
 @doc("used internally to replace a Key with a new Value, try with the provided
 Key first, if not found and is an atom convert it to a binary string and try
 again, otherwise fail")
-replace_key = fn ((struct, _Body)=Struct, Name, Value) when is_list(Name)
+replace_key = fn ((_Body,)=Struct, Name, Value) when is_list(Name)
     replace_key(Struct, Name, Value)
 
-fn ((struct, Body)=Struct, Key, Value) when is_atom(Key) or is_binary(Key)
+fn ((Body,)=Struct, Key, Value) when is_atom(Key) or is_binary(Key)
     if lists.keymember(Key, 1, Body)
-        (struct, lists.keyreplace(Key, 1, Body, Key => Value))
+        (lists.keyreplace(Key, 1, Body, Key => Value),)
     else if is_atom(Key)
         NewKey = list_to_binary(atom_to_list(Key))
 
         if lists.keymember(NewKey, 1, Body)
-            (struct, lists.keyreplace(NewKey, 1, Body, NewKey => Value))
+            (lists.keyreplace(NewKey, 1, Body, NewKey => Value),)
         else
             not_found(Struct, Key)
     else
@@ -93,7 +120,7 @@ fn ((struct, Body)=Struct, Key, Value) when is_atom(Key) or is_binary(Key)
 format = fn (Struct)
     format(Struct, false)
 
-format = fn ((struct, Body), ShowFuns)
+format = fn ((Body,), ShowFuns)
     Items = for Key => Val in Body if not is_function(Val) or ShowFuns
         NewKey = if is_binary(Key)
             binary_to_list(Key)
@@ -126,7 +153,7 @@ print = fn (Struct)
 print = fn (Struct, ShowFuns)
     io.format("~s~n", [format(Struct, ShowFuns)])
 
-has_not_found = fn ((struct, Body)=Struct, FName)
+has_not_found = fn ((Body,)=Struct, FName)
     # avoid calling has or has_h inside a call to has or has_h ;)
     if lists.keyfind(proto_, 1, Body) != false
         has_h(Struct.proto_, FName, fn has_not_found:2)
@@ -207,7 +234,7 @@ decoding json) then those keys will be returned as strings.
 
 it's your job to check that. This is done this way to avoid creating atoms
 ")
-fields = fn ((struct, Body))
+fields = fn ((Body,))
     [Key for (Key, _Val) in Body if Key != proto_]
 
 fn (Val)
@@ -216,7 +243,7 @@ fn (Val)
 @public
 @doc("extend the struct by adding an attribute named *Key* with value *Value*
 if *Key* already exists replace it")
-extend = fn ((struct, _Body)=Struct, Key, Value) when is_atom(Key) or is_binary(Key)
+extend = fn ((_Body,)=Struct, Key, Value) when is_atom(Key) or is_binary(Key)
     extend(Struct, Key, Value, replace)
 
 fn (Value, _Key, _Value)
@@ -235,27 +262,27 @@ fail:
 
 ignore:
     keep the old value")
-extend = fn ((struct, Body), Key, Value, fail)
+extend = fn ((Body,), Key, Value, fail)
     NKey = normalize_key(Key)
 
     if proplists.is_defined(NKey, Body)
         throw(key_exists)
     else
-        (struct, [NKey => Value:Body])
+        ([NKey => Value:Body],)
 
-fn ((struct, Body)=Struct, Key, Value, ignore)
+fn ((Body,)=Struct, Key, Value, ignore)
     NKey = normalize_key(Key)
 
     if proplists.is_defined(NKey, Body)
         Struct
     else
-        (struct, [NKey => Value:Body])
+        ([NKey => Value:Body],)
 
-fn ((struct, Body), Key, Value, replace)
+fn ((Body,), Key, Value, replace)
     NKey = normalize_key(Key)
 
     NewBody = proplists.delete(NKey, Body)
-    (struct, [NKey => Value:NewBody])
+    ([NKey => Value:NewBody],)
 
 @public
 @doc("return the prototype for a basic struct that can do the operations
@@ -316,7 +343,7 @@ do = fn (Struct, Name, FoundFn, NotFoundFn)
 
 @public
 @doc("like do/4 but with a callback to be called when the parameter is not a struct")
-do = fn ((struct, Body)=Struct, Name, FoundFn, NotFoundFn, _NotStruct)
+do = fn ((Body,)=Struct, Name, FoundFn, NotFoundFn, _NotStruct)
     Key = normalize_key(Name)
 
     switch lists.keyfind(Key, 1, Body)
@@ -341,7 +368,7 @@ fn (Val, _Name, _FoundFn, _NotFoundFn, NotStruct)
 @public
 @doc("return a prop list with the attributes of the struct, this function
 doesn't return attributes that are functions or the proto_ attribute")
-to_plist = fn ((struct, Body))
+to_plist = fn ((Body,))
     Filter = fn (Key => Val)
         Key != proto_ and not is_function(Val)
 
@@ -361,7 +388,7 @@ from_plist = fn (PList) when is_list(PList)
         false
 
     if lists.all(Check, PList)
-        (struct, PList)
+        (PList,)
     else
         throw(value_error => "parameter is not a valid proplist")
 

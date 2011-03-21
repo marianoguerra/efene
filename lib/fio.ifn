@@ -12,7 +12,7 @@ format_result = fn (Items, Open, Close)
 
 @doc("like io_lib.format but for efene terms")
 @public
-format = fn ((struct, _Body)=Struct)
+format = fn (([Head:_],)=Struct) when is_tuple(Head) and size(Head) == 2
     struct.format(Struct)
 
 fn (Val) when is_tuple(Val) and size(Val) == 0
