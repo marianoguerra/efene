@@ -34,17 +34,18 @@ similar to Javascript objects or python dictionaries and providing a
 lightweight object syntax.
 
 another benefit of structs is that they are 100% compatible with the format
-produced and consumed by the mochijson2 module::
+defined by `EEP`_ 18 and the one produced by couchdb.
 
-        >>> Person = mochijson2.decode("{\"name\": \"mariano\", \"age\": 25}")
-        {"name": <["mariano"]>, "age": 25}
-        >>> io.format(mochijson2.encode(Person))
-        {"name":"mariano","age":25}ok
-        >>> Person.name
-        <["mariano"]>
-        >>> Person.age
-        25
-        >>> 
+.. _EEP: http://www.erlang.org/eeps/eep-0018.html
+
+This format has only one slight difference with the representation used in
+mochijson2, where in mochijson2 a struct is represented by a tuple like::
+
+        (struct, [key => Val, ...])
+
+In EEP 18/couchdb/efene a struct is represented with::
+
+        ([key => Val, ...],) # Note that it's a one item tuple
 
 like the examples shown above a struct can be accessed like an object in any
 other object oriented language by specifying the object followed by a dot and
@@ -55,7 +56,7 @@ access nested attributes with the same syntax::
 
 to add a lightweight object oriented syntax to efene you can also define and
 call methods in structs, this works like python where every method of an object
-receives the object itself as first argument and is by convention called
+explicitly receives the object itself as first argument and is by convention called
 *Self*::
 
         >>> P = struct.set_prototype(Person)
