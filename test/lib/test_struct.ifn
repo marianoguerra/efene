@@ -184,8 +184,7 @@ test_set_prototype = fn ()
 
 @public
 run = fn ()
-    #try
-    if true
+    try
         test_has_atom_keys()
         test_has_str_keys()
         test_has_str_keys_proto()
@@ -196,5 +195,5 @@ run = fn ()
         test_to_plist()
         test_from_plist()
         test_set_prototype()
-    #catch Error Msg
-    #    io.format("error: ~p ~p~n", [Error, Msg])
+    catch Error Msg
+        io.format("error: ~p ~p~n", [Error, Msg])
