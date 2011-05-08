@@ -1,0 +1,21 @@
+
+@public
+hello = fn ("Winston Churchill") {
+    io.format("Well hello sir~n")
+}
+
+fn (Name) {
+    io.format("Hello ~s!~n", [Name])
+}
+
+@public
+hello = fn () {
+    hello("World")
+}
+
+@public
+run = fn () {
+    hello()
+    hello("coders")
+    hello("Winston Churchill")
+}

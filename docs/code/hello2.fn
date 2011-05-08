@@ -1,0 +1,16 @@
+
+@public
+hello = fn (Name) {
+    io.format("Hello ~s!~n", [Name])
+}
+
+@public
+hello = fn () {
+    hello("World")
+}
+
+@public
+run = fn () {
+    hello()
+    hello("coders")
+}

@@ -42,7 +42,7 @@ we declare with the public function attribute that the function is public, that 
    :language: efene
    :lines: 2
 
-we created a function called *run* that receives no arguments
+we create a function called *run* that receives no arguments
 
 .. literalinclude:: code/hello.fn
    :language: efene
@@ -70,6 +70,8 @@ to run the compiled program we run::
 
         fnc -r hello run
 
+the -r switch instructs the *fnc* command to run the function called *run* from the module called *hello*
+
 we may want to play with our module from the shell, let's do that by running the efene shell::
 
         fnc -s
@@ -81,7 +83,11 @@ now we call the function from the shell::
         ok
         >>> 
 
-and press Ctrl+D to exit
+The first line is the message printed to the standard output by the function, the second line (*ok*) is the value returned
+by the function, this is the value returned by the last statement on the function body, in this case, the value returned by
+io.format.
+
+to exit press Ctrl+D
 
 hello world take 2
 ::::::::::::::::::
@@ -133,13 +139,179 @@ play::
 usage hint
 ::::::::::
 
-since the efene shell doesn't have readline support builtin you can have it by using *rlwrap* that is a command that comes with the *readline* package
+since the efene shell doesn't have readline support builtin you can have it by
+using *rlwrap* that is a command that comes with the *readline* package
 
 running the shell like this::
 
         rlwrap fnc -s
 
 gives you all the readline features until they are supported by the shell
+
+hello world take 3
+::::::::::::::::::
+
+nice, we have a more generic hello function, but since I mostly salute to the
+world I want my old version back to, let's do that:
+
+.. literalinclude:: code/hello2.fn
+   :language: efene
+   :linenos:
+
+in this version we created a new function called *hello* that takes no
+parameters and when called it will call the version of the function that
+receives one parameter passing "World", in this way we have our old version
+back and we are reusing the code we already wrote.
+
+let's define arity
+..................
+
+let's admit it, I'm lazy, and writing "the function that receives one
+parameter" is to long for me, luckily there is a word to avoid typing, this
+word is called *arity*.
+
+*arity* means the number of parameters that a function receives, so "a function
+that receives no parameters" is a function of arity 0, " a function that
+receives 1 parameter" is a function of arity 1 and so on.
+
+but I still have to type "the hello function of arity 1"!, another expression
+to the rescue. When we want to refer to a function with a given name and a
+given arity we can use *functionname/arity*, for example: "the hello function
+that takes 1 parameter" is *hello/1*.
+
+from now on I will use this way to refer to functions.
+
+all animals are equal, but some animals are more equal than others
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+our hello world program is growing, and now we need to do a special case for
+our hello function, let's say that we have to salute Sir Winston Churchill, we
+should give him a better message than "hello Winston Churchill!"
+
+for that we will add a function clause to our *hello/1* function to pattern
+match for the specific case and do something different:
+
+.. literalinclude:: code/hello3.fn
+   :language: efene
+   :linenos:
+
+function clause? pattern matching? I knew you would start talking weird to me
+.............................................................................
+
+to avoid typing a lot and to use the same vocabulary when talking about
+programming we need some ground definitions, in this case I needed to use two
+new concepts:
+
+a function clause is a case of a function for a given set of parameters that
+will excecute a given body, until now we used functions with just one function
+clause that stored the given parameters on some variables.
+
+Those parameters could contain any value. But we can do more than that, we can
+specify that a given body will only be excecuted when the parameters *match*
+some values, this is called pattern matching.
+
+.. literalinclude:: code/hello3.fn
+   :language: efene
+   :lines: 2-10
+
+
+other ways to do the same
+:::::::::::::::::::::::::
+
+we can produce the same result as the last example using other features of the language, guards and if statement
+
+guards
+......
+
+guards are a way to run a given function clause only when the conditions after the *when* are true.
+
+with pattern matching on the function arguments we only match for equality of values, on guards we can
+test for other things, like the length of a string, if some values have some relations (!=, >, <, >=, <= etc.)
+
+.. literalinclude:: code/hello4.fn
+   :language: efene
+   :lines: 2-9
+
+if statement
+............
+
+the if statement is a control structure of the language that allows to execute the body only if the condition
+is true, it works similarly to guards but can be used inside function bodies.
+
+.. literalinclude:: code/hello5.fn
+   :language: efene
+   :lines: 2-10
+
+more pattern matching
+:::::::::::::::::::::
+
+we saw some basic pattern matching done on the function arguments, but pattern matching is available on more places,
+here I will show some things we can do with pattern matching on the command line::
+
+ dev $ rlwrap fnc -s
+ >>> A = 4
+ 4
+ >>> B = 4
+ 4
+ >>> C = 5
+ 5
+ >>> # this is not an assignment but pattern matching
+ >>> A = B
+ 4
+ >>> # both patterns match, so it's ok
+ >>> # now we will try to match two different values
+ >>> A = C
+ exception throw: {badmatch,5}
+ >>> # it throws a badmatch exception, that means that both values didn't match
+ >>> # let's use pattern matching for something more advanced
+ >>> L = [1, 2, 3, 4]
+ [1, 2, 3, 4]
+ >>> # we will match, some of the values to literals, some of them put them on variables and discard others
+ >>> # First and Second are variable names, so whatever value was in that place it will be assigned to that
+ >>> # variable
+ >>> # the 2 in the second position is a literal, so it will have to match to the value on the second position
+ >>> # of L
+ >>> # the variable with the name _ means "ignore this value I won't use it"
+ >>> [First, 2, Second, _] = L
+ [1, 2, 3, 4]
+ >>> # we can see the assigned values
+ >>> First
+ 1
+ >>> Second
+ 3
+ >>> # we can do the same with tuples
+ >>> T = (1, 2, (3, 4), 5)
+ (1, 2, (3, 4), 5)
+ >>> # even with tuples inside tuples
+ >>> (First, _, (FirstNested, SomeName), 5) = T
+ (1, 2, (3, 4), 5)
+ >>> First
+ 1
+ >>> FirstNested
+ 3
+ >>> SomeName
+ 4
+ >>> # let's define a new list with a value changed
+ >>> L1 = [1, 42, 3, 4]
+ >>> # try to match against the same pattern as before
+ >>> [First, 2, Second, _] = L1
+ exception throw: {badmatch,[1,42,3,4]}
+ >>> # since two isn't equal to 42 we get a badmatch exception
+ >>> # but something special happened above, since First and Second were
+ >>> # already bound to values, we were pattern matching against those values
+ >>> # instead of assigning them to the values in the list.
+ >>> # since the values were the same there was no problem, but let's try with a different value
+ >>>
+ >>> # let's bind the name NewFirst to the value 14
+ >>> NewFirst = 14
+ 14
+ >>> # and try to match against the list L1
+ >>> [NewFirst, 2, Second, _] = L1
+ exception throw: {badmatch,[1,42,3,4]}
+ >>> # this failed because NewFirst (14) isn't equal to 1
+ >>> # let's make it match
+ >>> [NewFirst, 2, Second, _] = [14, 2, 3, 999]
+ [14, 2, 3, 999]
 
 data types
 ::::::::::
