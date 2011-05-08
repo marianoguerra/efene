@@ -7,3 +7,7 @@ erl_crash.dump
 *.o
 docs/_build
 docs/lib/*.rst
+docs/build/Jinja2/
+docs/build/Pygments/
+docs/build/sphinx/
+
