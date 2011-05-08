@@ -60,15 +60,15 @@ explicitly receives the object itself as first argument and is by convention cal
 *Self*::
 
         >>> P = struct.set_prototype(Person)
-        {"name": <["mariano"]>, "age": 25}
+        {name: "mariano", "age": 25}
         >>> P.fields()
-        [<["name"]>, <["age"]>]
+        [name, <["age"]>]
         >>> P.has(name)
         true
         >>> P.name?
         true
         >>> P.print()
-        {"name": <["mariano"]>, "age": 25}
+        {name: "mariano", "age": 25}
         ok
 
 if you want to build more than one object that share the same methods you can
@@ -95,9 +95,9 @@ variable::
         >>> Person1 = Person.name := "Mariano"
 
 the name of the attributes can be atoms or binary strings, all access made
-using an atom will lookup the attribute as binary string if not found as atom,
-if a string or binary string is given then the attribute will be looked up only
-as a binary string.
+using an atom will lookup the attribute as atom first and then as binary string
+if not found, if a string or binary string is given then the attribute will be
+looked up only as a binary string.
 
 This is made to avoid converting strings to atoms since atoms are not garbage
 collected. Other reason for doing this is that JSON structs comming from the
