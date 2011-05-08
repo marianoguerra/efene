@@ -31,10 +31,13 @@ fn (Val) when is_list(Val) and length(Val) == 0
     "[]"
 
 fn (Val) when is_list(Val)
-    Items = for Item in Val
-        format(Item) ++ ", "
+    if list_is_printable(Val)
+        io_lib.format("~p", [Val])
+    else
+        Items = for Item in Val
+            format(Item) ++ ", "
 
-    format_result(Items, "[", "]")
+        format_result(Items, "[", "]")
 
 fn (Val) when is_binary(Val)
     [Repr] = io_lib.format("~p", [Val])
@@ -43,6 +46,17 @@ fn (Val) when is_binary(Val)
 
 fn (Val)
     io_lib.format("~p", [Val])
+
+@public
+@doc("returns true if a list contains all printable characters")
+list_is_printable = fn ([H:T]=List) when is_list(List) and H > 31 and H < 127
+    list_is_printable(T)
+
+fn ([])
+    true
+
+fn (List) when is_list(List)
+    false
 
 @doc("like io.format but for efene terms")
 @public
