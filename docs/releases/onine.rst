@@ -45,6 +45,7 @@ Tools
 * fnc builds on windows
 * -a and -p command line arguments added to fnc (-pa -pz in erl)
 * unified fnc and fn in a single binary (fnc -r to run programs)
+* allow empty lines and comment lines on efene shell
 
 Extras
 ~~~~~~
@@ -82,6 +83,7 @@ Documentation
 * fnc man pages
 * documentation on how to build fnc
 * Remove Go programming language dependency from README Also mention what OSX users have to do
+* New efene quickstart guide
 
 More Information
 ~~~~~~~~~~~~~~~~
