@@ -182,6 +182,15 @@ test_set_prototype = fn ()
     same(S1.fields(), [a, b])
     same(S1.has(a), true)
 
+test_strip_funs = fn ()
+    Fun = fn (Self)
+        Self
+
+    same({a: 1}, struct.strip_funs({a: 1}))
+    same({a: 1}, struct.strip_funs({a: 1, f: Fun}))
+    same({a: 1, b: {c: 2}}, struct.strip_funs({a: 1, f: Fun, b: {c: 2}}))
+    same({a: 1, b: {c: 2}}, struct.strip_funs({a: 1, f: Fun, b: {c: 2, f1: Fun}}))
+
 @public
 run = fn ()
     try
@@ -195,5 +204,6 @@ run = fn ()
         test_to_plist()
         test_from_plist()
         test_set_prototype()
+        test_strip_funs()
     catch Error Msg
         io.format("error: ~p ~p~n", [Error, Msg])

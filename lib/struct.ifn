@@ -3,13 +3,14 @@
 
 @public
 @doc("encode a given data structure to json")
-encode = fn (([Head:_]=Values,)) when is_tuple(Head) and size(Head) == 2
+encode = fn (([Head:_],)=Struct) when is_tuple(Head) and size(Head) == 2
     Handler = fn((L,)) when is_list(L)
         (struct, L)
     fn (Bad)
         exit((json_encode, (bad_term, Bad)))
 
-    mochijson2.encoder([(handler, Handler)])(Values)
+    StructWithoutFuns = strip_funs(Struct)
+    mochijson2.encoder([(handler, Handler)])(StructWithoutFuns)
 
 fn (Val)
     not_struct(Val)
@@ -239,6 +240,17 @@ fields = fn ((Body,))
 
 fn (Val)
     not_struct(Val)
+
+@public
+@doc("return the same struct but removing all functions recursively")
+strip_funs = fn ((Body,))
+    Fields = for (Key, Val) in Body if not is_function(Val)
+        if is_struct(Val)
+            (Key, strip_funs(Val))
+        else
+            (Key, Val)
+
+    (Fields,)
 
 @public
 @doc("extend the struct by adding an attribute named *Key* with value *Value*
