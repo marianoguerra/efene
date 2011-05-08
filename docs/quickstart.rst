@@ -36,7 +36,8 @@ hello worlds look simple and awesome on all programming languages, but it's a go
    :language: efene
    :linenos:
 
-we declare with the public function attribute that the function is public, that means that the function can be accessed from outside the module
+we declare with the public function attribute that the function is public, that
+means that the function can be accessed from outside the module
 
 .. literalinclude:: code/hello.fn
    :language: efene
@@ -60,19 +61,23 @@ the *~n* at the end of the string means "print a new line"
 compiling and running
 .....................
 
-let's compile the module we just created, we save the content on a file called hello.fn and run::
+let's compile the module we just created, we save the content on a file called
+hello.fn and run::
 
         fnc hello.fn
 
-here we compile the file hello.fn, if all goes well a file called hello.beam with the compiled bytecode is created
+here we compile the file hello.fn, if all goes well a file called hello.beam
+with the compiled bytecode is created
 
 to run the compiled program we run::
 
         fnc -r hello run
 
-the -r switch instructs the *fnc* command to run the function called *run* from the module called *hello*
+the -r switch instructs the *fnc* command to run the function called *run* from
+the module called *hello*
 
-we may want to play with our module from the shell, let's do that by running the efene shell::
+we may want to play with our module from the shell, let's do that by running
+the efene shell::
 
         fnc -s
 
@@ -83,34 +88,39 @@ now we call the function from the shell::
         ok
         >>> 
 
-The first line is the message printed to the standard output by the function, the second line (*ok*) is the value returned
-by the function, this is the value returned by the last statement on the function body, in this case, the value returned by
-io.format.
+The first line is the message printed to the standard output by the function,
+the second line (*ok*) is the value returned by the function, this is the value
+returned by the last statement on the function body, in this case, the value
+returned by io.format.
 
 to exit press Ctrl+D
 
 hello world take 2
 ::::::::::::::::::
 
-let's make the example a little more complex now, we could create a function that says hello to anyone, not just world:
+let's make the example a little more complex now, we could create a function
+that says hello to anyone, not just world:
 
 .. literalinclude:: code/hello1.fn
    :language: efene
    :linenos:
 
-here we defined two public functions, one called *hello* that receives one parameter called *Name*
+here we defined two public functions, one called *hello* that receives one
+parameter called *Name*
 
 .. literalinclude:: code/hello1.fn
    :language: efene
    :lines: 3
 
-that when called will print the string resulting from the replacement of the string (~s) contained in the *Name* parameter
+that when called will print the string resulting from the replacement of the
+string (~s) contained in the *Name* parameter
 
 .. literalinclude:: code/hello1.fn
    :language: efene
    :lines: 4
 
-then we change the body of the *run* function to call the *hello* function twice with two different parameters
+then we change the body of the *run* function to call the *hello* function
+twice with two different parameters
 
 .. literalinclude:: code/hello1.fn
    :language: efene
@@ -152,7 +162,7 @@ hello world take 3
 ::::::::::::::::::
 
 nice, we have a more generic hello function, but since I mostly salute to the
-world I want my old version back to, let's do that:
+world I want my old version back too, let's do that:
 
 .. literalinclude:: code/hello2.fn
    :language: efene
@@ -162,6 +172,9 @@ in this version we created a new function called *hello* that takes no
 parameters and when called it will call the version of the function that
 receives one parameter passing "World", in this way we have our old version
 back and we are reusing the code we already wrote.
+
+as you can see, we can have multiple functions with the same name as long as
+they have a different arity. In this case we have *hello/0* and *hello/1*.
 
 let's define arity
 ..................
@@ -218,15 +231,18 @@ some values, this is called pattern matching.
 other ways to do the same
 :::::::::::::::::::::::::
 
-we can produce the same result as the last example using other features of the language, guards and if statement
+we can produce the same result as the last example using other features of the
+language, guards and if statement
 
 guards
 ......
 
-guards are a way to run a given function clause only when the conditions after the *when* are true.
+guards are a way to run a given function clause only when the conditions after
+the *when* are true.
 
-with pattern matching on the function arguments we only match for equality of values, on guards we can
-test for other things, like the length of a string, if some values have some relations (!=, >, <, >=, <= etc.)
+with pattern matching on the function arguments we only match for equality of
+values, on guards we can test for other things, like the length of a string, if
+some values have some relations (!=, >, <, >=, <= etc.)
 
 .. literalinclude:: code/hello4.fn
    :language: efene
@@ -235,8 +251,9 @@ test for other things, like the length of a string, if some values have some rel
 if statement
 ............
 
-the if statement is a control structure of the language that allows to execute the body only if the condition
-is true, it works similarly to guards but can be used inside function bodies.
+the if statement is a control structure of the language that allows to execute
+the body only if the condition is true, it works similarly to guards but can be
+used inside function bodies.
 
 .. literalinclude:: code/hello5.fn
    :language: efene
@@ -245,8 +262,9 @@ is true, it works similarly to guards but can be used inside function bodies.
 more pattern matching
 :::::::::::::::::::::
 
-we saw some basic pattern matching done on the function arguments, but pattern matching is available on more places,
-here I will show some things we can do with pattern matching on the command line::
+we saw some basic pattern matching done on the function arguments, but pattern
+matching is available on more places, here I will show some things we can do
+with pattern matching on the command line::
 
  dev $ rlwrap fnc -s
  >>> A = 4
@@ -316,6 +334,9 @@ here I will show some things we can do with pattern matching on the command line
 data types
 ::::::::::
 
+on our examples we have seen different data types, mainly integers, strings,
+lists and tuples, let's define them here so you know them all.
+
 numbers
 .......
 
@@ -348,7 +369,7 @@ atoms
 
 An atom is a literal, a constant with name. An atom should be enclosed in
 single quotes (') if it does not begin with a lower-case letter or if it
-contains other characters than alphanumeric characters, underscore (_), or @.
+contains other characters than alphanumeric characters, underscore (_), or @::
 
         >>> ok
         ok
@@ -400,6 +421,32 @@ a tuple is an ordered set of elements with fixed size::
 as you can see the empty tuple is expressed as "(,)" and the one item tuple
 ends with a comma to differentiate it from an expression between parenthesis
 
+structs
+.......
+
+structs are a way to represent something similar to objects, they have the same
+syntax as JSON and object literals in javascript::
+
+        >>> P1 = {firstname: "Mariano", lastname: "Guerra"}
+        {firstname: "Mariano", lastname: "Guerra"}
+        >>> Name = fn (Self) { Self.firstname ++ " " ++ Self.lastname }
+        #Fun<erl_eval.6.13229925>
+        >>> Name(P1)
+        "Mariano Guerra"
+        >>> P2 = {firstname: "Luis Mariano", lastname: "Guerra", name: Name}
+        {firstname: "Luis Mariano", lastname: "Guerra"}
+        >>> P2.name()
+        "Luis Mariano Guerra"
+        >>> 
+
+as you can see, we can add functions to our structs, functions in structs work
+like methods in python, they explicitly receive the object they apply to as
+first argument, by convention this argument is called *Self*.
+
+when you call a struct's method the struct is implicitly passed as first
+parameter.
+
+
 basic language constructs
 :::::::::::::::::::::::::
 
@@ -447,7 +494,8 @@ output::
 everything is an expression
 :::::::::::::::::::::::::::
 
-in efene everything is an expression, that means that everything returns something and can be assigned to a variable
+in efene everything is an expression, that means that everything returns
+something and can be assigned to a variable
 
 here are some examples from that
 
