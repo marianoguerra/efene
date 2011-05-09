@@ -1,0 +1,25 @@
+
+@public
+hello = fn (Name) when Name == "Winston Churchill" {
+    "Well hello sir"
+}
+
+fn (Name) {
+    io_lib.format("Hello ~s!", [Name])
+}
+
+@public
+hello = fn () {
+    hello("World")
+}
+
+print = fn (Msg) {
+    io.format("~s~n", [Msg])
+}
+
+@public
+run = fn () {
+    print(hello())
+    print(hello("coders"))
+    print(hello("Winston Churchill"))
+}

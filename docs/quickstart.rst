@@ -90,7 +90,7 @@ now we call the function from the shell::
 
 The first line is the message printed to the standard output by the function,
 the second line (*ok*) is the value returned by the function, this is the value
-returned by the last statement on the function body, in this case, the value
+returned by the last expression on the function body, in this case, the value
 returned by io.format.
 
 to exit press Ctrl+D
@@ -270,7 +270,7 @@ other ways to do the same
 :::::::::::::::::::::::::
 
 we can produce the same result as the last example using other features of the
-language, guards, switch/case and if statements
+language, guards, switch/case and if expressions
 
 guards
 ......
@@ -286,10 +286,10 @@ some values have some relations (!=, >, <, >=, <= etc.)
    :language: efene
    :lines: 2-9
 
-if statement
-............
+if expression
+.............
 
-the if statement is a control structure of the language that allows to execute
+the if expression is a control structure of the language that allows to execute
 the body only if the condition is true, it works similarly to guards but can be
 used inside function bodies.
 
@@ -297,10 +297,10 @@ used inside function bodies.
    :language: efene
    :lines: 2-10
 
-switch/case statement
-.....................
+switch/case expression
+......................
 
-the switch/case statement is a control structure of the language that allows to execute
+the switch/case expression is a control structure of the language that allows to execute
 the body only if the expression in switch matches the expression in case.
 
 this is useful if we have to compare a variable or expression agains several values and
@@ -319,6 +319,71 @@ a web server or send it to another process?
 
 then we will have to make the *hello* function return the value and use it in other functions, let's redo
 our previous examples taking advantage of "everything is an expression".
+
+guards
+......
+
+here is the modified version of the guards example to return the value instead of printing it:
+
+.. literalinclude:: code/hello4-1.fn
+   :language: efene
+
+the things that changed are that in the first function clause we return the
+string. In efene the resulting value of the last expression of a function is
+returned as the result of the function execution, you don't need to add the
+return keyword or something similar.
+
+.. literalinclude:: code/hello4-1.fn
+   :language: efene
+   :lines: 4
+
+something new worth noticing is the use of the *io_lib.format/1* function, this
+function works as *io.format/1* but instead of printing the result of the
+formatting it returns it as a string. We use this function to avoid
+concatenating the pieces by hand.
+
+.. literalinclude:: code/hello4-1.fn
+   :language: efene
+   :lines: 8
+
+something else worth noticing is that we didn't defined the *print/1* as public,
+that means the the function will be only available inside the module and won't be
+exported to be used by other modules.
+
+if expression
+.............
+
+.. literalinclude:: code/hello5-1.fn
+   :language: efene
+
+this example has almost the same code as the last one, the only interesting thing to
+notice is that the value returned by the *hello/1* function is the value returned
+by the if clause that matches.
+
+as I said everything is an expression, even the if expression, this means that you
+can assign the result of the if expression to a variable and use it, for example::
+
+        >>> Num = 1
+        1
+        >>> Name = if Num == 1 { one } else { unknown }
+        one
+        >>> Name
+        one
+
+that is a dummy example, but you can see that we can assign the result of the if
+expression to a variable.
+
+but in our case since the if expression is the last expression of the function,
+the result of the if expression is returned as the function result.
+
+switch/case expression
+......................
+
+.. literalinclude:: code/hello6-1.fn
+   :language: efene
+
+the switch/case example is the same as the if example but changing the control
+structure used.
 
 more pattern matching
 :::::::::::::::::::::
@@ -533,21 +598,4 @@ for/in
 .. literalinclude:: code/basics.fn
    :language: efene
    :lines: 34-36
-
-complete program to run
-.......................
-
-.. literalinclude:: code/basics.fn
-   :language: efene
-
-output::
-
-        < 0
-        >= 0 and < 10
-        >= 10
-        one!
-        not one nor two
-        "spam"
-        "eggs"
-        "bacon"
 
