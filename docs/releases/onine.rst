@@ -26,6 +26,7 @@ New Language Syntax
 * allow lambdas defined as function parameters
 * allow lightweight struct syntax in ifene
 * add support for binary generators
+* add support for "receive after <timeout> <block>" expression (receive without a pattern)
 
 Syntax Changes
 ~~~~~~~~~~~~~~
