@@ -261,6 +261,7 @@ catch_pattern -> catch literal fn_block:
 % receive expression
 
 recv_expr -> receive receive_patterns                             : {'receive', line('$1'), '$2'}.
+recv_expr -> receive after literal fn_block                       : {'receive', line('$1'), [], '$3', '$4'}.
 recv_expr -> receive receive_patterns after literal fn_block      : {'receive', line('$1'), '$2', '$4', '$5'}.
 
 receive_patterns -> receive_pattern else receive receive_patterns : ['$1'|'$4'].
