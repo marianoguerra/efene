@@ -227,12 +227,50 @@ some values, this is called pattern matching.
    :language: efene
    :lines: 2-10
 
+in this case, the first function clause of the function *hello/1* will pattern match
+the argument to the string "Winston Churchill", if that matches it will excecute:
+
+.. literalinclude:: code/hello3.fn
+   :language: efene
+   :lines: 4
+
+otherwise it will try to match the next function clause, in this case the next
+function clause will store the content of the argument on the variable *Name*
+so it will always match and the body will be executed.
+
+got no match
+............
+
+but what happens if no function clause matches? well let's try it and find it
+for ourselves::
+
+        >>> OnlyMatchOne = fn (1) { one }
+        #Fun<erl_eval.6.13229925>
+        >>> OnlyMatchOne(1)
+        one
+        >>> OnlyMatchOne(2)
+        exception throw: function_clause
+        >>> 
+
+here we defined a function called *OnlyMatchOne* that has one function clause
+that will match the number one and return the atom *one*
+
+then we called the function with the argument 1 and it worked as expected.
+
+then we called the function with the argument 2 and it threw an exception because
+there is no function clause that matched that value.
+
+this is useful as a kind of assertion of the values the function accepts, we
+match only the values we know how to handle and let the runtime raise an
+exception if another value is provided.
+
+this is an example of the "let it crash" zen of erlang.
 
 other ways to do the same
 :::::::::::::::::::::::::
 
 we can produce the same result as the last example using other features of the
-language, guards and if statement
+language, guards, switch/case and if statements
 
 guards
 ......
@@ -258,6 +296,29 @@ used inside function bodies.
 .. literalinclude:: code/hello5.fn
    :language: efene
    :lines: 2-10
+
+switch/case statement
+.....................
+
+the switch/case statement is a control structure of the language that allows to execute
+the body only if the expression in switch matches the expression in case.
+
+this is useful if we have to compare a variable or expression agains several values and
+do something different on each one.
+
+.. literalinclude:: code/hello6.fn
+   :language: efene
+   :lines: 2-12
+
+everything is an expression
+:::::::::::::::::::::::::::
+
+in efene everything returns a value, if you see the previous examples you can see we use *io.format*
+all over the place, but what if we wanted to put the result of the function on a file, display it on
+a web server or send it to another process?
+
+then we will have to make the *hello* function return the value and use it in other functions, let's redo
+our previous examples taking advantage of "everything is an expression".
 
 more pattern matching
 :::::::::::::::::::::
@@ -489,36 +550,4 @@ output::
         "spam"
         "eggs"
         "bacon"
-
-
-everything is an expression
-:::::::::::::::::::::::::::
-
-in efene everything is an expression, that means that everything returns
-something and can be assigned to a variable
-
-here are some examples from that
-
-.. literalinclude:: code/basics1.fn
-   :language: efene
-
-output::
-
-        item 1
-        item 2
-        item 3
-        item 4
-        item 5
-        item 6
-        item 7
-        item 8
-        item 9
-        item 10
-        items [1,2,3,4,5,6,7,8,9,10]
-        items plus one [2,3,4,5,6,7,8,9,10,11]
-        age: -2 = error
-        age: 15 = minor
-        age: 25 = adult
-        Place 1 = Champion
-        Place 5 = Work hard next time!
 

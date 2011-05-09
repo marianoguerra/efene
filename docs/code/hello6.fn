@@ -1,0 +1,24 @@
+
+@public
+hello = fn (Name) {
+    switch (Name) {
+        case "Winston Churchill" {
+            io.format("Well hello sir~n")
+        }
+        else {
+            io.format("Hello ~s!~n", [Name])
+        }
+    }
+}
+
+@public
+hello = fn () {
+    hello("World")
+}
+
+@public
+run = fn () {
+    hello()
+    hello("coders")
+    hello("Winston Churchill")
+}
