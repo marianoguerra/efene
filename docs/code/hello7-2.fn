@@ -1,0 +1,45 @@
+
+hellower = fn () {
+    receive (Pid, Name) {
+        Pid ! hello(Name)
+    }
+    else receive Pid {
+        Pid ! hello()
+    }
+
+    hellower()
+}
+
+@public
+hello = fn (Name) when Name == "Winston Churchill" {
+    "Well hello sir"
+}
+
+fn (Name) {
+    io_lib.format("Hello ~s!", [Name])
+}
+
+@public
+hello = fn () {
+    hello("World")
+}
+
+print = fn (Msg) {
+    io.format("~s~n", [Msg])
+}
+
+@public
+run = fn () {
+    Pid = spawn(fn hellower:0)
+    Pid ! (self(), "Winston Churchill")
+
+    receive Msg {
+        print(Msg)
+    }
+
+    Pid ! self()
+
+    receive Msg1 {
+        print(Msg1)
+    }
+}

@@ -216,11 +216,11 @@ programming we need some ground definitions, in this case I needed to use two
 new concepts:
 
 a function clause is a case of a function for a given set of parameters that
-will excecute a given body, until now we used functions with just one function
+will execute a given body, until now we used functions with just one function
 clause that stored the given parameters on some variables.
 
 Those parameters could contain any value. But we can do more than that, we can
-specify that a given body will only be excecuted when the parameters *match*
+specify that a given body will only be executed when the parameters *match*
 some values, this is called pattern matching.
 
 .. literalinclude:: code/hello3.fn
@@ -228,7 +228,7 @@ some values, this is called pattern matching.
    :lines: 2-10
 
 in this case, the first function clause of the function *hello/1* will pattern match
-the argument to the string "Winston Churchill", if that matches it will excecute:
+the argument to the string "Winston Churchill", if that matches it will execute:
 
 .. literalinclude:: code/hello3.fn
    :language: efene
@@ -384,6 +384,193 @@ switch/case expression
 
 the switch/case example is the same as the if example but changing the control
 structure used.
+
+lightweight processes for fun and profit
+::::::::::::::::::::::::::::::::::::::::
+
+our hello world example has grown, we need to make it webscale (?) for that we
+will use processes.
+
+printer process
+...............
+
+.. literalinclude:: code/hello7-1.fn
+   :language: efene
+
+the first thing we need to do to use processes is to create the function that will
+act as the process.
+
+then we need to *spawn* the function as a process using the *spawn* function and store
+the process id (*pid* for short) and then send messages to it.
+
+the function we will use is *hellower/0*:
+
+.. literalinclude:: code/hello7-1.fn
+   :language: efene
+   :lines: 2-8
+
+if you code in other languages you may have noticed that the function calls itself
+as the last line of the function clause, you may be thinking "I'm smelling a stack overflow".
+
+well, erlang runtime has something called "tailcall optimization", that means that if the
+last expression of a function is a call to the function then the runtime doesn't add 
+the call to the stack, instead it is internally optimized as if it were a loop.
+
+in this example we also introduced the receive expression, this is used to wait
+for message sent to the process by any other process, you can use pattern
+matching in a receive expression, to match for specific kinds of messages.
+
+in this case we use the simplest form:
+
+.. literalinclude:: code/hello7-1.fn
+   :language: efene
+   :lines: 3-5
+
+the expression means "receive any message and store it in the *Name* variable", since
+this pattern always matches the clause will be executed for every message we receive and
+will call
+
+.. literalinclude:: code/hello7-1.fn
+   :language: efene
+   :lines: 4
+
+after that it calls itself to start waiting for the next message.
+
+one new thing that was introduced in this example is the syntax to pass a reference to a function
+if we don't hold it in a variable. Since we said that functions are defined by its name and arity
+it's reasonable to think that that's what we need to get a reference to them, well, you are right:
+
+.. literalinclude:: code/hello7-1.fn
+   :language: efene
+   :lines: 30
+
+the syntax to refer to a function is *fn functionname:arity*, let's see an example::
+
+        >>> Format = fn io.format:1
+        #Fun<io.format.1>
+        >>> Format("hi!~n")
+        hi!
+
+we can store the reference in a variable or pass it as parameter, in this case we pass it to spawn
+so it can create a new process and use the function as the process' code.
+
+send and receive
+................
+
+as we did before, we want to use the process to make more things than just printing the result,
+so now we will ask the process to format the message and send the result back to us:
+
+.. literalinclude:: code/hello7-2.fn
+   :language: efene
+
+now not only are we sending *Name* to the process but we are also sending him our own process 
+identifier so he can send us the result back:
+
+.. literalinclude:: code/hello7-2.fn
+   :language: efene
+   :lines: 34
+
+and
+
+.. literalinclude:: code/hello7-2.fn
+   :language: efene
+   :lines: 40
+
+btw, the *self/0* function returns the pid of the current process.
+
+the process matches the message to extract the *Pid* and *Name*:
+
+.. literalinclude:: code/hello7-2.fn
+   :language: efene
+   :lines: 3-5
+
+I also added another clause to the receive expression to match the messages
+that send us just the *Pid*, in that case we will call *hello/0*:
+
+.. literalinclude:: code/hello7-2.fn
+   :language: efene
+   :lines: 6-8
+
+since now *hellower/0* send us the result back to us, we have to receive
+and print them:
+
+.. literalinclude:: code/hello7-2.fn
+   :language: efene
+   :lines: 36-38
+
+delegate the print
+..................
+
+but we are not webscale yet! we need more processes! 
+
+for that we will create printer processes that will receive a message
+and print it, and instead of receiving the results by ourselves we will
+send the pid of the printers to *hellower/0*:
+
+.. literalinclude:: code/hello7-3.fn
+   :language: efene
+
+first we define the function we will use for printer processes:
+
+.. literalinclude:: code/hello7-3.fn
+   :language: efene
+   :lines: 13-19
+
+then we spawn two printers and store the pids:
+
+.. literalinclude:: code/hello7-3.fn
+   :language: efene
+   :lines: 43-44
+
+and we send messages to *hellower/0* sending the printers pids instead of our pid:
+
+.. literalinclude:: code/hello7-3.fn
+   :language: efene
+   :lines: 46-47
+
+killing in the pid of!
+......................
+
+in the previous examples there was no way to ask the processes to finish, this is ok
+since the lifetime of our application is short, but in long running applications we
+may want to be able to ask processes to finish.
+
+to do that we will send a special message to the process asking to quit:
+
+.. literalinclude:: code/hello7-4.fn
+   :language: efene
+
+the code should be self descriptive at this point, we add a clause to the
+receive expression matching the *quit* atom, if we match that we print an exit
+message and we don't call ourselves again, doing this, after the message is
+received the function will finish and the runtime will end the process:
+
+.. literalinclude:: code/hello7-4.fn
+   :language: efene
+   :lines: 2-24
+
+and we will gently ask them to quit after we sent them some messages:
+
+.. literalinclude:: code/hello7-4.fn
+   :language: efene
+   :lines: 56-58
+
+but wait! there is more! (?) you may have noticed something new in the code:
+
+.. literalinclude:: code/hello7-4.fn
+   :language: efene
+   :lines: 54
+
+this line is special for two reasons, first it introduces the *after* block in
+the *receive* expression, this allows to specify a timeout expression and a block
+of code to execute if we didn't received a message after that time.
+
+here we use *after* to wait for some time, and since we aren't waiting for a
+message, we don't specify a receive clause (to avoid actually receiving a
+message that we weren't expecting)
+
+you can use *after* in *receive* expressions if you want to specify a time after
+which you give up waiting for a message.
 
 more pattern matching
 :::::::::::::::::::::
@@ -571,31 +758,3 @@ first argument, by convention this argument is called *Self*.
 
 when you call a struct's method the struct is implicitly passed as first
 parameter.
-
-
-basic language constructs
-:::::::::::::::::::::::::
-
-here are some examples of basic language constructs
-
-if/else if/else
-...............
-
-.. literalinclude:: code/basics.fn
-   :language: efene
-   :lines: 4-12
-
-switch/case/else
-................
-
-.. literalinclude:: code/basics.fn
-   :language: efene
-   :lines: 17-29
-
-for/in
-......
-
-.. literalinclude:: code/basics.fn
-   :language: efene
-   :lines: 34-36
-
