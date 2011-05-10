@@ -2,7 +2,7 @@
 @public
 hello = fn (Name) {
     switch (Name) {
-        case "Winston Churchill" {
+        case "Winston Churchil" {
             io.format("Well hello sir~n")
         }
         else {
@@ -20,5 +20,5 @@ hello = fn () {
 run = fn () {
     hello()
     hello("coders")
-    hello("Winston Churchill")
+    hello("Winston Churchil")
 }

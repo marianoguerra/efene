@@ -19,7 +19,7 @@ printer = fn () {
 }
 
 @public
-hello = fn (Name) when Name == "Winston Churchill" {
+hello = fn (Name) when Name == "Winston Churchil" {
     "Well hello sir"
 }
 
@@ -44,5 +44,5 @@ run = fn () {
     PrinterPid2 = spawn(fn printer:0)
 
     Pid ! (PrinterPid1, "World")
-    Pid ! (PrinterPid2, "Winston Churchill")
+    Pid ! (PrinterPid2, "Winston Churchil")
 }

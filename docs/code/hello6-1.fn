@@ -2,7 +2,7 @@
 @public
 hello = fn (Name) {
     switch (Name) {
-        case "Winston Churchill" {
+        case "Winston Churchil" {
             "Well hello sir"
         }
         else {
@@ -24,5 +24,5 @@ print = fn (Msg) {
 run = fn () {
     print(hello())
     print(hello("coders"))
-    print(hello("Winston Churchill"))
+    print(hello("Winston Churchil"))
 }

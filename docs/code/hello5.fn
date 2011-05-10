@@ -1,7 +1,7 @@
 
 @public
 hello = fn (Name) {
-    if Name == "Winston Churchill" {
+    if Name == "Winston Churchil" {
         io.format("Well hello sir~n")
     }
     else {
@@ -18,5 +18,5 @@ hello = fn () {
 run = fn () {
     hello()
     hello("coders")
-    hello("Winston Churchill")
+    hello("Winston Churchil")
 }

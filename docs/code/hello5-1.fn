@@ -1,7 +1,7 @@
 
 @public
 hello = fn (Name) {
-    if Name == "Winston Churchill" {
+    if Name == "Winston Churchil" {
         "Well hello sir"
     }
     else {
@@ -22,5 +22,5 @@ print = fn (Msg) {
 run = fn () {
     print(hello())
     print(hello("coders"))
-    print(hello("Winston Churchill"))
+    print(hello("Winston Churchil"))
 }

@@ -1,6 +1,6 @@
 
 @public
-hello = fn (Name) when Name == "Winston Churchill" {
+hello = fn (Name) when Name == "Winston Churchil" {
     "Well hello sir"
 }
 
@@ -21,5 +21,5 @@ print = fn (Msg) {
 run = fn () {
     print(hello())
     print(hello("coders"))
-    print(hello("Winston Churchill"))
+    print(hello("Winston Churchil"))
 }

@@ -11,7 +11,7 @@ hellower = fn () {
 }
 
 @public
-hello = fn (Name) when Name == "Winston Churchill" {
+hello = fn (Name) when Name == "Winston Churchil" {
     "Well hello sir"
 }
 
@@ -31,7 +31,7 @@ print = fn (Msg) {
 @public
 run = fn () {
     Pid = spawn(fn hellower:0)
-    Pid ! (self(), "Winston Churchill")
+    Pid ! (self(), "Winston Churchil")
 
     receive Msg {
         print(Msg)

@@ -198,8 +198,8 @@ all animals are equal, but some animals are more equal than others
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 our hello world program is growing, and now we need to do a special case for
-our hello function, let's say that we have to salute Sir Winston Churchill, we
-should give him a better message than "hello Winston Churchill!"
+our hello function, let's say that we have to salute Sir Winston Churchil, we
+should give him a better message than "hello Winston Churchil!"
 
 for that we will add a function clause to our *hello/1* function to pattern
 match for the specific case and do something different:
@@ -228,7 +228,7 @@ some values, this is called pattern matching.
    :lines: 2-10
 
 in this case, the first function clause of the function *hello/1* will pattern match
-the argument to the string "Winston Churchill", if that matches it will execute:
+the argument to the string "Winston Churchil", if that matches it will execute:
 
 .. literalinclude:: code/hello3.fn
    :language: efene

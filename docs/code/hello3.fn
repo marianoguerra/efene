@@ -1,6 +1,6 @@
 
 @public
-hello = fn ("Winston Churchill") {
+hello = fn ("Winston Churchil") {
     io.format("Well hello sir~n")
 }
 
@@ -17,5 +17,5 @@ hello = fn () {
 run = fn () {
     hello()
     hello("coders")
-    hello("Winston Churchill")
+    hello("Winston Churchil")
 }
