@@ -579,7 +579,6 @@ we saw some basic pattern matching done on the function arguments, but pattern
 matching is available on more places, here I will show some things we can do
 with pattern matching on the command line::
 
- dev $ rlwrap fnc -s
  >>> A = 4
  4
  >>> B = 4
@@ -597,7 +596,7 @@ with pattern matching on the command line::
  >>> # let's use pattern matching for something more advanced
  >>> L = [1, 2, 3, 4]
  [1, 2, 3, 4]
- >>> # we will match, some of the values to literals, some of them put them on variables and discard others
+ >>> # we will match some of the values to literals, some of them put them on variables and discard others
  >>> # First and Second are variable names, so whatever value was in that place it will be assigned to that
  >>> # variable
  >>> # the 2 in the second position is a literal, so it will have to match to the value on the second position
