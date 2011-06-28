@@ -84,7 +84,7 @@ Documentation
 * fnc man pages
 * documentation on how to build fnc
 * Remove Go programming language dependency from README Also mention what OSX users have to do
-* New efene quickstart guide
+* New efene :ref:`quickstart guide <quickstart>`
 
 More Information
 ~~~~~~~~~~~~~~~~
@@ -92,6 +92,7 @@ More Information
 * `Download the latest snapshot`_
 * `Website`_
 * `Documentation`_
+* `Quickstart Guide`_
 * `Tutorial`_
 * `Blog`_
 * `Central repo`_
@@ -103,6 +104,7 @@ More Information
 .. _Blog: http://efene.tumblr.com
 .. _Tutorial: http://marianoguerra.com.ar/efene/tutorial
 .. _Documentation: http://marianoguerra.com.ar/efene/docs
+.. _Quickstart Guide: http://marianoguerra.com.ar/efene/docs/quickstart.html
 .. _Website: http://marianoguerra.com.ar/efene
 .. _Download the latest snapshot: http://github.com/marianoguerra/efene/tarball/master
 .. _Rosetta code page: http://rosettacode.org/wiki/Efene
