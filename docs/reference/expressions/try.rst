@@ -1,3 +1,5 @@
+.. _tryexpression:
+
 Try Expression
 --------------
 
@@ -46,7 +48,7 @@ used for cleanup with side effects:
                 ExceptionBody1
         }
 
-        jatch ([ClassN] ExceptionPatternN) [when (ExceptionGuardSeqN)] {
+        catch ([ClassN] ExceptionPatternN) [when (ExceptionGuardSeqN)] {
                 ExceptionBodyN
         }
 

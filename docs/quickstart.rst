@@ -1,4 +1,5 @@
 .. _quickstart:
+
 efene quickstart
 ----------------
 
@@ -758,3 +759,160 @@ first argument, by convention this argument is called *Self*.
 
 when you call a struct's method the struct is implicitly passed as first
 parameter.
+
+control structures
+::::::::::::::::::
+
+if/else if/else
+...............
+
+.. code-block:: efene
+
+        # if/else if/else
+        if (Expr1) {
+            Body1
+        }
+
+        else if (ExprN) {
+            BodyN
+        }
+
+        else {
+            ElseBody
+        }
+
+.. note::
+        for erlang programmers: in efene you can make function calls in the *if expression*
+
+        internally it's translated to a set of nested switch expressions
+
+more information on the :ref:`if expression documentation <ifexpression>`
+
+switch/case/else
+................
+
+.. code-block:: efene
+
+        switch Expr {
+            case (Pattern1) [when (GuardSeq1)] {
+                Body1
+            }
+
+            ...
+
+            case (PatternN) [when (GuardSeqN)] {
+                BodyN
+            }
+            
+            else {
+                ElseBody
+            }
+        }
+
+more information on the :ref:`switch expression documentation <switchexpression>`
+
+receive/else receive/after
+..........................
+
+.. code-block:: efene
+
+        # receive/else receive/after
+        receive (Pattern1) [when (GuardSeq1)] {
+                Body1
+        }
+
+        ...
+
+        else receive (PatternN) [when (GuardSeqN)] {
+                BodyN
+        }
+
+        after (ExprT) {
+                BodyT
+        }
+
+more information on the :ref:`receive expression documentation <receiveexpression>`
+
+for
+...
+
+.. code-block:: efene
+
+        for (Var in Seq) {
+                ForBody
+        }
+
+        # for with filter
+        for (Var in Seq if Cond) {
+                ForBody
+        }
+
+.. note::
+        for erlang programmers: *for* is an alternative syntax to write list comprehensions
+
+        *for* allows multiple expressions in the body since it uses *begin end* expressions internally for
+        the body
+
+more information on the :ref:`for expression documentation <forexpression>`
+
+try/catch/after
+...............
+
+.. code-block:: efene
+
+        try {
+                Expres
+        }
+
+        catch ([Class1] ExceptionPattern1) [when (ExceptionGuardSeq1)] {
+                ExceptionBody1
+        }
+
+        catch ([ClassN] ExceptionPatternN) [when (ExceptionGuardSeqN)] {
+                ExceptionBodyN
+        }
+
+        after {
+                AfterBody
+        }
+
+more information on the :ref:`try expression documentation <tryexpression>`
+
+when/else when/else
+...................
+
+.. code-block:: efene
+
+        # when/else when/else
+        when (GuardSeq1) {
+            Body1
+        }
+
+        else when (GuardSeqN) {
+            BodyN
+        }
+
+        else {
+            ElseBody
+        }
+
+.. note::
+        for erlang programmers: *when* is efene's equivalent of erlang's *if*
+
+        it's present on efene to provide complete compatibility with erlang
+
+        it shouldn't be used in new code
+
+more information on the :ref:`when expression documentation <whenexpression>`
+
+about guards in switch and try expressions
+..........................................
+
+you may have noticed that on *try* and *switch* expressions you can optionally add
+a guard to *catch* and *case*, this can be used to filter conditions just like
+you would do with a guard on a function.
+
+about parenthesis on expressions
+................................
+
+parenthesis are optional on all the control structures, using them is a mather of taste.

@@ -1,3 +1,5 @@
+.. _receiveexpression:
+
 Receive Expression
 ------------------
 

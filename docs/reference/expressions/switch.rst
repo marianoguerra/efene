@@ -1,3 +1,5 @@
+.. _switchexpression:
+
 Switch Expression
 -----------------
 

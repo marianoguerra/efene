@@ -33,7 +33,7 @@ debug all stages of compilation
 .sp
 This tool is just a thin front end that calls the appropiate erlang or efene
 program, you can even use it to run compiled erlang programs.
-.SH Running The Interactive Shell
+.SH RUNNING THE INTERACTIVE SHELL
 .sp
 To start the interactive shell just type in your shell:
 .sp
@@ -42,7 +42,7 @@ To start the interactive shell just type in your shell:
 fnc \-s
 .ft P
 .fi
-.SH Compiling one or more files
+.SH COMPILING ONE OR MORE FILES
 .sp
 To compile one or more files just give the filenames as parameters to fnc:
 .sp
@@ -55,7 +55,7 @@ fnc file1.fn
 fnc file1.fn file2.ifn file3.fn
 .ft P
 .fi
-.SH Running a compiled program
+.SH RUNNING A COMPILED PROGRAM
 .sp
 To run a program you have to pass the name of the module and function that you
 want to run to \fIfnc\fP with the \fI\-r\fP (run) flag:
@@ -98,7 +98,7 @@ erlc mymodule.erl
 fnc \-r mymodule run
 .ft P
 .fi
-.SH Adding paths to look for modules
+.SH ADDING PATHS TO LOOK FOR MODULES
 .sp
 When you start a program or start the shell you can instruct efene to add some
 extra paths to look for modules.
@@ -145,7 +145,7 @@ You can use this options as much as you need for example:
 fnc \-r server start \-p /home/user/lib \-a mods \-p libs \-a modules
 .ft P
 .fi
-.SH Transform a module to erlang
+.SH TRANSFORM A MODULE TO ERLANG
 .sp
 To transform an efene or ifene module to erlang source code run:
 .sp
@@ -164,7 +164,7 @@ It will print the erlang source code to the screen, you can save it:
 fnc \-t erl module.fn > module.erl
 .ft P
 .fi
-.SH When Something goes wrong
+.SH WHEN SOMETHING GOES WRONG
 .sp
 you can see what \fIfnc\fP actually wanted to run passing the \fI\-T\fP option as first
 option.
@@ -187,7 +187,7 @@ $ fnc \-T \-r mymodule run parameter 1 two false
 erl \-run mymodule run parameter 1 two false  \-run init stop \-noshell \-pa "/home/mariano/Proyectos/efene/ebin"
 .ft P
 .fi
-.SH Advanced options
+.SH ADVANCED OPTIONS
 .\" note:
 .\" 
 .\" This section is for advanced users, you don't need to know this to code or use efene.

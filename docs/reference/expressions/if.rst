@@ -6,7 +6,7 @@ If Expression
 .. code-block:: efene
 
         # simple form
-        if (GuardSeq1) {
+        if (Expr1) {
             Body1
         }
 
@@ -14,15 +14,15 @@ If Expression
 .. code-block:: efene
 
         # multiple ifs
-        if (GuardSeq1) {
+        if (Expr1) {
             Body1
         }
 
-        else if (GuardSeq2) {
+        else if (Expr2) {
             Body2
         }
 
-        else if (GuardSeqN) {
+        else if (ExprN) {
             BodyN
         }
 
@@ -30,7 +30,7 @@ If Expression
 .. code-block:: efene
 
         # if/else
-        if (GuardSeq1) {
+        if (Expr1) {
             Body1
         }
 
@@ -42,11 +42,11 @@ If Expression
 .. code-block:: efene
 
         # if/else if/else
-        if (GuardSeq1) {
+        if (Expr1) {
             Body1
         }
 
-        else if (GuardSeqN) {
+        else if (ExprN) {
             BodyN
         }
 
@@ -55,7 +55,7 @@ If Expression
         }
 
 The branches of an if-expression are scanned sequentially until a guard
-sequence GuardSeq which evaluates to true is found. Then the corresponding Body
+sequence Expr which evaluates to true is found. Then the corresponding Body
 (sequence of expressions) is evaluated.
 
 The return value of Body is the return value of the if expression.
@@ -88,7 +88,7 @@ Difference Between *if* and *when*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 if expressions are another way of writting switch statements that avoid the nesting
-of multiple switchs inside eachother, any boolean expression can be in the GuardSeq
+of multiple switchs inside eachother, any boolean expression can be in the Expr
 of an if expression.
 
 when expressions are a way to write guards in the body of a function, a guard can
