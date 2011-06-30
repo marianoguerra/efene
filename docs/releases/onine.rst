@@ -14,6 +14,21 @@ allows to translate an efene source file into a readable erlang one or compile
 it directly to bytecode. It also adds some syntactic sugar in some places to
 make some tasks easier.
 
+Participate
+~~~~~~~~~~~
+
+a mailing list is available at librelist just send a mail to
+efene@librelist.com to subscribe
+
+as first mail you may send a hello world program in efene and present yourself
+by saying your name, from where you are, how did you heard about efene and
+anything else you would like to say. 
+
+you can also participate by helping promote efene by trying it and posting your
+thoughts on your blog/twitter/facebook/google+
+
+of course, help on documentation or code is more than welcome
+
 New Language Syntax
 ~~~~~~~~~~~~~~~~~~~
 
@@ -51,6 +66,7 @@ Tools
 Extras
 ~~~~~~
 
+* new domain at http://efenelang.org
 * first simple version of emacs mode for ifene
 * basic TextMate support by creating a TextMate bundle
 
@@ -89,23 +105,19 @@ Documentation
 More Information
 ~~~~~~~~~~~~~~~~
 
-* `Download the latest snapshot`_
 * `Website`_
 * `Documentation`_
 * `Quickstart Guide`_
-* `Tutorial`_
-* `Blog`_
+* `Download the latest snapshot`_
 * `Central repo`_
 * `Issue Tracker`_
 * `Rosetta code page`_
 
 .. _Issue Tracker: http://github.com/marianoguerra/efene/issues
 .. _Central repo: http://github.com/marianoguerra/efene
-.. _Blog: http://efene.tumblr.com
-.. _Tutorial: http://marianoguerra.com.ar/efene/tutorial
 .. _Documentation: http://marianoguerra.com.ar/efene/docs
 .. _Quickstart Guide: http://marianoguerra.com.ar/efene/docs/quickstart.html
-.. _Website: http://marianoguerra.com.ar/efene
+.. _Website: http://efenelang.org
 .. _Download the latest snapshot: http://github.com/marianoguerra/efene/tarball/master
 .. _Rosetta code page: http://rosettacode.org/wiki/Efene
 
