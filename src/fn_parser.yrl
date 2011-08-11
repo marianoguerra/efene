@@ -22,7 +22,7 @@ Terminals
     mul_op if else when switch case try catch receive after begin open_list
     close_list sep split_op split_def_op dot dotdot dotdotdot arrow larrow
     fatarrow open_bin close_bin attr gattr for in open_meta_block open_oxford
-    close_oxford open_meta_oxford modvar question.
+    close_oxford open_meta_oxford modvar question macrovar.
 
 Rootsymbol program.
 
@@ -59,6 +59,7 @@ tl_expr -> attribute endl : '$1'.
 tl_expr -> send_op meta_block endl  : '$2'.
 tl_expr -> send_op astify endl      : '$2'.
 tl_expr -> send_op meta_astify endl : '$2'.
+tl_expr -> macrovar match bool_expr endl : store_constant(unwrap('$1'), '$3').
 
 attribute -> attrs:
     run_attribute(attr_level('$1'), unwrap('$1'), line('$1'), []).
@@ -282,6 +283,7 @@ literal -> bool_lit             : '$1'.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
 literal -> atom                 : '$1'.
 literal -> var                  : '$1'.
+literal -> macrovar             : get_constant(unwrap('$1'), line('$1')).
 literal -> open send_expr close : '$2'.
 literal -> char                 : '$1'.
 literal -> list                 : '$1'.
@@ -699,3 +701,21 @@ string_to_binstring({string, Line, Content}) ->
 normalize_struct_attr({string, Line, Val}) ->
     {bin, Line, [{bin_element, Line, {string, Line, Val}, default, default}]};
 normalize_struct_attr(Ast) -> Ast.
+
+store_constant({Module, Name}, Expr) ->
+    case get({fn_constant, Module, Name}) of
+        undefined ->
+            put({fn_constant, Module, Name}, Expr),
+            nop;
+        Val ->
+            fail(line(Expr),
+            io_lib:format("constant ~p already defined at line ~p",
+                [Name, line(Val)]))
+   end.
+
+get_constant({Module, Name}, Line) ->
+    case get({fn_constant, Module, Name}) of
+        undefined ->
+            fail(Line, "undefined constant", Name);
+        Val -> Val
+   end.
