@@ -96,6 +96,11 @@ tree_to_ast([{global_attribute, Line, Name, Value}|Tree], Publics, Ast, CurrAttr
 tree_to_ast([nop|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     tree_to_ast(Tree, Publics, Ast, CurrAttrs, Attrs);
 
+% export is a special attribute, it's "local" but set as global to avoid adding the function name on it
+% when we import code
+tree_to_ast([{attribute, _Line, export, _Value}=Attr|Tree], Publics, Ast, CurrAttrs, Attrs) ->
+    tree_to_ast(Tree, Publics, Ast, CurrAttrs, [Attr|Attrs]);
+
 tree_to_ast([{attribute, _Line, _Name, _Value}=Attr|Tree], Publics, Ast, CurrAttrs, Attrs) ->
     tree_to_ast(Tree, Publics, Ast, [Attr|CurrAttrs], Attrs);
 

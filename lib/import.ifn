@@ -1,0 +1,71 @@
+@@license("New BSD License, part of efene, see LICENSE for details")
+
+@public
+@doc("handle the @import attribute, receive a path to import a filedefinition and return the
+ast of that record")
+
+attribute = fn (local, _Line, [PathAst])
+    Path = erl_parse.normalise(PathAst)
+
+    switch ast_from_path(Path)
+        case ok => Ast
+            filter_ast(Ast)
+        case (error, _Reason) = Error
+            Error
+
+fn (local, _Line, (return, _First, _Second))
+        (error, "import doesn't work with ->")
+
+fn (_Type, _Line, _Args)
+    not_implemented
+
+@public
+@doc("get the ast of a file, supports .ifn, .fn, .erl and .hrl")
+ast_from_path = fn (Path)
+    switch file_type_from_path(Path)
+        # update docs above if you add a case
+        case ifene
+            ast_from_efene_file(Path)
+        case efene
+            ast_from_efene_file(Path)
+        case erlang
+            ast_from_erlang_file(Path)
+        case erlang_header
+            ast_from_erlang_file(Path)
+
+@public
+@doc("return an atom representing the file type
+    .erl -> erlang
+    .hrl -> erlang_header
+    .fn  -> efene
+    .ifn -> ifene
+")
+file_type_from_path = fn (Path)
+    if lists.suffix(".fn",  Path)
+        efene
+    else if lists.suffix(".ifn",  Path)
+        ifene
+    else if lists.suffix(".erl",  Path)
+        erlang
+    else if lists.suffix(".hrl",  Path)
+        erlang_header
+
+@public
+@doc("get the ast from an erlang file")
+ast_from_erlang_file = fn (Path)
+    epp.parse_file(Path, [], [])
+
+@public
+@doc("get the ast from an efene/ifene file")
+ast_from_efene_file = fn (Path)
+    # TODO: handle throws
+    (ok, 'fn'.build_module(Path))
+
+@public
+@doc("remove unwanted nodes from the AST")
+filter_ast = fn (Ast)
+    ast.filter_top_level(Ast, [
+        fn ast.filter_public_node:1,
+        fn ast.filter_file_node:1,
+        fn ast.filter_module_node:1,
+        fn ast.filter_eof_node:1])

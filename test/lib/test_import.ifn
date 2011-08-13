@@ -1,0 +1,42 @@
+
+equal = fn (A, A)
+        io.format("ok: equals ~p ~n", [A])
+fn (A, B)
+        io.format("error: ~p != ~p~n", [A, B])
+
+test_file_type_from_path = fn()
+    equal(efene, import.file_type_from_path("asd.fn"))
+    equal(efene, import.file_type_from_path("foo/asd.fn"))
+
+    equal(ifene, import.file_type_from_path("asd.ifn"))
+    equal(ifene, import.file_type_from_path("foo/asd.ifn"))
+
+    equal(erlang, import.file_type_from_path("asd.erl"))
+    equal(erlang, import.file_type_from_path("foo/asd.erl"))
+
+    equal(erlang_header, import.file_type_from_path("asd.hrl"))
+    equal(erlang_header, import.file_type_from_path("foo/asd.hrl"))
+
+test_filter_ast = fn()
+    equal([foo, bar], import.filter_ast([
+        (attribute, 1, file, ("test.fn", 1)),
+        (attribute, 2, module, test),
+        (attribute, 3, public, nil),
+        foo,
+        bar,
+        (eof, 5)]))
+
+test_import = fn ()
+    Result = [(attribute, 2, export, [(run, 0)]),
+        (function, 3, run, 0, [(clause, 3, [], [], [(atom, 4, pass)])])]
+
+    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/test.fn")]))
+    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/test.ifn")]))
+    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/test.erl")]))
+    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/test.hrl")]))
+
+@public
+run = fn ()
+    test_file_type_from_path()
+    test_filter_ast()
+    test_import()

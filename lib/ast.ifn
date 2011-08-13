@@ -381,3 +381,61 @@ set_clause_args = fn ((clause, Line, _Args, Guards, Body), NewArgs)
 
 set_fun_args = fn ((fun, Line, (clauses, [Clause])), NewArgs)
     (fun, Line, (clauses, [set_clause_args(Clause, NewArgs)]))
+
+@public
+@doc("transverse the top level definitions and apply the filters,
+remove the node if at any filter returns true")
+filter_top_level = fn (Ast, Filters)
+    filter_top_level(Ast, Filters, [])
+
+filter_top_level = fn ([], _Filters, Accum)
+    lists.reverse(Accum)
+
+fn ([Node:Rest], Filters, Accum)
+    NewAccum = switch filter_node(Node, Filters)
+        case keep
+            [Node:Accum]
+        case discard
+            Accum
+
+    filter_top_level(Rest, Filters, NewAccum)
+
+@public
+@doc("apply all *Filters* to a node, if any of them returns true
+return *discard* if all return false, return *keep*")
+filter_node = fn (Node, Filters)
+    NodeFilter = fn (Filter)
+        Filter(Node)
+
+    if lists.any(NodeFilter, Filters) == true
+        discard
+    else
+        keep
+
+@public
+@doc("return true if it's an eof ast node")
+filter_eof_node = fn ( (eof, _) )
+    true
+fn (_)
+    false
+
+@public
+@doc("return true if it's a file attribute ast node")
+filter_file_node = fn ( (attribute, _Line, file, (_Name, _)) )
+    true
+fn (_)
+    false
+
+@public
+@doc("return true if it's a module attribute ast node")
+filter_module_node = fn ( (attribute, _Line, module, _Name) )
+    true
+fn (_)
+    false
+
+@public
+@doc("return true if it's a @public attribute ast node")
+filter_public_node = fn ( (attribute, _Line, public, nil) )
+    true
+fn (_)
+    false
