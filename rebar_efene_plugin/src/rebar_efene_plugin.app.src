@@ -1,4 +1,0 @@
-{application, rebar_efene_plugin, [
-  {description, "Rebar Efene Plugin"},
-  {vsn, "1.0"}
-]}.
