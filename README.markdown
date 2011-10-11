@@ -1,19 +1,17 @@
 # Efene
 
-Efene is a programming language that runs on the erlang virtual machine.
+Efene is a programming language that runs on the Erlang virtual machine.
 
-the idea is to provide an alternative syntax to Erlang that is most suitable
-for people coming from languages like Java, C, C++, C#, Javascript, or Python.
+The idea is to provide an alternative syntax for Erlang that is more comfortable
+for people coming from languages like Java, C, C++, C#, Javascript, Ruby, or Python.
 
-Efene comes in two language dialects: Efene (Javascript style) and Ifene (Python style).
+Efene comes in two language dialects: Efene (Ruby style) and Ifene (Python style).
 
-The language is almost 100% compatible with Erlang (and will be), the compiler
-allows to translate an Efene source file into a readable Erlang one or compile it directly to BEAM bytecode.
-It also adds some syntactic sugar in some places to make some tasks easier.
+The language is almost 100% compatible with Erlang (and soon will be at 100%), and your
+Efene programs can easily interact with regular Erlang programs, or vice-versa. The compiler
+can translate an Efene source file into readable Erlang, or compile it directly to BEAM bytecode.
 
-To see how it looks you can go to the [examples](http://github.com/marianoguerra/efene/tree/master/examples/) dir.
-
-## Fast! Show me an example!
+## Quick! Show me an example!
 
 ### efene (hello.fn)
 <pre>
@@ -301,9 +299,11 @@ fnc -r demo run
 </code>
 </pre>
 
+You can see more examples in the [examples dir](http://github.com/marianoguerra/efene/tree/master/examples/).
+
 ## Participate
 
-A mailing-list is available at [librelist](http://librelist.com) just send a mail to [efene@librelist.com](mailto:efene@librelist.com) to subscribe.
+A mailing-list is available at [librelist](http://librelist.com), just send a mail to [efene@librelist.com](mailto:efene@librelist.com) to subscribe.
 
 As first mail you may send a hello world program in Efene and present yourself by saying your name, where you are, how did you heard about Efene and anything else you would like to say.
 
@@ -333,12 +333,12 @@ Additionally you can build and run the examples:
 
 ## Requirements
 
-To create the Efene compiler you will need a C compiler like GCC or LLVM-GCC. For the main purpose you will need any recent Erlang/OTP release.
+To create the Efene compiler you will need a C compiler like GCC or LLVM-GCC, and any recent Erlang/OTP release.
 
 * Erlang
 * (GCC or LLVM-GCC)
 
-Note: in debian based distributions the package erlang-parsetools  is required to compile efene.
+Note: In debian based distributions the package erlang-parsetools is required to compile efene.
 
 ## Useful links
 
