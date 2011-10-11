@@ -301,33 +301,71 @@ fnc -r demo run
 
 You can see more examples in the [examples dir](http://github.com/marianoguerra/efene/tree/master/examples/).
 
-## Participate
+## Using Efene in your app
 
-A mailing-list is available at [librelist](http://librelist.com/browser/efene/), just send a mail to [efene@librelist.com](mailto:efene@librelist.com) to subscribe.
+You will need a recent Erlang/OTP release. If you are on a Debian-based distribution, you can install it with apt-get:
 
-## Quick build instructions
+  $ sudo apt-get erlang erlang-parsetools
+
+Create a directory for your new project, and download rebar, an Erlang build tool:
+
+  $ mkdir -p myapp/src
+  $ cd myapp
+  $ wget http://bitbucket.org/basho/rebar/downloads/rebar; chmod u+x rebar
+
+Create a file named `rebar.config` in the myapp directory:
+
+  {deps, [
+    {efene, ".*",
+      {git, "git://github.com/marianoguerra/efene.git", "master"}
+    },
+    {rebar_efene_plugin, ".*",
+      {git, "git://github.com/DavidMikeSimon/rebar_efene_plugin.git", "stable"}
+    }
+  ]}.
+
+  {rebar_plugins, [
+    rebar_efene_plugin
+  ]}.
+
+Create a directory named `src`, and within it create a `myapp.app.src` file:
+
+  {application, myapp, [
+    {description, "My first app ever"},
+    {vsn, "0.0.1"},
+  ]}.
+
+Finally, go ahead and write a simple Efene (.fn) or Ifene (.ifn) file in
+the src directory. Then tell rebar to download your dependencies and
+compile everything:
+
+  $ rebar get-deps
+  $ rebar compile
+
+And there you go! Whenever you make changes to your source code, just
+run the compile command in rebar again:
+
+  $ rebar compile
+
+## Standalone build instructions
+
+To build efene by itself, rather than as a dependency for your project:
 
     $ git clone git://github.com/marianoguerra/efene.git
     $ cd efene
     $ ./build.sh
 
-## General build instructions
+This will also create an executable `bin/fnc`, which functions similarly to `erl` and `erlc`.
 
-The build instructions create the Efene compiler, compile the Efene source and some libraries. To compile Efene source code, a binary of `fnc` (the Efene compiler) is provided for Linux (32 bits) and Windows. If you are on different OSor architecture (e.g. OSX) you first will need to compile `fnc` under `./tools` for your needs.
-
-    $ git clone git://github.com/marianoguerra/efene.git
-    $ cd efene
-    $ cd tools ; make ; cd ..
-    $ cd src ; ./build.sh ; cd ..
-    $ cd lib ; ./build.sh ; cd ..
-
-## Examples
-
-Additionally you can build and run the examples:
+Additionally, you can build and run the examples:
 
     $ cd examples
     $ ./build.sh
     $ ./run.sh
+
+## Participate
+
+A mailing-list is available at [librelist](http://librelist.com/browser/efene/), just send a mail to [efene@librelist.com](mailto:efene@librelist.com) to subscribe.
 
 ## Requirements
 
@@ -336,7 +374,6 @@ To create the Efene compiler you will need a C compiler like GCC or LLVM-GCC, an
 * Erlang
 * (GCC or LLVM-GCC)
 
-Note: In debian based distributions the package erlang-parsetools is required to compile efene.
 
 ## Useful links
 
