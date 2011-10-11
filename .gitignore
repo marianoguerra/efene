@@ -1,6 +1,6 @@
 *.beam
-lexer.erl
-parser.erl
+fn_lexer.erl
+fn_parser.erl
 src/*.fn
 erl_crash.dump
 .*.swp
