@@ -309,7 +309,7 @@ You will need a recent Erlang/OTP release. If you are on a Debian-based distribu
 
 Create a directory for your new project, and download rebar, an Erlang build tool:
 
-    $ mkdir -p myapp/src
+    $ mkdir myapp
     $ cd myapp
     $ wget http://bitbucket.org/basho/rebar/downloads/rebar; chmod u+x rebar
 
