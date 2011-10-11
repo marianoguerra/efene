@@ -5,9 +5,7 @@ src/*.fn
 erl_crash.dump
 .*.swp
 *.o
-deps/mochiweb*
-deps/simple_bridge*
-deps/ibrowse*
+deps
 docs/_build
 docs/lib/*.rst
 docs/build/Jinja2/
