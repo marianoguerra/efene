@@ -11,5 +11,3 @@ lint:
 
 check:
 		valgrind fnc
-
-
