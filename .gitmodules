@@ -1,9 +1,0 @@
-[submodule "lib/thirdparty/ibrowse"]
-	path = lib/thirdparty/ibrowse
-	url = git://github.com/cmullaparthi/ibrowse.git
-[submodule "lib/thirdparty/mochiweb"]
-	path = lib/thirdparty/mochiweb
-	url = git://github.com/mochi/mochiweb.git
-[submodule "lib/thirdparty/simple_bridge"]
-	path = lib/thirdparty/simple_bridge
-	url = git://github.com/nitrogen/simple_bridge.git

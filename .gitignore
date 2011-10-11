@@ -5,9 +5,9 @@ src/*.fn
 erl_crash.dump
 .*.swp
 *.o
+deps
 docs/_build
 docs/lib/*.rst
 docs/build/Jinja2/
 docs/build/Pygments/
 docs/build/sphinx/
-
