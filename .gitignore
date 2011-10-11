@@ -12,3 +12,4 @@ docs/build/Jinja2/
 docs/build/Pygments/
 docs/build/sphinx/
 ebin
+bin
