@@ -332,7 +332,7 @@ Create a directory named `src`, and within it create a `myapp.app.src` file:
 
     {application, myapp, [
       {description, "My first app ever"},
-      {vsn, "0.0.1"},
+      {vsn, "0.0.1"}
     ]}.
 
 Finally, go ahead and write a simple Efene (.fn) or Ifene (.ifn) file in
@@ -342,8 +342,11 @@ compile everything:
     $ rebar get-deps
     $ rebar compile
 
-And there you go! Whenever you make changes to your source code, just
-run the compile command in rebar again:
+And there you go! You now have BEAM files in the `ebin` directory, just
+as with a regular Erlang project; you can load them and run functions
+from them using the Erlang shell.
+
+After you make more changes to your source code, just run the rebar compile command again:
 
     $ rebar compile
 
