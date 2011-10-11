@@ -305,47 +305,47 @@ You can see more examples in the [examples dir](http://github.com/marianoguerra/
 
 You will need a recent Erlang/OTP release. If you are on a Debian-based distribution, you can install it with apt-get:
 
-  $ sudo apt-get erlang erlang-parsetools
+    $ sudo apt-get erlang erlang-parsetools
 
 Create a directory for your new project, and download rebar, an Erlang build tool:
 
-  $ mkdir -p myapp/src
-  $ cd myapp
-  $ wget http://bitbucket.org/basho/rebar/downloads/rebar; chmod u+x rebar
+    $ mkdir -p myapp/src
+    $ cd myapp
+    $ wget http://bitbucket.org/basho/rebar/downloads/rebar; chmod u+x rebar
 
 Create a file named `rebar.config` in the myapp directory:
 
-  {deps, [
-    {efene, ".*",
-      {git, "git://github.com/marianoguerra/efene.git", "master"}
-    },
-    {rebar_efene_plugin, ".*",
-      {git, "git://github.com/DavidMikeSimon/rebar_efene_plugin.git", "stable"}
-    }
-  ]}.
+    {deps, [
+      {efene, ".*",
+        {git, "git://github.com/marianoguerra/efene.git", "master"}
+      },
+      {rebar_efene_plugin, ".*",
+        {git, "git://github.com/DavidMikeSimon/rebar_efene_plugin.git", "stable"}
+      }
+    ]}.
 
-  {rebar_plugins, [
-    rebar_efene_plugin
-  ]}.
+    {rebar_plugins, [
+      rebar_efene_plugin
+    ]}.
 
 Create a directory named `src`, and within it create a `myapp.app.src` file:
 
-  {application, myapp, [
-    {description, "My first app ever"},
-    {vsn, "0.0.1"},
-  ]}.
+    {application, myapp, [
+      {description, "My first app ever"},
+      {vsn, "0.0.1"},
+    ]}.
 
 Finally, go ahead and write a simple Efene (.fn) or Ifene (.ifn) file in
 the src directory. Then tell rebar to download your dependencies and
 compile everything:
 
-  $ rebar get-deps
-  $ rebar compile
+    $ rebar get-deps
+    $ rebar compile
 
 And there you go! Whenever you make changes to your source code, just
 run the compile command in rebar again:
 
-  $ rebar compile
+    $ rebar compile
 
 ## Standalone build instructions
 
