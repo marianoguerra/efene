@@ -1,19 +1,17 @@
 # Efene
 
-Efene is a programming language that runs on the erlang virtual machine.
+Efene is a programming language that runs on the Erlang virtual machine.
 
-the idea is to provide an alternative syntax to Erlang that is most suitable
-for people coming from languages like Java, C, C++, C#, Javascript, or Python.
+The idea is to provide an alternative syntax for Erlang that is more comfortable
+for people coming from languages like Java, C, C++, C#, Javascript, Ruby, or Python.
 
-Efene comes in two language dialects: Efene (Javascript style) and Ifene (Python style).
+Efene comes in two language dialects: Efene (Ruby style) and Ifene (Python style).
 
-The language is almost 100% compatible with Erlang (and will be), the compiler
-allows to translate an Efene source file into a readable Erlang one or compile it directly to BEAM bytecode.
-It also adds some syntactic sugar in some places to make some tasks easier.
+The language is almost 100% compatible with Erlang (and soon will be at 100%), and your
+Efene programs can easily interact with regular Erlang programs, or vice-versa. The compiler
+can translate an Efene source file into readable Erlang, or compile it directly to BEAM bytecode.
 
-To see how it looks you can go to the [examples](http://github.com/marianoguerra/efene/tree/master/examples/) dir.
-
-## Fast! Show me an example!
+## Quick! Show me an example!
 
 ### efene (hello.fn)
 <pre>
@@ -301,44 +299,84 @@ fnc -r demo run
 </code>
 </pre>
 
-## Participate
+You can see more examples in the [examples dir](http://github.com/marianoguerra/efene/tree/master/examples/).
 
-A mailing-list is available at [librelist](http://librelist.com) just send a mail to [efene@librelist.com](mailto:efene@librelist.com) to subscribe.
+## Using Efene in your app
 
-As first mail you may send a hello world program in Efene and present yourself by saying your name, where you are, how did you heard about Efene and anything else you would like to say.
+You will need a recent Erlang/OTP release. If you are on a Debian-based distribution, you can install it with apt-get:
 
-## Quick build instructions
+    $ sudo apt-get erlang erlang-parsetools
+
+Create a directory for your new project, and download rebar, an Erlang build tool:
+
+    $ mkdir myapp
+    $ cd myapp
+    $ wget http://bitbucket.org/basho/rebar/downloads/rebar; chmod u+x rebar
+
+Create a file named `rebar.config` in the myapp directory:
+
+    {deps, [
+      {efene, ".*",
+        {git, "git://github.com/marianoguerra/efene.git", "master"}
+      },
+      {rebar_efene_plugin, ".*",
+        {git, "git://github.com/DavidMikeSimon/rebar_efene_plugin.git", "stable"}
+      }
+    ]}.
+
+    {rebar_plugins, [
+      rebar_efene_plugin
+    ]}.
+
+Create a directory named `src`, and within it create a `myapp.app.src` file:
+
+    {application, myapp, [
+      {description, "My first app ever"},
+      {vsn, "0.0.1"}
+    ]}.
+
+Finally, go ahead and write a simple Efene (.fn) or Ifene (.ifn) file in
+the src directory. Then tell rebar to download your dependencies and
+compile everything:
+
+    $ rebar get-deps
+    $ rebar compile
+
+And there you go! You now have BEAM files in the `ebin` directory, just
+as with a regular Erlang project; you can load them and run functions
+from them using the Erlang shell.
+
+After you make more changes to your source code, just run the rebar compile command again:
+
+    $ rebar compile
+
+## Standalone build instructions
+
+To build efene by itself, rather than as a dependency for your project:
 
     $ git clone git://github.com/marianoguerra/efene.git
     $ cd efene
     $ ./build.sh
 
-## General build instructions
+This will also create an executable `bin/fnc`, which functions similarly to `erl` and `erlc`.
 
-The build instructions create the Efene compiler, compile the Efene source and some libraries. To compile Efene source code, a binary of `fnc` (the Efene compiler) is provided for Linux (32 bits) and Windows. If you are on different OSor architecture (e.g. OSX) you first will need to compile `fnc` under `./tools` for your needs.
-
-    $ git clone git://github.com/marianoguerra/efene.git
-    $ cd efene
-    $ cd tools ; make ; cd ..
-    $ cd src ; ./build.sh ; cd ..
-    $ cd lib ; ./build.sh ; cd ..
-
-## Examples
-
-Additionally you can build and run the examples:
+Additionally, you can build and run the examples:
 
     $ cd examples
     $ ./build.sh
     $ ./run.sh
 
+## Participate
+
+A mailing-list is available at [librelist](http://librelist.com/browser/efene/), just send a mail to [efene@librelist.com](mailto:efene@librelist.com) to subscribe.
+
 ## Requirements
 
-To create the Efene compiler you will need a C compiler like GCC or LLVM-GCC. For the main purpose you will need any recent Erlang/OTP release.
+To create the Efene compiler you will need a C compiler like GCC or LLVM-GCC, and any recent Erlang/OTP release.
 
 * Erlang
 * (GCC or LLVM-GCC)
 
-Note: in debian based distributions the package erlang-parsetools  is required to compile efene.
 
 ## Useful links
 

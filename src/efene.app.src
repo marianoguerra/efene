@@ -1,0 +1,5 @@
+{application, efene, [
+  {description, "Programming language providing an alternate Erlang syntax."},
+  {vsn, "0.0.1"},
+  {env, []}
+]}.
