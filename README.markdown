@@ -324,7 +324,7 @@ Create a file named `rebar.config` in the myapp directory:
       }
     ]}.
 
-    {rebar_plugins, [
+    {plugins, [
       rebar_efene_plugin
     ]}.
 
