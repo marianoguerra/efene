@@ -717,5 +717,35 @@ get_constant({Module, Name}, Line) ->
     case get({fn_constant, Module, Name}) of
         undefined ->
             fail(Line, "undefined constant", Name);
-        Val -> Val
+        Val -> update_line(Val, Line)
    end.
+
+update_line_aux([], _Line, Accum) ->
+    lists:reverse(Accum);
+update_line_aux([H|T], Line, Accum) ->
+    update_line_aux(T, Line, [update_line(H, Line)|Accum]).
+
+update_line(Ast, Line) when is_list(Ast) ->
+    update_line_aux(Ast, Line, []);
+% -1
+update_line({op, _, Op, Left}, Line) ->
+    {op, Line, Op, update_line(Left, Line)};
+% left op right
+update_line({op, _, Op, Left, Right}, Line) ->
+    {op, Line, Op, update_line(Left, Line), update_line(Right, Line)};
+
+% lists
+update_line({cons, _, H, T}, Line) ->
+    {cons, Line, update_line(H, Line), update_line(T, Line)};
+
+% tuples
+update_line({tuple, _, Items}, Line) ->
+    {tuple, Line, update_line(Items, Line)};
+
+% TODO: block expressions and others that require special treatment missing
+
+% generic catch all
+update_line({T, _}, Line) -> {T, Line};
+update_line({T, _, V}, Line) -> {T, Line, V};
+update_line({T, _, V, A1}, Line) -> {T, Line, V, A1};
+update_line({T, _, V, A1, A2}, Line) -> {T, Line, V, A1, A2}.
