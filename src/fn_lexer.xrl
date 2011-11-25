@@ -61,7 +61,7 @@ Send        = !
 % string stuff
 String      = "(\\\^.|\\.|[^\"])*"
 Char        = \$\\?.
-MacroVar    = \$[a-z][a-zA-Z0-9\_]+
+MacroVar    = \$[a-zA-Z][a-zA-Z0-9\_]+
 
 % identifiers and atoms
 Identifier  = [A-Z\_][a-zA-Z0-9\_]*
