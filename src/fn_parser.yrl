@@ -706,6 +706,7 @@ store_constant({Module, Name}, Expr) ->
     case get({fn_constant, Module, Name}) of
         undefined ->
             put({fn_constant, Module, Name}, Expr),
+            put({Module, Name}, {fn_constant, Module}),
             nop;
         Val ->
             fail(line(Expr),

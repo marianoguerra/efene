@@ -413,6 +413,47 @@ filter_node = fn (Node, Filters)
         keep
 
 @public
+@doc("transverse the top level definitions and apply the filters,
+keep the node if any filter returns true")
+search_top_level = fn (Ast, Filters)
+    search_top_level(Ast, Filters, [])
+
+search_top_level = fn ([], _Filters, Accum)
+    lists.reverse(Accum)
+
+fn ([Node:Rest], Filters, Accum)
+    NewAccum = switch search_node(Node, Filters)
+        case keep
+            [Node:Accum]
+        case discard
+            Accum
+
+    search_top_level(Rest, Filters, NewAccum)
+
+@public
+@doc("apply all *Filters* to a node, if any of them returns true
+return *keep* if all return false, return *discard*")
+search_node = fn (Node, Filters)
+    NodeFilter = fn (Filter)
+        Filter(Node)
+
+    if lists.any(NodeFilter, Filters) == true
+        keep
+    else
+        discard
+
+@public
+@doc("return module name if found")
+module_name = fn (Ast)
+    switch search_top_level(Ast, [fn filter_module_node:1])
+        case []
+            (error, not_found)
+        case [(attribute, _, module, Name)]
+            (ok, Name)
+        case Other
+            (error, (invalid, Other))
+
+@public
 @doc("return true if it's an eof ast node")
 filter_eof_node = fn ( (eof, _) )
     true

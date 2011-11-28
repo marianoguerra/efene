@@ -74,6 +74,9 @@ tree_to_ast(Tree) ->
     tree_to_ast(Tree, [], [], [], []).
 
 tree_to_ast(file, Name) ->
+    ModuleName = get_module_name(Name),
+    % this will bite me later :)
+    put(fn_current_module, ModuleName),
     Tree = get_tree(file, Name),
     tree_to_ast(Tree).
 

@@ -5,10 +5,22 @@
 ast of that record")
 
 attribute = fn (local, _Line, [PathAst])
+    DestModule = get(fn_current_module)
     Path = erl_parse.normalise(PathAst)
 
     switch ast_from_path(Path)
         case ok => Ast
+            # XXX ugly
+            put(fn_current_module, DestModule)
+
+            (ok, SrcModule) = ast.module_name(Ast)
+            Consts = get_keys((fn_constant, SrcModule))
+
+            for (_, ConstName) in Consts
+                ConstAst = get( (fn_constant, SrcModule, ConstName) )
+                put((fn_constant, DestModule, ConstName), ConstAst)
+                put((DestModule, ConstName), (fn_constant, DestModule))
+
             filter_ast(Ast)
         case (error, _Reason) = Error
             Error
