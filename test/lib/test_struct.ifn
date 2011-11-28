@@ -1,30 +1,17 @@
 
-same = fn (A, A)
-    io.format("ok: both terms are ~p~n", [A])
-
-fn (A, B)
-    io.format("error: ~p != ~p~n", [A, B])
-
 throws = fn (ExName, Expr)
     try
         Expr()
         io.format("error: expression should throw ~p~n", [ExName])
-    catch (ExName => _Desc)
-        io.format("ok: expression throws ~p~n", [ExName])
-    catch _ (OtherEx => _Desc)
-        io.format("error: expression should throw ~p not ~p~n", [ExName, OtherEx])
+    catch (Ex => _Desc)
+        etap.is(Ex, ExName,
+            io_lib.format("throws exception ~p", [ExName]))
 
 hasnt = fn (S, Names)
-    if struct.has(S, Names)
-        io.format("error: struct ~p shouldn't have ~p~n", [element(1, S), Names])
-    else
-        io.format("ok: struct ~p has't ~p~n", [element(1, S), Names])
+    etap.not_ok(struct.has(S, Names), io_lib.format("struct hasn't ~p", [Names]))
 
 has = fn (S, Names)
-    if struct.has(S, Names)
-        io.format("ok: struct ~p has ~p~n", [element(1, S), Names])
-    else
-        io.format("error: struct ~p should have ~p~n", [element(1, S), Names])
+    etap.ok(struct.has(S, Names), io_lib.format("struct has ~p", [Names]))
 
 test_has = fn (S)
     has(S, foo)
@@ -94,31 +81,31 @@ test_get = fn ()
     S = {a: {b: {c: 42}, d: 1}, e:2}
     test_get(S)
 
-    same(struct.get(S, [a]), {b: {c: 42}, d: 1})
-    same(struct.get(S, [a, b]), {c: 42})
+    etap.is(struct.get(S, [a]), {b: {c: 42}, d: 1}, "simple attr")
+    etap.is(struct.get(S, [a, b]), {c: 42}, "simple path")
 
 test_get_proto = fn ()
     S = {proto_: {a: {b: {c: 42}, d: 1}}, e:2}
     test_get(S)
 
-    same(struct.get(S, [a]), {b: {c: 42}, d: 1})
-    same(struct.get(S, [a, b]), {c: 42})
+    etap.is(struct.get(S, [a]), {b: {c: 42}, d: 1}, "simple proto attr")
+    etap.is(struct.get(S, [a, b]), {c: 42}, "simple proto path")
 
     S1 = {proto_: {a: {proto_: {b: {c: 42}, d: 1}}}, e:2}
     test_get(S1)
 
-    same(struct.get(S1, [a]), {proto_: {b: {c: 42}, d: 1}})
-    same(struct.get(S1, [a, b]), {c: 42})
+    etap.is(struct.get(S1, [a]), {proto_: {b: {c: 42}, d: 1}}, "proto attr")
+    etap.is(struct.get(S1, [a, b]), {c: 42}, "proto in proto")
 
     S2 = {proto_: {a: {b: {proto_: {c: 42}}, d: 1}}, e:2}
     test_get(S2)
 
-    same(struct.get(S2, [a]), {b: {proto_: {c: 42}}, d: 1})
-    same(struct.get(S2, [a, b]), {proto_: {c: 42}})
+    etap.is(struct.get(S2, [a]), {b: {proto_: {c: 42}}, d: 1}, "simple attr")
+    etap.is(struct.get(S2, [a, b]), {proto_: {c: 42}}, "attr in proto")
 
 test_get = fn (S)
 
-    same(struct.get(S, [a, b, c]), 42)
+    etap.is(struct.get(S, [a, b, c]), 42, "deep path")
 
     throws(attribute_error, fn () { struct.get(S, [z]) })
     throws(attribute_error, fn () { struct.get(S, [a, z]) })
@@ -130,16 +117,16 @@ test_get = fn (S)
 test_set_atom = fn ()
     S = {a: {b: {c: 42}, d: 1}, e:2}
     test_set(S)
-    same(struct.set(S, [a], 2), {a: 2, e: 2})
-    same(struct.set(S, [a, b], 3), {a: {b: 3, d: 1}, e: 2})
-    same(struct.set(S, [a, b, c], 4), {a: {b: {c: 4}, d: 1}, e: 2})
+    etap.is(struct.set(S, [a], 2), {a: 2, e: 2}, "set atom simple attr")
+    etap.is(struct.set(S, [a, b], 3), {a: {b: 3, d: 1}, e: 2}, "set atom simple path")
+    etap.is(struct.set(S, [a, b, c], 4), {a: {b: {c: 4}, d: 1}, e: 2}, "set atom deep path")
 
 test_set_binary_string = fn ()
     S = {"a": {"b": {"c": 42}, "d": 1}, "e":2}
     test_set(S)
-    same(struct.set(S, [a], 2), {"a": 2, "e": 2})
-    same(struct.set(S, [a, b], 3), {"a": {"b": 3, "d": 1}, "e": 2})
-    same(struct.set(S, [a, b, c], 4), {"a": {"b": {"c": 4}, "d": 1}, "e": 2})
+    etap.is(struct.set(S, [a], 2), {"a": 2, "e": 2}, "set binary string attr")
+    etap.is(struct.set(S, [a, b], 3), {"a": {"b": 3, "d": 1}, "e": 2}, "set binary string simple path")
+    etap.is(struct.set(S, [a, b, c], 4), {"a": {"b": {"c": 4}, "d": 1}, "e": 2}, "set binary string deep path")
 
 test_set = fn (S)
 
@@ -157,17 +144,17 @@ test_to_plist = fn ()
     S2 = {a: 1, b: 2}
     S3 = {"a": 1, "b": 2}
 
-    same(struct.to_plist(S), [a => 1, b => 2])
-    same(struct.to_plist(S1), [<["a"]> => 1, <["b"]> => 2])
-    same(struct.to_plist(S2), [a => 1, b => 2])
-    same(struct.to_plist(S3), [<["a"]> => 1, <["b"]> => 2])
+    etap.is(struct.to_plist(S), [a => 1, b => 2], "to plist with fns")
+    etap.is(struct.to_plist(S1), [<["a"]> => 1, <["b"]> => 2], "to plist binary strings with fns and proto")
+    etap.is(struct.to_plist(S2), [a => 1, b => 2], "simple to plist")
+    etap.is(struct.to_plist(S3), [<["a"]> => 1, <["b"]> => 2], "simple to plist with strings")
 
 test_from_plist = fn ()
     PList = [a => 1, b => 2]
     PList1 = ["a" => 1, "b" => 2]
 
-    same(PList->struct.from_plist()->struct.to_plist(), PList)
-    same(PList1->struct.from_plist()->struct.to_plist(), PList1)
+    etap.is(PList->struct.from_plist()->struct.to_plist(), PList, "from plist atoms")
+    etap.is(PList1->struct.from_plist()->struct.to_plist(), PList1, "from plist strings")
 
     throws(value_error, fn () { struct.from_plist(1) })
     throws(value_error, fn () { struct.from_plist([1]) })
@@ -178,32 +165,31 @@ test_set_prototype = fn ()
 
     S1 = struct.set_prototype(S)
 
-    same(S1.to_plist(), [a => 1, b => 2])
-    same(S1.fields(), [a, b])
-    same(S1.has(a), true)
+    etap.is(S1.to_plist(), [a => 1, b => 2], "set proto and to plist")
+    etap.is(S1.fields(), [a, b], "get field names in proto")
+    etap.is(S1.has(a), true, "has attribute in proto")
 
 test_strip_funs = fn ()
     Fun = fn (Self)
         Self
 
-    same({a: 1}, struct.strip_funs({a: 1}))
-    same({a: 1}, struct.strip_funs({a: 1, f: Fun}))
-    same({a: 1, b: {c: 2}}, struct.strip_funs({a: 1, f: Fun, b: {c: 2}}))
-    same({a: 1, b: {c: 2}}, struct.strip_funs({a: 1, f: Fun, b: {c: 2, f1: Fun}}))
+    etap.is({a: 1}, struct.strip_funs({a: 1}), "strip funs no fun")
+    etap.is({a: 1}, struct.strip_funs({a: 1, f: Fun}), "strip funs with fun")
+    etap.is({a: 1, b: {c: 2}}, struct.strip_funs({a: 1, f: Fun, b: {c: 2}}), "nested strip funs no fun")
+    etap.is({a: 1, b: {c: 2}}, struct.strip_funs({a: 1, f: Fun, b: {c: 2, f1: Fun}}), "nested strip funs")
 
 @public
 run = fn ()
-    try
-        test_has_atom_keys()
-        test_has_str_keys()
-        test_has_str_keys_proto()
-        test_get()
-        test_get_proto()
-        test_set_atom()
-        test_set_binary_string()
-        test_to_plist()
-        test_from_plist()
-        test_set_prototype()
-        test_strip_funs()
-    catch Error Msg
-        io.format("error: ~p ~p~n", [Error, Msg])
+    etap.plan(201)
+    test_has_atom_keys()
+    test_has_str_keys()
+    test_has_str_keys_proto()
+    test_get()
+    test_get_proto()
+    test_set_atom()
+    test_set_binary_string()
+    test_to_plist()
+    test_from_plist()
+    test_set_prototype()
+    test_strip_funs()
+    etap.end_tests()
