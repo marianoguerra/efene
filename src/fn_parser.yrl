@@ -709,9 +709,14 @@ store_constant({Module, Name}, Expr) ->
             put({Module, Name}, {fn_constant, Module}),
             nop;
         Val ->
+            DefinedAt = case get({fn_constant_origin, Module, Name}) of
+                undefined -> {Module, line(Val)};
+                OriginalModule -> {OriginalModule, line(Val)}
+            end,
+
             fail(line(Expr),
-            io_lib:format("constant ~p already defined at line ~p",
-                [Name, line(Val)]))
+            io_lib:format("constant ~p already defined at ~p",
+                [Name, DefinedAt]))
    end.
 
 get_constant({Module, Name}, Line) ->

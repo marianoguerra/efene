@@ -18,6 +18,15 @@ attribute = fn (local, _Line, [PathAst])
 
             for (_, ConstName) in Consts
                 ConstAst = get( (fn_constant, SrcModule, ConstName) )
+
+                Origin = switch get( (fn_constant_origin, SrcModule, ConstName) )
+                    case undefined
+                        SrcModule
+                    case OriginModuleName
+                        OriginModuleName
+
+                put((fn_constant_origin, DestModule, ConstName), Origin)
+
                 put((fn_constant, DestModule, ConstName), ConstAst)
                 put((DestModule, ConstName), (fn_constant, DestModule))
 
