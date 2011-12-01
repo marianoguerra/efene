@@ -13,7 +13,7 @@ Nonterminals
     bin_type_def bin_type prefix_op attribute for_expr range signed_integer
     meta_block astify meta_astify attrs fat_arrow_expr struct struct_items
     struct_item struct_get struct_ask struct_set struct_attrs
-    struct_attr struct_call.
+    struct_attr struct_call macro_call.
 
 Terminals
     fn match set open close open_block close_block integer float string var
@@ -283,7 +283,6 @@ literal -> bool_lit             : '$1'.
 literal -> string               : {string,  line('$1'), unwrap('$1')}.
 literal -> atom                 : '$1'.
 literal -> var                  : '$1'.
-literal -> macrovar             : get_constant(unwrap('$1'), line('$1')).
 literal -> open send_expr close : '$2'.
 literal -> char                 : '$1'.
 literal -> list                 : '$1'.
@@ -295,6 +294,7 @@ literal -> rec                  : '$1'.
 literal -> rec_set              : '$1'.
 literal -> rec_new              : '$1'.
 literal -> fun_call             : '$1'.
+literal -> macro_call           : '$1'.
 literal -> binary               : '$1'.
 literal -> dotdotdot            : {dotdotdot, line('$1')}.
 literal -> meta_block           : '$1'.
@@ -303,6 +303,13 @@ literal -> meta_astify          : '$1'.
 literal -> begin fn_block       : {block, line('$1'), '$2'}.
 literal -> struct               : '$1'.
 literal -> struct_ask           : '$1'.
+literal -> macrovar             :
+    {Pnum, {_, [Ast]}} = get_constant(unwrap('$1'), line('$1')),
+
+    case Pnum == none of
+        true -> Ast;
+        false -> fail(line('$1'), "trying to use a macro function as a value?")
+    end.
 
 literal -> struct_get           : gen_struct_get('$1').
 
@@ -419,6 +426,53 @@ fun_call -> modvar dot atom fn_parameters:
 fun_call -> modvar dot var fn_parameters:
     {call, line('$2'), {remote, line('$2'), {var, line('$1'), unwrap('$1')}, '$3'}, '$4'}.
 fun_call -> fun_call fn_parameters: {call, line('$1'), '$1', '$2'}.
+
+% macro call
+
+macro_call -> macrovar fn_parameters:
+    Line = line('$1'),
+    Macro = unwrap('$1'),
+    {MacroModule, MacroName} = Macro,
+    Params = '$2',
+
+    MacroExpr = get_constant(Macro, Line),
+
+    {MacroParamCount, {MacroParams, Body}} = MacroExpr,
+
+    case MacroParamCount == none of
+        true -> fail(Line, io_lib:format(
+            "trying to call macro ~p.~p but it's not a function",
+             [MacroModule, MacroName]));
+        false -> ok
+    end,
+
+    ParamCount = length(Params),
+
+    case ParamCount == MacroParamCount of
+        true ->
+            OldAndNewParams = lists:zipwith(fun (X, Y) -> {X, Y} end, MacroParams, Params),
+
+            Body1 = lists:foldl(
+                fun ({VarName, NewAst}, Ast) ->
+                    ast:replace_var(Ast, VarName, NewAst)
+                end,
+
+                Body,
+                OldAndNewParams
+            ),
+
+            case length(Body1) == 1 of
+                true ->
+                    [BodyExpr] = Body1,
+                    BodyExpr;
+                false ->
+                    {block, Line, Body1}
+            end;
+        false ->
+            fail(Line, io_lib:format(
+                "calling macro ~p.~p that expects ~p args with ~p instead",
+                [MacroModule, MacroName, MacroParamCount, ParamCount]))
+    end.
 
 % function arity
 
@@ -595,8 +649,13 @@ run_attribute(Type, Attr, Function, Line, Args) ->
                 Function == attribute ->
                     handle_undef_attribute(Type, Attr, Line, Args);
                 true ->
-                    fail(Line, "attribute handler not found", {Type, Attr, Function})
-            end
+                    fail(Line, "attribute handler not found",
+                        {Type, Attr, Function})
+            end;
+
+        OtherError ->
+            fail(Line, "error calling attribute", {Type, Attr, Function,
+                OtherError})
     end,
 
     case Result of
@@ -702,7 +761,35 @@ normalize_struct_attr({string, Line, Val}) ->
     {bin, Line, [{bin_element, Line, {string, Line, Val}, default, default}]};
 normalize_struct_attr(Ast) -> Ast.
 
+store_constant({Module, Name}, {'fun', Line, {clauses, Clauses}}) ->
+    case length(Clauses) of
+        1 -> ok;
+        _ -> fail(Line, "macro can't contain multiple clauses")
+    end,
+
+    [{clause, _, Params, Guard, Body}] = Clauses,
+
+    case Guard of
+        [] -> ok;
+        _  -> fail(Line, "macro can't contain guards")
+    end,
+
+    AllVars = lists:all(fun ({var, _, _}) -> true; (_) -> false end, Params),
+
+    case AllVars of
+        true -> ok;
+        false -> fail(Line, "all parameters in a macro must be variables")
+    end,
+
+    VarNames = lists:map(fun ({var, _, VarName}) -> VarName end, Params),
+
+    Expr = {length(Params), {VarNames, Body}},
+    do_store_constant({Module, Name}, Expr);
+
 store_constant({Module, Name}, Expr) ->
+    do_store_constant({Module, Name}, {none, {none, [Expr]}}).
+
+do_store_constant({Module, Name}, Expr) ->
     case get({fn_constant, Module, Name}) of
         undefined ->
             put({fn_constant, Module, Name}, Expr),
@@ -723,35 +810,6 @@ get_constant({Module, Name}, Line) ->
     case get({fn_constant, Module, Name}) of
         undefined ->
             fail(Line, "undefined constant", Name);
-        Val -> update_line(Val, Line)
+        {PNum, {Params, Ast}} ->
+            {PNum, {Params, ast:line(Line, Ast)}}
    end.
-
-update_line_aux([], _Line, Accum) ->
-    lists:reverse(Accum);
-update_line_aux([H|T], Line, Accum) ->
-    update_line_aux(T, Line, [update_line(H, Line)|Accum]).
-
-update_line(Ast, Line) when is_list(Ast) ->
-    update_line_aux(Ast, Line, []);
-% -1
-update_line({op, _, Op, Left}, Line) ->
-    {op, Line, Op, update_line(Left, Line)};
-% left op right
-update_line({op, _, Op, Left, Right}, Line) ->
-    {op, Line, Op, update_line(Left, Line), update_line(Right, Line)};
-
-% lists
-update_line({cons, _, H, T}, Line) ->
-    {cons, Line, update_line(H, Line), update_line(T, Line)};
-
-% tuples
-update_line({tuple, _, Items}, Line) ->
-    {tuple, Line, update_line(Items, Line)};
-
-% TODO: block expressions and others that require special treatment missing
-
-% generic catch all
-update_line({T, _}, Line) -> {T, Line};
-update_line({T, _, V}, Line) -> {T, Line, V};
-update_line({T, _, V, A1}, Line) -> {T, Line, V, A1};
-update_line({T, _, V, A1, A2}, Line) -> {T, Line, V, A1, A2}.

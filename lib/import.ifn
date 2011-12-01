@@ -8,7 +8,9 @@ attribute = fn (local, _Line, [PathAst])
     DestModule = get(fn_current_module)
     Path = erl_parse.normalise(PathAst)
 
-    switch ast_from_path(Path)
+    AstFromPath = ast_from_path(Path)
+
+    switch AstFromPath
         case ok => Ast
             # XXX ugly
             put(fn_current_module, DestModule)
@@ -49,7 +51,8 @@ ast_from_path = fn (Path)
 @public
 @doc("get the constants defined on a file")
 constants_from_path = fn (Path, SrcModule)
-    switch file_type_from_path(Path)
+    FileType = file_type_from_path(Path)
+    switch FileType
         # update docs above if you add a case
         case ifene
             constants_from_efene_file(Path, SrcModule)
@@ -89,13 +92,26 @@ constants_from_erlang_file = fn (Path, SrcModule)
             case atom => ConstName
 
                 switch Value
-                    case [(none, (none, [ValueAst]))]
-                        ok => (ConstName, ValueAst)
+                    case [(none, (none, ValueAst))]
+                        ok => (ConstName, (none, (none, ValueAst)))
+                    case [(Pnum, (Params, Toks))]
+                        ToksDot = Toks ++ [(dot, 1)]
+
+                        switch erl_parse.parse_exprs(ToksDot)
+                            case ok => ErlMacroAst
+                                ok => (ConstName, (Pnum, (Params, ErlMacroAst)))
+                            case error => ErlParseError
+                                io.format("error while parsing erlang macro~n")
+                                io.format("not importing it~n")
+                                io.format("~p, ~p~n", [ErlParseError, ToksDot])
+
+                                skip
+
                     case Other
-                        name_error => Other
+                        value_error => (Name, Other)
 
             case Other
-                value_error=> Other
+                name_error=> Other
 
         switch Const
             case ok => (ConstName1, ConstAst)
@@ -104,7 +120,8 @@ constants_from_erlang_file = fn (Path, SrcModule)
                 # skip builtin constants
                 (,)
             case name_error => Reason
-                io.format("don't know how to handle erlang macro ~p~n", [Reason])
+                io.format("don't know how to handle erlang macro ~p~n",
+                    [Reason])
 
                 (,)
             case value_error => Reason

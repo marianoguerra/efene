@@ -138,6 +138,23 @@ rename_var = fn (Ast, OldName, NewName)
     transform(Ast, Rename)
 
 @public
+@doc("replace a variable for other ast::
+
+    >>> ast.replace_var([|A + B|], [|42|], 'Foo')
+    {op,1,'+',{integer,1,42},{var,1,'B'}}")
+
+replace_var = fn (Ast, OldName, NewAst)
+    Rename = fn ((var, Line, Name))
+        if Name == OldName
+            NewAst
+        else
+            (var, Line, Name)
+    fn (Other)
+        Other
+
+    transform(Ast, Rename)
+
+@public
 @doc("replace the value of an atom::
 
     >>> ast.replace_atom([|foo|], foo, bar)
@@ -211,24 +228,43 @@ replace_record = fn (Ast, OldRecName, NewRecName, OldVarName, NewVarName, OldFie
     >>> ast.line(5, [| 1 + 2 * 3 |])
     {op,5,'+',{integer,5,1},{op,5,'*',{integer,5,2},{integer,5,3}}}")
 
-line = fn (Line, Ast)
-    transform(Ast, fn (A) { change_line(Line, A) })
+update_line_aux = fn (_Line, [], Accum)
+    lists.reverse(Accum)
 
-change_line = fn (_Line, (clauses, _)=Ast)
-    Ast
-fn (Line, (Op, _))
-    (Op, Line)
-fn (Line, (Op, _, A))
-    (Op, Line, A)
-fn (Line, (Op, _, A, B))
-    (Op, Line, A, B)
-fn (Line, (Op, _, A, B, C))
-    (Op, Line, A, B, C)
-fn (Line, (Op, _, A, B, C, D))
-    (Op, Line, A, B, C, D)
-fn (Line, Ast)
-    [Op, _:T] = tuple_to_list(Ast)
-    list_to_tuple([Op, Line:T])
+fn (Line, [H:T], Accum)
+    update_line_aux(Line, T, [line(Line, H):Accum])
+
+@public
+line = fn (Line, Ast) when is_list(Ast)
+    update_line_aux(Line, Ast, [])
+
+fn (Line, (atom=T, _, V))
+    (T, Line, V)
+
+fn (Line, (integer=T, _, V))
+    (T, Line, V)
+
+fn (Line, (float=T, _, V))
+    (T, Line, V)
+
+fn (Line, (string=T, _, V))
+    (T, Line, V)
+
+fn (Line, (var=T, _, V))
+    (T, Line, V)
+
+# generic catch all
+fn (Line, (T, _))
+    (T, Line)
+fn (Line, (T, _, V))
+    (T, Line, line(Line, V))
+fn (Line, (T, _, V, A1))
+    (T, Line, line(Line, V), line(Line, A1))
+fn (Line, (T, _, V, A1, A2))
+    (T, Line, line(Line, V), line(Line, A1), line(Line, A2))
+# try match here
+fn (Line, (T, _, V, A1, A2, A3))
+    (T, Line, line(Line, V), line(Line, A1), line(Line, A2), line(Line, A3))
 
 @public
 @doc("extract the first clause Ast from a fun definition")
