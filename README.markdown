@@ -324,9 +324,8 @@ Create a file named `rebar.config` in the myapp directory:
       }
     ]}.
 
-    {plugins, [
-      rebar_efene_plugin
-    ]}.
+    {plugins, [ rebar_efene_plugin ]}.
+    {plugin_dir, "deps/rebar_efene_plugin/src"}.
 
 Create a directory named `src`, and within it create a `myapp.app.src` file:
 
