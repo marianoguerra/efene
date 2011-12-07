@@ -139,6 +139,9 @@ post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {'case', _}=Token|Tokens]
 % remove endline between } and , to allow defining lambdas as parameters
 post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {sep, _, _}=Token|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|[Close|Accum]]);
+% remove endlines between } and ) to allow defining lambdas as last parameter
+post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {close, _, _}=Token|Tokens], Accum) ->
+    post_cleanup(Tokens, [Token|[Close|Accum]]);
 post_cleanup([Head|Tokens], Accum) ->
     post_cleanup(Tokens, [Head|Accum]).
 
