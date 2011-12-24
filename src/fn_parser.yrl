@@ -97,6 +97,7 @@ fun_def -> fn_patterns :
 fn_patterns -> fn_pattern : ['$1'].
 fn_patterns -> fn_pattern fn_patterns : ['$1'|'$2'].
 
+fn_pattern -> fn fn_block : {clause, line('$1'), [], [], '$2'}.
 fn_pattern -> fn fn_parameters fn_block : {clause, line('$1'), '$2', [], '$3'}.
 fn_pattern -> fn fn_parameters when bool_expr fn_block : {clause, line('$1'), '$2', [['$4']], '$5'}.
 
