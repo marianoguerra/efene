@@ -192,6 +192,7 @@ is_reserved("case")    -> true;
 is_reserved("switch")  -> true;
 is_reserved("when")    -> true;
 is_reserved("fn")      -> true;
+is_reserved("do")      -> true;
 is_reserved("for")     -> true;
 is_reserved("in")      -> true;
 is_reserved("begin")   -> true;

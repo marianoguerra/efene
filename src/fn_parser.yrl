@@ -1,7 +1,7 @@
 % New BSD License, part of efene, see LICENSE for details
 
 Nonterminals
-    program tl_exprs tl_expr fn_def fun_def fn_patterns fn_pattern
+    program tl_exprs tl_expr fn_def fun_def fn_patterns fn_pattern do_pattern
     fn_parameters parameters fn_block exprs literal bool_lit send_expr
     match_expr def_expr bool_expr bool_and_expr comp_expr concat_expr add_expr
     mul_expr block_expr arrow_expr when_expr when_patterns when_pattern if_expr
@@ -16,7 +16,7 @@ Nonterminals
     struct_attr struct_call macro_call.
 
 Terminals
-    fn match set open close open_block close_block integer float string var
+    fn do match set open close open_block close_block integer float string var
     char boolean atom endl send_op bool_orelse_op bool_andalso_op bool_or_op
     bool_and_op comp_op concat_op and_op or_op shift_op bin_not bool_not add_op
     mul_op if else when switch case try catch receive after begin open_list
@@ -106,6 +106,12 @@ fn_parameters -> open parameters close : '$2'.
 
 parameters -> send_expr sep parameters: ['$1'|'$3'].
 parameters -> send_expr : ['$1'].
+
+do_pattern -> do fn_block :
+    {'fun', line('$1'), {clauses, [{clause, line('$1'), [], [], '$2'}]}}.
+
+do_pattern -> do fn_parameters fn_block :
+    {'fun', line('$1'), {clauses, [{clause, line('$1'), '$2', [], '$3'}]}}.
 
 fn_block -> open_block send_expr close_block : ['$2'].
 fn_block -> open_block exprs close_block : '$2'.
@@ -428,7 +434,7 @@ fun_call -> modvar dot var fn_parameters:
     {call, line('$2'), {remote, line('$2'), {var, line('$1'), unwrap('$1')}, '$3'}, '$4'}.
 fun_call -> fun_call fn_parameters: {call, line('$1'), '$1', '$2'}.
 
-fun_block_call -> fun_call fun_def:
+fun_block_call -> fun_call do_pattern:
     {Op, Line, Fun, Args} = '$1',
     {Op, Line, Fun, Args ++ ['$2']}.
 
