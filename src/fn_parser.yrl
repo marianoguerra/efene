@@ -7,12 +7,12 @@ Nonterminals
     mul_expr block_expr arrow_expr when_expr when_patterns when_pattern if_expr
     case_expr case_body case_patterns case_pattern try_expr catch_patterns
     catch_pattern recv_expr receive_patterns receive_pattern list list_items
-    tuple tuple_items fun_call farity arrow_chains arrow_chain list_comp
-    list_generator list_generators bin_comp bin_generators bin_generator rec
-    rec_set rec_new attr_sets attr_set binary binary_items binary_item
-    bin_type_def bin_type prefix_op attribute for_expr range signed_integer
-    meta_block astify meta_astify attrs fat_arrow_expr struct struct_items
-    struct_item struct_get struct_ask struct_set struct_attrs
+    tuple tuple_items fun_call fun_block_call farity arrow_chains arrow_chain
+    list_comp list_generator list_generators bin_comp bin_generators
+    bin_generator rec rec_set rec_new attr_sets attr_set binary binary_items
+    binary_item bin_type_def bin_type prefix_op attribute for_expr range
+    signed_integer meta_block astify meta_astify attrs fat_arrow_expr struct
+    struct_items struct_item struct_get struct_ask struct_set struct_attrs
     struct_attr struct_call macro_call.
 
 Terminals
@@ -276,7 +276,7 @@ arrow_expr  -> literal : '$1'.
 
 arrow_chains -> arrow_chain arrow_chains : add_first_param('$1', '$2').
 arrow_chains -> arrow_chain    : '$1'.
-arrow_chain  -> arrow fun_call : '$2'.
+arrow_chain  -> arrow fun_block_call : '$2'.
 
 literal -> range                : '$1'.
 literal -> float                : '$1'.
@@ -294,7 +294,7 @@ literal -> bin_comp             : '$1'.
 literal -> rec                  : '$1'.
 literal -> rec_set              : '$1'.
 literal -> rec_new              : '$1'.
-literal -> fun_call             : '$1'.
+literal -> fun_block_call             : '$1'.
 literal -> macro_call           : '$1'.
 literal -> binary               : '$1'.
 literal -> dotdotdot            : {dotdotdot, line('$1')}.
@@ -393,7 +393,7 @@ range -> bin_not char: {op, line('$2'), op(unwrap('$1')), '$2'}.
 range -> bool_not bool_lit: {op, line('$2'), op(unwrap('$1')), '$2'}.
 range -> prefix_op var: {op, line('$2'), op(unwrap('$1')), '$2'}.
 range -> prefix_op rec: {op, line('$2'), op(unwrap('$1')), '$2'}.
-range -> prefix_op fun_call: {op, line('$2'), op(unwrap('$1')), '$2'}.
+range -> prefix_op fun_block_call: {op, line('$2'), op(unwrap('$1')), '$2'}.
 range -> prefix_op open send_expr close : {op, line('$2'), op(unwrap('$1')), '$3'}.
 
 % list type
@@ -427,6 +427,12 @@ fun_call -> modvar dot atom fn_parameters:
 fun_call -> modvar dot var fn_parameters:
     {call, line('$2'), {remote, line('$2'), {var, line('$1'), unwrap('$1')}, '$3'}, '$4'}.
 fun_call -> fun_call fn_parameters: {call, line('$1'), '$1', '$2'}.
+
+fun_block_call -> fun_call fun_def:
+    {Op, Line, Fun, Args} = '$1',
+    {Op, Line, Fun, Args ++ ['$2']}.
+
+fun_block_call -> fun_call: '$1'.
 
 % macro call
 
