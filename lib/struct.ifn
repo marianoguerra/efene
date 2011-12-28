@@ -77,7 +77,7 @@ fn (Struct, [Name:Names], FnNotFound)
     get_h(get_h(Struct, Name, FnNotFound), Names, FnNotFound)
 
 fn (Struct, Name, FnNotFound) when is_atom(Name) or is_binary(Name)
-    do(Struct, Name, fn get_found:3, FnNotFound)
+    do_on_attr(Struct, Name, fn get_found:3, FnNotFound)
 
 @public
 @doc("replace the value of an attribute in a struct")
@@ -212,7 +212,7 @@ has_h = fn (Struct, Name, FnNotFound)
     FnNotStruct = fn (_Val)
         false
 
-    do(Struct, Key, FnFound, FnNotFound, FnNotStruct)
+    do_on_attr(Struct, Key, FnFound, FnNotFound, FnNotStruct)
 
 @public
 @doc("return true if the struct has the given attribute as atom or string,
@@ -327,8 +327,8 @@ set_prototype = fn (Struct, Prototype)
 
 @public
 @doc("look for an attribute and call a function when found")
-do = fn (Struct, Name, FoundFn)
-    do(Struct, Name, FoundFn, fn not_found:2)
+do_on_attr = fn (Struct, Name, FoundFn)
+    do_on_attr(Struct, Name, FoundFn, fn not_found:2)
 
 @public
 @doc("look for an attribute and call a function when found, and other if not
@@ -350,12 +350,12 @@ the NotFoundFn function will be called with the following parameters:
  * Struct: the struct passed as parameter
  * Name: the name of the attribute as passed to this function
 ")
-do = fn (Struct, Name, FoundFn, NotFoundFn)
-    do(Struct, Name, FoundFn, NotFoundFn, fn not_struct:1)
+do_on_attr = fn (Struct, Name, FoundFn, NotFoundFn)
+    do_on_attr(Struct, Name, FoundFn, NotFoundFn, fn not_struct:1)
 
 @public
 @doc("like do/4 but with a callback to be called when the parameter is not a struct")
-do = fn ((Body,)=Struct, Name, FoundFn, NotFoundFn, _NotStruct)
+do_on_attr = fn ((Body,)=Struct, Name, FoundFn, NotFoundFn, _NotStruct)
     Key = normalize_key(Name)
 
     switch lists.keyfind(Key, 1, Body)
