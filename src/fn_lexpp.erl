@@ -94,6 +94,21 @@ pre_cleanup([{open_list, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum
 pre_cleanup([{open_list, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
     pre_cleanup(Tokens, [Token|Accum]);
 
+pre_cleanup([{open, _, _}=Token, {endl, _, _}, {white, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{open, _, _}=Token, {endl, _, _}|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{endl, _, _}, {white, _, _}, {close_list, _, _}=Token|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{endl, _, _}, {close_list, _, _}=Token|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
+pre_cleanup([{endl, _, _}, {white, _, _}, {close, _, _}=Token|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+pre_cleanup([{endl, _, _}, {close, _, _}=Token|Tokens], Accum) ->
+    pre_cleanup(Tokens, [Token|Accum]);
+
 pre_cleanup([{else, _}=Else, {endl, _, _}, {white, _, _}, {'if', _}=Token|Tokens], Accum) ->
     pre_cleanup(Tokens, [Token|[Else|Accum]]);
 pre_cleanup([{else, _}=Else, {endl, _, _}, {'if', _}=Token|Tokens], Accum) ->
@@ -139,6 +154,7 @@ post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {'case', _}=Token|Tokens]
 % remove endline between } and , to allow defining lambdas as parameters
 post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {sep, _, _}=Token|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|[Close|Accum]]);
+
 % remove endlines between } and ) to allow defining lambdas as last parameter
 post_cleanup([{close_block, _, _}=Close, {endl, _, _}, {close, _, _}=Token|Tokens], Accum) ->
     post_cleanup(Tokens, [Token|[Close|Accum]]);
