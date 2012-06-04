@@ -20,7 +20,7 @@ An example of a record containing the information of an user:
 
 .. code-block:: efene
         
-        @rec(user) ->(username="", mail="", password="")
+        @rec(user) -> (username="", mail="", password="")
 
 Default values for the fields can be specified after an equal sign.
 
