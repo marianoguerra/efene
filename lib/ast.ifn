@@ -260,8 +260,17 @@ fn (Line, (T, _, V))
     (T, Line, line(Line, V))
 fn (Line, (T, _, V, A1))
     (T, Line, line(Line, V), line(Line, A1))
+
+# op match here
+fn (Line, (T, _, V, A1, A2)) when is_atom(V)
+    (T, Line, V, line(Line, A1), line(Line, A2))
+
 fn (Line, (T, _, V, A1, A2))
     (T, Line, line(Line, V), line(Line, A1), line(Line, A2))
+
+fn (Line, (T, _, V, A1, A2, A3)) when is_atom(V)
+    (T, Line, V, line(Line, A1), line(Line, A2), line(Line, A3))
+
 # try match here
 fn (Line, (T, _, V, A1, A2, A3))
     (T, Line, line(Line, V), line(Line, A1), line(Line, A2), line(Line, A3))
