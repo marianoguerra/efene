@@ -22,12 +22,22 @@ fn ([(op, _Line, 'bor', _Ast1, _Ast2)=Bor:T], Accum)
 fn ([H:T], Accum)
     convert(T, [convert_one(H):Accum])
 
+# convert if it's not a negation of a number
+conditional_convert_one = fn ((op, _, '-', (Tag, _, _))=OriginalVal) when Tag == integer or Tag == float
+    OriginalVal
+
+fn (Val)
+    convert_one(Val)
+
 @public
 convert_one = fn ((call, Line, (remote, _, Mod, Fun), []))
     (remote_type, Line, [Mod, Fun, []])
 
 fn ((call, Line, (remote, _, (atom, _, lists), (atom, _, seq)), [Start, Stop]))
-    (type, Line, range, [convert_one(Start), convert_one(Stop)])
+    ConvertedStart = conditional_convert_one(Start)
+    ConvertedStop  = conditional_convert_one(Stop)
+
+    (type, Line, range, [ConvertedStart, ConvertedStop])
 
 # the tuple type is translated into a different type than the other types
 fn ((call, Line, (atom, _, tuple), []))
@@ -120,13 +130,13 @@ fn (Line, Node)
     throw((error, (Line, fn_parser, ["Invalid syntax in binary type: ", Node])))
 
 convert_union = fn ((op, Line, 'bor', Ast1, Ast2))
-    (type, Line, union, lists.flatten([convert_union_left(Ast1), [convert_one(Ast2)]]))
+    (type, Line, union, lists.flatten([convert_union_left(Ast1), [conditional_convert_one(Ast2)]]))
 
 convert_union_left = fn ((op, _Line, 'bor', Ast1, Ast2))
-    [convert_union_left(Ast1), convert_one(Ast2)]
+    [convert_union_left(Ast1), conditional_convert_one(Ast2)]
 
 fn (Ast)
-    convert_one(Ast)
+    conditional_convert_one(Ast)
 
 convert_list = fn ((cons, _, Head, (nil, _)))
         [convert_one(Head)]
