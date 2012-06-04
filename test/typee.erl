@@ -6,7 +6,7 @@ simple() ->
     ok.
 
 params() ->
-    tu:test_file("files/type/params.ifn", "files/type/params.erl"),
+    tu:test_file("files/type/tparams.ifn", "files/type/tparams.erl"),
     ok.
 
 all_erlang_types() ->

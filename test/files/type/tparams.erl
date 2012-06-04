@@ -1,4 +1,4 @@
--module(params).
+-module(tparams).
 -export([]).
 
 -type orddict(Key, Val) :: [{Key, Val}].

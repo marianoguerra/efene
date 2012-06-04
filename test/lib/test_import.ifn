@@ -19,7 +19,7 @@ test_file_type_from_path = fn()
 
 test_filter_ast = fn()
     equal([foo, bar], import.filter_ast([
-        (attribute, 1, file, ("test.fn", 1)),
+        (attribute, 1, file, ("imptest.fn", 1)),
         (attribute, 2, module, test),
         (attribute, 3, public, nil),
         foo,
@@ -30,10 +30,10 @@ test_import = fn ()
     Result = [(attribute, 2, export, [(run, 0)]),
         (function, 3, run, 0, [(clause, 3, [], [], [(atom, 4, pass)])])]
 
-    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/test.fn")]))
-    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/test.ifn")]))
-    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/test.erl")]))
-    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/test.hrl")]))
+    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/imptest.fn")]))
+    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/imptest.ifn")]))
+    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/imptest.erl")]))
+    equal(Result, import.attribute(local, 1, [(string, 1, "files/import/imptest.hrl")]))
 
 @public
 run = fn ()

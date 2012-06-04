@@ -10,7 +10,7 @@ unions() ->
     ok.
 
 params() ->
-    tu:test_file("files/spec/params.ifn", "files/spec/params.erl"),
+    tu:test_file("files/spec/sparams.ifn", "files/spec/sparams.erl"),
     ok.
 
 annotation() ->

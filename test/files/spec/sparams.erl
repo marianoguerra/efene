@@ -1,4 +1,4 @@
--module(params).
+-module(sparams).
 -export([f_1/1, f_2/1, f_3/1, f_4/1, f_5/1, f_6/1]).
 
 -spec f_1(maybe_improper_list(any(),  any())) -> maybe_improper_list(any(), any()).
