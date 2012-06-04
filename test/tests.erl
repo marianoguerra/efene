@@ -14,4 +14,5 @@ all() ->
     tu:test(specc),
     tu:test(typee),
     tu:test(endlines),
+    tu:test(timport),
     ok.

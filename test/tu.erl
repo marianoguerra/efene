@@ -3,6 +3,20 @@
 
 % test utils
 
+same(A, B, Verbose) ->
+    if
+        Verbose -> io:format("checking ~p = ~p~n", [A, B]);
+        true -> ok
+    end,
+
+    try
+        A = B,
+        ok
+    catch
+        error:_Error -> {error, A, B}
+    end.
+
+
 same_ast(FnExpr, ErlExpr) ->
     FnAst = fn:get_ast(string, FnExpr ++ ";"),
     ErlAst = fn:erl_to_ast(ErlExpr ++ "."),

@@ -8,6 +8,15 @@ attribute = fn (local, _Line, [PathAst])
     DestModule = get(fn_current_module)
     Path = erl_parse.normalise(PathAst)
 
+    do_import(Path, DestModule)
+
+fn (local, _Line, (return, _First, _Second))
+        (error, "import doesn't work with ->")
+
+fn (_Type, _Line, _Args)
+    not_implemented
+
+do_import = fn (Path, DestModule)
     AstFromPath = ast_from_path(Path)
 
     switch AstFromPath
@@ -15,7 +24,15 @@ attribute = fn (local, _Line, [PathAst])
             # XXX ugly
             put(fn_current_module, DestModule)
 
-            (ok, SrcModule) = ast.module_name(Ast)
+            SrcModule = switch ast.module_name(Ast)
+                case (ok, SrcMod)
+                    SrcMod
+                case (error, not_found)
+                    io.format("module name not found on path, deducing from filename ~p~n", [Path])
+                    SrcMod = 'fn'.get_module_name(Path)
+                    io.format("module path is ~p~n", [SrcMod])
+                    SrcMod
+
             Consts = constants_from_path(Path, SrcModule)
 
             for (ConstName, Origin, ConstAst) in Consts
@@ -25,14 +42,33 @@ attribute = fn (local, _Line, [PathAst])
                 put((DestModule, ConstName), (fn_constant, DestModule))
 
             filter_ast(Ast)
+
         case (error, _Reason) = Error
             Error
 
-fn (local, _Line, (return, _First, _Second))
-        (error, "import doesn't work with ->")
+@public
+@doc("return the absolute path of a lib relative path")
+lib_abs_path = fn (RelPath)
+    Dirs = string.tokens(RelPath, "/")
+    [BaseDir:Rest] = Dirs
+    switch code.lib_dir(BaseDir)
+        case (error, _) = Error
+            Error
+        case LibDir
+            string.join([LibDir:Rest], "/")
 
-fn (_Type, _Line, _Args)
-    not_implemented
+@public
+@doc("handle @import.lib attribute, receive the path of a lib to import,
+resolve the path with code.lib_dir and import it")
+
+lib = fn (local, _line, [PathAst])
+    DestModule = get(fn_current_module)
+    RelPath = erl_parse.normalise(PathAst)
+    switch lib_abs_path(RelPath)
+        case (error, Reason)
+            throw(error_importing_lib => (RelPath, Reason))
+        case Path
+            do_import(Path, DestModule)
 
 @public
 @doc("get the ast of a file, supports .ifn, .fn, .erl and .hrl")

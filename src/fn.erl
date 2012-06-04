@@ -3,7 +3,7 @@
         get_tree/2, print_tree/2,
         get_ast/2, print_ast/2,
         get_publics/1, get_publics/2,
-        get_attrs/1, get_attrs/2,
+        get_attrs/1, get_attrs/2, get_module_name/1,
         build_module/1, print_module/1,
         compile/2, compile_files/2,
         get_erlang/2, from_erlang/1, print_erlang/2,
