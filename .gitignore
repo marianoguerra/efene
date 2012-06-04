@@ -13,3 +13,4 @@ docs/build/Pygments/
 docs/build/sphinx/
 ebin
 bin
+.eunit
