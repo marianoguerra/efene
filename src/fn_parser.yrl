@@ -1,0 +1,284 @@
+% New BSD License, part of efene, see LICENSE for details
+
+Nonterminals
+    program tl_exprs tl_expr literal raw_literal e_fn_tl
+    l_atom l_var l_integer l_float l_boolean l_string l_fn l_fn_ref
+    seq_items l_tuple l_list l_cons
+    kv_items kv_item
+    kv_match_items kv_match_item l_map_match
+    kv_key kv_val l_map l_map_update
+    e_bool
+    e_case e_cases e_case_cond e_case_else
+    e_switch e_receive e_try
+    e_when e_when_cond e_when_else e_when_final_else e_when_elses
+    e_begin
+    expr body
+    attrs attr
+    e_call e_call_do e_call_thread e_call_thread_funs call_val
+    e_assign e_send
+    e_bool_and e_comp e_concat e_add e_mul e_unary.
+
+Terminals
+    fn atom var integer float boolean string colon end nl case else switch when
+    begin receive after try catch hash open close sep open_list close_list
+    open_map close_map split_def_op at arrow arrowend dot larrow larrowend
+    coloneq assign send_op
+    bool_or bool_orr bool_xor bool_and bool_andd comp_op concat_op add_op mul_op
+    bin_or bin_and bin_shift bin_not bool_not.
+
+Rootsymbol program.
+
+Left 100 bool_orr.
+Left 200 bool_andd.
+Left 300 comp_op.
+Right 400 concat_op.
+Left 500 bin_and.
+Left 700 bin_or.
+Left 700 add_op bool_or.
+Left 800 bin_shift.
+Left 800 mul_op bool_and.
+Left 900 bin_not.
+Left 900 bool_not.
+Left 1000 assign send_op.
+Left 1100 open.
+
+program -> tl_exprs : '$1'.
+program -> nl tl_exprs : '$2'.
+
+tl_exprs -> tl_expr : ['$1'].
+tl_exprs -> tl_expr nl tl_exprs : ['$1'|'$3'].
+
+tl_expr -> e_fn_tl: '$1'.
+tl_expr -> attr : '$1'.
+tl_expr -> literal : '$1'.
+
+e_fn_tl -> fn l_atom colon e_case end:
+    Name = '$2',
+    Cases = '$4',
+    {expr, line('$1'), fn, {Name, [], Cases}}.
+
+e_fn_tl -> fn l_atom colon attrs e_case end:
+    Name = '$2',
+    Attrs = '$4',
+    Cases = '$5',
+    {expr, line('$1'), fn, {Name, Attrs, Cases}}.
+
+e_case -> e_cases : {expr, line('$1'), 'case', '$1'}.
+
+e_case_cond -> case colon body : {cmatch, line('$1'), {[], nowhen, '$3'}}.
+e_case_cond -> case seq_items colon body : {cmatch, line('$1'), {'$2', nowhen, '$4'}}.
+e_case_cond -> case seq_items when e_bool colon body : {cmatch, line('$1'), {'$2', '$4', '$6'}}.
+
+e_case_else -> else colon body : {celse, line('$1'), '$3'}.
+
+e_cases -> e_case_cond : ['$1'].
+e_cases -> e_case_cond e_case_else : ['$1', '$2'].
+e_cases -> e_case_cond e_cases : ['$1'|'$2'].
+
+e_switch -> switch literal colon e_case end:
+    {expr, line('$1'), switch, {'$2', '$4'}}.
+
+e_receive -> receive e_case end:
+    {expr, line('$1'), 'receive', {'$2', noafter}}.
+
+e_receive -> receive e_case after literal colon body end:
+    {expr, line('$1'), 'receive', {'$2', {'$4', '$6'}}}.
+
+e_try -> try body after body end:
+    {expr, line('$1'), 'try', {'$2', nocatch, '$4'}}.
+
+e_try -> try body catch e_case end:
+    {expr, line('$1'), 'try', {'$2', '$4', noafter}}.
+
+e_try -> try body catch e_case after body end:
+    {expr, line('$1'), 'try', {'$2', '$4', '$6'}}.
+
+e_when -> e_when_cond end : {expr, line('$1'), 'when', ['$1']}.
+e_when -> e_when_cond e_when_elses end : {expr, line('$1'), 'when', ['$1'|'$2']}.
+
+e_when_cond -> when e_bool colon body : {wcond, line('$1'), '$2', '$4'}.
+e_when_else -> else e_bool colon body : {wcond, line('$1'), '$2', '$4'}.
+e_when_final_else -> else colon body  : {welse, line('$1'), '$3'}.
+
+e_when_elses -> e_when_else : ['$1'].
+e_when_elses -> e_when_final_else : ['$1'].
+e_when_elses -> e_when_else e_when_elses : ['$1'|'$2'].
+
+e_begin -> begin body end: {expr, line('$1'), 'begin', '$2'}.
+
+e_bool -> e_bool_and bool_or e_bool: op('$2', '$1', '$3').
+e_bool -> e_bool_and: '$1'.
+
+e_bool_and -> e_comp bool_and e_bool_and: op('$2', '$1', '$3').
+e_bool_and -> e_comp: '$1'.
+
+e_comp -> e_concat comp_op e_comp : op('$2', '$1', '$3').
+e_comp -> e_concat : '$1'.
+
+e_concat -> e_add concat_op e_concat : op('$2', '$1', '$3').
+e_concat -> e_add : '$1'.
+
+e_add -> e_mul add_op e_add : op('$2', '$1', '$3').
+e_add -> e_mul bool_orr e_add : op('$2', '$1', '$3').
+e_add -> e_mul bool_xor e_add : op('$2', '$1', '$3').
+e_add -> e_mul bin_shift e_add : op('$2', '$1', '$3').
+e_add -> e_mul bin_or e_add : op('$2', '$1', '$3').
+e_add -> e_mul : '$1'.
+
+e_mul -> e_unary mul_op e_mul : op('$2', '$1', '$3').
+e_mul -> e_unary bool_andd e_mul : op('$2', '$1', '$3').
+e_mul -> e_unary bin_and e_mul : op('$2', '$1', '$3').
+e_mul -> e_unary : '$1'.
+
+e_unary -> bin_not literal: unary_op('$1', '$2').
+e_unary -> bool_not literal: unary_op('$1', '$2').
+e_unary -> add_op literal: unary_op('$1', '$2').
+e_unary -> literal : '$1'.
+
+expr -> e_switch : '$1'.
+expr -> e_when: '$1'.
+expr -> e_begin: '$1'.
+expr -> e_receive: '$1'.
+expr -> e_try: '$1'.
+expr -> e_send : '$1'.
+expr -> e_call_do : '$1'.
+expr -> e_call_thread : '$1'.
+
+body -> expr nl: ['$1'].
+body -> expr nl body : ['$1'|'$3'].
+
+literal -> hash atom raw_literal :
+    ValType = element(3, '$3'),
+    case ValType of
+        map -> map_to_record(unwrap('$2'), '$3');
+        _Other -> {tag, line('$1'), unwrap('$2'), '$3'}
+    end.
+
+literal -> raw_literal : '$1'.
+
+raw_literal -> l_atom : '$1'.
+raw_literal -> l_var : '$1'.
+raw_literal -> l_integer : '$1'.
+raw_literal -> l_float : '$1'.
+raw_literal -> l_boolean : '$1'.
+raw_literal -> l_string : '$1'.
+raw_literal -> l_tuple : '$1'.
+raw_literal -> l_list : '$1'.
+raw_literal -> l_cons : '$1'.
+raw_literal -> l_map : '$1'.
+raw_literal -> l_map_match : '$1'.
+raw_literal -> l_map_update : '$1'.
+raw_literal -> l_fn : '$1'.
+raw_literal -> l_fn_ref : '$1'.
+raw_literal -> open expr close : '$2'.
+raw_literal -> e_call : '$1'.
+
+l_atom -> atom : value('$1', atom).
+l_var -> var : value('$1', var).
+l_integer -> integer : value('$1', integer).
+l_float -> float : value('$1', float).
+l_boolean -> boolean : value('$1', boolean).
+l_string -> string : value('$1', string).
+l_fn -> fn e_case end: expr_raw('$2', fn).
+l_fn_ref -> fn colon call_val colon l_integer : {val, line('$1'), fn_ref, {'$3', '$5'}}.
+
+l_tuple -> hash open close : seq_value([], line('$1'), tuple).
+l_tuple -> hash open seq_items close : seq_value('$3', line('$1'), tuple).
+
+l_list -> open_list close_list : seq_value([], line('$1'), list).
+l_list -> open_list seq_items close_list : seq_value('$2', line('$1'), list).
+
+l_cons -> open_list literal split_def_op literal close_list : seq_value({'$2', '$4'}, line('$1'), cons).
+
+seq_items -> expr: ['$1'].
+seq_items -> expr sep: ['$1'].
+seq_items -> expr sep seq_items : ['$1'|'$3'].
+
+l_map -> open_map close_map: seq_value([], line('$1'), map).
+l_map -> open_map kv_items close_map: seq_value('$2', line('$1'), map).
+
+l_map_update -> l_var hash l_map :
+    {seq, Line, map, Items} = '$3',
+    {seq, Line, map, {'$1', Items}}.
+
+
+l_map_match -> open_map kv_match_items close_map: seq_value('$2', line('$1'), map).
+
+kv_key -> literal : '$1'.
+kv_val -> literal : '$1'.
+
+kv_item -> kv_key colon kv_val: {kv, line('$1'), '$1', '$3'}.
+
+kv_items -> kv_item: ['$1'].
+kv_items -> kv_item sep: ['$1'].
+kv_items -> kv_item sep kv_items: ['$1'|'$3'].
+
+kv_match_items -> kv_match_item: ['$1'].
+kv_match_items -> kv_match_item sep: ['$1'].
+kv_match_items -> kv_match_item sep kv_match_items: ['$1'|'$3'].
+
+kv_match_item -> kv_key coloneq kv_val: {kvmatch, line('$1'), '$1', '$3'}.
+
+attrs -> attr nl : ['$1'].
+attrs -> attr nl attrs : ['$1'|'$3'].
+
+attr -> at atom : make_attr('$2', noparams, noresult).
+attr -> at atom literal : make_attr('$2', '$3', noresult).
+attr -> at atom literal arrow literal : make_attr('$2', '$3', '$5').
+
+call_val -> l_atom : '$1'.
+call_val -> l_var : '$1'.
+call_val -> l_atom dot l_atom : {'$1', '$3'}.
+call_val -> l_atom dot l_var : {'$1', '$3'}.
+call_val -> l_var dot l_atom : {'$1', '$3'}.
+call_val -> l_var dot l_var : {'$1', '$3'}.
+
+e_call -> call_val open close : {expr, line('$2'), call, {'$1', []}}.
+e_call -> call_val open seq_items close : {expr, line('$2'), call, {'$1', '$3'}}.
+
+e_call_do -> e_call larrow l_fn : {expr, line('$2'), call_do, {first, '$1', '$3'}}.
+e_call_do -> e_call larrowend l_fn : {expr, line('$2'), call_do, {last, '$1', '$3'}}.
+
+e_call_thread -> literal e_call_thread_funs : {expr, line('$1'), call_thread, {'$1', '$2'}}.
+
+e_call_thread_funs -> arrow e_call : [{first, '$2'}].
+e_call_thread_funs -> arrowend e_call : [{last, '$2'}].
+e_call_thread_funs -> arrow e_call e_call_thread_funs : [{first, '$2'}|'$3'].
+e_call_thread_funs -> arrowend e_call e_call_thread_funs : [{last, '$2'}|'$3'].
+
+e_send -> literal send_op expr : op('$2', '$1', '$3').
+e_send -> e_assign : '$1'.
+
+% can't chain assignments a = b = c, this is to simplify the parser and why
+% woud you make that is that or you have to wrap the right side in parenthesis
+% if it's an expression, which is much more common
+e_assign -> e_bool assign expr : op('$2', '$1', '$3').
+e_assign -> e_bool : '$1'.
+
+Erlang code.
+
+unwrap({_,V})   -> V;
+unwrap({_,_,V}) -> V;
+unwrap(V) -> ct:print("WAT ~p", [V]).
+
+line(T) when is_tuple(T) -> element(2, T);
+line([H|_T]) -> element(2, H);
+line(T) -> ct:print("WAT ~p", [T]).
+
+value(Val, Type) -> {val, line(Val), Type, unwrap(Val)}.
+
+expr_raw(Val, Type) -> {expr, line(Val), Type, Val}.
+
+seq_value(Val, Line, Type) -> {seq, Line, Type, Val}.
+
+make_attr(Name, Params, Result) ->
+    {attr, line(Name), unwrap(Name), Params, Result}.
+
+op(Op, Left, Right) ->
+    {op, line(Op), unwrap(Op), Left, Right}.
+
+unary_op(Op, Val) ->
+    {unary_op, line(Op), unwrap(Op), Val}.
+
+map_to_record(RecordType, {seq, Line, map, Items}) ->
+    {val, Line, record, {RecordType, Items}}.
