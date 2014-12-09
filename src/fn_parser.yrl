@@ -16,7 +16,8 @@ Nonterminals
     attrs attr
     e_call e_call_do e_call_thread e_call_thread_funs call_val
     e_assign e_send
-    e_bool_and e_comp e_concat e_add e_mul e_unary.
+    e_bool_and e_comp e_concat e_add e_mul e_unary
+    path path_item.
 
 Terminals
     fn atom var integer float boolean string colon end nl case else switch when
@@ -147,14 +148,15 @@ expr -> e_call_thread : '$1'.
 body -> expr nl: ['$1'].
 body -> expr nl body : ['$1'|'$3'].
 
-literal -> hash atom raw_literal :
-    ValType = element(3, '$3'),
-    case ValType of
-        map -> map_to_record(unwrap('$2'), '$3');
-        _Other -> {tag, line('$1'), unwrap('$2'), '$3'}
-    end.
+literal -> hash path raw_literal : {tag, line('$1'), '$2', '$3'}.
 
 literal -> raw_literal : '$1'.
+
+path -> path_item : ['$1'].
+path -> path_item dot path : ['$1'|'$3'].
+
+path_item -> l_atom : '$1'.
+path_item -> l_var : '$1'.
 
 raw_literal -> l_atom : '$1'.
 raw_literal -> l_var : '$1'.
@@ -280,5 +282,3 @@ op(Op, Left, Right) ->
 unary_op(Op, Val) ->
     {unary_op, line(Op), unwrap(Op), Val}.
 
-map_to_record(RecordType, {seq, Line, map, Items}) ->
-    {val, Line, record, {RecordType, Items}}.

@@ -1,11 +1,20 @@
 -module(fn_to_erl).
 -export([ast_to_ast/1]).
 
+% sequence
 -define(S(Line, Type, Val), {seq, Line, Type, Val}).
+% val
 -define(V(Line, Type, Val), {val, Line, Type, Val}).
+% expression
 -define(E(Line, Type, Val), {expr, Line, Type, Val}).
+% operation
 -define(O(Line, Type, Left, Right), {op, Line, Type, Left, Right}).
+% unary operation
 -define(UO(Line, Type, Val), {unary_op, Line, Type, Val}).
+% tag
+-define(T(Line, Tag, Val), {tag, Line, Tag, Val}).
+
+-define(Atom(Val), ?V(_, atom, Val)).
 
 ast_to_ast(Nodes) when is_list(Nodes) -> ast_to_ast(Nodes, []);
 
@@ -40,10 +49,11 @@ ast_to_ast(?S(Line, map=Type, {Var, KVs})) ->
 ast_to_ast(?S(Line, map=Type, KVs)) ->
     {Type, Line, lists:map(fun to_map_field/1, KVs)};
 
-ast_to_ast(?V(Line, record=Type, {Name, {Var, KVs}})) ->
-    {Type, Line, ast_to_ast(Var), Name, lists:map(fun to_record_field/1, KVs)};
-ast_to_ast(?V(Line, record=Type, {Name, KVs})) ->
-    {Type, Line, Name, lists:map(fun to_record_field/1, KVs)};
+ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)],
+              ?S(_MapLine, map, {Var, KVs}))) ->
+    {record, Line, ast_to_ast(Var), RecordName, lists:map(fun to_record_field/1, KVs)};
+ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs))) ->
+    {record, Line, RecordName, lists:map(fun to_record_field/1, KVs)};
 
 ast_to_ast(?S(Line, tuple=Type, Val))   -> {Type, Line, ast_to_ast(Val)};
 ast_to_ast(?S(Line, cons=Type, {H, T})) ->
