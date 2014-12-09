@@ -55,6 +55,8 @@ ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)],
 ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs))) ->
     {record, Line, RecordName, lists:map(fun to_record_field/1, KVs)};
 
+ast_to_ast(?T(Line, [?Atom(atom)], ?V(_StrLine, string, AtomStr))) ->
+    {atom, Line, list_to_atom(AtomStr)};
 ast_to_ast(?S(Line, tuple=Type, Val))   -> {Type, Line, ast_to_ast(Val)};
 ast_to_ast(?S(Line, cons=Type, {H, T})) ->
     {Type, Line, ast_to_ast(H), ast_to_ast(T)};
