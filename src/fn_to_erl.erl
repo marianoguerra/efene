@@ -143,10 +143,12 @@ ast_to_ast(?O(Line, Op, Left, Right)) ->
 
 ast_to_ast(?V(Line, atom=Type, Val))    -> {Type, Line, Val};
 ast_to_ast(?V(Line, integer=Type, Val)) -> {Type, Line, Val};
-ast_to_ast(?V(Line, string=Type, Val))  -> {Type, Line, Val};
 ast_to_ast(?V(Line, float=Type, Val))   -> {Type, Line, Val};
 ast_to_ast(?V(Line, boolean, Val))      -> {atom, Line, Val};
 ast_to_ast(?V(Line, var=Type, Val))     -> {Type, Line, Val};
+ast_to_ast(?V(Line, string=Type, Val))  -> {Type, Line, Val};
+ast_to_ast(?V(Line, bstring, Val)) ->
+    {bin, Line, [{bin_element, 5, {string, Line, Val}, default, default}]};
 
 ast_to_ast(?UO(Line, Op, Val)) ->
     {op, Line, map_op(Op), ast_to_ast(Val)}.

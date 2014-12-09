@@ -2,7 +2,7 @@
 
 Nonterminals
     program tl_exprs tl_expr literal raw_literal e_fn_tl
-    l_atom l_var l_integer l_float l_boolean l_string l_fn l_fn_ref
+    l_atom l_var l_integer l_float l_boolean l_string l_bstring l_fn l_fn_ref
     seq_items l_tuple l_list l_cons
     kv_items kv_item
     kv_match_items kv_match_item l_map_match
@@ -20,7 +20,7 @@ Nonterminals
     path path_item.
 
 Terminals
-    fn atom var integer float boolean string colon end nl case else switch when
+    fn atom var integer float boolean string bstring colon end nl case else switch when
     begin receive after try catch hash open close sep open_list close_list
     open_map close_map split_def_op at arrow arrowend dot larrow larrowend
     coloneq assign send_op
@@ -164,6 +164,7 @@ raw_literal -> l_integer : '$1'.
 raw_literal -> l_float : '$1'.
 raw_literal -> l_boolean : '$1'.
 raw_literal -> l_string : '$1'.
+raw_literal -> l_bstring : '$1'.
 raw_literal -> l_tuple : '$1'.
 raw_literal -> l_list : '$1'.
 raw_literal -> l_cons : '$1'.
@@ -181,6 +182,7 @@ l_integer -> integer : value('$1', integer).
 l_float -> float : value('$1', float).
 l_boolean -> boolean : value('$1', boolean).
 l_string -> string : value('$1', string).
+l_bstring -> bstring : value('$1', bstring).
 l_fn -> fn e_case end: expr_raw('$2', fn).
 l_fn_ref -> fn colon call_val colon l_integer : {val, line('$1'), fn_ref, {'$3', '$5'}}.
 

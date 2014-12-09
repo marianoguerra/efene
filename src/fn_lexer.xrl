@@ -56,6 +56,7 @@ At          = @
 
 % string stuff
 String      = "(\\\^.|\\.|[^\"])*"
+BString      = '(\\\^.|\\.|[^\'])*'
 
 % identifiers and atoms
 Identifier  = [A-Z\_][a-zA-Z0-9\_]*
@@ -117,6 +118,7 @@ Rules.
 
 % string stuff
 {String}                 : build_string(string, TokenChars, TokenLine, TokenLen).
+{BString}                : build_string(bstring, TokenChars, TokenLine, TokenLen).
 
 % identifiers and atoms
 {Identifier}             : make_token(var, TokenLine, TokenChars).
