@@ -78,6 +78,13 @@ ast_to_ast({wcond, Line, Cond, Body}) ->
 ast_to_ast({welse, Line, Body}) ->
     {clause, Line, [], [{atom, Line, true}], ast_to_ast(Body)};
 
+ast_to_ast(?E(Line, 'for', {Qualifiers, Body})) ->
+    EBody = case Body of
+                [Node] -> ast_to_ast(Node);
+                Nodes -> {block, Line, ast_to_ast(Nodes)}
+            end,
+    {lc, Line, EBody, lists:map(fun for_qualifier_to_ast/1, Qualifiers)};
+
 % TODO: fix case: to match some default value or reject it
 % todo, restrict tuple to 1 or two items, the first being throw, error or exit
 ast_to_ast(?E(Line, 'try', {Body, Catch, After})) ->
@@ -243,5 +250,9 @@ to_tuple_clause({clause, _Line, [_Match], _Guard, _Body}=Ast) ->
     Ast;
 to_tuple_clause({clause, Line, Matches, Guard, Body}) ->
     {clause, Line, [{tuple, Line, Matches}], Guard, Body}.
+
+for_qualifier_to_ast({filter, Ast}) -> ast_to_ast(Ast);
+for_qualifier_to_ast({generate, Line, Left, Right}) ->
+    {generate, Line, ast_to_ast(Left), ast_to_ast(Right)}.
 
 unwrap(?V(_Line, _Type, Val)) -> Val.

@@ -36,9 +36,10 @@ Open        = \(
 Close       = \)
 OpenList    = \[
 CloseList   = \]
-OpenMap    = \{
-CloseMap   = \}
+OpenMap     = \{
+CloseMap    = \}
 Sep         = ,
+SemiColon   = ;
 Endls       = (\s|\t)*(\r?\n|;)((\s|\t)*(\r?\n))*
 Whites      = \s+
 Tabs        = \t+
@@ -104,6 +105,7 @@ Rules.
 {CloseMap}               : make_token(close_map ,  TokenLine, TokenChars).
 
 {Sep}                    : make_token(sep,          TokenLine, TokenChars).
+{SemiColon}              : make_token(semicolon,    TokenLine, TokenChars).
 {Send}                   : make_token(send_op,      TokenLine, TokenChars).
 {Hash}                   : make_token(hash,         TokenLine, TokenChars).
 {At}                     : make_token(at,         TokenLine, TokenChars).

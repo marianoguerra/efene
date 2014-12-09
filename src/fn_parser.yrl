@@ -12,6 +12,7 @@ Nonterminals
     e_switch e_receive e_try
     e_when e_when_cond e_when_else e_when_final_else e_when_elses
     e_begin
+    e_for for_items for_item
     expr body
     attrs attr
     e_call e_call_do e_call_thread e_call_thread_funs call_val
@@ -21,7 +22,8 @@ Nonterminals
 
 Terminals
     fn atom var integer float boolean string bstring colon end nl case else match when
-    begin receive after try catch hash open close sep open_list close_list
+    begin receive after try catch for in
+    hash open close sep semicolon open_list close_list
     open_map close_map split_def_op at arrow arrowend dot larrow larrowend
     coloneq assign send_op
     bool_or bool_orr bool_xor bool_and bool_andd comp_op concat_op add_op mul_op
@@ -107,6 +109,14 @@ e_when_elses -> e_when_else e_when_elses : ['$1'|'$2'].
 
 e_begin -> begin body end: {expr, line('$1'), 'begin', '$2'}.
 
+e_for -> for for_items colon body end : {expr, line('$1'), 'for', {'$2', '$4'}}.
+
+for_item -> e_bool : {filter, '$1'}.
+for_item -> literal in literal : {generate, line('$2'), '$1', '$3'}.
+
+for_items -> for_item : ['$1'].
+for_items -> for_item semicolon for_items : ['$1'|'$3'].
+
 e_bool -> e_bool_and bool_or e_bool: op('$2', '$1', '$3').
 e_bool -> e_bool_and: '$1'.
 
@@ -139,6 +149,7 @@ e_unary -> literal : '$1'.
 expr -> e_switch : '$1'.
 expr -> e_when: '$1'.
 expr -> e_begin: '$1'.
+expr -> e_for: '$1'.
 expr -> e_receive: '$1'.
 expr -> e_try: '$1'.
 expr -> e_send : '$1'.
