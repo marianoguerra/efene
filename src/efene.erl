@@ -80,6 +80,14 @@ str_to_erl_ast(String) ->
 
 % cli utilities
 
+print({ok, Data}) ->
+    print(Data);
+print({error, {Line, fn_parser, Reason}}) ->
+    io:format("error:~p: parse error: '~s'~n", [Line, Reason]);
+print({error, {Line, fn_lexer, {illegal, Reason}}, _}) ->
+    io:format("error:~p: illegal char ~p~n", [Line, Reason]);
+print(Data) when is_list(Data) ->
+    io:format("~s~n", [Data]);
 print(Data) ->
     io:format("~p~n", [Data]).
 
@@ -98,7 +106,7 @@ run(["mod", File]) ->
 run(["erlast", File]) ->
     print(to_erl_ast(File));
 run(["erl", File]) ->
-    io:format("~s~n", [to_erl(File)]);
+    print(to_erl(File));
 run(["erl2ast", File]) ->
     print(from_erl(File));
 run(["beam", File]) ->
