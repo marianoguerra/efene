@@ -157,7 +157,7 @@ is_reserved("catch")   -> true;
 is_reserved("receive") -> true;
 is_reserved("after")   -> true;
 is_reserved("case")    -> true;
-is_reserved("switch")  -> true;
+is_reserved("match")   -> true;
 is_reserved("when")    -> true;
 is_reserved("fn")      -> true;
 is_reserved("do")      -> true;

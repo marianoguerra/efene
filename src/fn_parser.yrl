@@ -20,7 +20,7 @@ Nonterminals
     path path_item.
 
 Terminals
-    fn atom var integer float boolean string bstring colon end nl case else switch when
+    fn atom var integer float boolean string bstring colon end nl case else match when
     begin receive after try catch hash open close sep open_list close_list
     open_map close_map split_def_op at arrow arrowend dot larrow larrowend
     coloneq assign send_op
@@ -76,7 +76,7 @@ e_cases -> e_case_cond : ['$1'].
 e_cases -> e_case_cond e_case_else : ['$1', '$2'].
 e_cases -> e_case_cond e_cases : ['$1'|'$2'].
 
-e_switch -> switch literal colon e_case end:
+e_switch -> match literal colon e_case end:
     {expr, line('$1'), switch, {'$2', '$4'}}.
 
 e_receive -> receive e_case end:
