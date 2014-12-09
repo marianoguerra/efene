@@ -133,10 +133,12 @@ ast_to_ast(?E(Line, fn, {Name, _Attrs, ?E(_CLine, 'case', Cases)})) ->
     [FirstCase|_TCases] = Cases,
     {cmatch, _FCLine, {FCCond, _FCWhen, _FCBody}} = FirstCase,
     Arity = length(FCCond),
-    {function, Line, unwrap(Name), Arity, ast_to_ast(Cases)};
+    {ok, FixedCases} = expand_case_else_match(Cases),
+    {function, Line, unwrap(Name), Arity, ast_to_ast(FixedCases)};
 
 ast_to_ast(?E(Line, fn, ?E(_CLine, 'case', Cases))) ->
-    {'fun', Line, {clauses, ast_to_ast(Cases)}};
+    {ok, FixedCases} = expand_case_else_match(Cases),
+    {'fun', Line, {clauses, ast_to_ast(FixedCases)}};
 
 ast_to_ast(?E(Line, call, {{Mod, Fun}, Args})) ->
     EMod = ast_to_ast(Mod),
@@ -254,5 +256,18 @@ to_tuple_clause({clause, Line, Matches, Guard, Body}) ->
 for_qualifier_to_ast({filter, Ast}) -> ast_to_ast(Ast);
 for_qualifier_to_ast({generate, Line, Left, Right}) ->
     {generate, Line, ast_to_ast(Left), ast_to_ast(Right)}.
+
+expand_case_else_match([{cmatch, _Line, {Matches, _When, _Body}}=H|T]) ->
+    Arity = length(Matches),
+    expand_case_else_match(T, Arity, [H]).
+
+expand_case_else_match([], _Arity, Accum) ->
+    {ok, lists:reverse(Accum)};
+expand_case_else_match([{celse, Line, Body}|T], Arity, Accum) ->
+    Matches = [?V(Line, var, '_') || _ <- lists:seq(1, Arity)],
+    NewElse = {cmatch, Line, {Matches, nowhen, Body}},
+    expand_case_else_match(T, Arity, [NewElse|Accum]);
+expand_case_else_match([H|T], Arity, Accum) ->
+    expand_case_else_match(T, Arity, [H|Accum]).
 
 unwrap(?V(_Line, _Type, Val)) -> Val.
