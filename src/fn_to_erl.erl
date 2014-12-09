@@ -73,7 +73,7 @@ ast_to_ast(?E(Line, 'when', Clauses)) ->
     {'if', Line, ast_to_ast(Clauses)};
 
 ast_to_ast({wcond, Line, Cond, Body}) ->
-    {clause, Line, [], [ast_to_ast(Cond)], ast_to_ast(Body)};
+    {clause, Line, [], ast_to_ast(Cond), ast_to_ast(Body)};
 
 ast_to_ast({welse, Line, Body}) ->
     {clause, Line, [], [{atom, Line, true}], ast_to_ast(Body)};
@@ -234,7 +234,10 @@ ast_to_catch({celse, Line, Body}) ->
 % TODO: catch the rest and accumulate the error
 
 when_to_ast(nowhen) -> [];
-when_to_ast(When) -> [ast_to_ast(When)].
+when_to_ast(When) when is_list(When) ->
+    lists:map(fun when_to_ast/1, When);
+when_to_ast(When) ->
+    ast_to_ast(When).
 
 to_map_field({kv, Line, Key, Val}) ->
     {map_field_assoc, Line, ast_to_ast(Key), ast_to_ast(Val)};

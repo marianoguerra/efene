@@ -3,7 +3,7 @@
 Nonterminals
     program tl_exprs tl_expr literal raw_literal e_fn_tl
     l_atom l_var l_integer l_float l_boolean l_string l_bstring l_fn l_fn_ref
-    seq_items l_tuple l_list l_cons
+    guard_seq seq_items l_tuple l_list l_cons
     kv_items kv_item
     kv_match_items kv_match_item l_map_match
     kv_key kv_val l_map l_map_update
@@ -99,8 +99,8 @@ e_try -> try body catch e_case after body end:
 e_when -> e_when_cond end : {expr, line('$1'), 'when', ['$1']}.
 e_when -> e_when_cond e_when_elses end : {expr, line('$1'), 'when', ['$1'|'$2']}.
 
-e_when_cond -> when e_bool colon body : {wcond, line('$1'), '$2', '$4'}.
-e_when_else -> else e_bool colon body : {wcond, line('$1'), '$2', '$4'}.
+e_when_cond -> when guard_seq colon body : {wcond, line('$1'), '$2', '$4'}.
+e_when_else -> else guard_seq colon body : {wcond, line('$1'), '$2', '$4'}.
 e_when_final_else -> else colon body  : {welse, line('$1'), '$3'}.
 
 e_when_elses -> e_when_else : ['$1'].
@@ -205,9 +205,17 @@ l_list -> open_list seq_items close_list : seq_value('$2', line('$1'), list).
 
 l_cons -> open_list literal split_def_op literal close_list : seq_value({'$2', '$4'}, line('$1'), cons).
 
-seq_items -> expr: ['$1'].
-seq_items -> expr sep: ['$1'].
-seq_items -> expr sep seq_items : ['$1'|'$3'].
+guard_seq -> seq_items : '$1'.
+guard_seq -> seq_items semicolon guard_seq :
+    Tail = '$3',
+    [TailHead|_] = Tail,
+    if is_tuple(TailHead) -> ['$1',Tail];
+        true -> ['$1'|Tail]
+    end.
+
+seq_items -> e_assign: ['$1'].
+seq_items -> e_assign sep: ['$1'].
+seq_items -> e_assign sep seq_items : ['$1'|'$3'].
 
 l_map -> open_map close_map: seq_value([], line('$1'), map).
 l_map -> open_map kv_items close_map: seq_value('$2', line('$1'), map).
