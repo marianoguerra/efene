@@ -86,10 +86,10 @@ print({error, {Line, fn_parser, Reason}}) ->
     io:format("error:~p: parse error: '~s'~n", [Line, Reason]);
 print({error, {Line, fn_lexer, {illegal, Reason}}, _}) ->
     io:format("error:~p: illegal char ~p~n", [Line, Reason]);
-print(Data) when is_list(Data) ->
-    io:format("~s~n", [Data]);
 print(Data) ->
-    io:format("~p~n", [Data]).
+    try io:format("~s~n", [Data]) catch
+        _:_ -> io:format("~p~n", [Data])
+    end.
 
 % command line interface
 
