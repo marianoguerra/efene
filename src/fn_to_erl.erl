@@ -103,11 +103,13 @@ ast_to_ast(?E(Line, 'try', {Body, Catch, After})) ->
 % TODO: fix case: to match some default value or reject it
 ast_to_ast(?E(Line, 'receive', {?E(_CLine, 'case', Clauses), noafter})) ->
     EClauses = ast_to_ast(Clauses),
-    {'receive', Line, EClauses};
+    TupleClauses = lists:map(fun to_tuple_clause/1, EClauses),
+    {'receive', Line, TupleClauses};
 
 ast_to_ast(?E(Line, 'receive', {?E(_CLine, 'case', Clauses), {After, AfterBody}})) ->
     EClauses = ast_to_ast(Clauses),
-    {'receive', Line, EClauses, ast_to_ast(After), ast_to_ast(AfterBody)};
+    TupleClauses = lists:map(fun to_tuple_clause/1, EClauses),
+    {'receive', Line, TupleClauses, ast_to_ast(After), ast_to_ast(AfterBody)};
 
 % TODO: fix case: to match some default value or reject it
 ast_to_ast(?E(Line, switch, {Value, ?E(_CaseLine, 'case', Clauses)})) ->
