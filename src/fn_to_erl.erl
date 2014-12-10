@@ -219,20 +219,26 @@ ast_to_export_fun(?O(_Line, '/', ?V(_ALine, atom, FunName), ?V(_ArLine, integer,
     {FunName, Arity}.
 
 ast_to_catch({cmatch, Line, {[Match], When, Body}}) ->
-    EMatch = {tuple, Line, [{atom, Line, throw}, ast_to_ast(Match), {var, Line, '_'}]},
-    EBody = ast_to_ast(Body),
-    EWhen = when_to_ast(When),
-    {clause, Line, [EMatch], EWhen, EBody};
-% TODO: check that ClassName is throw, error or exit
-ast_to_catch({cmatch, Line, {[?V(_ALine, atom, ClassName), Match], When, Body}}) ->
-    EMatch = {tuple, Line, [{atom, Line, ClassName}, ast_to_ast(Match), {var, Line, '_'}]},
-    EBody = ast_to_ast(Body),
-    EWhen = when_to_ast(When),
-    {clause, Line, [EMatch], EWhen, EBody};
+    cmatch_to_catch(Line, ?V(Line, atom, throw), Match, When, Body);
+ast_to_catch({cmatch, Line, {[?V(_ALine, atom, throw=_ClassName)=CN, Match], When, Body}}) ->
+    cmatch_to_catch(Line, CN, Match, When, Body);
+ast_to_catch({cmatch, Line, {[?V(_ALine, atom, error=_ClassName)=CN, Match], When, Body}}) ->
+    cmatch_to_catch(Line, CN, Match, When, Body);
+ast_to_catch({cmatch, Line, {[?V(_ALine, atom, exit=_ClassName)=CN, Match], When, Body}}) ->
+    cmatch_to_catch(Line, CN, Match, When, Body);
+ast_to_catch({cmatch, Line, {[?V(_ALine, var, _VarName)=Var, Match], When, Body}}) ->
+    cmatch_to_catch(Line, Var, Match, When, Body);
 ast_to_catch({celse, Line, Body}) ->
     EMatch = {tuple, Line, [{var, Line, '_'}, {var, Line, '_'}, {var, Line, '_'}]},
     EBody = ast_to_ast(Body),
     {clause, Line, [EMatch], [], EBody}.
+
+cmatch_to_catch(Line, Class, Match, When, Body) ->
+    EMatch = {tuple, Line, [ast_to_ast(Class), ast_to_ast(Match), {var, Line, '_'}]},
+    EBody = ast_to_ast(Body),
+    EWhen = when_to_ast(When),
+    {clause, Line, [EMatch], EWhen, EBody}.
+
 % TODO: catch the rest and accumulate the error
 
 when_to_ast(nowhen) -> [];
