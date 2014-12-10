@@ -16,7 +16,7 @@
 
 -define(Atom(Val), ?V(_, atom, Val)).
 
-new_state() -> #{errors => [], warnings => []}.
+new_state() -> #{errors => [], warnings => [], attrs => []}.
 
 to_erl(Ast) -> ast_to_ast(Ast, new_state()).
 
@@ -174,17 +174,18 @@ ast_to_ast(?E(Line, 'begin', Body), State) ->
     R = {block, Line, EBody},
     {R, State1};
 
-% TODO: attrs
 % TODO: check that arities on match are equal and that there's only one
 % case if using empty case (arity 0 fun)
-ast_to_ast(?E(Line, fn, {Name, _Attrs, ?E(_CLine, 'case', Cases)}), State) ->
+ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), State) ->
     [FirstCase|_TCases] = Cases,
     {cmatch, _FCLine, {FCCond, _FCWhen, _FCBody}} = FirstCase,
     Arity = length(FCCond),
     {ok, FixedCases} = expand_case_else_match(Cases),
     {EFixedCases, State1} = ast_to_ast(FixedCases, State),
-    R = {function, Line, unwrap(Name), Arity, EFixedCases},
-    {R, State1};
+    BareName = unwrap(Name),
+    State2 = add_attributes(State1, fn, {BareName, Arity}, Attrs),
+    R = {function, Line, BareName, Arity, EFixedCases},
+    {R, State2};
 
 ast_to_ast(?E(Line, fn, ?E(_CLine, 'case', Cases)), State) ->
     {ok, FixedCases} = expand_case_else_match(Cases),
@@ -363,5 +364,9 @@ state_map(Fun, Seq, State) ->
                        {R, State1} = Fun(Item, StateIn),
                        {[R|Accum], State1}
                end,  {[], State}, Seq).
+
+add_attributes(#{attrs := AttrList}=State, Type, Name, Attrs) ->
+    NewAttrList = [{Type, Name, Attrs}|AttrList],
+    State#{attrs => NewAttrList}.
 
 unwrap(?V(_Line, _Type, Val)) -> Val.

@@ -20,7 +20,8 @@ to_erl_ast(Path) -> with_file_content(Path, fun str_to_erl_ast/1).
 
 to_mod(Path) ->
     case to_erl_ast(Path) of
-        {ok, {Ast, _State}} ->
+        {ok, {Ast, State}} ->
+            io:format("~p~n~n", [State]),
             ModAtomName = get_module_name(Path),
             ModAttr = {attribute, 1, module, ModAtomName},
             FileAttr = {attribute, 1, file, {Path, 1}},
