@@ -20,7 +20,7 @@ to_erl_ast(Path) -> with_file_content(Path, fun str_to_erl_ast/1).
 
 to_mod(Path) ->
     case to_erl_ast(Path) of
-        {ok, Ast} ->
+        {ok, {Ast, _State}} ->
             ModAtomName = get_module_name(Path),
             ModAttr = {attribute, 1, module, ModAtomName},
             FileAttr = {attribute, 1, file, {Path, 1}},
@@ -74,7 +74,7 @@ str_to_ast(Str) ->
 
 str_to_erl_ast(String) ->
     case str_to_ast(String) of
-        {ok, Ast} -> {ok, fn_to_erl:ast_to_ast(Ast)};
+        {ok, Ast} -> {ok, fn_to_erl:to_erl(Ast)};
         Other -> Other
     end.
 
