@@ -174,8 +174,6 @@ ast_to_ast(?E(Line, 'begin', Body), State) ->
     R = {block, Line, EBody},
     {R, State1};
 
-% TODO: check that arities on match are equal and that there's only one
-% case if using empty case (arity 0 fun)
 ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), State) ->
     [FirstCase|_TCases] = Cases,
     {cmatch, _FCLine, {FCCond, _FCWhen, _FCBody}} = FirstCase,
@@ -226,7 +224,14 @@ ast_to_ast(?V(Line, bstring, Val), State) ->
 ast_to_ast(?UO(Line, Op, Val), State) ->
     {EVal, State1} = ast_to_ast(Val, State),
     R = {op, Line, map_op(Op), EVal},
+    {R, State1};
+
+ast_to_ast(Ast, State) ->
+    Line = element(2, Ast),
+    State1 = add_error(State, invalid_exppression, Line, Ast),
+    R = {atom, 1, error},
     {R, State1}.
+
 
 ast_to_ast([], Accum, State) ->
     {lists:reverse(Accum), State};
@@ -275,10 +280,14 @@ list_to_cons_list_r(Line, [H|T], Cons, State) ->
     {EH, State1} = ast_to_ast(H, State),
     list_to_cons_list_r(Line, T, {cons, Line, EH, Cons}, State1).
 
-% TODO: match wrong values and generate errors
 ast_to_export_fun(?O(_Line, '/', ?V(_ALine, atom, FunName), ?V(_ArLine, integer, Arity)), State) ->
     R = {FunName, Arity},
-    {R, State}.
+    {R, State};
+ast_to_export_fun(Ast, State) ->
+    Line = element(2, Ast),
+    State1 = add_error(State, invalid_export, Line,
+                       expected_got("funname/Arity", {ast, Ast})),
+    {{atom, 1, error}, State1}.
 
 ast_to_catch({cmatch, Line, {[Match], When, Body}}, State) ->
     cmatch_to_catch(Line, ?V(Line, atom, throw), Match, When, Body, State);
