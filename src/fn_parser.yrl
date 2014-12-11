@@ -55,15 +55,15 @@ tl_expr -> e_fn_tl: '$1'.
 tl_expr -> attr : '$1'.
 tl_expr -> literal : '$1'.
 
-e_fn_tl -> fn l_atom colon e_case end:
+e_fn_tl -> fn l_atom e_case end:
     Name = '$2',
-    Cases = '$4',
+    Cases = '$3',
     {expr, line('$1'), fn, {Name, [], Cases}}.
 
-e_fn_tl -> fn l_atom colon attrs e_case end:
+e_fn_tl -> fn l_atom attrs e_case end:
     Name = '$2',
-    Attrs = '$4',
-    Cases = '$5',
+    Attrs = '$3',
+    Cases = '$4',
     {expr, line('$1'), fn, {Name, Attrs, Cases}}.
 
 e_case -> e_cases : {expr, line('$1'), 'case', '$1'}.
@@ -195,6 +195,7 @@ l_boolean -> boolean : value('$1', boolean).
 l_string -> string : value('$1', string).
 l_bstring -> bstring : value('$1', bstring).
 l_fn -> fn e_case end: expr_raw('$2', fn).
+l_fn -> fn l_var e_case end: {expr, line('$1'), fn, {'$2', '$3'}}.
 l_fn_ref -> fn colon call_val colon l_integer : {val, line('$1'), fn_ref, {'$3', '$5'}}.
 
 l_tuple -> hash open_map close_map : seq_value([], line('$1'), tuple).

@@ -192,6 +192,12 @@ ast_to_ast(?E(Line, fn, ?E(_CLine, 'case', Cases)), State) ->
     R = {'fun', Line, {clauses, EFixedCases}},
     {R, State1};
 
+ast_to_ast(?E(Line, fn, {?V(_VLine, var, FName), ?E(_CLine, 'case', Cases)}), State) ->
+    {ok, FixedCases} = expand_case_else_match(Cases),
+    {EFixedCases, State1} = ast_to_ast(FixedCases, State),
+    R = {named_fun, Line, FName, EFixedCases},
+    {R, State1};
+
 ast_to_ast(?E(Line, call, {{Mod, Fun}, Args}), State) ->
     {EMod, State1} = ast_to_ast(Mod, State),
     {EFun, State2} = ast_to_ast(Fun, State1),
