@@ -22,10 +22,11 @@ to_mod(Path) ->
     case to_erl_ast(Path) of
         {ok, {Ast, State}} ->
             io:format("~p~n~n", [State]),
+            ExportAttr = fn_util:get_export_attr_ast(State),
             ModAtomName = get_module_name(Path),
             ModAttr = {attribute, 1, module, ModAtomName},
             FileAttr = {attribute, 1, file, {Path, 1}},
-            {ok, [FileAttr, ModAttr|Ast]};
+            {ok, [FileAttr, ModAttr, ExportAttr|Ast]};
         Other -> Other
     end.
 

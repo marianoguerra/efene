@@ -183,7 +183,7 @@ ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), State) ->
     {ok, FixedCases} = expand_case_else_match(Cases),
     {EFixedCases, State1} = ast_to_ast(FixedCases, State),
     BareName = unwrap(Name),
-    State2 = add_attributes(State1, fn, {BareName, Arity}, Attrs),
+    State2 = add_attributes(State1, fn, Line, {BareName, Arity}, Attrs),
     R = {function, Line, BareName, Arity, EFixedCases},
     {R, State2};
 
@@ -365,8 +365,8 @@ state_map(Fun, Seq, State) ->
                        {[R|Accum], State1}
                end,  {[], State}, Seq).
 
-add_attributes(#{attrs := AttrList}=State, Type, Name, Attrs) ->
-    NewAttrList = [{Type, Name, Attrs}|AttrList],
+add_attributes(#{attrs := AttrList}=State, Type, Line, Name, Attrs) ->
+    NewAttrList = [{Type, Line, Name, Attrs}|AttrList],
     State#{attrs => NewAttrList}.
 
 unwrap(?V(_Line, _Type, Val)) -> Val.
