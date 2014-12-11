@@ -1,5 +1,5 @@
-{application, enefe, [
-	{description, ""},
+{application, efene, [
+	{description, "A Programming Language for the Erlang VM"},
 	{vsn, "0.1.0"},
 	{modules, []},
 	{registered, []},
