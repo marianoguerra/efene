@@ -245,9 +245,9 @@ kv_match_item -> kv_key coloneq kv_val: {kvmatch, line('$1'), '$1', '$3'}.
 attrs -> attr nl : ['$1'].
 attrs -> attr nl attrs : ['$1'|'$3'].
 
-attr -> at atom : make_attr('$2', noparams, noresult).
-attr -> at atom literal : make_attr('$2', '$3', noresult).
-attr -> at atom literal arrow literal : make_attr('$2', '$3', '$5').
+attr -> at path : make_attr(line('$1'), '$2', noparams, noresult).
+attr -> at path literal : make_attr(line('$1'), '$2', '$3', noresult).
+attr -> at path literal arrow literal : make_attr(line('$1'), '$2', '$3', '$5').
 
 call_val -> l_atom : '$1'.
 call_val -> l_var : '$1'.
@@ -294,8 +294,8 @@ expr_raw(Val, Type) -> {expr, line(Val), Type, Val}.
 
 seq_value(Val, Line, Type) -> {seq, Line, Type, Val}.
 
-make_attr(Name, Params, Result) ->
-    {attr, line(Name), unwrap(Name), Params, Result}.
+make_attr(Line, Path, Params, Result) ->
+    {attr, Line, Path, Params, Result}.
 
 op(Op, Left, Right) ->
     {op, line(Op), unwrap(Op), Left, Right}.
