@@ -389,6 +389,8 @@ check_case_arities_equal([{cmatch, Line, {Cond, _When, _Body}}|T], State, Arity)
                               expected_got(Arity, CaseArity)),
            check_case_arities_equal(T, State1, Arity)
     end;
+check_case_arities_equal([{celse, _Line, _Body}|T], State, Arity) ->
+    check_case_arities_equal(T, State, Arity);
 check_case_arities_equal([], State, _Arity) -> State.
 
 add_error(#{errors:=Errors}=State, ErrType, Line, Detail) ->
