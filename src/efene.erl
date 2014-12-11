@@ -21,12 +21,14 @@ to_erl_ast(Path) -> with_file_content(Path, fun str_to_erl_ast/1).
 to_mod(Path) ->
     case to_erl_ast(Path) of
         {ok, {Ast, State}} ->
-            io:format("~p~n~n", [State]),
-            ExportAttr = fn_util:get_export_attr_ast(State),
             ModAtomName = get_module_name(Path),
-            ModAttr = {attribute, 1, module, ModAtomName},
-            FileAttr = {attribute, 1, file, {Path, 1}},
-            {ok, [FileAttr, ModAttr, ExportAttr|Ast]};
+            ToMod = fun () ->
+                            ExportAttr = fn_util:get_export_attr_ast(State),
+                            ModAttr = {attribute, 1, module, ModAtomName},
+                            FileAttr = {attribute, 1, file, {Path, 1}},
+                            {ok, [FileAttr, ModAttr, ExportAttr|Ast]}
+                    end,
+            print_errors_or(ModAtomName, State, ToMod);
         Other -> Other
     end.
 
@@ -196,3 +198,10 @@ to_file(Data, Path, Mode) ->
             ok;
         Error -> Error
     end.
+
+print_errors_or(_Module, #{errors:=[]}, Fn) -> Fn();
+print_errors_or(Module, #{errors:=Errors}, _Fn) ->
+    ErrorsFirstToLast = lists:reverse(Errors),
+    ErrorsStr = fn_error:to_string(Module, ErrorsFirstToLast),
+    io:format("~s~n", [ErrorsStr]).
+

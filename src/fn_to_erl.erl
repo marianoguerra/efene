@@ -185,7 +185,8 @@ ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), State) ->
     BareName = unwrap(Name),
     State2 = add_attributes(State1, fn, Line, {BareName, Arity}, Attrs),
     R = {function, Line, BareName, Arity, EFixedCases},
-    {R, State2};
+    State3 = check_case_arities_equal(Cases, State2, Arity),
+    {R, State3};
 
 ast_to_ast(?E(Line, fn, ?E(_CLine, 'case', Cases)), State) ->
     {ok, FixedCases} = expand_case_else_match(Cases),
@@ -368,5 +369,22 @@ state_map(Fun, Seq, State) ->
 add_attributes(#{attrs := AttrList}=State, Type, Line, Name, Attrs) ->
     NewAttrList = [{Type, Line, Name, Attrs}|AttrList],
     State#{attrs => NewAttrList}.
+
+expected_got(Expected, Got) -> {expected, Expected, got, Got}.
+
+check_case_arities_equal([{cmatch, Line, {Cond, _When, _Body}}|T], State, Arity) ->
+    CaseArity = length(Cond),
+    if CaseArity == Arity -> check_case_arities_equal(T, State, Arity);
+       true ->
+           State1 = add_error(State, case_mismatch, Line,
+                              expected_got(Arity, CaseArity)),
+           check_case_arities_equal(T, State1, Arity)
+    end;
+check_case_arities_equal([], State, _Arity) -> State.
+
+add_error(#{errors:=Errors}=State, ErrType, Line, Detail) ->
+    Error = {ErrType, Line, Detail},
+    NewErrors = [Error|Errors],
+    State#{errors => NewErrors}.
 
 unwrap(?V(_Line, _Type, Val)) -> Val.
