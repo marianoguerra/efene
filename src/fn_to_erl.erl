@@ -234,7 +234,7 @@ ast_to_ast(?UO(Line, Op, Val), State) ->
 
 ast_to_ast(Ast, State) ->
     Line = element(2, Ast),
-    State1 = add_error(State, invalid_exppression, Line, Ast),
+    State1 = add_error(State, invalid_expression, Line, Ast),
     R = {atom, Line, error},
     {R, State1}.
 
