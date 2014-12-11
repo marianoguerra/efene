@@ -28,7 +28,7 @@ to_mod(Path) ->
                             FileAttr = {attribute, 1, file, {Path, 1}},
                             {ok, [FileAttr, ModAttr, ExportAttr|Ast]}
                     end,
-            print_errors_or(ModAtomName, State, ToMod);
+            format_errors_or(ModAtomName, State, ToMod);
         Other -> Other
     end.
 
@@ -199,9 +199,8 @@ to_file(Data, Path, Mode) ->
         Error -> Error
     end.
 
-print_errors_or(_Module, #{errors:=[]}, Fn) -> Fn();
-print_errors_or(Module, #{errors:=Errors}, _Fn) ->
+format_errors_or(_Module, #{errors:=[]}, Fn) -> Fn();
+format_errors_or(Module, #{errors:=Errors}, _Fn) ->
     ErrorsFirstToLast = lists:reverse(Errors),
-    ErrorsStr = fn_error:to_string(Module, ErrorsFirstToLast),
-    io:format("~s~n", [ErrorsStr]).
+    fn_error:to_string(Module, ErrorsFirstToLast).
 
