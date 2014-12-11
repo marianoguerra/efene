@@ -303,7 +303,12 @@ ast_to_catch({celse, Line, Body}, State) ->
     EMatch = {tuple, Line, [{var, Line, '_'}, {var, Line, '_'}, {var, Line, '_'}]},
     {EBody, State1} = ast_to_ast(Body, State),
     R = {clause, Line, [EMatch], [], EBody},
-    {R, State1}.
+    {R, State1};
+ast_to_catch({cmatch, Line, {Match, _When, _Body}}, State) ->
+    State1 = add_error(State, invalid_catch, Line,
+                       expected_got("throw:T, error:E, exit:X or T",
+                                    {ast, ?V(Line, tuple, Match)})),
+    {{atom, 1, error}, State1}.
 
 cmatch_to_catch(Line, Class, Match, When, Body, State) ->
     {EClass, State1} = ast_to_ast(Class, State),
@@ -313,8 +318,6 @@ cmatch_to_catch(Line, Class, Match, When, Body, State) ->
     {EWhen, State4} = when_to_ast(When, State3),
     R = {clause, Line, [ETupleMatch], EWhen, EBody},
     {R, State4}.
-
-% TODO: catch the rest and accumulate the error
 
 when_to_ast(nowhen, State) -> {[], State};
 when_to_ast(When, State) when is_list(When) ->

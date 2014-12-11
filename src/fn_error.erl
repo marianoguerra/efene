@@ -11,6 +11,7 @@ to_string(Module, {Type, Line, Details}) ->
 type_to_string(case_mismatch) -> <<"Case Mismatch">>;
 type_to_string(invalid_export) -> <<"Invalid Export">>;
 type_to_string(invalid_expression) -> <<"Invalid Expression">>;
+type_to_string(invalid_catch) -> <<"Invalid Catch">>;
 type_to_string(Other) -> atom_to_list(Other).
 
 details_to_string({expected, Expected, got, Got}) ->
