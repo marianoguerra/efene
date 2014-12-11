@@ -1,2 +1,2 @@
-PROJECT = enefe
+PROJECT = efene
 include erlang.mk
