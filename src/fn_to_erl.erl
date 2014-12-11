@@ -229,7 +229,7 @@ ast_to_ast(?UO(Line, Op, Val), State) ->
 ast_to_ast(Ast, State) ->
     Line = element(2, Ast),
     State1 = add_error(State, invalid_exppression, Line, Ast),
-    R = {atom, 1, error},
+    R = {atom, Line, error},
     {R, State1}.
 
 
@@ -287,7 +287,7 @@ ast_to_export_fun(Ast, State) ->
     Line = element(2, Ast),
     State1 = add_error(State, invalid_export, Line,
                        expected_got("funname/Arity", {ast, Ast})),
-    {{atom, 1, error}, State1}.
+    {{atom, Line, error}, State1}.
 
 ast_to_catch({cmatch, Line, {[Match], When, Body}}, State) ->
     cmatch_to_catch(Line, ?V(Line, atom, throw), Match, When, Body, State);
@@ -308,7 +308,7 @@ ast_to_catch({cmatch, Line, {Match, _When, _Body}}, State) ->
     State1 = add_error(State, invalid_catch, Line,
                        expected_got("throw:T, error:E, exit:X or T",
                                     {ast, ?V(Line, tuple, Match)})),
-    {{atom, 1, error}, State1}.
+    {{atom, Line, error}, State1}.
 
 cmatch_to_catch(Line, Class, Match, When, Body, State) ->
     {EClass, State1} = ast_to_ast(Class, State),
