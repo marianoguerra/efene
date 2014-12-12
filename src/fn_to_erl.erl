@@ -9,7 +9,7 @@ to_erl(Ast) -> ast_to_ast(Ast, new_state()).
 
 ast_to_ast(Nodes, State) when is_list(Nodes) -> ast_to_ast(Nodes, [], State);
 
-ast_to_ast({attr, Line, [?V(_ELine, atom, export)], ?S(_PLine, list, Params), noresult}, State) ->
+ast_to_ast({attr, Line, [?V(_ELine, atom, export)], Params, noresult}, State) ->
     {EFuns, State1} = state_map(fun ast_to_export_fun/2, Params, State),
     R = {attribute, Line, export, EFuns},
     {R, State1};
