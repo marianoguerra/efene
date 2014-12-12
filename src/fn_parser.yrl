@@ -192,7 +192,7 @@ l_list -> open_list seq_items close_list : seq_value('$2', line('$1'), list).
 
 l_cons -> open_list literal split_def_op literal close_list : seq_value({'$2', '$4'}, line('$1'), cons).
 
-guard_seq -> seq_items : '$1'.
+guard_seq -> seq_items : ['$1'].
 guard_seq -> seq_items semicolon guard_seq :
     Tail = '$3',
     [TailHead|_] = Tail,
