@@ -247,8 +247,8 @@ attrs -> attr nl : ['$1'].
 attrs -> attr nl attrs : ['$1'|'$3'].
 
 attr -> at path : make_attr(line('$1'), '$2', noparams, noresult).
-attr -> at path literal : make_attr(line('$1'), '$2', '$3', noresult).
-attr -> at path literal arrow literal : make_attr(line('$1'), '$2', '$3', '$5').
+attr -> at path open seq_items close : make_attr(line('$1'), '$2', '$4', noresult).
+attr -> at path open seq_items close arrow literal : make_attr(line('$1'), '$2', '$4', '$7').
 
 call_val -> l_atom : '$1'.
 call_val -> l_var : '$1'.
