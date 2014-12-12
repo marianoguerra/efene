@@ -314,7 +314,8 @@ cmatch_to_catch(Line, Class, Match, When, Body, State) ->
 
 when_to_ast(nowhen, State) -> {[], State};
 when_to_ast(When, State) when is_list(When) ->
-    state_map(fun when_to_ast/2, When, State);
+    {R, State1} = state_map(fun when_to_ast/2, When, State),
+    {lists:reverse(R), State1};
 when_to_ast(When, State) ->
     ast_to_ast(When, State).
 

@@ -56,7 +56,7 @@ e_case -> e_cases : {expr, line('$1'), 'case', '$1'}.
 
 e_case_cond -> case colon body : {cmatch, line('$1'), {[], nowhen, '$3'}}.
 e_case_cond -> case seq_items colon body : {cmatch, line('$1'), {'$2', nowhen, '$4'}}.
-e_case_cond -> case seq_items when e_bool colon body : {cmatch, line('$1'), {'$2', '$4', '$6'}}.
+e_case_cond -> case seq_items when guard_seq colon body : {cmatch, line('$1'), {'$2', '$4', '$6'}}.
 
 e_case_else -> else colon body : {celse, line('$1'), '$3'}.
 
