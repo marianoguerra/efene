@@ -31,20 +31,6 @@ Terminals
 
 Rootsymbol program.
 
-Left 100 bool_orr.
-Left 200 bool_andd.
-Left 300 comp_op.
-Right 400 concat_op.
-Left 500 bin_and.
-Left 700 bin_or.
-Left 700 add_op bool_or.
-Left 800 bin_shift.
-Left 800 mul_op bool_and.
-Left 900 bin_not.
-Left 900 bool_not.
-Left 1000 assign send_op.
-Left 1100 open.
-
 program -> tl_exprs : '$1'.
 program -> nl tl_exprs : '$2'.
 
