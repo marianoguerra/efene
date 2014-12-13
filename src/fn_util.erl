@@ -1,12 +1,14 @@
 -module(fn_util).
 -export([get_exported_fns/1, get_export_attr_ast/1, get_export_attr_ast/2]).
 
+-include("efene.hrl").
+
 get_fn_attrs(#{attrs:=Attrs}) ->
     lists:filter(fun ({fn, _Line, _Fn, _FnAttrs}) -> true;
                      (_) -> false end, Attrs).
 
 
-is_public_attr({attr, _, public, noparams, noresult}) -> true;
+is_public_attr({attr, _, [?V(_, atom, public)], noparams, noresult}) -> true;
 is_public_attr(_) -> false.
 
 is_public_fn({fn, _Line, _Fn, Attrs}) ->
