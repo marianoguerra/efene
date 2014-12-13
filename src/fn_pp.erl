@@ -13,7 +13,9 @@ ind(Indent) -> string:copies("  ", Indent).
 fmt(Str, Fmt, true, Indent, Args) -> [Str, ind(Indent), io_lib:format(Fmt, Args), "\n"];
 fmt(Str, Fmt, false, Indent, Args) -> [Str, ind(Indent), io_lib:format(Fmt, Args)].
 
-print(Nodes) -> print(Nodes, "", true, 0, [], "\n").
+print(Nodes) when is_list(Nodes) -> print(Nodes, "", true, 0, [], "\n");
+print(Node) -> print_single(Node).
+
 %print(Nodes, Indent) -> print(Nodes, "", true, Indent, [], "\n").
 print_single(Node) -> print(Node, "", false, 0).
 print_single(Node, Indent) -> string:strip(lists:flatten(print(Node, "", true, Indent)), left).
