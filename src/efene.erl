@@ -32,6 +32,12 @@ to_mod(Path) ->
         Other -> Other
     end.
 
+pprint(Path) ->
+    case to_ast(Path) of
+        {ok, Ast} -> io:format("~s", [fn_pp:print(Ast)]);
+        Other -> io:format("Error: ~p", [Other])
+    end.
+
 to_erl(Path) ->
     case to_mod(Path) of
         {ok, Mod} -> erl_prettypr:format(erl_syntax:form_list(Mod));
@@ -48,6 +54,7 @@ to_code(Path) ->
             end;
         Other -> Other
     end.
+
 
 compile(Path) ->
     case to_code(Path) of
@@ -115,6 +122,10 @@ run(["erl2ast", File]) ->
     print(from_erl(File));
 run(["beam", File]) ->
     print(compile(File));
+run(["pprint", File]) ->
+    pprint(File);
+run(["testpp"]) ->
+    test_pp();
 run(Opts) ->
     io:format("Invalid input to fn.erl: \"~p\"~n", [Opts]).
 
@@ -206,3 +217,123 @@ format_errors_or(Module, #{errors:=Errors}, _Fn) ->
     ErrorsFirstToLast = lists:reverse(Errors),
     fn_error:to_string(Module, ErrorsFirstToLast).
 
+pp(Code) ->
+    case str_to_ast(Code) of
+        {ok, Ast} -> io:format("~s => ~s", [Code, fn_pp:print(Ast)]);
+        Other -> io:format("Error: ~s -> ~p~n", [Code, Other])
+    end.
+    
+test_pp() ->
+    pp("1"),
+    pp("1.2"),
+    pp("true"),
+    pp("atom"),
+    pp("Var"),
+    pp("nil"),
+
+    pp("'\"binary\" \\'string\\''"),
+    pp("\"'list' \\\"string\\\"\""),
+
+    pp("{}"),
+    pp("[]"),
+    pp("#{}"),
+    pp("{a: 1}"),
+    pp("{a: 1, b: true}"),
+    pp("{a: 1, b: true, c: asd}"),
+    pp("{a:= 1}"),
+    pp("{a:= 1, b:= true}"),
+    pp("{a:= 1, b:= true, c:= asd}"),
+    pp("[1]"),
+    pp("[1::2]"),
+    pp("[1::[1]]"),
+    pp("[1, 1.2]"),
+    pp("[1, 1.2, nil]"),
+    pp("[1, 1.2, nil, {a, V}]"),
+    pp("{1}"),
+    pp("{1,}"),
+    pp("{1, 1.2}"),
+    pp("{1, 1.2,}"),
+    pp("{1, 1.2, nil}"),
+    pp("{1, 1.2, nil, {a, V}}"),
+
+    pp("(-2)"),
+    pp("(+2)"),
+    pp("(~2)"),
+    pp("(-2 + +3)"),
+    pp("(+2 - -3)"),
+    pp("(-2 + -3)"),
+    pp("(+2 - +3)"),
+    pp("(~2 | 3)"),
+    pp("(not true)"),
+    pp("(a ! 2)"),
+    pp("(a ! 2)"),
+    pp("(1 = 2)"),
+    pp("(1 + 2)"),
+    pp("(1 * 2)"),
+    pp("(1 + 2 * 3)"),
+    pp("(1 * 2 + 3)"),
+    pp("(1 * (2 + 3))"),
+    pp("((1 + 2) * 3)"),
+    pp("(3 - 5 - 7)"),
+    pp("((3 - 5) - 7)"),
+    pp("(3 - (5 - 7))"),
+    pp("(1 < 2 and 2 >= 3 or 4 + 5)"),
+    pp("(1 < (2 and 2) >= (3 or 4) + 5)"),
+    pp("(true and false or nil)"),
+    pp("(true or false and nil)"),
+
+    pp("@public"),
+    pp("@public(1)"),
+    pp("@public(1, asd)"),
+    pp("@public(1) -> 2"),
+    pp("@public -> 2"),
+    pp("@public(1, true) -> 2"),
+    pp("@public(1) -> {2, 3}"),
+    pp("@public(1, true) -> [2]"),
+    pp("fn:foo:4"),
+    pp("fn:foo.bar:4"),
+    pp("foo(a, B, 4, [1,2,3])"),
+    pp("foo.bar(a, B, 4, [1,2,3])"),
+
+    pp("(begin 42\nend)"),
+    pp("(begin A = 42\nA + B\nend)"),
+    pp("(begin A = 42\nbegin B = 12\nA + B\nend\nend)"),
+    pp("(begin A = 42\nbegin B = 12\nbegin C = 1\nC + A + B\nend\nend\nend)"),
+
+    pp("(receive case A: B\nend)"),
+    pp("(receive case A: B\nelse: error\nend)"),
+    pp("(receive case A: B\ncase A, B: C = A + B\nC * 2\nelse: error\nend)"),
+    pp("(receive case A: B\nafter 5: ahhhhh\nend)"),
+    pp("(receive case A: B\ncase A, B: C = A + B\nC * 2\nelse: error\nafter 10:\nD = 10\nE = foo(12)\nD * 2\nend)"),
+    pp("(receive case A when A < 10: B\nend)"),
+    pp("(receive case A when A < 10, A > 20; A == 12, A == 13: B\nend)"),
+
+    pp("(match A: case 42: one\ntwo\nend)"),
+    pp("(match A: case 42: one\ntwo\ncase 43: cuatro\nend)"),
+    pp("(match A: case 42: one\ntwo\ncase 43: cuatro\nelse: ahh\nend)"),
+    pp("(match A: case 42 when A < 10; A == 11, A == 12; A == 13, A == 14, A == 15: one\ntwo\nend)"),
+
+    pp("(try 42\nafter finalthing\nend)"),
+    pp("(try 42\nA + B\nafter finalthing\nend)"),
+    pp("(try 42\nA + B\ncatch case E: error\nafter finalthing\nend)"),
+    pp("(try 42\nA + B\ncatch case T: throw\ncase error,E: error\nafter finalthing\nend)"),
+
+    pp("(when true: ok\nend)"),
+    pp("(when true: ok\nelse 42: two\nend)"),
+    pp("(when true: ok\nelse 42: two\nelse A < B, A == 12; A > 13: A = 12\nB = A + 5\nend)"),
+    pp("(when true: ok\nelse 42: two\nelse A < B, A == 12; A > 13: A = 12\nB = A + 5\nelse: default\nend)"),
+
+    pp("fn hello case A: A + 1\nend"),
+    pp("fn hello @public\n@doc('hi there')\n@spec(A) -> bool()\ncase A: A + 1\nend"),
+    pp("fn hello case A: A + 1\nelse: 42\nend"),
+    pp("(fn case A: A + 1\nend)"),
+    pp("(fn F case A: A + 1\nend)"),
+
+    pp("(A -> foo())"),
+    pp("(A -> foo() ->> bar(1))"),
+    pp("(A -> foo() ->> bar(1) -> a.b([]))"),
+    pp("(A -> foo() ->> bar(1) -> a.b([]) ->> A.B(1, 2.3))"),
+
+    pp("(for A in B: B + 1\nend)"),
+    pp("(for A in B; A < 10: B + 1\nend)"),
+    ok.
