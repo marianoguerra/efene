@@ -300,7 +300,7 @@ ast_to_catch({celse, Line, Body}, State) ->
 ast_to_catch({cmatch, Line, {Match, _When, _Body}}, State) ->
     State1 = add_error(State, invalid_catch, Line,
                        expected_got("throw:T, error:E, exit:X or T",
-                                    {ast, ?V(Line, tuple, Match)})),
+                                    {ast, ?S(Line, tuple, Match)})),
     {{atom, Line, error}, State1}.
 
 cmatch_to_catch(Line, Class, Match, When, Body, State) ->
