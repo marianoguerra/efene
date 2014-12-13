@@ -14,7 +14,9 @@ type_to_string(invalid_expression) -> <<"Invalid Expression">>;
 type_to_string(invalid_catch) -> <<"Invalid Catch">>;
 type_to_string(Other) -> atom_to_list(Other).
 
+format_maybe_ast({ast, Ast}) -> fn_pp:print(Ast);
+format_maybe_ast(Other) -> io_lib:format("~p", [Other]).
+
 details_to_string({expected, Expected, got, Got}) ->
-    io_lib:format("Expected ~p got ~p", [Expected, Got]);
-details_to_string(Other) ->
-    io_lib:format("~p", [Other]).
+    io_lib:format("Expected ~p got ~s", [Expected, format_maybe_ast(Got)]);
+details_to_string(Other) -> format_maybe_ast(Other).
