@@ -16,6 +16,7 @@ fmt(Str, Fmt, false, Indent, Args) -> [Str, ind(Indent), io_lib:format(Fmt, Args
 print(Nodes) -> print(Nodes, "", true, 0, [], "\n").
 %print(Nodes, Indent) -> print(Nodes, "", true, Indent, [], "\n").
 print_single(Node) -> print(Node, "", false, 0).
+print_single(Node, Indent) -> string:strip(lists:flatten(print(Node, "", true, Indent)), left).
 
 print(Nodes, Str, Nl, Indent) when is_list(Nodes) -> print(Nodes, Str, Nl, Indent, [], "");
 
@@ -48,12 +49,6 @@ print(?S(_L, map, KVs), Str, Nl, Indent) ->
 print(?T(_L, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, {Var, KVs})), Str, Nl, Indent) ->
     fmt(Str, "#r.~p ~s#{~s}", Nl, Indent, [RecordName, print_single(Var), print_kvs(KVs)]);
 
-print({kv, _L, Key, Val}, Str, Nl, Indent) ->
-    fmt(Str, "~s: ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
-
-print({kvmatch, _L, Key, Val}, Str, Nl, Indent) ->
-    fmt(Str, "~s := ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
-
 print(?T(_L, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), Str, Nl, Indent) ->
     fmt(Str, "#r.~p {~s}", Nl, Indent, [RecordName, print_kvs(KVs)]);
 
@@ -62,6 +57,16 @@ print(?T(_L, [?Atom(c)], ?V(_StrLine, string, [Char])), Str, Nl, Indent) ->
 % TODO: escape content of string
 print(?T(_L, [?Atom(atom)], ?V(_StrLine, string, AtomStr)), Str, Nl, Indent) ->
     fmt(Str, "#atom \"~s\"", Nl, Indent, [AtomStr]);
+
+print(?T(_L, Path, Val), Str, Nl, Indent) ->
+    fmt(Str, "#~s ~s", Nl, Indent, [print_path(Path), print_single(Val)]);
+
+print({kv, _L, Key, Val}, Str, Nl, Indent) ->
+    fmt(Str, "~s: ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
+
+print({kvmatch, _L, Key, Val}, Str, Nl, Indent) ->
+    fmt(Str, "~s := ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
+
 print(?S(_L, tuple, []), Str, Nl, Indent)   ->
     fmt(Str, "#{}", Nl, Indent, []);
 print(?S(_L, tuple, Val), Str, Nl, Indent)   ->
@@ -106,6 +111,8 @@ print(?E(_L, switch, {Value, ?E(_CaseLine, 'case', Clauses)}), Str, Nl, Indent) 
                                              print_clauses(Clauses, Nl, Indent + 1),
                                              ind(Indent)]);
 
+print({cmatch, _L, {[], nowhen, Body}}, Str, Nl, Indent) ->
+    fmt(Str, "case:~n~s", false, Indent, [print(Body, "", Nl, Indent + 1)]);
 print({cmatch, _L, {Conds, When, Body}}, Str, Nl, Indent) ->
     fmt(Str, "case ~s~s:~n~s", false, Indent,
         [print_conds(Conds), print_when(When), print(Body, "", Nl, Indent + 1)]);
@@ -116,6 +123,10 @@ print({celse, _L, Body}, Str, _Nl, Indent) ->
 print(?E(_L, 'begin', Body), Str, _Nl, Indent) ->
     fmt(Str, "begin~n~s~send", true, Indent,
         [print_body(Body, Indent + 1), ind(Indent)]);
+
+print(?E(_L, fn, {Name, [], ?E(_CLine, 'case', Cases)}), Str, Nl, Indent) ->
+    fmt(Str, "fn ~s~n~s~send", true, Indent,
+        [print_single(Name), print_clauses(Cases, Nl, Indent + 1), ind(Indent)]);
 
 print(?E(_L, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), Str, Nl, Indent) ->
     fmt(Str, "fn ~s~n~s~n~s~send", true, Indent,
@@ -140,11 +151,15 @@ print(?E(_L, call, {Fun, Args}), Str, Nl, Indent) ->
 print(?O(_L, Op, Left, Right), Str, Nl, Indent) ->
     WrapLeft = should_wrap(Op, left, Left),
     WrapRight = should_wrap(Op, right, Right),
+    IndentRight = should_indent_right(Right),
+    RightStr = if IndentRight -> print_single(Right, Indent);
+                  true -> print_single(Right)
+               end,
     LeftFmt = if WrapLeft -> "(~s)"; true -> "~s" end,
     RightFmt = if WrapRight -> "(~s)"; true -> "~s" end,
     Format = LeftFmt ++ " ~s " ++ RightFmt,
     fmt(Str, Format, Nl, Indent,
-        [print_single(Left), atom_to_list(Op), print_single(Right)]);
+        [print_single(Left), atom_to_list(Op), RightStr]);
 
 print(?V(_L, atom, Val), Str, Nl, Indent)    ->
     fmt(Str, "~s", Nl, Indent, [atom_to_list(Val)]);
@@ -282,3 +297,9 @@ should_wrap(Op, Pos, ?O(_Line, SubOp, _L, _R)) ->
         _ -> false
     end;
 should_wrap(_Op, _Pos, _Sub) -> false.
+
+should_indent_right(?E(_L, call, _)) -> false;
+should_indent_right(?E(_L, call_do, _)) -> false;
+should_indent_right(?E(_L, call_thread, _)) -> false;
+should_indent_right(?E(_L, _, _)) -> true;
+should_indent_right(_) -> false.
