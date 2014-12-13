@@ -105,7 +105,7 @@ ast_to_ast(?E(Line, 'for', {Qualifiers, Body}), State) ->
                               {Ri, S1}
                       end,
     {Items, State2} = state_map(fun for_qualifier_to_ast/2, Qualifiers, State1),
-    R = {lc, Line, EBody, Items},
+    R = {lc, Line, EBody, lists:reverse(Items)},
     {R, State2};
 
 ast_to_ast(?E(Line, 'try', {Body, Catch, After}), State) ->

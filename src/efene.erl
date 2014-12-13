@@ -123,9 +123,9 @@ run(Opts) ->
 clean_tokens(Tokens) -> clean_tokens(Tokens, []).
 
 clean_tokens([], Accum) -> lists:reverse(Accum);
-% remove newline after colon
+% remove newline after colon, comma and semicolon
 clean_tokens([{colon, _, _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
-% remove newline after comma
+clean_tokens([{semicolon, _, _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{sep, _, _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 % remove newline after logical ops
 clean_tokens([{bool_or, _, _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
