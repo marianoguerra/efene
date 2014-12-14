@@ -56,9 +56,8 @@ print(?T(_L, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), Str, Nl, In
 
 print(?T(_L, [?Atom(c)], ?V(_StrLine, string, [Char])), Str, Nl, Indent) ->
     fmt(Str, "#c \"~c\"", Nl, Indent, [Char]);
-% TODO: escape content of string
 print(?T(_L, [?Atom(atom)], ?V(_StrLine, string, AtomStr)), Str, Nl, Indent) ->
-    fmt(Str, "#atom \"~s\"", Nl, Indent, [AtomStr]);
+    fmt(Str, "#atom ~s", Nl, Indent, [escape_string(AtomStr)]);
 
 print(?T(_L, Path, Val), Str, Nl, Indent) ->
     fmt(Str, "#~s ~s", Nl, Indent, [print_path(Path), print_single(Val)]);
@@ -173,12 +172,10 @@ print(?V(_L, boolean, Val), Str, Nl, Indent) ->
     fmt(Str, "~s", Nl, Indent, [atom_to_list(Val)]);
 print(?V(_L, var, Val), Str, Nl, Indent)     ->
     fmt(Str, "~s", Nl, Indent, [atom_to_list(Val)]);
-% TODO: escape string
 print(?V(_L, string, Val), Str, Nl, Indent)  ->
-    fmt(Str, "\"~s\"", Nl, Indent, [Val]);
-% TODO: escape string
+    fmt(Str, "~s", Nl, Indent, [escape_string(Val)]);
 print(?V(_L, bstring, Val), Str, Nl, Indent) ->
-    fmt(Str, "'~s'", Nl, Indent, [Val]);
+    fmt(Str, "~s", Nl, Indent, [escape_bstring(Val)]);
 
 print(?UO(_L, Op, Val), Str, Nl, Indent) ->
     fmt(Str, "~s~s", Nl, Indent, [atom_to_list(Op), print_single(Val)]);
@@ -305,3 +302,6 @@ should_indent_right(?E(_L, call_do, _)) -> false;
 should_indent_right(?E(_L, call_thread, _)) -> false;
 should_indent_right(?E(_L, _, _)) -> true;
 should_indent_right(_) -> false.
+
+escape_string(Str) -> io_lib:write_string(Str, $").
+escape_bstring(Str) -> io_lib:write_string(Str, $').
