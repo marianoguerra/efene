@@ -3,15 +3,34 @@
 
 -include("efene.hrl").
 
-new_state() -> #{errors => [], warnings => [], attrs => []}.
+new_state() -> #{errors => [], warnings => [], attrs => [], level => 0}.
 
 to_erl(Ast) -> ast_to_ast(Ast, new_state()).
 
 ast_to_ast(Nodes, State) when is_list(Nodes) -> ast_to_ast(Nodes, [], State);
 
-ast_to_ast({attr, Line, [?V(_ELine, atom, export)], Params, noresult}, State) ->
+ast_to_ast({attr, Line, [?V(_ELine, atom, export)], Params, noresult}, #{level := 0}=State) ->
     {EFuns, State1} = state_map(fun ast_to_export_fun/2, Params, State),
     R = {attribute, Line, export, EFuns},
+    {R, State1};
+
+ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}=State) ->
+    [FirstCase|_TCases] = Cases,
+    {cmatch, _FCLine, {FCCond, _FCWhen, _FCBody}} = FirstCase,
+    Arity = length(FCCond),
+    {ok, FixedCases} = expand_case_else_match(Cases),
+    StateLevel1 = State#{level => 1},
+    {EFixedCases, State1} = ast_to_ast(FixedCases, StateLevel1),
+    BareName = unwrap(Name),
+    State2 = add_attributes(State1, fn, Line, {BareName, Arity}, Attrs),
+    R = {function, Line, BareName, Arity, EFixedCases},
+    State3 = check_case_arities_equal(Cases, State2, Arity),
+    {R, State3#{level => 0}};
+
+ast_to_ast(Ast, #{level := 0}=State) ->
+    Line = element(2, Ast),
+    State1 = add_error(State, invalid_top_level_expression, Line, {ast, Ast}),
+    R = {atom, Line, error},
     {R, State1};
 
 ast_to_ast(?E(Line, call_do, {Place, Call, Fun}), State) ->
@@ -161,18 +180,6 @@ ast_to_ast(?E(Line, 'begin', Body), State) ->
     R = {block, Line, EBody},
     {R, State1};
 
-ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), State) ->
-    [FirstCase|_TCases] = Cases,
-    {cmatch, _FCLine, {FCCond, _FCWhen, _FCBody}} = FirstCase,
-    Arity = length(FCCond),
-    {ok, FixedCases} = expand_case_else_match(Cases),
-    {EFixedCases, State1} = ast_to_ast(FixedCases, State),
-    BareName = unwrap(Name),
-    State2 = add_attributes(State1, fn, Line, {BareName, Arity}, Attrs),
-    R = {function, Line, BareName, Arity, EFixedCases},
-    State3 = check_case_arities_equal(Cases, State2, Arity),
-    {R, State3};
-
 ast_to_ast(?E(Line, fn, ?E(_CLine, 'case', Cases)), State) ->
     {ok, FixedCases} = expand_case_else_match(Cases),
     {EFixedCases, State1} = ast_to_ast(FixedCases, State),
@@ -221,7 +228,7 @@ ast_to_ast(?UO(Line, Op, Val), State) ->
 
 ast_to_ast(Ast, State) ->
     Line = element(2, Ast),
-    State1 = add_error(State, invalid_expression, Line, Ast),
+    State1 = add_error(State, invalid_expression, Line, {ast, Ast}),
     R = {atom, Line, error},
     {R, State1}.
 
