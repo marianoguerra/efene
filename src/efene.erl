@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 -module(efene).
--export([run/0, run/1]).
+-export([run/0, run/1, compile/2]).
 
 read_file(Path) ->
     case file:read_file(Path) of
@@ -74,12 +74,14 @@ to_code(Path) ->
         Other -> Other
     end.
 
-
 compile(Path) ->
+    compile(Path, ".").
+
+compile(Path, DestPath) ->
     case to_code(Path) of
         {ok, _ModuleName, Code, Warnings} ->
             print(Warnings),
-            BeamPath = get_module_beam_name(Path),
+            BeamPath = filename:join(DestPath, get_module_beam_name(Path)),
             bin_to_file(Code, BeamPath);
         Other -> Other
     end.
