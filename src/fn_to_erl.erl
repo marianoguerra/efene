@@ -374,7 +374,8 @@ to_record_field_decl(?V(Line, 'atom', FieldName), State) ->
     {R, State};
 to_record_field_decl(Other, State) ->
     Line = element(2, Other),
-    State1 = add_error(State, case_mismatch, Line, expected_got("atom or assignment", {ast, Other})),
+    State1 = add_error(State, bad_record_field_decl, Line,
+                       expected_got("atom or assignment", {ast, Other})),
     {{atom, Line, error}, State1}.
 
 % erlang ast

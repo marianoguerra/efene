@@ -23,6 +23,7 @@ to_string(Module, {Type, Line, Details}) ->
     io_lib:format("~p:~p:~p: ~s at line ~p: ~s~n", [Module, Line, Type, TypeStr, Line, DetailsStr]).
 
 type_to_string(case_mismatch) -> <<"Case Mismatch">>;
+type_to_string(bad_record_field_decl) -> <<"Bad Record Field Declaration">>;
 type_to_string(invalid_export) -> <<"Invalid Export">>;
 type_to_string(invalid_expression) -> <<"Invalid Expression">>;
 type_to_string(invalid_top_level_expression) -> <<"Invalid Top Level Expression">>;
