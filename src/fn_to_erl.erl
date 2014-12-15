@@ -27,6 +27,12 @@ ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}
     State3 = check_case_arities_equal(Cases, State2, Arity),
     {R, State3#{level => 0}};
 
+ast_to_ast({attr, Line, [?Atom(record)], [?Atom(RecordName)], ?S(_TLine, tuple, Fields)},
+           #{level := 0}=State) ->
+    {RFields, State1} = lists:mapfoldl(fun to_record_field_decl/2, State#{level => 1}, Fields),
+    R = {attribute, Line, record, {RecordName, RFields}},
+    {R, State1#{level => 0}};
+
 ast_to_ast(Ast, #{level := 0}=State) ->
     Line = element(2, Ast),
     State1 = add_error(State, invalid_top_level_expression, Line, {ast, Ast}),
@@ -344,6 +350,18 @@ to_record_field({kv, Line, Key, Val}, State) ->
     {EKey, EVal, State1} = kv_to_ast(Key, Val, State),
     R = {record_field, Line, EKey, EVal},
     {R, State1}.
+
+to_record_field_decl(?O(Line, '=', ?V(FLine, atom, FieldName), Val), State) ->
+    {EVal, State1} = ast_to_ast(Val, State),
+    R = {record_field, Line, {atom, FLine, FieldName}, EVal},
+    {R, State1};
+to_record_field_decl(?V(Line, 'atom', FieldName), State) ->
+    R = {record_field, Line, {atom, Line, FieldName}},
+    {R, State};
+to_record_field_decl(Other, State) ->
+    Line = element(2, Other),
+    State1 = add_error(State, case_mismatch, Line, expected_got("atom or assignment", {ast, Other})),
+    {{atom, Line, error}, State1}.
 
 % erlang ast
 % NOTE for now empty case in switch matches the empty tuple
