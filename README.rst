@@ -35,6 +35,13 @@ and call our function::
 
 note: the ok after hello world is the value returned by the hello function.
 
+now every time you do a change run::
+
+    ./rebar3 efene
+
+and it will recompile the changed files, it will also fetch deps and compile
+erlang modules in your project.
+
 License
 -------
 
