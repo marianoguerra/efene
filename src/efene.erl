@@ -30,7 +30,10 @@ with_file_content(Path, Fn) ->
 to_raw_lex(Path) -> with_file_content(Path, fun str_to_raw_lex/1).
 to_lex(Path)     -> with_file_content(Path, fun str_to_lex/1).
 to_ast(Path)     -> with_file_content(Path, fun str_to_ast/1).
-to_erl_ast(Path) -> with_file_content(Path, fun str_to_erl_ast/1).
+to_erl_ast(Path) -> with_file_content(Path, fun (Str) ->
+                                                Module = get_module_name(Path),
+                                                str_to_erl_ast(Str, Module)
+                                            end).
 
 to_mod(Path) ->
     case to_erl_ast(Path) of
@@ -104,9 +107,9 @@ str_to_ast(Str) ->
         Other -> Other
     end.
 
-str_to_erl_ast(String) ->
+str_to_erl_ast(String, Module) ->
     case str_to_ast(String) of
-        {ok, Ast} -> {ok, fn_to_erl:to_erl(Ast)};
+        {ok, Ast} -> {ok, fn_to_erl:to_erl(Ast, Module)};
         Other -> Other
     end.
 

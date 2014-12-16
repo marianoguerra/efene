@@ -13,13 +13,13 @@
 %% limitations under the License.
 
 -module(fn_to_erl).
--export([ast_to_ast/2, to_erl/1]).
+-export([ast_to_ast/2, to_erl/2]).
 
 -include("efene.hrl").
 
-new_state() -> #{errors => [], warnings => [], attrs => [], level => 0}.
+new_state(Module) -> #{module => Module, errors => [], warnings => [], attrs => [], level => 0}.
 
-to_erl(Ast) -> ast_to_ast(Ast, new_state()).
+to_erl(Ast, Module) -> ast_to_ast(Ast, new_state(Module)).
 
 ast_to_ast(Nodes, State) when is_list(Nodes) -> ast_to_ast(Nodes, [], State);
 
@@ -87,6 +87,8 @@ ast_to_ast(?S(Line, map=Type, KVs), State) ->
     R = {Type, Line, Items},
     {R, State1};
 
+ast_to_ast(?T(Line, [?Atom(i)], ?V(_VLine, string, Str)), State) ->
+    info_to_ast(Line, Str, State);
 ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)],
               ?S(_MapLine, map, {Var, KVs})), State) ->
     {EVar, State1} = ast_to_ast(Var, State),
@@ -441,6 +443,16 @@ lc_to_ast(Line, Qualifiers, Body, State) ->
                       end,
     {Items, State2} = state_map(fun for_qualifier_to_ast/2, Qualifiers, State1),
     {lists:reverse(Items), EBody, State2}.
+
+info_to_ast(Line, "line", State) ->
+    {{integer, Line, Line}, State};
+info_to_ast(Line, "module", #{module := Module}=State) ->
+    {{atom, Line, Module}, State};
+info_to_ast(Line, Name, State) ->
+    State1 = add_error(State, unknown_compiler_info, Line,
+                       expected_got("\"line\" or \"module\"", Name)),
+    {{atom, Line, error}, State1}.
+
 
 add_error(#{errors:=Errors}=State, ErrType, Line, Detail) ->
     Error = {ErrType, Line, Detail},

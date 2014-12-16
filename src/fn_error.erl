@@ -22,6 +22,7 @@ to_string(Module, {Type, Line, Details}) ->
     DetailsStr = details_to_string(Details),
     io_lib:format("~p:~p:~p: ~s at line ~p: ~s~n", [Module, Line, Type, TypeStr, Line, DetailsStr]).
 
+type_to_string(unknown_compiler_info) -> <<"Unknown Compiler Info Name">>;
 type_to_string(case_mismatch) -> <<"Case Mismatch">>;
 type_to_string(bad_record_field_decl) -> <<"Bad Record Field Declaration">>;
 type_to_string(invalid_export) -> <<"Invalid Export">>;
@@ -33,6 +34,8 @@ type_to_string(Other) -> atom_to_list(Other).
 format_maybe_ast({ast, Ast}) -> fn_pp:print(Ast);
 format_maybe_ast(Other) -> io_lib:format("~p", [Other]).
 
+details_to_string({expected, Expected, got, Got}) when is_list(Expected) ->
+    io_lib:format("Expected ~s got ~s", [Expected, format_maybe_ast(Got)]);
 details_to_string({expected, Expected, got, Got}) ->
     io_lib:format("Expected ~p got ~s", [Expected, format_maybe_ast(Got)]);
 details_to_string(Other) -> format_maybe_ast(Other).
