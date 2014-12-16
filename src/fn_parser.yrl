@@ -155,6 +155,7 @@ expr -> e_send : '$1'.
 expr -> e_call_do : '$1'.
 expr -> e_call_thread : '$1'.
 
+body -> expr: ['$1'].
 body -> expr nl: ['$1'].
 body -> expr nl body : ['$1'|'$3'].
 
