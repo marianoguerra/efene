@@ -110,6 +110,7 @@ e_begin -> begin body end: {expr, line('$1'), 'begin', '$2'}.
 e_for -> for for_items colon body end : {expr, line('$1'), 'for', {'$2', '$4'}}.
 
 for_item -> e_bool : {filter, '$1'}.
+for_item -> literal larrow literal : {bgenerate, line('$2'), '$1', '$3'}.
 for_item -> literal in literal : {generate, line('$2'), '$1', '$3'}.
 
 for_items -> for_item : ['$1'].

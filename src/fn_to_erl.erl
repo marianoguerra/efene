@@ -135,17 +135,14 @@ ast_to_ast({welse, Line, Body}, State) ->
     R = {clause, Line, [], [{atom, Line, true}], EBody},
     {R, State1};
 
+ast_to_ast(?T(_TLine, [?Atom(b)], ?E(Line, 'for', {Qualifiers, Body})), State) ->
+    {Items, EBody, State1} = lc_to_ast(Line, Qualifiers, Body, State),
+    R = {bc, Line, EBody, Items},
+    {R, State1};
 ast_to_ast(?E(Line, 'for', {Qualifiers, Body}), State) ->
-    {EBody, State1} = case Body of
-                          [Node] -> ast_to_ast(Node, State);
-                          Nodes ->
-                              {EBlockBody, S1} = ast_to_ast(Nodes, State),
-                              Ri = {block, Line, EBlockBody},
-                              {Ri, S1}
-                      end,
-    {Items, State2} = state_map(fun for_qualifier_to_ast/2, Qualifiers, State1),
-    R = {lc, Line, EBody, lists:reverse(Items)},
-    {R, State2};
+    {Items, EBody, State1} = lc_to_ast(Line, Qualifiers, Body, State),
+    R = {lc, Line, EBody, Items},
+    {R, State1};
 
 ast_to_ast(?E(Line, 'try', {Body, Catch, After}), State) ->
     {EBody, State1} = ast_to_ast(Body, State),
@@ -388,6 +385,10 @@ to_tuple_clause({clause, Line, Matches, Guard, Body}) ->
     {clause, Line, [{tuple, Line, Matches}], Guard, Body}.
 
 for_qualifier_to_ast({filter, Ast}, State) -> ast_to_ast(Ast, State);
+for_qualifier_to_ast({bgenerate, Line, Left, Right}, State) ->
+    {ELeft, ERight, State1} = kv_to_ast(Left, Right, State),
+    R = {b_generate, Line, ELeft, ERight},
+    {R, State1};
 for_qualifier_to_ast({generate, Line, Left, Right}, State) ->
     {ELeft, ERight, State1} = kv_to_ast(Left, Right, State),
     R = {generate, Line, ELeft, ERight},
@@ -429,6 +430,17 @@ check_case_arities_equal([{cmatch, Line, {Cond, _When, _Body}}|T], State, Arity)
 check_case_arities_equal([{celse, _Line, _Body}|T], State, Arity) ->
     check_case_arities_equal(T, State, Arity);
 check_case_arities_equal([], State, _Arity) -> State.
+
+lc_to_ast(Line, Qualifiers, Body, State) ->
+    {EBody, State1} = case Body of
+                          [Node] -> ast_to_ast(Node, State);
+                              Nodes ->
+                              {EBlockBody, S1} = ast_to_ast(Nodes, State),
+                              Ri = {block, Line, EBlockBody},
+                              {Ri, S1}
+                      end,
+    {Items, State2} = state_map(fun for_qualifier_to_ast/2, Qualifiers, State1),
+    {lists:reverse(Items), EBody, State2}.
 
 add_error(#{errors:=Errors}=State, ErrType, Line, Detail) ->
     Error = {ErrType, Line, Detail},
