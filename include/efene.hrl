@@ -12,4 +12,5 @@
 -define(T(Line, Tag, Val), {tag, Line, Tag, Val}).
 
 -define(Atom(Val), ?V(_, atom, Val)).
+-define(Var(Val), ?V(_, var, Val)).
 
