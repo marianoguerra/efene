@@ -255,7 +255,9 @@ print_thread_calls(Calls, Indent) ->
 print_qualifier({filter, Filter}, Indent) ->
     [ind(Indent), print_single(Filter)];
 print_qualifier({generate, _Line, Left, Right}, Indent) ->
-    fmt("", "~s in ~s", false, Indent, [print_single(Left), print_single(Right)]).
+    fmt("", "~s in ~s", false, Indent, [print_single(Left), print_single(Right)]);
+print_qualifier({bgenerate, _Line, Left, Right}, Indent) ->
+    fmt("", "~s <- ~s", false, Indent, [print_single(Left), print_single(Right)]).
 
 print_qualifiers(Qs, _Indent) ->
     StrQs = lists:map(fun (Q) -> print_qualifier(Q, 0) end, Qs),
