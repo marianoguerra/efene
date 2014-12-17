@@ -92,6 +92,9 @@ ast_to_ast(?S(Line, map=Type, KVs), State) ->
 
 ast_to_ast(?T(Line, [?Atom(i)], ?V(_VLine, string, Str)), State) ->
     info_to_ast(Line, Str, State);
+ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)], ?Atom(Field)), State) ->
+    R = {record_index, Line, RecordName, {atom, Line, Field}},
+    {R, State};
 ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)],
               ?S(_MapLine, map, {Var, KVs})), State) ->
     {EVar, State1} = ast_to_ast(Var, State),
