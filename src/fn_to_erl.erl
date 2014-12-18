@@ -90,12 +90,12 @@ ast_to_ast(?S(Line, map=Type, KVs), State) ->
     R = {Type, Line, Items},
     {R, State1};
 
-ast_to_ast(?T(Line, [?Atom(i)], ?V(_VLine, string, Str)), State) ->
-    info_to_ast(Line, Str, State);
-ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)], ?Atom(Field)), State) ->
+ast_to_ast(?V(Line, tag, [?Atom(i), ?Atom(Name)]), State) ->
+    info_to_ast(Line, Name, State);
+ast_to_ast(?V(Line, tag, [?Atom(r), ?Atom(RecordName), ?Atom(Field)]), State) ->
     R = {record_index, Line, RecordName, {atom, Line, Field}},
     {R, State};
-ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName), ?Var(RecordVar)], ?Atom(Field)), State) ->
+ast_to_ast(?V(Line, tag, [?Atom(r), ?Atom(RecordName), ?Var(RecordVar), ?Atom(Field)]), State) ->
     R = {record_field, Line, {var, Line, RecordVar}, RecordName, {atom, Line, Field}},
     {R, State};
 ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)],
@@ -453,9 +453,9 @@ lc_to_ast(Line, Qualifiers, Body, State) ->
     {Items, State2} = state_map(fun for_qualifier_to_ast/2, Qualifiers, State1),
     {lists:reverse(Items), EBody, State2}.
 
-info_to_ast(Line, "line", State) ->
+info_to_ast(Line, line, State) ->
     {{integer, Line, Line}, State};
-info_to_ast(Line, "module", #{module := Module}=State) ->
+info_to_ast(Line, module, #{module := Module}=State) ->
     {{atom, Line, Module}, State};
 info_to_ast(Line, Name, State) ->
     State1 = add_error(State, unknown_compiler_info, Line,

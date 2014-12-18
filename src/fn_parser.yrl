@@ -184,8 +184,10 @@ raw_literal -> l_map_match : '$1'.
 raw_literal -> l_map_update : '$1'.
 raw_literal -> l_fn : '$1'.
 raw_literal -> l_fn_ref : '$1'.
-raw_literal -> open expr close : '$2'.
+
 raw_literal -> e_call : '$1'.
+raw_literal -> hash path : {val, line('$1'), tag, '$2'}.
+raw_literal -> open expr close : '$2'.
 
 l_atom -> atom : value('$1', atom).
 l_var -> var : value('$1', var).
