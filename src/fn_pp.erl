@@ -73,8 +73,11 @@ print(?T(_L, [?Atom(c)], ?V(_StrLine, string, [Char])), Str, Nl, Indent) ->
 print(?T(_L, [?Atom(atom)], ?V(_StrLine, string, AtomStr)), Str, Nl, Indent) ->
     fmt(Str, "#atom ~s", Nl, Indent, [escape_string(AtomStr)]);
 
+print(?V(_L, tag, Path), Str, Nl, Indent) ->
+    fmt(Str, "#!~s", Nl, Indent, [print_path(Path)]);
+
 print(?T(_L, Path, Val), Str, Nl, Indent) ->
-    fmt(Str, "#~s ~s", Nl, Indent, [print_path(Path), print_single(Val)]);
+    fmt(Str, "#~s ~s", Nl, Indent, [print_path(Path), print_single(Val, Indent + 1)]);
 
 print({kv, _L, Key, Val}, Str, Nl, Indent) ->
     fmt(Str, "~s: ~s", Nl, Indent, [print_single(Key), print_single(Val)]);

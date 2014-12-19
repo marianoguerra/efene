@@ -74,6 +74,10 @@ ast_to_ast(?E(_Line, call_thread, {InitialVal, Calls}), State) ->
                 end, InitialVal, Calls),
     ast_to_ast(Threaded, State);
 
+ast_to_ast(?T(Line, [?Var('_')], _), State) ->
+    R = {atom, Line, fn_compiler_ignore},
+    {R, State};
+
 ast_to_ast(?T(Line, [?Atom(b)], ?S(_LLine, list, TSList)), State) ->
     type_specifiers_to_ast(Line, TSList, State);
 

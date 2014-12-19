@@ -25,7 +25,7 @@ Nonterminals
     e_when e_when_cond e_when_else e_when_final_else e_when_elses
     e_begin
     e_for for_items for_item
-    expr body
+    raw_expr expr body
     attrs attr
     e_call e_call_do e_call_thread e_call_thread_funs call_val
     e_assign e_send
@@ -145,21 +145,23 @@ e_unary -> bool_not literal: unary_op('$1', '$2').
 e_unary -> add_op literal: unary_op('$1', '$2').
 e_unary -> literal : '$1'.
 
-expr -> e_switch : '$1'.
-expr -> e_when: '$1'.
-expr -> e_begin: '$1'.
-expr -> e_for: '$1'.
-expr -> e_receive: '$1'.
-expr -> e_try: '$1'.
-expr -> e_send : '$1'.
-expr -> e_call_do : '$1'.
-expr -> e_call_thread : '$1'.
+expr -> hash send_op path : {val, line('$1'), tag, '$3'}.
+expr -> hash path raw_expr: {tag, line('$1'), '$2', '$3'}.
+expr -> raw_expr : '$1'.
+
+raw_expr -> e_switch : '$1'.
+raw_expr -> e_when: '$1'.
+raw_expr -> e_begin: '$1'.
+raw_expr -> e_for: '$1'.
+raw_expr -> e_receive: '$1'.
+raw_expr -> e_try: '$1'.
+raw_expr -> e_send : '$1'.
+raw_expr -> e_call_do : '$1'.
+raw_expr -> e_call_thread : '$1'.
 
 body -> expr: ['$1'].
 body -> expr nl: ['$1'].
 body -> expr nl body : ['$1'|'$3'].
-
-literal -> hash path raw_literal : {tag, line('$1'), '$2', '$3'}.
 
 literal -> raw_literal : '$1'.
 
@@ -186,7 +188,6 @@ raw_literal -> l_fn : '$1'.
 raw_literal -> l_fn_ref : '$1'.
 
 raw_literal -> e_call : '$1'.
-raw_literal -> hash path : {val, line('$1'), tag, '$2'}.
 raw_literal -> open expr close : '$2'.
 
 l_atom -> atom : value('$1', atom).
