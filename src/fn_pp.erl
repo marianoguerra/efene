@@ -77,7 +77,7 @@ print(?V(_L, tag, Path), Str, Nl, Indent) ->
     fmt(Str, "#!~s", Nl, Indent, [print_path(Path)]);
 
 print(?T(_L, Path, Val), Str, Nl, Indent) ->
-    fmt(Str, "#~s ~s", Nl, Indent, [print_path(Path), print_single(Val, Indent + 1)]);
+    fmt(Str, "#~s ~s", Nl, Indent, [print_path(Path), print_single(Val, Indent)]);
 
 print({kv, _L, Key, Val}, Str, Nl, Indent) ->
     fmt(Str, "~s: ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
