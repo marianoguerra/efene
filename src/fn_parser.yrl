@@ -201,8 +201,9 @@ l_fn -> fn e_case end: expr_raw('$2', fn).
 l_fn -> fn l_var e_case end: {expr, line('$1'), fn, {'$2', '$3'}}.
 l_fn_ref -> fn colon call_val colon l_integer : {val, line('$1'), fn_ref, {'$3', '$5'}}.
 
-l_tuple -> hash open_map close_map : seq_value([], line('$1'), tuple).
-l_tuple -> open_map seq_items close_map: seq_value('$2', line('$1'), tuple).
+l_tuple -> open close : seq_value([], line('$1'), tuple).
+l_tuple -> open e_assign sep close : seq_value(['$2'], line('$1'), tuple).
+l_tuple -> open e_assign sep seq_items close: seq_value(['$2'|'$4'], line('$1'), tuple).
 
 l_list -> open_list close_list : seq_value([], line('$1'), list).
 l_list -> open_list seq_items close_list : seq_value('$2', line('$1'), list).

@@ -86,9 +86,11 @@ print({kvmatch, _L, Key, Val}, Str, Nl, Indent) ->
     fmt(Str, "~s := ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
 
 print(?S(_L, tuple, []), Str, Nl, Indent)   ->
-    fmt(Str, "#{}", Nl, Indent, []);
+    fmt(Str, "()", Nl, Indent, []);
+print(?S(_L, tuple, [Item]), Str, Nl, Indent)   ->
+    fmt(Str, "(~s,)", Nl, Indent, [print_single(Item)]);
 print(?S(_L, tuple, Val), Str, Nl, Indent)   ->
-    fmt(Str, "{~s}", Nl, Indent, [print_seq(Val)]);
+    fmt(Str, "(~s)", Nl, Indent, [print_seq(Val)]);
 print(?S(_L, cons, {H, T}), Str, Nl, Indent) ->
     fmt(Str, "[~s::~s]", Nl, Indent, [print_single(H), print_single(T)]);
 
