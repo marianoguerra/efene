@@ -94,11 +94,11 @@ print(?S(_L, tuple, Val), Str, Nl, Indent)   ->
 print(?S(_L, cons, {H, T}), Str, Nl, Indent) ->
     fmt(Str, "[~s::~s]", Nl, Indent, [print_single(H), print_single(T)]);
 
-print(?V(_L, fn_ref, {{Mod, Fun}, Arity}), Str, Nl, Indent) ->
-    fmt(Str, "fn:~s.~s:~s", Nl, Indent, [print_single(Mod), print_single(Fun), print_single(Arity)]);
+print(?V(_L, fn_ref, {[Mod, Fun], Arity}), Str, Nl, Indent) ->
+    fmt(Str, "fn ~s.~s:~s", Nl, Indent, [print_single(Mod), print_single(Fun), print_single(Arity)]);
 
-print(?V(_L, fn_ref, {Fun, Arity}), Str, Nl, Indent) ->
-    fmt(Str, "fn:~s:~s", Nl, Indent, [print_single(Fun), print_single(Arity)]);
+print(?V(_L, fn_ref, {[Fun], Arity}), Str, Nl, Indent) ->
+    fmt(Str, "fn ~s:~s", Nl, Indent, [print_single(Fun), print_single(Arity)]);
 
 print(?E(_L, 'when', Clauses), Str, _Nl, Indent) ->
     fmt(Str, "when ~s~send", true, Indent, [print_wclauses(Clauses, Indent),
@@ -161,11 +161,11 @@ print(?E(_L, fn, {?V(_VLine, var, _RawName)=Name, ?E(_CLine, 'case', Cases)}), S
     fmt(Str, "fn ~s~n~s~send", true, Indent,
         [print_single(Name), print_clauses(Cases, Nl, Indent + 1), ind(Indent)]);
 
-print(?E(_L, call, {{Mod, Fun}, Args}), Str, Nl, Indent) ->
+print(?E(_L, call, {[Mod, Fun], Args}), Str, Nl, Indent) ->
     fmt(Str, "~s.~s(~s)", Nl, Indent,
         [print_single(Mod), print_single(Fun), print_seq(Args)]);
 
-print(?E(_L, call, {Fun, Args}), Str, Nl, Indent) ->
+print(?E(_L, call, {[Fun], Args}), Str, Nl, Indent) ->
     fmt(Str, "~s(~s)", Nl, Indent, [print_single(Fun), print_seq(Args)]);
 
 print(?O(_L, Op, Left, Right), Str, Nl, Indent) ->

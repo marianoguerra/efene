@@ -27,7 +27,7 @@ Nonterminals
     e_for for_items for_item
     raw_expr expr body
     attrs attr
-    e_call e_call_do e_call_thread e_call_thread_funs call_val
+    e_call e_call_do e_call_thread e_call_thread_funs
     e_assign e_send
     e_bool_and e_comp e_concat e_add e_mul e_unary
     path path_item.
@@ -199,7 +199,7 @@ l_string -> string : value('$1', string).
 l_bstring -> bstring : value('$1', bstring).
 l_fn -> fn e_case end: expr_raw('$2', fn).
 l_fn -> fn l_var e_case end: {expr, line('$1'), fn, {'$2', '$3'}}.
-l_fn_ref -> fn colon call_val colon l_integer : {val, line('$1'), fn_ref, {'$3', '$5'}}.
+l_fn_ref -> fn path colon l_integer : {val, line('$1'), fn_ref, {'$2', '$4'}}.
 
 l_tuple -> open close : seq_value([], line('$1'), tuple).
 l_tuple -> open e_assign sep close : seq_value(['$2'], line('$1'), tuple).
@@ -255,15 +255,8 @@ attr -> at path arrow literal : make_attr(line('$1'), '$2', noparams, '$4').
 attr -> at path open seq_items close : make_attr(line('$1'), '$2', '$4', noresult).
 attr -> at path open seq_items close arrow literal : make_attr(line('$1'), '$2', '$4', '$7').
 
-call_val -> l_atom : '$1'.
-call_val -> l_var : '$1'.
-call_val -> l_atom dot l_atom : {'$1', '$3'}.
-call_val -> l_atom dot l_var : {'$1', '$3'}.
-call_val -> l_var dot l_atom : {'$1', '$3'}.
-call_val -> l_var dot l_var : {'$1', '$3'}.
-
-e_call -> call_val open close : {expr, line('$2'), call, {'$1', []}}.
-e_call -> call_val open seq_items close : {expr, line('$2'), call, {'$1', '$3'}}.
+e_call -> path open close : {expr, line('$2'), call, {'$1', []}}.
+e_call -> path open seq_items close : {expr, line('$2'), call, {'$1', '$3'}}.
 
 e_call_do -> e_call larrow l_fn : {expr, line('$2'), call_do, {first, '$1', '$3'}}.
 e_call_do -> e_call larrowend l_fn : {expr, line('$2'), call_do, {last, '$1', '$3'}}.

@@ -126,11 +126,20 @@ ast_to_ast(?S(Line, cons=Type, {H, T}), State) ->
     R = {Type, Line, EH, ET},
     {R, State2};
 
-ast_to_ast(?V(Line, fn_ref, {{Mod, Fun}, Arity}), State) ->
-    R = {'fun', Line, {function, unwrap(Mod), unwrap(Fun), unwrap(Arity)}},
-    {R, State};
+ast_to_ast(?V(Line, fn_ref, {[Mod, Fun], Arity}), State) ->
+    {EMod, State1} = ast_to_ast(Mod, State),
+    {EFun, State2} = ast_to_ast(Fun, State1),
+    {EArity, State3} = ast_to_ast(Arity, State2),
+    R = {'fun', Line, {function, EMod, EFun, EArity}},
+    {R, State3};
 
-ast_to_ast(?V(Line, fn_ref, {Fun, Arity}), State) ->
+ast_to_ast(?V(Line, fn_ref, {[?Var(Fun)=FunAst], Arity}), State) ->
+    State1 = add_error(State, invalid_fn_ref, Line,
+              expected_got("atom", {ast, FunAst})),
+    R = {'fun', Line, {function, Fun, unwrap(Arity)}},
+    {R, State1};
+
+ast_to_ast(?V(Line, fn_ref, {[Fun], Arity}), State) ->
     R = {'fun', Line, {function, unwrap(Fun), unwrap(Arity)}},
     {R, State};
 
@@ -224,14 +233,14 @@ ast_to_ast(?E(Line, fn, {?V(_VLine, var, FName), ?E(_CLine, 'case', Cases)}), St
     R = {named_fun, Line, FName, EFixedCases},
     {R, State1};
 
-ast_to_ast(?E(Line, call, {{Mod, Fun}, Args}), State) ->
+ast_to_ast(?E(Line, call, {[Mod, Fun], Args}), State) ->
     {EMod, State1} = ast_to_ast(Mod, State),
     {EFun, State2} = ast_to_ast(Fun, State1),
     {EArgs, State3} = ast_to_ast(Args, State2),
     R = {call, Line, {remote, Line, EMod, EFun}, EArgs},
     {R, State3};
 
-ast_to_ast(?E(Line, call, {Fun, Args}), State) ->
+ast_to_ast(?E(Line, call, {[Fun], Args}), State) ->
     {EFun, State1} = ast_to_ast(Fun, State),
     {EArgs, State2} = ast_to_ast(Args, State1),
     R = {call, Line, EFun, EArgs},
