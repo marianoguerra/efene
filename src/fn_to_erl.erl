@@ -105,7 +105,7 @@ ast_to_ast(?V(Line, tag, [?Atom(r), ?Atom(RecordName), ?Var(RecordVar), ?Atom(Fi
 ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)],
               ?S(_MapLine, map, {Var, KVs})), State) ->
     {EVar, State1} = ast_to_ast(Var, State),
-    {Items, State2} = lists:map(fun to_record_field/2, KVs, State1),
+    {Items, State2} = state_map(fun to_record_field/2, KVs, State1),
     R = {record, Line, EVar, RecordName, Items},
     {R, State2};
 ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), State) ->
