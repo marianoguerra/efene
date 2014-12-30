@@ -246,6 +246,12 @@ ast_to_ast(?E(Line, call, {[Fun], Args}), State) ->
     R = {call, Line, EFun, EArgs},
     {R, State2};
 
+ast_to_ast(?O(Line, '=', Left, Right), State) ->
+    {ELeft, State1} = ast_to_ast(Left, State),
+    {ERight, State2} = ast_to_ast(Right, State1),
+    R = {match, Line, ELeft, ERight},
+    {R, State2};
+
 ast_to_ast(?O(Line, Op, Left, Right), State) ->
     {ELeft, State1} = ast_to_ast(Left, State),
     {ERight, State2} = ast_to_ast(Right, State1),
@@ -308,8 +314,7 @@ map_op('>=') -> '>=';
 map_op('==') -> '==';
 map_op('===') -> '=:=';
 map_op('!=') -> '/=';
-map_op('!==') -> '=/=';
-map_op('=') -> '='.
+map_op('!==') -> '=/='.
 
 list_to_cons_list(Line, Val, State) ->
     list_to_cons_list_r(Line, lists:reverse(Val), {nil, Line}, State).
