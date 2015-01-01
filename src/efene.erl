@@ -18,7 +18,7 @@
 
 read_file(Path) ->
     case file:read_file(Path) of
-        {ok, Content} -> {ok, binary_to_list(Content)};
+        {ok, Content} -> {ok, unicode:characters_to_list(Content, utf8)};
         Other -> Other
     end.
 
