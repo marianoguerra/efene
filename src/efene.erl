@@ -210,6 +210,8 @@ clean_tokens([{nl, _, _}, {arrow, _, _}=H|T], Accum) -> clean_tokens([H|T], Accu
 clean_tokens([{nl, _, _}, {arrowend, _, _}=H|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{nl, _, _}, {larrow, _, _}=H|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{nl, _, _}, {larrowend, _, _}=H|T], Accum) -> clean_tokens([H|T], Accum);
+% remove duplicated endlines
+clean_tokens([{nl, _, _}, {nl, _, _}=H|T], Accum) -> clean_tokens([H|T], Accum);
 % remove last endline
 clean_tokens([{nl, _, _}], Accum) -> clean_tokens([], Accum);
 clean_tokens([H|T], Accum) -> clean_tokens(T, [H|Accum]).
