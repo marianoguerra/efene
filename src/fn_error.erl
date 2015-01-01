@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 -module(fn_error).
--export([to_string/2]).
+-export([to_string/2, normalize/1]).
 
 to_string(Module, Errors) when is_list(Errors) ->
     lists:map(fun (Error) -> to_string(Module, Error) end, Errors);
@@ -42,3 +42,13 @@ details_to_string({expected, Expected, got, Got}) when is_list(Expected) ->
 details_to_string({expected, Expected, got, Got}) ->
     io_lib:format("Expected ~p got ~s", [Expected, format_maybe_ast(Got)]);
 details_to_string(Other) -> format_maybe_ast(Other).
+
+normalize({error, {Line, fn_parser, Reason}}) ->
+    io_lib:format("~p: parse error: '~s'", [Line, Reason]);
+normalize({error, {Line, fn_lexer, {illegal, Reason}}, _}) ->
+    io_lib:format("~p: illegal char ~p", [Line, Reason]);
+normalize({error, {efene, _Module, Reason}}) ->
+    io_lib:format("~s", [Reason]);
+normalize({error, Other}) ->
+    io_lib:format("~p", [Other]).
+

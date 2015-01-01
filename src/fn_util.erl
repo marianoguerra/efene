@@ -18,14 +18,14 @@
 -include("efene.hrl").
 
 get_fn_attrs(#{attrs:=Attrs}) ->
-    lists:filter(fun ({fn, _Line, _Fn, _FnAttrs}) -> true;
+    lists:filter(fun ({efene, _Line, _Fn, _FnAttrs}) -> true;
                      (_) -> false end, Attrs).
 
 
 is_public_attr({attr, _, [?V(_, atom, public)], noparams, noresult}) -> true;
 is_public_attr(_) -> false.
 
-is_public_fn({fn, _Line, _Fn, Attrs}) ->
+is_public_fn({efene, _Line, _Fn, Attrs}) ->
     lists:any(fun is_public_attr/1, Attrs);
 is_public_fn(_) -> false.
 
@@ -38,5 +38,5 @@ get_export_attr_ast(State) ->
 
 get_export_attr_ast(State, Line) ->
     PublicFns = get_exported_fns(State),
-    Exports = lists:map(fun ({fn, _Line, Fn, _Attrs}) -> Fn end, PublicFns),
+    Exports = lists:map(fun ({efene, _Line, Fn, _Attrs}) -> Fn end, PublicFns),
     {attribute, Line, export, Exports}.

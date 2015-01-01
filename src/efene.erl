@@ -117,12 +117,9 @@ str_to_erl_ast(String, Module) ->
 
 print({ok, Data}) ->
     print(Data);
-print({error, {Line, fn_parser, Reason}}) ->
-    io:format("error:~p: parse error: '~s'~n", [Line, Reason]);
-print({error, {Line, fn_lexer, {illegal, Reason}}, _}) ->
-    io:format("error:~p: illegal char ~p~n", [Line, Reason]);
-print({error, {fn, _Module, Reason}}) ->
-    io:format("~s", [Reason]);
+print(Error) when is_tuple(Error) andalso element(1, Error) == error ->
+    Reason = fn_error:normalize(Error),
+    io:format("error:~s~n", [Reason]);
 print(Data) ->
     try io:format("~s~n", [Data]) catch
         _:_ -> io:format("~p~n", [Data])
@@ -241,7 +238,7 @@ to_file(Data, Path, Mode) ->
 format_errors_or(_Module, #{errors:=[]}, Fn) -> Fn();
 format_errors_or(Module, #{errors:=Errors}, _Fn) ->
     ErrorsFirstToLast = lists:reverse(Errors),
-    {error, {fn, Module, fn_error:to_string(Module, ErrorsFirstToLast)}}.
+    {error, {efene, Module, fn_error:to_string(Module, ErrorsFirstToLast)}}.
 
 pp(Code) ->
     case str_to_ast(Code) of
