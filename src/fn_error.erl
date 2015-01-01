@@ -45,8 +45,10 @@ details_to_string(Other) -> format_maybe_ast(Other).
 
 normalize({error, {Line, fn_parser, Reason}}) ->
     io_lib:format("~p: parse error: '~s'", [Line, Reason]);
-normalize({error, {Line, fn_lexer, {illegal, Reason}}, _}) ->
+normalize({error, {Line, fn_lexer, {illegal, Reason}}}) ->
     io_lib:format("~p: illegal char ~p", [Line, Reason]);
+normalize({error, {Line, fn_lexer, {eof, _}}}) ->
+    io_lib:format("~p: end of file", [Line]);
 normalize({error, {efene, _Module, Reason}}) ->
     io_lib:format("~s", [Reason]);
 normalize({error, Other}) ->

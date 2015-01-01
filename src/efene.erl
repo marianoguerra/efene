@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 -module(efene).
--export([run/0, run/1, compile/2]).
+-export([run/0, run/1, compile/2, to_code/1]).
 
 read_file(Path) ->
     case file:read_file(Path) of
@@ -95,10 +95,11 @@ str_to_raw_lex(String) -> fn_lexer:string(String).
 
 str_to_lex(String) ->
     case fn_lexer:string(String) of
-        {ok, Tokens, NewLine} ->
+        {ok, Tokens, Endline} ->
             CleanTokens = clean_tokens(Tokens),
-            {ok, CleanTokens, NewLine};
-        Other -> Other
+            {ok, CleanTokens, Endline};
+        {eof, Endline} -> {error, {Endline, fn_lexer, {eof, Endline}}};
+        {error, Error} -> {error, Error}
     end.
 
 str_to_ast(Str) ->
@@ -117,7 +118,7 @@ str_to_erl_ast(String, Module) ->
 
 print({ok, Data}) ->
     print(Data);
-print(Error) when is_tuple(Error) andalso element(1, Error) == error ->
+print({error, _}=Error) ->
     Reason = fn_error:normalize(Error),
     io:format("error:~s~n", [Reason]);
 print(Data) ->
