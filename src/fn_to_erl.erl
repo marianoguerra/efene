@@ -318,7 +318,7 @@ list_to_cons_list_r(Line, [H|T], Cons, State) ->
     {EH, State1} = ast_to_ast(H, State),
     list_to_cons_list_r(Line, T, {cons, Line, EH, Cons}, State1).
 
-ast_to_export_fun(?O(_Line, '/', ?V(_ALine, atom, FunName), ?V(_ArLine, integer, Arity)), State) ->
+ast_to_export_fun(?O(_Line, '/', ?Atom(FunName), ?V(_ArLine, integer, Arity)), State) ->
     R = {FunName, Arity},
     {R, State};
 ast_to_export_fun(Ast, State) ->

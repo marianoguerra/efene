@@ -69,7 +69,8 @@ At          = @
 
 % string stuff
 String      = "(\\\^.|\\.|[^\"])*"
-BString      = '(\\\^.|\\.|[^\'])*'
+BString     = '(\\\^.|\\.|[^\'])*'
+AtomString  = `(\\\^.|\\.|[^\`])*`
 
 % identifiers and atoms
 Identifier  = [A-Z\_][a-zA-Z0-9\_]*
@@ -137,6 +138,7 @@ Rules.
 % identifiers and atoms
 {Identifier}             : make_token(var, TokenLine, TokenChars).
 {Atom}                   : {token, atom_or_identifier(TokenChars, TokenLine)}.
+{AtomString}             : build_atom_string(TokenChars, TokenLine, TokenLen).
 
 % spaces, tabs and new lines
 {Endls}                 : make_token(nl, TokenLine, endls(TokenChars)).
@@ -180,6 +182,10 @@ is_reserved("in")      -> true;
 is_reserved("begin")   -> true;
 is_reserved("end")     -> true;
 is_reserved(_)         -> false.
+
+build_atom_string(Chars, Line, Len) ->
+  String = unescape_string(lists:sublist(Chars, 2, Len - 2), Line),
+  {token, {atom, Line, list_to_atom(String)}}.
 
 build_string(Type, Chars, Line, Len) ->
   String = unescape_string(lists:sublist(Chars, 2, Len - 2), Line),
