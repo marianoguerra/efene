@@ -258,8 +258,8 @@ attr -> at path open seq_items close arrow literal : make_attr(line('$1'), '$2',
 e_call -> path open close : {expr, line('$2'), call, {'$1', []}}.
 e_call -> path open seq_items close : {expr, line('$2'), call, {'$1', '$3'}}.
 
-e_call_do -> e_call larrow l_fn : {expr, line('$2'), call_do, {first, '$1', '$3'}}.
-e_call_do -> e_call larrowend l_fn : {expr, line('$2'), call_do, {last, '$1', '$3'}}.
+e_call_do -> e_call larrow l_fn : {expr, line('$2'), call_do, {last, '$1', '$3'}}.
+e_call_do -> e_call larrowend l_fn : {expr, line('$2'), call_do, {first, '$1', '$3'}}.
 
 e_call_thread -> literal e_call_thread_funs : {expr, line('$1'), call_thread, {'$1', '$2'}}.
 
