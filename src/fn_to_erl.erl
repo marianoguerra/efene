@@ -1,11 +1,11 @@
 %% Copyright 2015 Mariano Guerra
-%% 
+%%
 %% Licensed under the Apache License, Version 2.0 (the "License");
 %% you may not use this file except in compliance with the License.
 %% You may obtain a copy of the License at
-%% 
+%%
 %%     http://www.apache.org/licenses/LICENSE-2.0
-%% 
+%%
 %% Unless required by applicable law or agreed to in writing, software
 %% distributed under the License is distributed on an "AS IS" BASIS,
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,14 +53,15 @@ ast_to_ast(Ast, #{level := 0}=State) ->
     R = {atom, Line, error},
     {R, State1};
 
-ast_to_ast(?E(Line, call_do, {Place, Call, Fun}), State) ->
-    {{call, Line, FCall, Args}, State1} = ast_to_ast(Call, State),
-    {EFun, State2} = ast_to_ast(Fun, State1),
-    AllArgs = case Place of
-                  first -> [EFun|Args];
-                  last  -> Args ++ [EFun]
-              end,
-    {{call, Line, FCall, AllArgs}, State2};
+ast_to_ast(?E(_Line, call_do, {Place, Call, Fun}), State) ->
+    with_childs(State, Call, Fun,
+                fun ({call, CallLine, FCall, Args}, EFun) ->
+                        AllArgs = case Place of
+                                      first -> [EFun|Args];
+                                      last  -> Args ++ [EFun]
+                                  end,
+                        {call, CallLine, FCall, AllArgs}
+                end);
 
 ast_to_ast(?E(_Line, call_thread, {InitialVal, Calls}), State) ->
     Threaded = lists:foldl(fun (Current, Accum) ->
@@ -121,17 +122,13 @@ ast_to_ast(?S(Line, tuple=Type, Val), State)   ->
     {EVal, State1} = ast_to_ast(Val, State),
     {{Type, Line, EVal}, State1};
 ast_to_ast(?S(Line, cons=Type, {H, T}), State) ->
-    {EH, State1} = ast_to_ast(H, State),
-    {ET, State2} = ast_to_ast(T, State1),
-    R = {Type, Line, EH, ET},
-    {R, State2};
+    with_childs(State, H, T, fun (EH, ET) -> {Type, Line, EH, ET} end);
 
 ast_to_ast(?V(Line, fn_ref, {[Mod, Fun], Arity}), State) ->
-    {EMod, State1} = ast_to_ast(Mod, State),
-    {EFun, State2} = ast_to_ast(Fun, State1),
-    {EArity, State3} = ast_to_ast(Arity, State2),
-    R = {'fun', Line, {function, EMod, EFun, EArity}},
-    {R, State3};
+    with_childs(State, Mod, Fun, Arity,
+                fun (EMod, EFun, EArity) ->
+                        {'fun', Line, {function, EMod, EFun, EArity}}
+                end);
 
 ast_to_ast(?V(Line, fn_ref, {[?Var(Fun)=FunAst], Arity}), State) ->
     State1 = add_error(State, invalid_fn_ref, Line,
@@ -149,10 +146,9 @@ ast_to_ast(?E(Line, 'when', Clauses), State) ->
     {R, State1};
 
 ast_to_ast({wcond, Line, Cond, Body}, State) ->
-    {ECond, State1} = ast_to_ast(Cond, State),
-    {EBody, State2} = ast_to_ast(Body, State1),
-    R = {clause, Line, [], ECond, EBody},
-    {R, State2};
+    with_childs(State, Cond, Body, fun (ECond, EBody) ->
+                                           {clause, Line, [], ECond, EBody}
+                                   end);
 
 ast_to_ast({welse, Line, Body}, State) ->
     {EBody, State1} = ast_to_ast(Body, State),
@@ -190,19 +186,18 @@ ast_to_ast(?E(Line, 'receive', {?E(_CLine, 'case', Clauses), noafter}), State) -
     {R, State1};
 
 ast_to_ast(?E(Line, 'receive', {?E(_CLine, 'case', Clauses), {After, AfterBody}}), State) ->
-    {EClauses, State1} = ast_to_ast(Clauses, State),
-    TupleClauses = lists:map(fun to_tuple_clause/1, EClauses),
-    {EAfter, State2} = ast_to_ast(After, State1),
-    {EAfterBody, State3} = ast_to_ast(AfterBody, State2),
-    R = {'receive', Line, TupleClauses, EAfter, EAfterBody},
-    {R, State3};
+    with_childs(State, Clauses, After, AfterBody,
+                fun(EClauses, EAfter, EAfterBody) ->
+                        TupleClauses = lists:map(fun to_tuple_clause/1, EClauses),
+                        {'receive', Line, TupleClauses, EAfter, EAfterBody}
+                end);
 
 ast_to_ast(?E(Line, switch, {Value, ?E(_CaseLine, 'case', Clauses)}), State) ->
-    {EClauses, State1} = ast_to_ast(Clauses, State),
-    TupleClauses = lists:map(fun to_tuple_clause/1, EClauses),
-    {EValue, State2} = ast_to_ast(Value, State1),
-    R = {'case', Line, EValue, TupleClauses},
-    {R, State2};
+    with_childs(State, Clauses, Value,
+                fun(EClauses, EValue) ->
+                        TupleClauses = lists:map(fun to_tuple_clause/1, EClauses),
+                        {'case', Line, EValue, TupleClauses}
+                end);
 
 ast_to_ast({cmatch, Line, {Conds, When, Body}}, State) ->
     {EConds, State1} = ast_to_ast(Conds, State),
@@ -234,29 +229,22 @@ ast_to_ast(?E(Line, fn, {?V(_VLine, var, FName), ?E(_CLine, 'case', Cases)}), St
     {R, State1};
 
 ast_to_ast(?E(Line, call, {[Mod, Fun], Args}), State) ->
-    {EMod, State1} = ast_to_ast(Mod, State),
-    {EFun, State2} = ast_to_ast(Fun, State1),
-    {EArgs, State3} = ast_to_ast(Args, State2),
-    R = {call, Line, {remote, Line, EMod, EFun}, EArgs},
-    {R, State3};
+    with_childs(State, Mod, Fun, Args,
+                fun (EMod, EFun, EArgs) ->
+                        {call, Line, {remote, Line, EMod, EFun}, EArgs}
+                end);
 
 ast_to_ast(?E(Line, call, {[Fun], Args}), State) ->
-    {EFun, State1} = ast_to_ast(Fun, State),
-    {EArgs, State2} = ast_to_ast(Args, State1),
-    R = {call, Line, EFun, EArgs},
-    {R, State2};
+    with_childs(State, Fun, Args,
+                fun (EFun, EArgs) -> {call, Line, EFun, EArgs} end);
 
 ast_to_ast(?O(Line, '=', Left, Right), State) ->
-    {ELeft, State1} = ast_to_ast(Left, State),
-    {ERight, State2} = ast_to_ast(Right, State1),
-    R = {match, Line, ELeft, ERight},
-    {R, State2};
+    with_childs(State, Left, Right,
+                fun (ELeft, ERight) -> {match, Line, ELeft, ERight} end);
 
 ast_to_ast(?O(Line, Op, Left, Right), State) ->
-    {ELeft, State1} = ast_to_ast(Left, State),
-    {ERight, State2} = ast_to_ast(Right, State1),
-    R = {op, Line, map_op(Op), ELeft, ERight},
-    {R, State2};
+    with_childs(State, Left, Right,
+                fun (ELeft, ERight) -> {op, Line, map_op(Op), ELeft, ERight} end);
 
 ast_to_ast(?V(Line, atom=Type, Val), State)    -> {{Type, Line, Val}, State};
 ast_to_ast(?V(Line, integer=Type, Val), State) -> {{Type, Line, Val}, State};
@@ -373,21 +361,19 @@ when_to_ast(When, State) ->
     ast_to_ast(When, State).
 
 kv_to_ast(Key, Val, State) ->
-    {EKey, State1} = ast_to_ast(Key, State),
-    {EVal, State2} = ast_to_ast(Val, State1),
-    {EKey, EVal, State2}.
+    with_childs(State, Key, Val, fun (EKey, EVal) -> {EKey, EVal} end).
 
 to_map_field({kv, Line, Key, Val}, State) ->
-    {EKey, EVal, State1} = kv_to_ast(Key, Val, State),
+    {{EKey, EVal}, State1} = kv_to_ast(Key, Val, State),
     R = {map_field_assoc, Line, EKey, EVal},
     {R, State1};
 to_map_field({kvmatch, Line, Key, Val}, State) ->
-    {EKey, EVal, State1} = kv_to_ast(Key, Val, State),
+    {{EKey, EVal}, State1} = kv_to_ast(Key, Val, State),
     R = {map_field_exact, Line, EKey, EVal},
     {R, State1}.
 
 to_record_field({kv, Line, Key, Val}, State) ->
-    {EKey, EVal, State1} = kv_to_ast(Key, Val, State),
+    {{EKey, EVal}, State1} = kv_to_ast(Key, Val, State),
     R = {record_field, Line, EKey, EVal},
     {R, State1}.
 
@@ -415,11 +401,11 @@ to_tuple_clause({clause, Line, Matches, Guard, Body}) ->
 
 for_qualifier_to_ast({filter, Ast}, State) -> ast_to_ast(Ast, State);
 for_qualifier_to_ast({bgenerate, Line, Left, Right}, State) ->
-    {ELeft, ERight, State1} = kv_to_ast(Left, Right, State),
+    {{ELeft, ERight}, State1} = kv_to_ast(Left, Right, State),
     R = {b_generate, Line, ELeft, ERight},
     {R, State1};
 for_qualifier_to_ast({generate, Line, Left, Right}, State) ->
-    {ELeft, ERight, State1} = kv_to_ast(Left, Right, State),
+    {{ELeft, ERight}, State1} = kv_to_ast(Left, Right, State),
     R = {generate, Line, ELeft, ERight},
     {R, State1}.
 
@@ -566,3 +552,14 @@ add_error(#{errors:=Errors}=State, ErrType, Line, Detail) ->
     State#{errors => NewErrors}.
 
 unwrap(?V(_Line, _Type, Val)) -> Val.
+
+with_childs(State, Ast1, Ast2, Fun) ->
+    {EAst1, State1} = ast_to_ast(Ast1, State),
+    {EAst2, State2} = ast_to_ast(Ast2, State1),
+    {Fun(EAst1, EAst2), State2}.
+
+with_childs(State, Ast1, Ast2, Ast3, Fun) ->
+    {EAst1, State1} = ast_to_ast(Ast1, State),
+    {EAst2, State2} = ast_to_ast(Ast2, State1),
+    {EAst3, State3} = ast_to_ast(Ast3, State2),
+    {Fun(EAst1, EAst2, EAst3), State3}.
