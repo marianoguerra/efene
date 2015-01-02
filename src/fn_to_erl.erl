@@ -23,11 +23,15 @@ to_erl(Ast, Module) -> ast_to_ast(Ast, new_state(Module)).
 
 ast_to_ast(Nodes, State) when is_list(Nodes) -> ast_to_ast(Nodes, [], State);
 
-ast_to_ast({attr, Line, [?V(_ELine, atom, export)], Params, noresult}, #{level := 0}=State) ->
+ast_to_ast({attr, Line, [?Atom(export)], Params, noresult}, #{level := 0}=State) ->
     {EFuns, State1} = state_map(fun ast_to_export_fun/2, Params, State),
     R = {attribute, Line, export, EFuns},
     {R, State1};
 
+ast_to_ast({attr, Line, [?Atom(AttrName)], [?Atom(BName)], noresult}, #{level := 0}=State) 
+        when AttrName == behavior orelse AttrName == behaviour ->
+    R = {attribute, Line, AttrName, BName},
+    {R, State};
 ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}=State) ->
     [FirstCase|_TCases] = Cases,
     {cmatch, _FCLine, {FCCond, _FCWhen, _FCBody}} = FirstCase,
