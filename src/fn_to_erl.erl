@@ -152,7 +152,7 @@ ast_to_ast({wcond, Line, Cond, Body}, State) ->
 
 ast_to_ast({welse, Line, Body}, State) ->
     {EBody, State1} = ast_to_ast(Body, State),
-    R = {clause, Line, [], [{atom, Line, true}], EBody},
+    R = {clause, Line, [], [[{atom, Line, true}]], EBody},
     {R, State1};
 
 ast_to_ast(?T(_TLine, [?Atom(b)], ?E(Line, 'for', {Qualifiers, Body})), State) ->
