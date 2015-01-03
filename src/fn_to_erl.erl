@@ -304,9 +304,9 @@ map_op('<=') -> '=<';
 map_op('>') -> '>';
 map_op('>=') -> '>=';
 map_op('==') -> '==';
-map_op('===') -> '=:=';
+map_op('is') -> '=:=';
 map_op('!=') -> '/=';
-map_op('!==') -> '=/='.
+map_op('isnt') -> '=/='.
 
 list_to_cons_list(Line, Val, State) ->
     list_to_cons_list_r(Line, lists:reverse(Val), {nil, Line}, State).

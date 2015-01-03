@@ -150,10 +150,10 @@ op_ne(Left, Right) -> op_ne(1, Left, Right).
 op_ne(Line, Left, Right) -> op('!=', Line, Left, Right).
 
 op_eeq(Left, Right) -> op_eeq(1, Left, Right).
-op_eeq(Line, Left, Right) -> op('===', Line, Left, Right).
+op_eeq(Line, Left, Right) -> op('is', Line, Left, Right).
 
 op_ene(Left, Right) -> op_ene(1, Left, Right).
-op_ene(Line, Left, Right) -> op('!==', Line, Left, Right).
+op_ene(Line, Left, Right) -> op('isnt', Line, Left, Right).
 
 
 op_not(Val) -> op_not(1, Val).

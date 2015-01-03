@@ -32,7 +32,7 @@ Bool        = (true|false)
 % arithmetic operators
 Add         = (\+|-)
 Mul         = (\*|//|/|%)
-Comp        = (<|<=|==|===|>=|>|!=|!==)
+Comp        = (<|<=|==|is|>=|>|!=|isnt)
 Assign      = =
 ColonEq     = :=
 

@@ -296,9 +296,9 @@ precedence('<=') -> {left, 700};
 precedence('>') -> {left, 700};
 precedence('>=') -> {left, 700};
 precedence('==') -> {left, 700};
-precedence('===') -> {left, 700};
+precedence('is') -> {left, 700};
 precedence('!=') -> {left, 700};
-precedence('!==') -> {left, 700};
+precedence('isnt') -> {left, 700};
 
 precedence('and') -> {left, 800};
 precedence('or') -> {left, 900};
