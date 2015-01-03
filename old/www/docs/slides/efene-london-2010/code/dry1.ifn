@@ -1,3 +1,0 @@
-f = fn(X)
-  X->foo()->fab()->bar()->baz()
-

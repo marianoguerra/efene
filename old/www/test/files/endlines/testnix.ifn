@@ -1,7 +1,0 @@
-
-@public
-run = fn ()
-
-    io.format("hi!~n")
-
-

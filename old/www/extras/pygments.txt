@@ -1,3 +1,0 @@
-to make it work i added the code to
-/var/lib/python-support/python2.6/pygments/lexers/compiled.py as a class and added
-the class name to __all__ variable, then I run _mapping.py
