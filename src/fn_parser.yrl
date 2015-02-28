@@ -251,9 +251,9 @@ attrs -> attr nl : ['$1'].
 attrs -> attr nl attrs : ['$1'|'$3'].
 
 attr -> at path : make_attr(line('$1'), '$2', noparams, noresult).
-attr -> at path arrow literal : make_attr(line('$1'), '$2', noparams, '$4').
+attr -> at path arrow e_bool : make_attr(line('$1'), '$2', noparams, '$4').
 attr -> at path open seq_items close : make_attr(line('$1'), '$2', '$4', noresult).
-attr -> at path open seq_items close arrow literal : make_attr(line('$1'), '$2', '$4', '$7').
+attr -> at path open seq_items close arrow e_bool : make_attr(line('$1'), '$2', '$4', '$7').
 
 e_call -> path open close : {expr, line('$2'), call, {'$1', []}}.
 e_call -> path open seq_items close : {expr, line('$2'), call, {'$1', '$3'}}.

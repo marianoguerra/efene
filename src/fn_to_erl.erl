@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 -module(fn_to_erl).
--export([ast_to_ast/2, to_erl/2]).
+-export([ast_to_ast/2, to_erl/2, add_error/4]).
 
 -include("efene.hrl").
 
@@ -50,6 +50,13 @@ ast_to_ast({attr, Line, [?Atom(record)], [?Atom(RecordName)], ?S(_TLine, tuple, 
     {RFields, State1} = lists:mapfoldl(fun to_record_field_decl/2, State#{level => 1}, Fields),
     R = {attribute, Line, record, {RecordName, RFields}},
     {R, State1#{level => 0}};
+
+ast_to_ast({attr, Line, [?Atom(type)], _Params, noresult}=Ast, #{level := 0}=State) ->
+    invalid_type_declaration(State, Line, Ast);
+ast_to_ast({attr, Line, [?Atom(type)], noparams, _Result}=Ast, #{level := 0}=State) ->
+    invalid_type_declaration(State, Line, Ast);
+ast_to_ast({attr, _Line, [?Atom(type)], _Params, _Result}=Ast, #{level := 0}=State) ->
+    fn_spec:type_to_spec(Ast, State);
 
 ast_to_ast(Ast, #{level := 0}=State) ->
     Line = element(2, Ast),
@@ -567,3 +574,9 @@ with_childs(State, Ast1, Ast2, Ast3, Fun) ->
     {EAst2, State2} = ast_to_ast(Ast2, State1),
     {EAst3, State3} = ast_to_ast(Ast3, State2),
     {Fun(EAst1, EAst2, EAst3), State3}.
+
+invalid_type_declaration(State, Line, Ast) ->
+    State1 = add_error(State, invalid_type_declaration, Line, {ast, Ast}),
+    R = {atom, Line, error},
+    {R, State1}.
+
