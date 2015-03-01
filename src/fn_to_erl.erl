@@ -51,11 +51,14 @@ ast_to_ast({attr, Line, [?Atom(record)], [?Atom(RecordName)], ?S(_TLine, tuple, 
     R = {attribute, Line, record, {RecordName, RFields}},
     {R, State1#{level => 0}};
 
-ast_to_ast({attr, Line, [?Atom(type)], _Params, noresult}=Ast, #{level := 0}=State) ->
+ast_to_ast({attr, Line, [?Atom(Type)], _Params, noresult}=Ast, #{level := 0}=State)
+  when Type == type orelse Type == opaque ->
     invalid_type_declaration(State, Line, Ast);
-ast_to_ast({attr, Line, [?Atom(type)], noparams, _Result}=Ast, #{level := 0}=State) ->
+ast_to_ast({attr, Line, [?Atom(Type)], noparams, _Result}=Ast, #{level := 0}=State)
+  when Type == type orelse Type == opaque ->
     invalid_type_declaration(State, Line, Ast);
-ast_to_ast({attr, _Line, [?Atom(type)], _Params, _Result}=Ast, #{level := 0}=State) ->
+ast_to_ast({attr, _Line, [?Atom(Type)], _Params, _Result}=Ast, #{level := 0}=State)
+  when Type == type orelse Type == opaque ->
     fn_spec:type_to_spec(Ast, State);
 
 ast_to_ast(Ast, #{level := 0}=State) ->

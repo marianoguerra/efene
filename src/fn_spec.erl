@@ -3,9 +3,9 @@
 
 -include("efene.hrl").
 
-type_to_spec({attr, Line, ?Type(_), [?Atom(TName)], Result}, State) ->
+type_to_spec({attr, Line, [?Atom(Type)], [?Atom(TName)], Result}, State) ->
     {Value, State1} = parse_type_value(Result, State),
-    A = {attribute, Line, type, {TName, Value, []}},
+    A = {attribute, Line, Type, {TName, Value, []}},
     {A, State1};
 type_to_spec({attr, Line, _, _, _}=Ast, State) ->
     State1 = fn_to_erl:add_error(State, invalid_type_declaration, Line, {ast, Ast}),
@@ -33,6 +33,9 @@ parse_type_value(?O(Line, 'or', Left, Right), State) ->
     Types = flatten_or(Right, [Left]),
     {FnTypes, State1} = parse_types(Types, State),
     {{type, Line, union, FnTypes}, State1};
+parse_type_value(?V(Line, tag, [?Atom(r), ?Atom(RecordName)]), State) ->
+    {{type, Line, record, [{atom, Line, RecordName}]}, State};
+
 parse_type_value(Ast, State) ->
     Line = element(2, Ast),
     State1 = fn_to_erl:add_error(State, invalid_type_value, Line, {ast, Ast}),
