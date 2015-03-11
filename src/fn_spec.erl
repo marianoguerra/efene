@@ -7,11 +7,28 @@ type_to_spec({attr, Line, [?Atom(Type)], [?Atom(TName)], Result}, State) ->
     {Value, State1} = parse_type_value(Result, State),
     A = {attribute, Line, Type, {TName, Value, []}},
     {A, State1};
+type_to_spec({attr, Line, [?Atom(Type)], [?E(_, call, {[?Atom(TName)], TArgs})], Result}, State) ->
+    {ETArgs, State1} = parse_type_args(TArgs, State, []),
+    {Value, State2} = parse_type_value(Result, State1),
+    A = {attribute, Line, Type, {TName, Value, ETArgs}},
+    {A, State2};
+
 type_to_spec({attr, Line, _, _, _}=Ast, State) ->
     State1 = fn_to_erl:add_error(State, invalid_type_declaration, Line, {ast, Ast}),
     R = {atom, Line, error},
     {R, State1}.
 
+parse_type_args([], State, Accum) ->
+    {lists:reverse(Accum), State};
+parse_type_args([Var=?Var(_)|Args], State, Accum) ->
+    {EVar, State1} = parse_type_value(Var, State),
+    parse_type_args(Args, State1, [EVar|Accum]);
+parse_type_args([Ast|Args], State, Accum) ->
+    Line = element(2, Ast),
+    State1 = fn_to_erl:add_error(State, invalid_type_argument, Line, {ast, Ast}),
+    parse_type_args(Args, State1, Accum).
+
+parse_type_value(?V(Line, var=Type, Val), State)     -> {{Type, Line, Val}, State};
 parse_type_value(?V(Line, atom=Type, Val), State)    -> {{Type, Line, Val}, State};
 parse_type_value(?V(Line, integer=Type, Val), State) -> {{Type, Line, Val}, State};
 parse_type_value(?V(Line, boolean, Val), State)      -> {{atom, Line, Val}, State};

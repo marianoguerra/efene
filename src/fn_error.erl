@@ -33,6 +33,7 @@ type_to_string(invalid_expression) -> <<"Invalid Expression">>;
 type_to_string(invalid_top_level_expression) -> <<"Invalid Top Level Expression">>;
 type_to_string(invalid_type_declaration) -> <<"Invalid Type Declaration">>;
 type_to_string(invalid_type_value) -> <<"Invalid Type Value">>;
+type_to_string(invalid_type_argument) -> <<"Invalid Type Argument">>;
 type_to_string(invalid_catch) -> <<"Invalid Catch">>;
 type_to_string(Other) -> atom_to_list(Other).
 
