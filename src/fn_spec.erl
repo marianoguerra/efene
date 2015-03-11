@@ -65,7 +65,8 @@ parse_types(Types, State) ->
                   TypesOut = [FnType|TypesIn],
                   {TypesOut, StateOut}
           end,
-    lists:foldl(Fun, {[], State}, Types).
+    {OutTypes, OutState} = lists:foldl(Fun, {[], State}, Types),
+    {lists:reverse(OutTypes), OutState}.
 
 flatten_or(?O(_Line, 'or', Left, Right), Accum) ->
     flatten_or(Right, [Left|Accum]);
