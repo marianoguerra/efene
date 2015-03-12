@@ -36,6 +36,8 @@ parse_type_value(?E(Line, call,
                     {[?Atom(range=Name)], [?Int(FL, From), ?Int(TL, To)]}),
                  State) ->
     {{type, Line, Name, [{integer, FL, From}, {integer, TL, To}]}, State};
+parse_type_value(?E(Line, call, {[?Atom('fun')], [?S(_, list, [])]}), State) ->
+    {{type, Line, 'fun', []}, State};
 parse_type_value(?E(Line, call, {[?Atom(Name)], []=Args}), State) ->
     {{type, Line, Name, Args}, State};
 parse_type_value(?S(Line, list, []), State) ->
