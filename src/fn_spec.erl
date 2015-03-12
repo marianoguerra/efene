@@ -36,17 +36,22 @@ parse_type_value(?E(Line, call,
                     {[?Atom(range=Name)], [?Int(FL, From), ?Int(TL, To)]}),
                  State) ->
     {{type, Line, Name, [{integer, FL, From}, {integer, TL, To}]}, State};
+% type fun()
 parse_type_value(?E(Line, call, {[?Atom('fun')], [?S(_, list, [])]}), State) ->
     {{type, Line, 'fun', []}, State};
+% type fun(any, <type>)
 parse_type_value(?E(Line, call, {[?Atom('fun')], [?V(ALine, atom, any), Return]}), State) ->
     {EReturn, State1} = parse_type_value(Return, State),
     {{type, Line, 'fun', [{type, ALine, any}, EReturn]}, State1};
+% type fun([<type>*], <type>)
 parse_type_value(?E(Line, call, {[?Atom('fun')], [?S(ALine, list, Args), Return]}), State) ->
     {EReturn, State1} = parse_type_value(Return, State),
     {EArgs, State2} = parse_types(Args, State1),
     {{type, Line, 'fun', [{type, ALine, product, EArgs}, EReturn]}, State2};
-parse_type_value(?E(Line, call, {[?Atom(Name)], []=Args}), State) ->
-    {{type, Line, Name, Args}, State};
+% type <atom>(<type>*)
+parse_type_value(?E(Line, call, {[?Atom(Name)], Args}), State) ->
+    {EArgs, State1} = parse_types(Args, State),
+    {{type, Line, Name, EArgs}, State1};
 parse_type_value(?S(Line, list, []), State) ->
     {{type, Line, nil, []}, State};
 parse_type_value(?S(Line, list, [Type]), State) ->
