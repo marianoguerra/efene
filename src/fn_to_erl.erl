@@ -96,8 +96,8 @@ ast_to_ast(?E(_Line, call_thread, {InitialVal, Calls}), State) ->
                 end, InitialVal, Calls),
     ast_to_ast(Threaded, State);
 
-ast_to_ast(?T(Line, [?Var('_')], _), State) ->
-    R = {atom, Line, fn_compiler_ignore},
+ast_to_ast(?T(_Line, [?Var('_')], _), State) ->
+    R = 'fn compiler ignore',
     {R, State};
 
 ast_to_ast(?T(Line, [?Atom(b)], ?S(_LLine, list, TSList)), State) ->
@@ -294,6 +294,7 @@ ast_to_ast([], Accum, State) ->
 ast_to_ast([H|T], Accum, State) ->
     {EH, State1} = ast_to_ast(H, State),
     NewAccum = if is_list(EH) -> EH ++ Accum;
+                  EH == 'fn compiler ignore' -> Accum;
                   true -> [EH|Accum]
                end,
     ast_to_ast(T, NewAccum, State1).
