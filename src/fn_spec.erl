@@ -73,7 +73,7 @@ parse_type_value(?O(Line, 'or', Left, Right), State) ->
     Types = flatten_or(Right, [Left]),
     {FnTypes, State1} = parse_types(Types, State),
     {{type, Line, union, FnTypes}, State1};
-parse_type_value(?V(Line, tag, [?Atom(r), ?Atom(RecordName)]), State) ->
+parse_type_value(?LTag(Line, [?Atom(r)], ?Atom(RecordName)), State) ->
     {{type, Line, record, [{atom, Line, RecordName}]}, State};
 
 parse_type_value(Ast, State) ->
