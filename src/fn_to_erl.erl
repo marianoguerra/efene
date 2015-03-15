@@ -42,15 +42,16 @@ ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}
     BareName = unwrap(Name),
     EFn = {function, Line, BareName, Arity, EFixedCases},
     FnRef = {Name, Arity},
-    {R, State2} = case extract_spec_attr(FnRef, Attrs, [], nil, State1) of
-                              {found, ESpecAttr, RestAttrs, State21} ->
-                                  {[EFn, RestAttrs, ESpecAttr], State21};
-                              {notfound, RestAttrs, State21} ->
-                                  {[EFn, RestAttrs], State21}
+    {R, RestAttrs, State2} = case extract_spec_attr(FnRef, Attrs, [], nil, State1) of
+                              {found, ESpecAttr, IRestAttrs, State21} ->
+                                  {[EFn, ESpecAttr], IRestAttrs, State21};
+                              {notfound, IRestAttrs, State21} ->
+                                  {EFn, IRestAttrs, State21}
                           end,
     State3 = add_attributes(State2, fn, Line, {BareName, Arity}, Attrs),
-    State4 = check_case_arities_equal(Cases, State3, Arity),
-    {R, State4#{level => 0}};
+    State4 = add_attributes(State3, fn_attrs, Line, {BareName, Arity}, RestAttrs),
+    State5 = check_case_arities_equal(Cases, State4, Arity),
+    {R, State5#{level => 0}};
 
 ast_to_ast({attr, Line, [?Atom(record)], [?Atom(RecordName)], ?S(_TLine, tuple, Fields)},
            #{level := 0}=State) ->

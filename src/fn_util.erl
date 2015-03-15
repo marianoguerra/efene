@@ -13,7 +13,8 @@
 %% limitations under the License.
 
 -module(fn_util).
--export([get_exported_fns/1, get_export_attr_ast/1, get_export_attr_ast/2]).
+-export([get_exported_fns/1, get_export_attr_ast/1, get_export_attr_ast/2,
+        get_fn_attribute/1]).
 
 -include("efene.hrl").
 
@@ -40,3 +41,9 @@ get_export_attr_ast(State, Line) ->
     PublicFns = get_exported_fns(State),
     Exports = lists:map(fun ({fn, _Line, Fn, _Attrs}) -> Fn end, PublicFns),
     {attribute, Line, export, Exports}.
+
+get_fn_attribute(#{attrs:=Attrs}) ->
+    FnAttrs = lists:filtermap(fun ({fn_attrs, _Line, _Fn, FnAttrs}) -> {true, FnAttrs};
+                                (_) -> false
+                            end, Attrs),
+    lists:reverse(FnAttrs).

@@ -42,13 +42,14 @@ to_mod(Path) ->
             ModAtomName = get_module_name(Path),
             ToMod = fun () ->
                             ExportAttr = fn_util:get_export_attr_ast(State),
+                            FnAttrs = fn_util:get_fn_attribute(State),
                             ModAttr = {attribute, 1, module, ModAtomName},
                             FileAttr = {attribute, 1, file, {Path, 1}},
                             case ExportAttr of
                                 {attribute, _ExportLine, export, []} ->
-                                    {ok, [FileAttr, ModAttr|Ast]};
+                                    {ok, [FileAttr, ModAttr|(FnAttrs ++ Ast)]};
                                 _ ->
-                                    {ok, [FileAttr, ModAttr, ExportAttr|Ast]}
+                                    {ok, [FileAttr, ModAttr, ExportAttr|(FnAttrs ++ Ast)]}
                             end
                     end,
             format_errors_or(ModAtomName, State, ToMod);
