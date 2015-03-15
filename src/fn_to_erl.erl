@@ -40,10 +40,17 @@ ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}
     StateLevel1 = State#{level => 1},
     {EFixedCases, State1} = ast_to_ast(FixedCases, StateLevel1),
     BareName = unwrap(Name),
-    State2 = add_attributes(State1, fn, Line, {BareName, Arity}, Attrs),
-    R = {function, Line, BareName, Arity, EFixedCases},
-    State3 = check_case_arities_equal(Cases, State2, Arity),
-    {R, State3#{level => 0}};
+    EFn = {function, Line, BareName, Arity, EFixedCases},
+    FnRef = {Name, Arity},
+    {R, Attrs1, State2} = case extract_spec_attr(FnRef, Attrs, [], nil, State1) of
+                              {found, ESpecAttr, RestAttrs, State21} ->
+                                  {[EFn, ESpecAttr], RestAttrs, State21};
+                              {notfound, RestAttrs, State21} ->
+                                  {EFn, RestAttrs, State21}
+                          end,
+    State3 = add_attributes(State2, fn, Line, {BareName, Arity}, Attrs1),
+    State4 = check_case_arities_equal(Cases, State3, Arity),
+    {R, State4#{level => 0}};
 
 ast_to_ast({attr, Line, [?Atom(record)], [?Atom(RecordName)], ?S(_TLine, tuple, Fields)},
            #{level := 0}=State) ->
@@ -286,7 +293,10 @@ ast_to_ast([], Accum, State) ->
     {lists:reverse(Accum), State};
 ast_to_ast([H|T], Accum, State) ->
     {EH, State1} = ast_to_ast(H, State),
-    ast_to_ast(T, [EH|Accum], State1).
+    NewAccum = if is_list(EH) -> EH ++ Accum;
+                  true -> [EH|Accum]
+               end,
+    ast_to_ast(T, NewAccum, State1).
 
 map_op('+') -> '+';
 map_op('-') -> '-';
@@ -583,3 +593,21 @@ invalid_type_declaration(State, Line, Ast) ->
     R = {atom, Line, error},
     {R, State1}.
 
+extract_spec_attr(_FnRef, [], Accum, nil, State) ->
+    {notfound, lists:reverse(Accum), State};
+extract_spec_attr(FnRef, [], Accum, SpecAttr, State) ->
+    {ESpecAttr, State1} = parse_spec_attr(FnRef, SpecAttr, State),
+    {found, ESpecAttr, lists:reverse(Accum), State1};
+extract_spec_attr(FnRef, [{attr, _Line, [?Atom(spec)], _Params, _Result}=SpecAttr|T],
+                  Accum, nil, State) ->
+    extract_spec_attr(FnRef, T, Accum, SpecAttr, State);
+extract_spec_attr(FnRef, [{attr, Line, [?Atom(spec)], _Params, _Result}=SpecAttr|T],
+                  Accum, ExistingSpecAttr, State) ->
+    State1 = add_error(State, duplicated_function_spec, Line, {ast, SpecAttr}),
+    extract_spec_attr(FnRef, T, Accum, ExistingSpecAttr, State1);
+extract_spec_attr(FnRef, [Attr|T], Accum, SpecAttr, State) ->
+    extract_spec_attr(FnRef, T, [Attr|Accum], SpecAttr, State).
+
+parse_spec_attr({?Atom(Name), Arity}, {attr, Line, [?Atom(spec)], Args, Return},
+                State) ->
+    fn_spec:parse_spec_attr(Name, Arity, Line, Args, Return, State).

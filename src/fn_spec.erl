@@ -1,7 +1,16 @@
 -module(fn_spec).
--export([type_to_spec/2]).
+-export([type_to_spec/2, parse_spec_attr/6]).
 
 -include("efene.hrl").
+
+parse_spec_attr(Name, Arity, Line, Args, Return, State) ->
+    {EReturn, State1} = parse_type_value(Return, State),
+    {EArgs, State2} = parse_types(Args, State1),
+    ESpec = {attribute, Line, spec, {{Name, Arity},
+                                     [{type, Line, 'fun',
+                                       [{type, Line, product, EArgs}, EReturn]}]}},
+    {ESpec, State2}.
+
 
 type_to_spec({attr, Line, [?Atom(Type)], [?Atom(TName)], Result}, State) ->
     {Value, State1} = parse_type_value(Result, State),
