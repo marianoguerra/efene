@@ -23,10 +23,10 @@ to_erl(Ast, Module) -> ast_to_ast(Ast, new_state(Module)).
 
 ast_to_ast(Nodes, State) when is_list(Nodes) -> ast_to_ast(Nodes, [], State);
 
-ast_to_ast({attr, Line, [?Atom(export)], Params, noresult}, #{level := 0}=State) ->
-    {EFuns, State1} = state_map(fun ast_to_export_fun/2, Params, State),
-    R = {attribute, Line, export, EFuns},
-    {R, State1};
+ast_to_ast({attr, Line, [?Atom(export=Name)], Params, noresult}, #{level := 0}=State) ->
+    export_like_to_ast(Name, Line, Params, State);
+ast_to_ast({attr, Line, [?Atom(export_type=Name)], Params, noresult}, #{level := 0}=State) ->
+    export_like_to_ast(Name, Line, Params, State);
 
 ast_to_ast({attr, Line, [?Atom(AttrName)], [?Atom(BName)], noresult}, #{level := 0}=State) 
         when AttrName == behavior orelse AttrName == behaviour ->
@@ -612,3 +612,9 @@ extract_spec_attr(FnRef, [Attr|T], Accum, SpecAttr, State) ->
 parse_spec_attr({?Atom(Name), Arity}, {attr, Line, [?Atom(spec)], Args, Return},
                 State) ->
     fn_spec:parse_spec_attr(Name, Arity, Line, Args, Return, State).
+
+export_like_to_ast(Name, Line, Params, State) ->
+    {EFuns, State1} = state_map(fun ast_to_export_fun/2, Params, State),
+    R = {attribute, Line, Name, EFuns},
+    {R, State1}.
+
