@@ -75,6 +75,10 @@ parse_type_value(?O(Line, 'or', Left, Right), State) ->
     {{type, Line, union, FnTypes}, State1};
 parse_type_value(?LTag(Line, [?Atom(r)], ?Atom(RecordName)), State) ->
     {{type, Line, record, [{atom, Line, RecordName}]}, State};
+parse_type_value(?LTag(Line, [?Atom(bin)],
+                       ?S(Line, tuple, [?Int(MLine, M), ?Int(NLine, N)])),
+                 State) ->
+    {{type, Line, binary, [{integer, MLine, M}, {integer, NLine, N}]}, State};
 
 parse_type_value(Ast, State) ->
     Line = element(2, Ast),
