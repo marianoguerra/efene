@@ -10,6 +10,8 @@
 -define(UO(Line, Type, Val), {unary_op, Line, Type, Val}).
 % tag
 -define(T(Line, Tag, Val), {tag, Line, Tag, Val}).
+% ltag
+-define(LTag(Line, Path, Val), {ltag, Line, Path, Val}).
 
 -define(Atom(Val), ?V(_, atom, Val)).
 -define(Var(Val), ?V(_, var, Val)).

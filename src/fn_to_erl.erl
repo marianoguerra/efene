@@ -116,12 +116,12 @@ ast_to_ast(?S(Line, map=Type, KVs), State) ->
     R = {Type, Line, Items},
     {R, State1};
 
-ast_to_ast(?V(Line, tag, [?Atom(i), ?Atom(Name)]), State) ->
+ast_to_ast(?LTag(Line, [?Atom(i)], ?Atom(Name)), State) ->
     info_to_ast(Line, Name, State);
-ast_to_ast(?V(Line, tag, [?Atom(r), ?Atom(RecordName), ?Atom(Field)]), State) ->
+ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName)], ?Atom(Field)), State) ->
     R = {record_index, Line, RecordName, {atom, Line, Field}},
     {R, State};
-ast_to_ast(?V(Line, tag, [?Atom(r), ?Atom(RecordName), ?Var(RecordVar), ?Atom(Field)]), State) ->
+ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName), ?Atom(Field)], ?Var(RecordVar)), State) ->
     R = {record_field, Line, {var, Line, RecordVar}, RecordName, {atom, Line, Field}},
     {R, State};
 ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)],
@@ -135,9 +135,9 @@ ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), Stat
     R = {record, Line, RecordName, Items},
     {R, State1};
 
-ast_to_ast(?T(Line, [?Atom(c)], ?V(_StrLine, string, [Char])), State) ->
+ast_to_ast(?LTag(Line, [?Atom(c)], ?V(_StrLine, string, [Char])), State) ->
     {{char, Line, Char}, State};
-ast_to_ast(?T(Line, [?Atom(atom)], ?V(_StrLine, string, AtomStr)), State) ->
+ast_to_ast(?LTag(Line, [?Atom(atom)], ?V(_StrLine, string, AtomStr)), State) ->
     {{atom, Line, list_to_atom(AtomStr)}, State};
 ast_to_ast(?S(Line, tuple=Type, Val), State)   ->
     {EVal, State1} = ast_to_ast(Val, State),
