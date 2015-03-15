@@ -42,13 +42,13 @@ ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}
     BareName = unwrap(Name),
     EFn = {function, Line, BareName, Arity, EFixedCases},
     FnRef = {Name, Arity},
-    {R, Attrs1, State2} = case extract_spec_attr(FnRef, Attrs, [], nil, State1) of
+    {R, State2} = case extract_spec_attr(FnRef, Attrs, [], nil, State1) of
                               {found, ESpecAttr, RestAttrs, State21} ->
-                                  {[EFn, ESpecAttr], RestAttrs, State21};
+                                  {[EFn, RestAttrs, ESpecAttr], State21};
                               {notfound, RestAttrs, State21} ->
-                                  {EFn, RestAttrs, State21}
+                                  {[EFn, RestAttrs], State21}
                           end,
-    State3 = add_attributes(State2, fn, Line, {BareName, Arity}, Attrs1),
+    State3 = add_attributes(State2, fn, Line, {BareName, Arity}, Attrs),
     State4 = check_case_arities_equal(Cases, State3, Arity),
     {R, State4#{level => 0}};
 
@@ -594,11 +594,11 @@ invalid_type_declaration(State, Line, Ast) ->
     R = {atom, Line, error},
     {R, State1}.
 
-extract_spec_attr(_FnRef, [], Accum, nil, State) ->
-    {notfound, lists:reverse(Accum), State};
-extract_spec_attr(FnRef, [], Accum, SpecAttr, State) ->
+extract_spec_attr({Name, Arity}, [], Accum, nil, State) ->
+    {notfound, make_fun_attrs(Name, Arity, Accum), State};
+extract_spec_attr({Name, Arity}=FnRef, [], Accum, SpecAttr, State) ->
     {ESpecAttr, State1} = parse_spec_attr(FnRef, SpecAttr, State),
-    {found, ESpecAttr, lists:reverse(Accum), State1};
+    {found, ESpecAttr, make_fun_attrs(Name, Arity, Accum), State1};
 extract_spec_attr(FnRef, [{attr, _Line, [?Atom(spec)], _Params, _Result}=SpecAttr|T],
                   Accum, nil, State) ->
     extract_spec_attr(FnRef, T, Accum, SpecAttr, State);
@@ -606,8 +606,19 @@ extract_spec_attr(FnRef, [{attr, Line, [?Atom(spec)], _Params, _Result}=SpecAttr
                   Accum, ExistingSpecAttr, State) ->
     State1 = add_error(State, duplicated_function_spec, Line, {ast, SpecAttr}),
     extract_spec_attr(FnRef, T, Accum, ExistingSpecAttr, State1);
-extract_spec_attr(FnRef, [Attr|T], Accum, SpecAttr, State) ->
-    extract_spec_attr(FnRef, T, [Attr|Accum], SpecAttr, State).
+extract_spec_attr(FnRef, [{attr, Line, Name, Params, Result}|T],
+                  Accum, SpecAttr, State) ->
+    {ENameList, State1} = ast_to_ast(Name, State),
+    EName = ast_list_to_cons(lists:reverse(ENameList), Line),
+    {NParams, State2} = if Params == noparams -> {[], State1};
+                           true -> {Params, State1}
+                        end,
+    {EResult, State3} = if Result == noresult -> {{nil, Line}, State2};
+                           true -> ast_to_ast(Result, State2)
+                        end,
+    {EParams, State4} = list_to_cons_list(Line, NParams, State3),
+    EAttr = {tuple, Line, [EName, {tuple, Line, [EParams, EResult]}]},
+    extract_spec_attr(FnRef, T, [EAttr|Accum], SpecAttr, State4).
 
 parse_spec_attr({?Atom(Name), Arity}, {attr, Line, [?Atom(spec)], Args, Return},
                 State) ->
@@ -618,3 +629,18 @@ export_like_to_ast(Name, Line, Params, State) ->
     R = {attribute, Line, Name, EFuns},
     {R, State1}.
 
+% assumes Items is reversed
+ast_list_to_cons([], Line) ->
+    {nil, Line};
+ast_list_to_cons(Items, Line) ->
+    ast_list_to_cons(Items, Line, {nil, Line}).
+
+ast_list_to_cons([], _Line, Cons) ->
+    Cons;
+ast_list_to_cons([H|T], Line, Cons) ->
+    ast_list_to_cons(T, Line, {cons, Line, H, Cons}).
+
+make_fun_attrs(?V(Line, atom, Name), Arity, Accum) ->
+    ConsAttrs = {tuple, Line, [{atom, Line, Name}, {integer, Line, Arity},
+                               ast_list_to_cons(Accum, Line)]},
+    {attribute, Line, fn_attrs, erl_syntax:concrete(ConsAttrs)}.
