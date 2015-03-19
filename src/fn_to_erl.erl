@@ -125,13 +125,13 @@ ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName)], ?Atom(Field)), State) ->
 ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName), ?Atom(Field)], ?Var(RecordVar)), State) ->
     R = {record_field, Line, {var, Line, RecordVar}, RecordName, {atom, Line, Field}},
     {R, State};
-ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)],
+ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName)],
               ?S(_MapLine, map, {Var, KVs})), State) ->
     {EVar, State1} = ast_to_ast(Var, State),
     {Items, State2} = state_map(fun to_record_field/2, KVs, State1),
     R = {record, Line, EVar, RecordName, Items},
     {R, State2};
-ast_to_ast(?T(Line, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), State) ->
+ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), State) ->
     {Items, State1} = state_map(fun to_record_field/2, KVs, State),
     R = {record, Line, RecordName, Items},
     {R, State1};

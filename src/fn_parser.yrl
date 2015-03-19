@@ -145,7 +145,7 @@ e_unary -> bool_not literal: unary_op('$1', '$2').
 e_unary -> add_op literal: unary_op('$1', '$2').
 e_unary -> literal : '$1'.
 
-expr -> hash path raw_expr: {tag, line('$1'), '$2', '$3'}.
+expr -> bin_or path raw_expr: {tag, line('$1'), '$2', '$3'}.
 expr -> raw_expr : '$1'.
 
 raw_expr -> e_switch : '$1'.
@@ -162,7 +162,7 @@ body -> expr: ['$1'].
 body -> expr nl: ['$1'].
 body -> expr nl body : ['$1'|'$3'].
 
-literal -> bin_or path raw_literal : {ltag, line('$1'), '$2', '$3'}.
+literal -> hash path raw_literal : {ltag, line('$1'), '$2', '$3'}.
 literal -> raw_literal : '$1'.
 
 path -> path_item : ['$1'].
