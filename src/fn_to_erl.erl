@@ -180,9 +180,10 @@ ast_to_ast(?E(Line, 'when', Clauses), State) ->
     {R, State1};
 
 ast_to_ast({wcond, Line, Cond, Body}, State) ->
-    with_childs(State, Cond, Body, fun (ECond, EBody) ->
-                                           {clause, Line, [], ECond, EBody}
-                                   end);
+    {ECond, State1} = when_to_ast(Cond, State),
+    {EBody, State2} = ast_to_ast(Body, State1),
+    R = {clause, Line, [], ECond, EBody},
+    {R, State2};
 
 ast_to_ast({welse, Line, Body}, State) ->
     {EBody, State1} = ast_to_ast(Body, State),
