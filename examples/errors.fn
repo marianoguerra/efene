@@ -1,0 +1,35 @@
+@export(42)
+@export(hello/1) -> ok
+@record(foo) -> (a, b = 12, c = true, D = 12)
+@record(person) -> (first, last)
+
+@type(t1, t2) -> []
+@type(t1) -> [1, 2, 3]
+@type(t1(1)) -> (ok, term())
+
+A
+
+fn hello
+    @spec(integer()) -> term()
+    @spec(integer()) -> term()
+    case:
+        a
+    case 1:
+        F = fn now:0
+        F1 = fn F:0
+        Asd = #i "asd"
+        Asd1 = #i asd
+        A = #b [{foo: bar},
+                {val: A, unit: foo},
+                {sign: aries},
+                {type: nice},
+                {endianness: infinite},
+                {unit: 0}]
+        P = #r.person {first = "bob", last = "sponge"}
+
+        try
+            1/0
+        catch
+            case asd, E: E
+        end
+end
