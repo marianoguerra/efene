@@ -109,60 +109,76 @@ ast_to_ast(?E(_Line, call_thread, {InitialVal, Calls}), State) ->
                 end, InitialVal, Calls),
     ast_to_ast(Threaded, State);
 
+% ^_ <expr>
 ast_to_ast(?T(_Line, [?Var('_')], _), State) ->
     R = 'fn compiler ignore',
     {R, State};
 
+% binary list
 ast_to_ast(?LTag(Line, [?Atom(b)], ?S(_LLine, list, TSList)), State) ->
     type_specifiers_to_ast(Line, TSList, State);
 
+% list
 ast_to_ast(?S(Line, list, Val), State) ->
     list_to_cons_list(Line, Val, State);
 
+% <var>#<map>
 ast_to_ast(?S(Line, map=Type, {Var, KVs}), State) ->
     {EVar, State1} = ast_to_ast(Var, State),
     {Items, State2} = state_map(fun to_map_field/2, KVs, State1),
     R = {Type, Line, EVar, lists:reverse(Items)},
     {R, State2};
+% <map>
 ast_to_ast(?S(Line, map=Type, KVs), State) ->
     {Items, State1} = state_map(fun to_map_field/2, KVs, State),
     R = {Type, Line, lists:reverse(Items)},
     {R, State1};
 
+% #i <atom>
 ast_to_ast(?LTag(Line, [?Atom(i)], ?Atom(Name)), State) ->
     info_to_ast(Line, Name, State);
+% #r.<atom> <atom>
 ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName)], ?Atom(Field)), State) ->
     R = {record_index, Line, RecordName, {atom, Line, Field}},
     {R, State};
+% #r.<atom>.<atom> <var>
 ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName), ?Atom(Field)], ?Var(RecordVar)), State) ->
     R = {record_field, Line, {var, Line, RecordVar}, RecordName, {atom, Line, Field}},
     {R, State};
+% #r.<atom> <var>#<map>
 ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName)],
               ?S(_MapLine, map, {Var, KVs})), State) ->
     {EVar, State1} = ast_to_ast(Var, State),
     {Items, State2} = state_map(fun to_record_field/2, KVs, State1),
     R = {record, Line, EVar, RecordName, Items},
     {R, State2};
+% #r.<atom> <map>
 ast_to_ast(?LTag(Line, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), State) ->
     {Items, State1} = state_map(fun to_record_field/2, KVs, State),
     R = {record, Line, RecordName, Items},
     {R, State1};
 
+% #c <string>
 ast_to_ast(?LTag(Line, [?Atom(c)], ?V(_StrLine, string, [Char])), State) ->
     {{char, Line, Char}, State};
+% #atom <string>
 ast_to_ast(?LTag(Line, [?Atom(atom)], ?V(_StrLine, string, AtomStr)), State) ->
     {{atom, Line, list_to_atom(AtomStr)}, State};
+% tuple
 ast_to_ast(?S(Line, tuple=Type, Val), State)   ->
     {EVal, State1} = ast_to_ast(Val, State),
     {{Type, Line, EVal}, State1};
 
+% [<val> :: <val]
 ast_to_ast(?S(Line, cons=Type, {[H], T}), State) ->
     with_childs(State, H, T, fun (EH, ET) -> {Type, Line, EH, ET} end);
 
+% [<seq> :: <val]
 ast_to_ast(?S(Line, cons, {H, T}), State) ->
     with_childs(State, H, T, fun (EH, ET) ->
                                  ast_list_to_cons(lists:reverse(EH), Line, ET) end);
 
+% function reference
 ast_to_ast(?V(Line, fn_ref, {[Mod, Fun], Arity}), State) ->
     with_childs(State, Mod, Fun, Arity,
                 fun (EMod, EFun, EArity) ->
@@ -179,6 +195,7 @@ ast_to_ast(?V(Line, fn_ref, {[Fun], Arity}), State) ->
     R = {'fun', Line, {function, unwrap(Fun), unwrap(Arity)}},
     {R, State};
 
+% when
 ast_to_ast(?E(Line, 'when', Clauses), State) ->
     {EClauses, State1} = ast_to_ast(Clauses, State),
     R = {'if', Line, EClauses},
@@ -195,15 +212,19 @@ ast_to_ast({welse, Line, Body}, State) ->
     R = {clause, Line, [], [[{atom, Line, true}]], EBody},
     {R, State1};
 
+% binary comprehension
 ast_to_ast(?T(_TLine, [?Atom(b)], ?E(Line, 'for', {Qualifiers, Body})), State) ->
     {Items, EBody, State1} = lc_to_ast(Line, Qualifiers, Body, State),
     R = {bc, Line, EBody, Items},
     {R, State1};
+
+% list comprehension
 ast_to_ast(?E(Line, 'for', {Qualifiers, Body}), State) ->
     {Items, EBody, State1} = lc_to_ast(Line, Qualifiers, Body, State),
     R = {lc, Line, EBody, Items},
     {R, State1};
 
+% try expression
 ast_to_ast(?E(Line, 'try', {Body, Catch, After}), State) ->
     {EBody, State1} = ast_to_ast(Body, State),
     {ECatch, State2} = case Catch of
@@ -219,6 +240,7 @@ ast_to_ast(?E(Line, 'try', {Body, Catch, After}), State) ->
     R = {'try', Line, EBody, [], lists:reverse(ECatch), EAfter},
     {R, State3};
 
+% receive
 ast_to_ast(?E(Line, 'receive', {?E(_CLine, 'case', Clauses), noafter}), State) ->
     {EClauses, State1} = ast_to_ast(Clauses, State),
     TupleClauses = lists:map(fun to_tuple_clause/1, EClauses),
@@ -232,6 +254,7 @@ ast_to_ast(?E(Line, 'receive', {?E(_CLine, 'case', Clauses), {After, AfterBody}}
                         {'receive', Line, TupleClauses, EAfter, EAfterBody}
                 end);
 
+% match
 ast_to_ast(?E(Line, switch, {Value, ?E(_CaseLine, 'case', Clauses)}), State) ->
     with_childs(State, Clauses, Value,
                 fun(EClauses, EValue) ->
@@ -251,6 +274,7 @@ ast_to_ast({celse, Line, Body}, State) ->
     R = {clause, Line, [{var, Line, '_'}], [], EBody},
     {R, State1};
 
+% begin
 ast_to_ast(?E(Line, 'begin', Body), State) ->
     {EBody, State1} = ast_to_ast(Body, State),
     R = {block, Line, EBody},
@@ -268,6 +292,7 @@ ast_to_ast(?E(Line, fn, {?V(_VLine, var, FName), ?E(_CLine, 'case', Cases)}), St
     R = {named_fun, Line, FName, EFixedCases},
     {R, State1};
 
+% call
 ast_to_ast(?E(Line, call, {[Mod, Fun], Args}), State) ->
     with_childs(State, Mod, Fun, Args,
                 fun (EMod, EFun, EArgs) ->
@@ -278,14 +303,17 @@ ast_to_ast(?E(Line, call, {[Fun], Args}), State) ->
     with_childs(State, Fun, Args,
                 fun (EFun, EArgs) -> {call, Line, EFun, EArgs} end);
 
+% =
 ast_to_ast(?O(Line, '=', Left, Right), State) ->
     with_childs(State, Left, Right,
                 fun (ELeft, ERight) -> {match, Line, ELeft, ERight} end);
 
+% ops
 ast_to_ast(?O(Line, Op, Left, Right), State) ->
     with_childs(State, Left, Right,
                 fun (ELeft, ERight) -> {op, Line, map_op(Op), ELeft, ERight} end);
 
+% values
 ast_to_ast(?V(Line, atom=Type, Val), State)    -> {{Type, Line, Val}, State};
 ast_to_ast(?V(Line, integer=Type, Val), State) -> {{Type, Line, Val}, State};
 ast_to_ast(?V(Line, float=Type, Val), State)   -> {{Type, Line, Val}, State};
@@ -296,6 +324,7 @@ ast_to_ast(?V(Line, bstring, Val), State) ->
     R = {bin, Line, [{bin_element, 5, {string, Line, Val}, default, default}]},
     {R, State};
 
+% unary ops
 ast_to_ast(?UO(Line, Op, Val), State) ->
     {EVal, State1} = ast_to_ast(Val, State),
     R = {op, Line, map_op(Op), EVal},
