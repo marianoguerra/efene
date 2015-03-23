@@ -55,9 +55,16 @@ ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}
 
 ast_to_ast({attr, Line, [?Atom(record)], [?Atom(RecordName)], ?S(_TLine, tuple, Fields)},
            #{level := 0}=State) ->
-    {RFields, State1} = lists:mapfoldl(fun to_record_field_decl/2, State#{level => 1}, Fields),
-    R = {attribute, Line, record, {RecordName, RFields}},
-    {R, State1#{level => 0}};
+    {FieldsAndTypes, State1} = lists:mapfoldl(fun to_record_field_decl/2,
+                                              State#{level => 1}, Fields),
+    {RFields, RTypes} = lists:foldl(fun ({type, Field, Type}, {Fs, Ts}) ->
+                                            {[Field|Fs], [Type|Ts]};
+                                        (Field, {Fs, Ts}) ->
+                                            {[Field|Fs], Ts}
+                                    end, {[], []}, FieldsAndTypes),
+
+    R = {attribute, Line, record, {RecordName, lists:reverse(RFields)}},
+    maybe_type_record(R, Line, RecordName, RTypes, State1#{level => 0});
 
 ast_to_ast({attr, Line, [?Atom(Type)], _Params, noresult}=Ast, #{level := 0}=State)
   when Type == type orelse Type == opaque ->
@@ -403,6 +410,14 @@ to_record_field({kv, Line, Key, Val}, State) ->
     R = {record_field, Line, EKey, EVal},
     {R, State1}.
 
+to_record_field_decl(?O(Line, '=', ?V(FLine, atom, FieldName), ?O(_OLine, is, Val, Type)),
+                     State) ->
+    {R, State1} = to_record_field_decl(?O(Line, '=', ?V(FLine, atom, FieldName), Val), State),
+    {{type, R, {Line, has_default, R, Type}}, State1};
+to_record_field_decl(?O(_OLine, is, ?V(Line, 'atom', FieldName), Type),
+                     State) ->
+    {R, State1} = to_record_field_decl(?V(Line, 'atom', FieldName), State),
+    {{type, R, {Line, no_default, R, Type}}, State1};
 to_record_field_decl(?O(Line, '=', ?V(FLine, atom, FieldName), Val), State) ->
     {EVal, State1} = ast_to_ast(Val, State),
     R = {record_field, Line, {atom, FLine, FieldName}, EVal},
@@ -645,3 +660,9 @@ make_fun_attrs(?V(Line, atom, Name), Arity, Accum) ->
     ConsAttrs = {tuple, Line, [{atom, Line, Name}, {integer, Line, Arity},
                                ast_list_to_cons(Accum, Line)]},
     {attribute, Line, fn_attrs, erl_syntax:concrete(ConsAttrs)}.
+
+maybe_type_record(R, _Line, _RecordName, [], State) -> {R, State};
+maybe_type_record(R, Line, RecordName, Types, State) ->
+    {RType, State1} = fn_spec:parse_record_types(RecordName, Line, Types, State),
+    {[RType, R], State1}.
+

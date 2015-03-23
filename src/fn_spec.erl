@@ -1,5 +1,5 @@
 -module(fn_spec).
--export([type_to_spec/2, parse_spec_attr/6]).
+-export([type_to_spec/2, parse_spec_attr/6, parse_record_types/4]).
 
 -include("efene.hrl").
 
@@ -94,3 +94,26 @@ flatten_or(?O(_Line, 'or', Left, Right), Accum) ->
     flatten_or(Right, [Left|Accum]);
 flatten_or(Other, Accum) ->
     [Other|Accum].
+
+parse_record_types(RecordName, Line, Types, State) ->
+    Fun = fun (Type, {TypesIn, StateIn}) ->
+                  {ParsedType, StateOut} = parse_record_type(Type, StateIn),
+                  TypesOut = [ParsedType|TypesIn],
+                  {TypesOut, StateOut}
+          end,
+    {Fields, State1} = lists:foldl(Fun, {[], State}, Types),
+    Attr = {attribute, Line, type, {{record, RecordName}, Fields, []}},
+    {Attr, State1}.
+
+parse_record_type({_Line, HasDefaultFlag, Field, Type}, State) ->
+    {EType0, State1} = parse_type_value(Type, State),
+    EType = maybe_add_undefined(HasDefaultFlag, EType0),
+    ParsedType = {typed_record_field, Field, EType},
+    {ParsedType, State1}.
+
+maybe_add_undefined(has_default, Type) -> Type;
+maybe_add_undefined(no_default, {type, Line, union, Types}) ->
+    {type, Line, union, [{atom, Line, undefined}|Types]};
+maybe_add_undefined(no_default, Type) ->
+    Line = element(2, Type),
+    {type, Line, union, [{atom, Line, undefined},Type]}.
