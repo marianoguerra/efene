@@ -210,7 +210,7 @@ ast_to_ast(?E(Line, 'try', {Body, Catch, After}), State) ->
                            noafter -> {[], State2};
                            AfterBody -> ast_to_ast(AfterBody, State2)
                        end,
-    R = {'try', Line, EBody, [], ECatch, EAfter},
+    R = {'try', Line, EBody, [], lists:reverse(ECatch), EAfter},
     {R, State3};
 
 ast_to_ast(?E(Line, 'receive', {?E(_CLine, 'case', Clauses), noafter}), State) ->
