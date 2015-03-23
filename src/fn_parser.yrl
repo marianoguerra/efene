@@ -37,7 +37,7 @@ Terminals
     begin receive after try catch for in
     hash open close sep semicolon open_list close_list
     open_map close_map split_def_op at arrow arrowend dot larrow larrowend
-    coloneq assign send_op
+    assign send_op
     bool_or bool_orr bool_xor bool_and bool_andd comp_op concat_op add_op mul_op
     bin_or bin_and bin_shift bin_not bool_not.
 
@@ -245,7 +245,7 @@ kv_match_items -> kv_match_item: ['$1'].
 kv_match_items -> kv_match_item sep: ['$1'].
 kv_match_items -> kv_match_item sep kv_match_items: ['$1'|'$3'].
 
-kv_match_item -> kv_key coloneq kv_val: {kvmatch, line('$1'), '$1', '$3'}.
+kv_match_item -> kv_key assign kv_val: {kvmatch, line('$1'), '$1', '$3'}.
 
 attrs -> attr nl : ['$1'].
 attrs -> attr nl attrs : ['$1'|'$3'].
