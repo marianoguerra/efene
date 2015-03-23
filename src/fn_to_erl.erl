@@ -117,11 +117,11 @@ ast_to_ast(?S(Line, list, Val), State) ->
 ast_to_ast(?S(Line, map=Type, {Var, KVs}), State) ->
     {EVar, State1} = ast_to_ast(Var, State),
     {Items, State2} = state_map(fun to_map_field/2, KVs, State1),
-    R = {Type, Line, EVar, Items},
+    R = {Type, Line, EVar, lists:reverse(Items)},
     {R, State2};
 ast_to_ast(?S(Line, map=Type, KVs), State) ->
     {Items, State1} = state_map(fun to_map_field/2, KVs, State),
-    R = {Type, Line, Items},
+    R = {Type, Line, lists:reverse(Items)},
     {R, State1};
 
 ast_to_ast(?LTag(Line, [?Atom(i)], ?Atom(Name)), State) ->
