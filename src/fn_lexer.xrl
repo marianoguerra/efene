@@ -147,6 +147,8 @@ Rules.
 
 Erlang code.
 
+-export([is_reserved/1]).
+
 make_token(Name, Line, Chars) when is_list(Chars) ->
     {token, {Name, Line, list_to_atom(Chars)}};
 make_token(Name, Line, Chars) ->

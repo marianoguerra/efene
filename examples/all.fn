@@ -48,6 +48,9 @@ fn types @public
     atom
     #atom "an atom"
     `an atom`
+
+    (`if`, `else`, `try`, `catch`, `receive`, `after`, `case`, `match`, `when`,
+     `fn`, `do`, `for`, `in`, `begin`, `end`)
   case list:
     []
     [1]

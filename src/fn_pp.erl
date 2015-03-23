@@ -179,7 +179,18 @@ print(?O(_L, Op, Left, Right), Str, Nl, Indent) ->
         [print_single(Left), atom_to_list(Op), RightStr]);
 
 print(?V(_L, atom, Val), Str, Nl, Indent)    ->
-    fmt(Str, "~s", Nl, Indent, [atom_to_list(Val)]);
+    AtomStr = atom_to_list(Val),
+    IsSpecialChar = fun (C) when C >= $a, C =< $z; C == $_ -> false;
+                         (_) -> true
+                     end,
+    IsReserved = fn_lexer:is_reserved(AtomStr),
+    HasSpecialChar = lists:any(IsSpecialChar, AtomStr),
+    ShouldQuote =  IsReserved orelse HasSpecialChar,
+    if ShouldQuote ->
+        fmt(Str, "`~s`", Nl, Indent, [AtomStr]);
+       true ->
+        fmt(Str, "~s", Nl, Indent, [AtomStr])
+    end;
 print(?V(_L, integer, Val), Str, Nl, Indent) ->
     fmt(Str, "~p", Nl, Indent, [Val]);
 print(?V(_L, float, Val), Str, Nl, Indent)   ->
