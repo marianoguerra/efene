@@ -208,7 +208,7 @@ l_tuple -> open e_assign sep seq_items close: seq_value(['$2'|'$4'], line('$1'),
 l_list -> open_list close_list : seq_value([], line('$1'), list).
 l_list -> open_list seq_items close_list : seq_value('$2', line('$1'), list).
 
-l_cons -> open_list literal split_def_op literal close_list : seq_value({'$2', '$4'}, line('$1'), cons).
+l_cons -> open_list seq_items split_def_op literal close_list : seq_value({'$2', '$4'}, line('$1'), cons).
 
 guard_seq -> seq_items : ['$1'].
 guard_seq -> seq_items semicolon guard_seq :

@@ -80,7 +80,7 @@ print({kv, _L, Key, Val}, Str, Nl, Indent) ->
     fmt(Str, "~s: ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
 
 print({kvmatch, _L, Key, Val}, Str, Nl, Indent) ->
-    fmt(Str, "~s := ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
+    fmt(Str, "~s = ~s", Nl, Indent, [print_single(Key), print_single(Val)]);
 
 print(?S(_L, tuple, []), Str, Nl, Indent)   ->
     fmt(Str, "()", Nl, Indent, []);

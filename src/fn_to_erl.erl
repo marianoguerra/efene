@@ -150,8 +150,13 @@ ast_to_ast(?LTag(Line, [?Atom(atom)], ?V(_StrLine, string, AtomStr)), State) ->
 ast_to_ast(?S(Line, tuple=Type, Val), State)   ->
     {EVal, State1} = ast_to_ast(Val, State),
     {{Type, Line, EVal}, State1};
-ast_to_ast(?S(Line, cons=Type, {H, T}), State) ->
+
+ast_to_ast(?S(Line, cons=Type, {[H], T}), State) ->
     with_childs(State, H, T, fun (EH, ET) -> {Type, Line, EH, ET} end);
+
+ast_to_ast(?S(Line, cons, {H, T}), State) ->
+    with_childs(State, H, T, fun (EH, ET) ->
+                                 ast_list_to_cons(lists:reverse(EH), Line, ET) end);
 
 ast_to_ast(?V(Line, fn_ref, {[Mod, Fun], Arity}), State) ->
     with_childs(State, Mod, Fun, Arity,
@@ -658,8 +663,13 @@ ast_list_to_cons(Items, Line) ->
 
 ast_list_to_cons([], _Line, Cons) ->
     Cons;
+ast_list_to_cons([H|T], Line, Cons) when is_list(T) ->
+    ast_list_to_cons(T, Line, {cons, Line, maybe_consify_head(H, Line), Cons});
 ast_list_to_cons([H|T], Line, Cons) ->
-    ast_list_to_cons(T, Line, {cons, Line, H, Cons}).
+    {cons, Line, maybe_consify_head(H, Line), {cons, Line, T, Cons}}.
+
+maybe_consify_head(H, Line) when is_list(H) -> ast_list_to_cons(H, Line);
+maybe_consify_head(H, _Line) -> H.
 
 make_fun_attrs(?V(Line, atom, Name), Arity, Accum) ->
     ConsAttrs = {tuple, Line, [{atom, Line, Name}, {integer, Line, Arity},
