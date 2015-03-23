@@ -205,7 +205,10 @@ print(?V(_L, bstring, Val), Str, Nl, Indent) ->
     fmt(Str, "~s", Nl, Indent, [escape_bstring(Val)]);
 
 print(?UO(_L, Op, Val), Str, Nl, Indent) ->
-    fmt(Str, "~s~s", Nl, Indent, [atom_to_list(Op), print_single(Val)]);
+    Fmt = if Op == 'not' -> "~s ~s";
+             true -> "~s~s"
+          end,
+    fmt(Str, Fmt, Nl, Indent, [atom_to_list(Op), print_single(Val)]);
 
 print(Ast, Str, Nl, Indent) ->
     fmt(Str, "(INVALID: ~p)", Nl, Indent, [Ast]).
