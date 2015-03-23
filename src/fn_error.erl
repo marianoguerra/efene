@@ -27,6 +27,7 @@ type_to_string(invalid_bin_type_specifier_Field) -> <<"Invalid Type Specifier Fi
 type_to_string(invalid_bin_type_specifier_value) -> <<"Invalid Type Specifier Value">>;
 type_to_string(unknown_compiler_info) -> <<"Unknown Compiler Info Name">>;
 type_to_string(case_mismatch) -> <<"Case Mismatch">>;
+type_to_string(bad_record_field_init) -> <<"Bad Record Field Initialization">>;
 type_to_string(bad_record_field_decl) -> <<"Bad Record Field Declaration">>;
 type_to_string(invalid_export) -> <<"Invalid Export">>;
 type_to_string(invalid_expression) -> <<"Invalid Expression">>;

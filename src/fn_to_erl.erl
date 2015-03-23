@@ -408,7 +408,12 @@ to_map_field({kvmatch, Line, Key, Val}, State) ->
 to_record_field({kv, Line, Key, Val}, State) ->
     {{EKey, EVal}, State1} = kv_to_ast(Key, Val, State),
     R = {record_field, Line, EKey, EVal},
-    {R, State1}.
+    {R, State1};
+to_record_field(Other, State) ->
+    Line = element(2, Other),
+    State1 = add_error(State, bad_record_field_init, Line,
+                       expected_got("initialization", {ast, Other})),
+    {{atom, Line, error}, State1}.
 
 to_record_field_decl(?O(Line, '=', ?V(FLine, atom, FieldName), ?O(_OLine, is, Val, Type)),
                      State) ->
