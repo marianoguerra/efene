@@ -130,6 +130,11 @@ fn types @public
     MapR(R) <- case X:
       X + 1
     end
+
+    R ->> lists.map(fn case X: X + 1 end)
+      -> MapR(fn case X: X + 1 end)
+      -> length()
+
   case bin_ops:
     ~1 & 2 ^ 3 | 4
   case math_ops:

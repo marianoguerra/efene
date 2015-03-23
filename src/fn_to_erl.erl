@@ -23,8 +23,10 @@ to_erl(Ast, Module) -> ast_to_ast(Ast, new_state(Module)).
 
 ast_to_ast(Nodes, State) when is_list(Nodes) -> ast_to_ast(Nodes, [], State);
 
+%-export([...]).
 ast_to_ast({attr, Line, [?Atom(export=Name)], Params, noresult}, #{level := 0}=State) ->
     export_like_to_ast(Name, Line, Params, State);
+%-export_type([...]).
 ast_to_ast({attr, Line, [?Atom(export_type=Name)], Params, noresult}, #{level := 0}=State) ->
     export_like_to_ast(Name, Line, Params, State);
 
@@ -32,6 +34,7 @@ ast_to_ast({attr, Line, [?Atom(AttrName)], [?Atom(BName)], noresult}, #{level :=
         when AttrName == behavior orelse AttrName == behaviour ->
     R = {attribute, Line, AttrName, BName},
     {R, State};
+% top level function
 ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}=State) ->
     [FirstCase|_TCases] = Cases,
     {cmatch, _FCLine, {FCCond, _FCWhen, _FCBody}} = FirstCase,
@@ -53,6 +56,7 @@ ast_to_ast(?E(Line, fn, {Name, Attrs, ?E(_CLine, 'case', Cases)}), #{level := 0}
     State5 = check_case_arities_equal(Cases, State4, Arity),
     {R, State5#{level => 0}};
 
+% record declaration
 ast_to_ast({attr, Line, [?Atom(record)], [?Atom(RecordName)], ?S(_TLine, tuple, Fields)},
            #{level := 0}=State) ->
     {FieldsAndTypes, State1} = lists:mapfoldl(fun to_record_field_decl/2,
@@ -66,6 +70,7 @@ ast_to_ast({attr, Line, [?Atom(record)], [?Atom(RecordName)], ?S(_TLine, tuple, 
     R = {attribute, Line, record, {RecordName, lists:reverse(RFields)}},
     maybe_type_record(R, Line, RecordName, RTypes, State1#{level => 0});
 
+% type and opaque attributes
 ast_to_ast({attr, Line, [?Atom(Type)], _Params, noresult}=Ast, #{level := 0}=State)
   when Type == type orelse Type == opaque ->
     invalid_type_declaration(State, Line, Ast);
