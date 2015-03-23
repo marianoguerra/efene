@@ -61,6 +61,12 @@ parse_type_value(?E(Line, call, {[?Atom('fun')], [?S(ALine, list, Args), Return]
 parse_type_value(?E(Line, call, {[?Atom(Name)], Args}), State) ->
     {EArgs, State1} = parse_types(Args, State),
     {{type, Line, Name, EArgs}, State1};
+% type <atom>.<atom>(<type>*)
+parse_type_value(?E(Line, call, {[?Atom(_ModName)=Mod, ?Atom(_FName)=Name], Args}), State) ->
+    {EArgs, State1} = parse_types(Args, State),
+    {EName, State2} = parse_type_value(Name, State1),
+    {EMod, State3} = parse_type_value(Mod, State2),
+    {{remote_type, Line, [EMod, EName, EArgs]}, State3};
 parse_type_value(?S(Line, list, []), State) ->
     {{type, Line, nil, []}, State};
 parse_type_value(?S(Line, list, [Type]), State) ->
