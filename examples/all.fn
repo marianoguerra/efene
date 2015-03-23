@@ -82,6 +82,7 @@ fn types @public
     State1 = #r.state State#{counter: 2}
     Counter = #r.state.counter State
     CounterIdx = #r.state counter
+    #r.state {counter: Counter} = State
   case binary:
     B0 = #b []
     B = #b [{},
