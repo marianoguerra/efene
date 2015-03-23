@@ -190,13 +190,14 @@ clean_tokens([{arrow, _, _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accu
 clean_tokens([{arrowend, _, _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{larrow, _, _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{larrowend, _, _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
-% remove newline after try, catch, after, receive, begin
+% remove newline after try, catch, after, receive, begin, match
 clean_tokens([{'try', _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{'catch', _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{'after', _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{'receive', _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{'begin', _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
 clean_tokens([{'fn', _}=H, {nl, _, _}|T], Accum) -> clean_tokens([H|T], Accum);
+clean_tokens([{'match', _}=H1, H2, {nl, _, _}|T], Accum) -> clean_tokens([H1, H2|T], Accum);
 clean_tokens([{'fn', _}=H1, {var, _, _}=H2, {nl, _, _}|T], Accum) -> clean_tokens([H1, H2|T], Accum);
 clean_tokens([{'fn', _}=H1, {atom, _, _}=H2, {nl, _, _}|T], Accum) -> clean_tokens([H1, H2|T], Accum);
 
