@@ -108,7 +108,7 @@ ast_to_ast(?T(_Line, [?Var('_')], _), State) ->
     R = 'fn compiler ignore',
     {R, State};
 
-ast_to_ast(?T(Line, [?Atom(b)], ?S(_LLine, list, TSList)), State) ->
+ast_to_ast(?LTag(Line, [?Atom(b)], ?S(_LLine, list, TSList)), State) ->
     type_specifiers_to_ast(Line, TSList, State);
 
 ast_to_ast(?S(Line, list, Val), State) ->
