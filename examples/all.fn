@@ -48,6 +48,8 @@ fn types @public
     atom
     #atom "an atom"
     `an atom`
+    `1atom`
+    atom1
 
     (`if`, `else`, `try`, `catch`, `receive`, `after`, `case`, `match`, `when`,
      `fn`, `do`, `for`, `in`, `begin`, `end`)

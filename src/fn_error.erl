@@ -23,7 +23,7 @@ to_string(Module, {Type, Line, Details}) ->
     io_lib:format("~p:~p:~p: ~s at line ~p: ~s~n", [Module, Line, Type, TypeStr, Line, DetailsStr]).
 
 type_to_string(invalid_fn_ref) -> <<"Invalid Function Reference">>;
-type_to_string(invalid_bin_type_specifier_Field) -> <<"Invalid Type Specifier Field">>;
+type_to_string(invalid_bin_type_specifier_field) -> <<"Invalid Type Specifier Field">>;
 type_to_string(invalid_bin_type_specifier_value) -> <<"Invalid Type Specifier Value">>;
 type_to_string(unknown_compiler_info) -> <<"Unknown Compiler Info Name">>;
 type_to_string(case_mismatch) -> <<"Case Mismatch">>;

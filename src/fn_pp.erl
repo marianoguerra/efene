@@ -183,11 +183,13 @@ print(?O(_L, Op, Left, Right), Str, Nl, Indent) ->
 
 print(?V(_L, atom, Val), Str, Nl, Indent)    ->
     AtomStr = atom_to_list(Val),
-    IsSpecialChar = fun (C) when C >= $a, C =< $z; C == $_ -> false;
+    [FirstChar|_] = AtomStr,
+    IsSpecialChar = fun (C) when C >= $a, C =< $z; C >= $0, C =< $9;C == $_ -> false;
                          (_) -> true
                      end,
     IsReserved = fn_lexer:is_reserved(AtomStr),
-    HasSpecialChar = lists:any(IsSpecialChar, AtomStr),
+    HasSpecialChar = ((FirstChar >= $0 andalso FirstChar =< $9) orelse
+                      lists:any(IsSpecialChar, AtomStr)),
     ShouldQuote =  IsReserved orelse HasSpecialChar,
     if ShouldQuote ->
         fmt(Str, "`~s`", Nl, Indent, [AtomStr]);
