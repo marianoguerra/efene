@@ -62,16 +62,19 @@ print(?S(_L, map, {Var, KVs}), Str, Nl, Indent) ->
 print(?S(_L, map, KVs), Str, Nl, Indent) ->
     fmt(Str, "{~s}", Nl, Indent, [print_kvs(KVs)]);
 
-print(?T(_L, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, {Var, KVs})), Str, Nl, Indent) ->
+print(?LTag(_L, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, {Var, KVs})), Str, Nl, Indent) ->
     fmt(Str, "#r.~p ~s#{~s}", Nl, Indent, [RecordName, print_single(Var), print_kvs(KVs)]);
 
-print(?T(_L, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), Str, Nl, Indent) ->
+print(?LTag(_L, [?Atom(r), ?Atom(RecordName)], ?S(_MapLine, map, KVs)), Str, Nl, Indent) ->
     fmt(Str, "#r.~p {~s}", Nl, Indent, [RecordName, print_kvs(KVs)]);
 
 print(?LTag(_L, [?Atom(c)], ?V(_StrLine, string, [Char])), Str, Nl, Indent) ->
     fmt(Str, "#c \"~c\"", Nl, Indent, [Char]);
 print(?LTag(_L, [?Atom(atom)], ?V(_StrLine, string, AtomStr)), Str, Nl, Indent) ->
     fmt(Str, "#atom ~s", Nl, Indent, [escape_string(AtomStr)]);
+
+print(?LTag(_L, Path, Val), Str, Nl, Indent) ->
+    fmt(Str, "#~s ~s", Nl, Indent, [print_path(Path), print_single(Val, Indent)]);
 
 print(?T(_L, Path, Val), Str, Nl, Indent) ->
     fmt(Str, "^~s ~s", Nl, Indent, [print_path(Path), print_single(Val, Indent)]);
