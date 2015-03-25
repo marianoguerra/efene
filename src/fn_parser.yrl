@@ -76,8 +76,8 @@ e_cases -> e_case_cond : ['$1'].
 e_cases -> e_case_cond e_case_else : ['$1', '$2'].
 e_cases -> e_case_cond e_cases : ['$1'|'$2'].
 
-e_switch -> match literal e_case end:
-    {expr, line('$1'), switch, {'$2', '$3'}}.
+e_switch -> match literal colon e_case end:
+    {expr, line('$1'), switch, {'$2', '$4'}}.
 
 e_receive -> receive e_case end:
     {expr, line('$1'), 'receive', {'$2', noafter}}.

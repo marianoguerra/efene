@@ -216,7 +216,7 @@ fn types @public
        end
   case match_expr:
        Error = (throw, badarg)
-       match Error
+       match Error:
             case throw, T1: T1
             case error, E1: E1
             case exit, X1: X1

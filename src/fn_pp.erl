@@ -127,7 +127,7 @@ print(?E(_L, 'receive', {?E(_CLine, 'case', Clauses), After}), Str, Nl, Indent) 
                                               ind(Indent)]);
 
 print(?E(_L, switch, {Value, ?E(_CaseLine, 'case', Clauses)}), Str, Nl, Indent) ->
-    fmt(Str, "match ~s~n~s~send", true, Indent, [print_single(Value),
+    fmt(Str, "match ~s:~n~s~send", true, Indent, [print_single(Value),
                                              print_clauses(Clauses, Nl, Indent + 1),
                                              ind(Indent)]);
 
