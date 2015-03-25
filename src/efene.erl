@@ -14,7 +14,7 @@
 
 -module(efene).
 -export([run/0, run/1, compile/2, to_code/1,
-         to_raw_lex/1, to_lex/1, to_ast/1, to_erl_ast/1, to_mod/1, pprint/1]).
+         to_raw_lex/1, to_lex/1, to_ast/1, to_erl/1, to_erl_ast/1, to_mod/1, pprint/1]).
 
 read_file(Path) ->
     case file:read_file(Path) of
